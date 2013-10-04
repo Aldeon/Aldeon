@@ -6,22 +6,28 @@ import org.aldeon.protocol.action.StatusAction;
 import org.aldeon.protocol.query.Query;
 import org.aldeon.protocol.query.StatusQuery;
 import org.aldeon.protocol.response.Response;
-import org.aldeon.protocol.response.StatusResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestProtocol implements Protocol {
 
-    private Action<StatusQuery, StatusResponse> statusAction;
+    private Map<Class<?>, Action<? extends Query, ?>> actions;
 
     public TestProtocol() {
-        statusAction = new StatusAction();
+        actions = new HashMap<>();
+
+        // Register all the actions here
+        actions.put(StatusQuery.class, new StatusAction());
     }
 
     @Override
     public Response respond(Query query, Observer observer) {
 
-        if(query instanceof StatusQuery)
-            return statusAction.respond((StatusQuery) query, observer);
+        Action<? extends Query,?> action = actions.get(query.getClass());
 
-        return null;
+        return (action == null)
+                ? null
+                : ((Action<Query, ?>) action).respond(query, observer);
     }
 }
