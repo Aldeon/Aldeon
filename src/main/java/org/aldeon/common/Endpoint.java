@@ -6,7 +6,7 @@ package org.aldeon.common;
  */
 public interface Endpoint {
 
-    public void setResponder(Responder responder);
+    public void setObserver(Observer observer);
 
     public void start();
     public void stop();

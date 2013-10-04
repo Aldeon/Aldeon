@@ -4,12 +4,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.aldeon.common.EndpointWithPortPolicy;
+import org.aldeon.protocol.Protocol;
+import org.aldeon.protocol.TestProtocol;
 
 public class JettyModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(EndpointWithPortPolicy.class).to(JettyHttpEndpoint.class);
-        bind(ResponderAwareAbstractHandler.class).to(JettyEndpointHandler.class);
+        bind(ObserverAwareAbstractHandler.class).to(JettyEndpointHandler.class);
+        bind(Protocol.class).to(TestProtocol.class);
     }
 
     public static EndpointWithPortPolicy getEndpoint() {
