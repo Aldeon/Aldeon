@@ -61,7 +61,6 @@ class JettyHttpEndpoint implements EndpointWithPortPolicy {
         @Override
         public void run() {
             try {
-                System.out.println("running!");
                 server.start();
                 server.join();
             } catch (Exception e) {

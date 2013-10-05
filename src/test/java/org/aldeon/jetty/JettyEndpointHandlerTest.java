@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -23,40 +24,54 @@ public class JettyEndpointHandlerTest {
 
     public static final String VALID_QUERY      = "valid_query";
     public static final String VALID_RESPONSE   = "valid_response";
+    public static final String ERROR_RESPONSE   = "error_response";
 
 
-    // @Test WORK IN PROGRESS
-    public void shouldReturnValidResponseForValidQuery() throws Exception {
-
-        JsonQueryMapper mapper = mock(JsonQueryMapper.class);
-        JsonParser parser = mock(JsonParser.class);
-        Protocol protocol = mock(Protocol.class);
+    @Test
+    public void shouldUseQueryResolverOnIncomingQueries() throws Exception {
+        StringQueryResolver resolver = mock(StringQueryResolver.class);
         Observer observer = mock(Observer.class);
-        Gson gson = mock(Gson.class);
 
         Request baseRequest = mock(Request.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-
-        JsonObject json = mock(JsonObject.class);
-        Query query = mock(Query.class);
-        Response resp = mock(Response.class);
         PrintWriter writer = mock(PrintWriter.class);
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getParameter("query")).thenReturn(VALID_QUERY);
-        when(parser.parse(VALID_QUERY)).thenReturn(json);
-        when(mapper.parse(json)).thenReturn(query);
-        when(protocol.respond(query, observer)).thenReturn(resp);
-        when(gson.toJson(resp)).thenReturn(VALID_RESPONSE);
+        when(resolver.queryResponse(VALID_QUERY, observer)).thenReturn(VALID_RESPONSE);
         when(response.getWriter()).thenReturn(writer);
 
 
-        JettyEndpointHandler handler = new JettyEndpointHandler(mapper, parser, protocol, gson);
+        JettyEndpointHandler handler = new JettyEndpointHandler(resolver);
         handler.setObserver(observer);
         handler.handle("target", baseRequest, request, response);
 
         verify(baseRequest).setHandled(true);
         verify(writer).println(VALID_RESPONSE);
+    }
+
+    @Test
+    public void shouldReturnErrorForInvalidQuery() throws Exception {
+        StringQueryResolver resolver = mock(StringQueryResolver.class);
+        Observer observer = mock(Observer.class);
+
+        Request baseRequest = mock(Request.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        PrintWriter writer = mock(PrintWriter.class);
+
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("query")).thenReturn(VALID_QUERY);
+        when(resolver.queryResponse(VALID_QUERY, observer)).thenThrow(new IllegalArgumentException());
+        when(resolver.errorResponse()).thenReturn(ERROR_RESPONSE);
+        when(response.getWriter()).thenReturn(writer);
+
+        JettyEndpointHandler handler = new JettyEndpointHandler(resolver);
+        handler.setObserver(observer);
+        handler.handle("target", baseRequest, request, response);
+
+        verify(baseRequest).setHandled(true);
+        verify(writer).println(ERROR_RESPONSE);
     }
 }

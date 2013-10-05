@@ -2,9 +2,9 @@ package org.aldeon.protocol;
 
 import org.aldeon.common.Observer;
 import org.aldeon.protocol.action.Action;
-import org.aldeon.protocol.action.StatusAction;
+import org.aldeon.protocol.action.ExampleAction;
+import org.aldeon.protocol.query.ExampleQuery;
 import org.aldeon.protocol.query.Query;
-import org.aldeon.protocol.query.StatusQuery;
 import org.aldeon.protocol.response.Response;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class TestProtocol implements Protocol {
         actions = new HashMap<>();
 
         // Register all the actions here
-        actions.put(StatusQuery.class, new StatusAction());
+        actions.put(ExampleQuery.class, new ExampleAction());
     }
 
     @Override

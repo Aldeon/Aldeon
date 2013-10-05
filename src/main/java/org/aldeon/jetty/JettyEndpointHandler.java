@@ -19,49 +19,32 @@ import java.io.IOException;
 class JettyEndpointHandler extends ObserverAwareAbstractHandler {
 
     private static Logger log = Logger.getLogger(JettyEndpointHandler.class);
-    private JsonQueryMapper mapper;
-    private Protocol protocol;
-    private JsonParser parser;
-    private Gson gson;
+
+    StringQueryResolver resolver;
 
     @Inject
-    public JettyEndpointHandler(JsonQueryMapper mapper, JsonParser parser, Protocol protocol, Gson gson) {
-        this.mapper = mapper;
-        this.protocol = protocol;
-        this.parser = parser;
-        this.gson = gson;
+    public JettyEndpointHandler(StringQueryResolver resolver) {
+        this.resolver = resolver;
     }
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        log.info("Received request (" + request.toString() + ") from " + request.getRemoteAddr() + ":" + request.getRemotePort());
+        log.info("Received request (" + request.toString() + ") "
+                + "from " + request.getRemoteAddr()
+                + ":" + request.getRemotePort());
 
         if(request.getMethod() == "GET") {
             try {
-                // First, parse the query passed in the http request.
-                JsonObject jsonQuery = (JsonObject) parser.parse(request.getParameter("query"));
-
-                // Great, we have a json. Now let's convert it into a protocol query.
-                Query protocolQuery = mapper.parse(jsonQuery);
-
-                // We have a proper query. We use our protocol to fetch the response.
-                Response protocolResponse = protocol.respond(protocolQuery, observer);
-
-                // Send it to client.
-                respond(gson.toJson(protocolResponse), response, baseRequest);
-
-            } catch(Exception e) {
-                // debug
-                respond("{\"error\": \"" + e.getMessage() + "\"}", response, baseRequest);
-                e.printStackTrace();
+                respond(resolver.queryResponse(request.getParameter("query"), observer), response, baseRequest);
+                return;
+            } catch (Exception e) {
+                log.warn("Exception caught when constructing the response", e);
             }
-        } else {
-            // debug
-            respond("{\"error\": \"asdsdsas\"}", response, baseRequest);
         }
 
+        respond(resolver.errorResponse(), response, baseRequest);
     }
 
     protected void respond(String answer, HttpServletResponse response, Request baseRequest) throws IOException {

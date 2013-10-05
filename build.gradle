@@ -23,3 +23,11 @@ test {
         events "passed", "failed", "standardOut", "standardError"
     }
 }
+
+task(run, dependsOn: 'classes', type: JavaExec) {
+    main = 'org.aldeon.app.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+}
+
+defaultTasks 'run'
