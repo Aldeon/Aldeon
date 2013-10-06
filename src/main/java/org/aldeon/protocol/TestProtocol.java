@@ -21,6 +21,7 @@ public class TestProtocol implements Protocol {
         actions.put(ExampleQuery.class, new ExampleAction());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Response respond(Query query, Observer observer) {
 
@@ -28,6 +29,6 @@ public class TestProtocol implements Protocol {
 
         return (action == null)
                 ? null
-                : ((Action<Query, ?>) action).respond(query, observer);
+                : ((Action<Query, ?>) action).respond(query, observer); //the cast here if fine - Query is abstract
     }
 }
