@@ -1,13 +1,8 @@
-package org.aldeon.jetty;
+package org.aldeon.jetty.handler;
 
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.inject.Inject;
-import org.aldeon.protocol.Protocol;
-import org.aldeon.protocol.query.Query;
-import org.aldeon.protocol.response.Response;
+import org.aldeon.jetty.resolver.QueryResolver;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Request;
 
@@ -16,34 +11,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-class JettyEndpointHandler extends ObserverAwareAbstractHandler {
+public class JettyEndpointHandler extends ObserverAwareAbstractHandler {
 
     private static Logger log = Logger.getLogger(JettyEndpointHandler.class);
 
-    StringQueryResolver resolver;
+    QueryResolver resolver;
 
     @Inject
-    public JettyEndpointHandler(StringQueryResolver resolver) {
+    public JettyEndpointHandler(QueryResolver resolver) {
         this.resolver = resolver;
     }
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-
-        log.info("Received request (" + request.toString() + ") "
-                + "from " + request.getRemoteAddr()
-                + ":" + request.getRemotePort());
+    public void handle(
+            String target,
+            Request baseRequest,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws IOException, ServletException
+    {
+        log.info("Received request from " + request.getRemoteAddr() + ":" + request.getRemotePort());
 
         if(request.getMethod() == "GET") {
             try {
-                respond(resolver.queryResponse(request.getParameter("query"), observer), response, baseRequest);
+                String query = request.getParameter("query");
+                respond(resolver.queryResponse(query, observer), response, baseRequest);
                 return;
             } catch (Exception e) {
                 log.warn("Exception caught when constructing the response", e);
             }
         }
-
         respond(resolver.errorResponse(), response, baseRequest);
     }
 

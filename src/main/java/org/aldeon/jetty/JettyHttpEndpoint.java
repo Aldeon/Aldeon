@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import org.aldeon.common.EndpointWithPortPolicy;
 import org.aldeon.common.Observer;
 import org.aldeon.common.net.PortPolicy;
+import org.aldeon.jetty.handler.ObserverAwareAbstractHandler;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 

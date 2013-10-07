@@ -1,9 +1,9 @@
-package org.aldeon.jetty;
+package org.aldeon.jetty.handler;
 
 import org.aldeon.common.Observer;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-abstract class ObserverAwareAbstractHandler extends AbstractHandler {
+public abstract class ObserverAwareAbstractHandler extends AbstractHandler {
 
     protected Observer observer;
 

@@ -27,8 +27,10 @@ public class TestProtocol implements Protocol {
 
         Action<? extends Query,?> action = actions.get(query.getClass());
 
-        return (action == null)
-                ? null
-                : ((Action<Query, ?>) action).respond(query, observer); //the cast here if fine - Query is abstract
+        if(action == null) {
+            throw new IllegalArgumentException("Unknown query type");
+        } else {
+            return ((Action<Query, ?>) action).respond(query, observer); //the cast here is fine - Query is abstract
+        }
     }
 }

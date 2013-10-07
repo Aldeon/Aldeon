@@ -1,12 +1,8 @@
 package org.aldeon.jetty;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.aldeon.common.Observer;
-import org.aldeon.protocol.Protocol;
-import org.aldeon.protocol.query.Query;
-import org.aldeon.protocol.response.Response;
+import org.aldeon.jetty.handler.JettyEndpointHandler;
+import org.aldeon.jetty.resolver.JsonQueryResolver;
 import org.eclipse.jetty.server.Request;
 import org.junit.Test;
 
@@ -14,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.PrintWriter;
-import java.util.logging.Logger;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -29,7 +24,7 @@ public class JettyEndpointHandlerTest {
 
     @Test
     public void shouldUseQueryResolverOnIncomingQueries() throws Exception {
-        StringQueryResolver resolver = mock(StringQueryResolver.class);
+        JsonQueryResolver resolver = mock(JsonQueryResolver.class);
         Observer observer = mock(Observer.class);
 
         Request baseRequest = mock(Request.class);
@@ -53,7 +48,7 @@ public class JettyEndpointHandlerTest {
 
     @Test
     public void shouldReturnErrorForInvalidQuery() throws Exception {
-        StringQueryResolver resolver = mock(StringQueryResolver.class);
+        JsonQueryResolver resolver = mock(JsonQueryResolver.class);
         Observer observer = mock(Observer.class);
 
         Request baseRequest = mock(Request.class);
