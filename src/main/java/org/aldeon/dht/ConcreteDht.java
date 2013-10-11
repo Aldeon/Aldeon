@@ -11,12 +11,12 @@ import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ConcreteLocalDht<T extends PeerAddress> implements LocalDht<T> {
+public class ConcreteDht<T extends PeerAddress> implements Dht<T> {
 
     private NeighbourhoodSet<Identifiable> circle;
     private Arithmetic<ByteBuffer> arithmetic;
 
-    public ConcreteLocalDht(Arithmetic<ByteBuffer> arithmetic) {
+    public ConcreteDht(Arithmetic<ByteBuffer> arithmetic) {
         this.arithmetic = arithmetic;
         circle = new ConcreteNeighbourhoodSet<>(new IdentifiableArithmetic());
     }
