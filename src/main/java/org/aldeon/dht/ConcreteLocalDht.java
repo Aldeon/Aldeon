@@ -1,0 +1,92 @@
+package org.aldeon.dht;
+
+import org.aldeon.common.model.Identifiable;
+import org.aldeon.common.model.Identifier;
+import org.aldeon.common.net.PeerAddress;
+import org.aldeon.utils.collections.ConcreteNeighbourhoodSet;
+import org.aldeon.utils.collections.NeighbourhoodSet;
+import org.aldeon.utils.math.Arithmetic;
+
+import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Set;
+
+public class ConcreteLocalDht<T extends PeerAddress> implements LocalDht<T> {
+
+    private NeighbourhoodSet<Identifiable> circle;
+    private Arithmetic<ByteBuffer> arithmetic;
+
+    public ConcreteLocalDht(Arithmetic<ByteBuffer> arithmetic) {
+        this.arithmetic = arithmetic;
+        circle = new ConcreteNeighbourhoodSet<>(new IdentifiableArithmetic());
+    }
+
+    @Override
+    public void insert(T address) {
+        circle.add(address);
+    }
+
+    @Override
+    public void remove(T address) {
+        circle.remove(address);
+    }
+
+    @Override
+    public Set<T> getNearest(Identifier identifier, int maxResults) {
+        Set<T> results = new HashSet<>();
+
+        for(Identifiable peer: circle.closestValues(new IdentifiableStub(identifier), maxResults)) {
+            results.add((T) peer);
+        }
+
+        return results;
+    }
+
+    private class IdentifiableStub implements Identifiable {
+
+        private Identifier identifier;
+
+        public IdentifiableStub(Identifier identifier) {
+            this.identifier = identifier;
+        }
+
+        @Override
+        public Identifier getIdentifier() {
+            return identifier;
+        }
+    }
+
+    private class IdentifierStub implements Identifier {
+
+        private ByteBuffer buffer;
+
+        public IdentifierStub(ByteBuffer buffer) {
+            this.buffer = buffer;
+        }
+
+        @Override
+        public ByteBuffer getByteBuffer() {
+            return buffer;
+        }
+    }
+
+    private class IdentifiableArithmetic implements Arithmetic<Identifiable> {
+
+        @Override
+        public Identifiable add(Identifiable a, Identifiable b) {
+            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            return new IdentifiableStub(new IdentifierStub(result));
+        }
+
+        @Override
+        public Identifiable sub(Identifiable a, Identifiable b) {
+            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            return new IdentifiableStub(new IdentifierStub(result));
+        }
+
+        @Override
+        public int compare(Identifiable o1, Identifiable o2) {
+            return arithmetic.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
+        }
+    }
+}
