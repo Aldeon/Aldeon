@@ -1,5 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'idea'
+apply from: 'https://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot/javafx.plugin'
+
 
 repositories {
     mavenCentral()
@@ -24,10 +26,10 @@ test {
     }
 }
 
-task(run, dependsOn: 'classes', type: JavaExec) {
+task(runAldeon, dependsOn: 'classes', type: JavaExec) {
     main = 'org.aldeon.app.Main'
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
 }
 
-defaultTasks 'run'
+defaultTasks 'runAldeon'

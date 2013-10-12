@@ -24,6 +24,8 @@ import org.aldeon.gui.listeners.OnOptionClicked;
 import org.aldeon.gui.listeners.ThreadCreator;
 import org.aldeon.gui.listeners.ThreadInspector;
 
+import java.net.URL;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Prophet
@@ -83,11 +85,11 @@ public class GUIManager extends Application {
             ln.setStroke(Color.web("#333333"));
         }
         ImageView[] icons = new ImageView[]{
-                new ImageView(getClass().getResource("\\resource\\Logo.png").toExternalForm()),
-                new ImageView(getClass().getResource("\\resource\\Identities.png").toExternalForm()),
-                new ImageView(getClass().getResource("\\resource\\Threads.png").toExternalForm()),
-                new ImageView(getClass().getResource("\\resource\\Friends.png").toExternalForm()),
-                new ImageView(getClass().getResource("\\resource\\Settings.png").toExternalForm()),
+                new ImageView(getClass().getClassLoader().getResource("gui/Logo.png").toExternalForm()),
+                new ImageView(getClass().getClassLoader().getResource("gui/Identities.png").toExternalForm()),
+                new ImageView(getClass().getClassLoader().getResource("gui/Threads.png").toExternalForm()),
+                new ImageView(getClass().getClassLoader().getResource("gui/Friends.png").toExternalForm()),
+                new ImageView(getClass().getClassLoader().getResource("gui/Settings.png").toExternalForm()),
         };
         for(int i=0;i<icons.length;i++){
             icons[i].setPreserveRatio(true);
@@ -171,7 +173,7 @@ public class GUIManager extends Application {
         pane.setStyle("-fx-background-color:#444444;");
         pane.setPrefSize(700,700);
         if(option=="main"){
-            pane.getChildren().add(new ImageView(getClass().getResource("\\resource\\main.png").toExternalForm()));
+            pane.getChildren().add(new ImageView(getClass().getClassLoader().getResource("gui/main.png").toExternalForm()));
         }else if(option=="Identities"){
             pane.setPadding(new Insets(30, 30, 30, 30));
             pane.getChildren().add(identityMode("ID","HASH",Color.web("#ffffff")));
