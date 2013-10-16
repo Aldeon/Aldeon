@@ -11,6 +11,16 @@ import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Class implementing the Dht interface. The closeness of PeerAddresses
+ * is defined as the difference of their corresponding ByteBuffers,
+ * interpreted as byte-stored integers of arbitrary size.
+ *
+ * This class should be rewritten to accept NeighbourhoodSet as its
+ * dependency.
+ *
+ * @param <T>
+ */
 public class ConcreteDht<T extends PeerAddress> implements Dht<T> {
 
     private NeighbourhoodSet<Identifiable> circle;
@@ -31,6 +41,7 @@ public class ConcreteDht<T extends PeerAddress> implements Dht<T> {
         circle.remove(address);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Set<T> getNearest(Identifier identifier, int maxResults) {
         Set<T> results = new HashSet<>();

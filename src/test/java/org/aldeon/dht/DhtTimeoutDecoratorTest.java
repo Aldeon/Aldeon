@@ -5,6 +5,9 @@ import org.aldeon.common.net.TemporaryPeerAddress;
 import org.aldeon.utils.time.TimeProvider;
 import org.junit.Test;
 
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class DhtTimeoutDecoratorTest {
@@ -87,6 +90,23 @@ public class DhtTimeoutDecoratorTest {
         dht.refresh();
 
         verify(dhtMock).remove(stub);
+    }
+
+    @Test
+    public void shouldAskUnderlyingDhtForNearestValues() {
+
+        Dht<Stub> dhtMock = mock(Dht.class);
+        TimeProvider timerMock = mock(TimeProvider.class);
+        Set<Stub> setMock = mock(Set.class);
+        Identifier idMock = mock(Identifier.class);
+        int maxValues = 42;
+
+        when(timerMock.getTime()).thenReturn((long) 0);
+        when(dhtMock.getNearest(idMock, maxValues)).thenReturn(setMock);
+
+        DhtTimeoutDecorator<Stub> dht = new DhtTimeoutDecorator<>(dhtMock, timerMock);
+
+        assertEquals(setMock, dht.getNearest(idMock, maxValues));
     }
 
 

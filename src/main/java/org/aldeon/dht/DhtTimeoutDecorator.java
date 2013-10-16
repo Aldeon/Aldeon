@@ -9,6 +9,12 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * Class enhances the existing Dht, providing a method of removing elements
+ * with too low getTimeout() value. This way, each element can be put into
+ * the Dht for a specific period of time.
+ * @param <T>
+ */
 public class DhtTimeoutDecorator<T extends TemporaryPeerAddress> implements Dht<T> {
 
     private TimeProvider timer;
@@ -40,6 +46,7 @@ public class DhtTimeoutDecorator<T extends TemporaryPeerAddress> implements Dht<
         return dht.getNearest(identifier, maxResults);
     }
 
+    @SuppressWarnings("unchecked")
     public void refresh() {
         Set<TemporaryPeerAddress> expired = timeouts.headSet(new AddressStub(timer.getTime()));
 
