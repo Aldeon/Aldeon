@@ -1,9 +1,16 @@
 package org.aldeon.utils.collections;
 
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 public class CircularTreeSet<E> extends TreeSet<E> implements CircularSortedSet<E> {
+
+    public CircularTreeSet() {
+        super();
+    }
+
+    public CircularTreeSet(Comparator<? super E> comparator) {
+        super(comparator);
+    }
 
     @Override
     public Iterator<E> fwdIterator(E start) {
