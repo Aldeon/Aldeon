@@ -1,10 +1,10 @@
 package org.aldeon.nat;
 
-import org.aldeon.common.net.PortPolicy;
+import org.aldeon.common.net.ConnectionPolicy;
 
-public abstract class UpnpPortForwardingPolicy implements PortPolicy {
+public abstract class UpnpConnectionForwardingPolicy implements ConnectionPolicy {
 
-    public static UpnpPortForwardingPolicy create() {
+    public static UpnpConnectionForwardingPolicy create() {
 
         /*
         Sample implementations:

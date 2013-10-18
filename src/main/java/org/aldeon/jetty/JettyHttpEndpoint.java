@@ -1,19 +1,19 @@
 package org.aldeon.jetty;
 
 import com.google.inject.Inject;
-import org.aldeon.common.EndpointWithPortPolicy;
+import org.aldeon.common.EndpointWithConnectionPolicy;
 import org.aldeon.common.Observer;
-import org.aldeon.common.net.PortPolicy;
+import org.aldeon.common.net.ConnectionPolicy;
 import org.aldeon.jetty.handler.ObserverAwareAbstractHandler;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 
 
-class JettyHttpEndpoint implements EndpointWithPortPolicy {
+class JettyHttpEndpoint implements EndpointWithConnectionPolicy {
 
     private static Logger log = Logger.getLogger(JettyHttpEndpoint.class);
 
-    private PortPolicy portPolicy;
+    private ConnectionPolicy connectionPolicy;
     private Server server;
     private ObserverAwareAbstractHandler handler;
     private ServerThread thread;
@@ -29,18 +29,18 @@ class JettyHttpEndpoint implements EndpointWithPortPolicy {
     }
 
     @Override
-    public void setPortPolicy(PortPolicy portPolicy) {
-        this.portPolicy = portPolicy;
+    public void setConnectionPolicy(ConnectionPolicy connectionPolicy) {
+        this.connectionPolicy = connectionPolicy;
     }
 
     @Override
-    public PortPolicy getPortPolicy() {
-        return portPolicy;
+    public ConnectionPolicy getConnectionPolicy() {
+        return connectionPolicy;
     }
 
     @Override
     public void start() {
-        int port = getPortPolicy().getInternalPort().getIntValue();
+        int port = getConnectionPolicy().getInternalPort().getIntValue();
         server = new Server(port);
         server.setHandler(this.handler);
         thread = new ServerThread();

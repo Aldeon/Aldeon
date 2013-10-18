@@ -1,10 +1,10 @@
 package org.aldeon.common.net;
 
-public class ConcretePort implements Port {
+public class PortImpl implements Port {
 
     private int value;
 
-    public ConcretePort(int value) {
+    public PortImpl(int value) {
         if(value > 65535) {
             throw new IllegalArgumentException();
         }
