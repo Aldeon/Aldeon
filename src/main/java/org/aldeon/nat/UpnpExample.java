@@ -4,11 +4,18 @@ import org.aldeon.common.net.ConnectionPolicy;
 import org.aldeon.common.net.Port;
 import org.aldeon.common.net.PortImpl;
 import org.aldeon.nat.upnp.UpnpPolicyFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.IOException;
 import java.net.InetAddress;
 
 public class UpnpExample {
+
+    static {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
 
         Port internalPort = new PortImpl(80);
@@ -25,7 +32,7 @@ public class UpnpExample {
 
         while(!factory.isReady()) {
             Thread.sleep(100);
-            if(++cycles > 5) break;
+            if(++cycles > 50) break;
         }
 
         ConnectionPolicy policy = factory.getPolicy();

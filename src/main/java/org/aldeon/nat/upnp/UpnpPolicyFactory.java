@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class UpnpPolicyFactory implements ConnectionPolicyFactory {
 
-    private static int LEASE_DURATION_SECONDS = 86400; //debug
+    private static final int LEASE_DURATION_SECONDS = 86400; //debug
     private Port desiredInternalPort;
     private Port desiredExternalPort;
     private InetAddress internalAddress;
@@ -23,7 +23,7 @@ public class UpnpPolicyFactory implements ConnectionPolicyFactory {
     private boolean didShutDown = false;
 
 
-    private UpnpPolicyFactory() {};
+    private UpnpPolicyFactory() {}
 
     public static UpnpPolicyFactory create(Port desiredInternalPort, Port desiredExternalPort, InetAddress internalAddress) {
 
@@ -63,11 +63,6 @@ public class UpnpPolicyFactory implements ConnectionPolicyFactory {
     @Override
     public boolean isReady() {
         return listener.getExternalIPsOfActivePortMappings().size() > 0;
-    }
-
-    @Override
-    public boolean didFail() {
-        return didShutDown;
     }
 
     @Override

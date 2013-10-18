@@ -5,13 +5,14 @@ import org.aldeon.common.EndpointWithConnectionPolicy;
 import org.aldeon.common.Observer;
 import org.aldeon.common.net.ConnectionPolicy;
 import org.aldeon.jetty.handler.ObserverAwareAbstractHandler;
-import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 class JettyHttpEndpoint implements EndpointWithConnectionPolicy {
 
-    private static Logger log = Logger.getLogger(JettyHttpEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(JettyHttpEndpoint.class);
 
     private ConnectionPolicy connectionPolicy;
     private Server server;

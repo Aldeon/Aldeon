@@ -11,7 +11,9 @@ import org.fourthline.cling.support.igd.callback.GetExternalIP;
 import org.fourthline.cling.support.igd.callback.PortMappingAdd;
 import org.fourthline.cling.support.igd.callback.PortMappingDelete;
 import org.fourthline.cling.support.model.PortMapping;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -23,7 +25,7 @@ import java.util.Set;
 
 class PortMappingAndIpListener extends DefaultRegistryListener {
 
-    private static final Logger log = Logger.getLogger(PortMappingAndIpListener.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(PortMappingAndIpListener.class);
     private final PortMapping portMapping;
     private Set<Service> servicesWithActivePortMapping;
     private Map<Service, InetAddress> externalIpsByService;
@@ -35,7 +37,9 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
     }
 
     synchronized public Set<InetAddress> getExternalIPsOfActivePortMappings() {
-        return new HashSet(externalIpsByService.values());
+        Set<InetAddress> ret = new HashSet<>();
+        ret.addAll(externalIpsByService.values());
+        return ret;
     }
 
     @Override
@@ -44,7 +48,7 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
         final Service service = discoverConnectionService(device);
         if(service == null) return;
 
-        log.info("Activating port mapping on" + service);
+        log.info("Activating port mapping on " + service);
 
         new PortMappingAdd(service, registry.getUpnpService().getControlPoint(), portMapping) {
 
