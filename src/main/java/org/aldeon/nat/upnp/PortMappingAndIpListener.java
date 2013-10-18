@@ -53,7 +53,7 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
                 log.info("Added port mapping (" + portMapping +  ") to service " + service);
                 servicesWithActivePortMapping.add(service);
 
-                new GetExternalIP(service) {
+                controlPoint.execute(new GetExternalIP(service) {
                     @Override
                     protected void success(String externalIPAddress) {
                         try {
@@ -68,7 +68,7 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
                     public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                         log.warn("Failed to obtain an external IP address for this service.");
                     }
-                }.run();
+                });
             }
 
             @Override

@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class UpnpPolicyFactory implements ConnectionPolicyFactory {
 
-    private static int LEASE_DURATION = 0;
+    private static int LEASE_DURATION_SECONDS = 86400; //debug
     private Port desiredInternalPort;
     private Port desiredExternalPort;
     private InetAddress internalAddress;
@@ -30,7 +30,7 @@ public class UpnpPolicyFactory implements ConnectionPolicyFactory {
         PortMapping pm = new PortMapping();
         pm.setDescription("Aldeon UPnP TCP");
         pm.setProtocol(PortMapping.Protocol.TCP);
-        pm.setLeaseDurationSeconds(new UnsignedIntegerFourBytes(LEASE_DURATION));
+        pm.setLeaseDurationSeconds(new UnsignedIntegerFourBytes(LEASE_DURATION_SECONDS));
         pm.setInternalPort(new UnsignedIntegerTwoBytes(desiredInternalPort.getIntValue()));
         pm.setExternalPort(new UnsignedIntegerTwoBytes(desiredExternalPort.getIntValue()));
         pm.setInternalClient(internalAddress.getHostAddress());

@@ -15,4 +15,9 @@ public class PortImpl implements Port {
     public int getIntValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "" + getIntValue();
+    }
 }
