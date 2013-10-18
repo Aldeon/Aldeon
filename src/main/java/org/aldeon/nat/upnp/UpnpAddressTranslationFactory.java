@@ -1,8 +1,8 @@
 package org.aldeon.nat.upnp;
 
-import org.aldeon.common.net.ConnectionPolicy;
+import org.aldeon.common.net.AddressTranslation;
 import org.aldeon.common.net.Port;
-import org.aldeon.nat.ConnectionPolicyFactory;
+import org.aldeon.nat.AddressTranslationFactory;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
@@ -12,7 +12,7 @@ import org.fourthline.cling.support.model.PortMapping;
 import java.net.InetAddress;
 import java.util.Set;
 
-public class UpnpPolicyFactory implements ConnectionPolicyFactory {
+public class UpnpAddressTranslationFactory implements AddressTranslationFactory {
 
     private static final int LEASE_DURATION_SECONDS = 86400; //debug
     private Port desiredInternalPort;
@@ -23,9 +23,9 @@ public class UpnpPolicyFactory implements ConnectionPolicyFactory {
     private boolean didShutDown = false;
 
 
-    private UpnpPolicyFactory() {}
+    private UpnpAddressTranslationFactory() {}
 
-    public static UpnpPolicyFactory create(Port desiredInternalPort, Port desiredExternalPort, InetAddress internalAddress) {
+    public static UpnpAddressTranslationFactory create(Port desiredInternalPort, Port desiredExternalPort, InetAddress internalAddress) {
 
         PortMapping pm = new PortMapping();
         pm.setDescription("Aldeon UPnP TCP");
@@ -35,7 +35,7 @@ public class UpnpPolicyFactory implements ConnectionPolicyFactory {
         pm.setExternalPort(new UnsignedIntegerTwoBytes(desiredExternalPort.getIntValue()));
         pm.setInternalClient(internalAddress.getHostAddress());
 
-        UpnpPolicyFactory factory = new UpnpPolicyFactory();
+        UpnpAddressTranslationFactory factory = new UpnpAddressTranslationFactory();
 
         factory.listener = new PortMappingAndIpListener(pm);
         factory.upnp = new UpnpServiceImpl(factory.listener);
@@ -66,13 +66,13 @@ public class UpnpPolicyFactory implements ConnectionPolicyFactory {
     }
 
     @Override
-    public ConnectionPolicy getPolicy() {
+    public AddressTranslation getAddressTranslation() {
         Set<InetAddress> addresses = listener.getExternalIPsOfActivePortMappings();
         if(addresses.size() == 0) return null;
 
         final InetAddress address = addresses.iterator().next(); //we take only the first one
 
-        return new ConnectionPolicy() {
+        return new AddressTranslation() {
             @Override
             public Port getInternalPort() {
                 return desiredInternalPort;
@@ -94,7 +94,7 @@ public class UpnpPolicyFactory implements ConnectionPolicyFactory {
             }
 
             @Override
-            public void close() {
+            public void shutdown() {
                 abort();
             }
         };

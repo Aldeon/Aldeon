@@ -1,9 +1,9 @@
-package org.aldeon.nat;
+package org.aldeon.nat.upnp;
 
-import org.aldeon.common.net.ConnectionPolicy;
+import org.aldeon.common.net.AddressTranslation;
 import org.aldeon.common.net.Port;
 import org.aldeon.common.net.PortImpl;
-import org.aldeon.nat.upnp.UpnpPolicyFactory;
+import org.aldeon.nat.AddressTranslationFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class UpnpExample {
         Port externalPort = new PortImpl(12346);
         InetAddress ip = InetAddress.getByName("192.168.1.90");
 
-        ConnectionPolicyFactory factory = UpnpPolicyFactory.create(internalPort, externalPort, ip);
+        AddressTranslationFactory factory = UpnpAddressTranslationFactory.create(internalPort, externalPort, ip);
 
         System.out.println("Trying to map a port...");
 
@@ -35,23 +35,23 @@ public class UpnpExample {
             if(++cycles > 50) break;
         }
 
-        ConnectionPolicy policy = factory.getPolicy();
+        AddressTranslation addressTranslation = factory.getAddressTranslation();
 
-        if(policy == null) {
-            System.out.println("No policy obtained.");
+        if(addressTranslation == null) {
+            System.out.println("No address translation obtained.");
             factory.abort();
             return;
         }
 
         System.out.println("Success!");
 
-        System.out.println("Internal port : " + policy.getInternalPort());
-        System.out.println("External port : " + policy.getExternalPort());
-        System.out.println("Internal IP   : " + policy.getInternalAddress());
-        System.out.println("External IP   : " + policy.getExternalAddress());
+        System.out.println("Internal port : " + addressTranslation.getInternalPort());
+        System.out.println("External port : " + addressTranslation.getExternalPort());
+        System.out.println("Internal IP   : " + addressTranslation.getInternalAddress());
+        System.out.println("External IP   : " + addressTranslation.getExternalAddress());
 
         System.in.read();
 
-        policy.close();
+        addressTranslation.shutdown();
     }
 }

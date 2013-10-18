@@ -5,7 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
-import org.aldeon.common.EndpointWithConnectionPolicy;
+import org.aldeon.common.EndpointWithAddressTranslation;
 import org.aldeon.jetty.handler.JettyEndpointHandler;
 import org.aldeon.jetty.handler.ObserverAwareAbstractHandler;
 import org.aldeon.jetty.json.ClassMapper;
@@ -21,7 +21,7 @@ import org.aldeon.protocol.query.Query;
 public class JettyModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(EndpointWithConnectionPolicy.class).to(JettyHttpEndpoint.class);
+        bind(EndpointWithAddressTranslation.class).to(JettyHttpEndpoint.class);
         bind(ObserverAwareAbstractHandler.class).to(JettyEndpointHandler.class);
         bind(Protocol.class).to(TestProtocol.class);
         bind(JsonParser.class).to(ConcreteJsonParser.class);
@@ -31,8 +31,8 @@ public class JettyModule extends AbstractModule {
         }).to(ProtocolClassMapper.class);
     }
 
-    public static EndpointWithConnectionPolicy getEndpoint() {
+    public static EndpointWithAddressTranslation getEndpoint() {
         Injector jettyInjector = Guice.createInjector(new JettyModule());
-        return jettyInjector.getInstance(EndpointWithConnectionPolicy.class);
+        return jettyInjector.getInstance(EndpointWithAddressTranslation.class);
     }
 }

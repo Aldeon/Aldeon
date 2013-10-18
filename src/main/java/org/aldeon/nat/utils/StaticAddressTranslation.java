@@ -1,15 +1,18 @@
-package org.aldeon.common.net;
+package org.aldeon.nat.utils;
+
+import org.aldeon.common.net.AddressTranslation;
+import org.aldeon.common.net.Port;
 
 import java.net.InetAddress;
 
-public class StaticConnectionPolicy implements ConnectionPolicy {
+public class StaticAddressTranslation implements AddressTranslation {
 
     private final InetAddress internalAddress;
     private final InetAddress externalAddress;
     private final Port internal;
     private final Port external;
 
-    public StaticConnectionPolicy(Port internal, Port external, InetAddress internalAddress, InetAddress getExternalAddress) {
+    public StaticAddressTranslation(Port internal, Port external, InetAddress internalAddress, InetAddress getExternalAddress) {
         this.internal = internal;
         this.external = external;
         this.internalAddress = internalAddress;
@@ -37,7 +40,7 @@ public class StaticConnectionPolicy implements ConnectionPolicy {
     }
 
     @Override
-    public void close() {
+    public void shutdown() {
         // do nothing
     }
 }

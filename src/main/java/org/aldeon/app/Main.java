@@ -1,10 +1,11 @@
 package org.aldeon.app;
 
-import org.aldeon.common.EndpointWithConnectionPolicy;
+import org.aldeon.common.EndpointWithAddressTranslation;
 import org.aldeon.common.net.PortImpl;
-import org.aldeon.common.net.ConnectionPolicy;
+import org.aldeon.common.net.AddressTranslation;
 import org.aldeon.common.net.Port;
-import org.aldeon.common.net.StaticConnectionPolicy;
+import org.aldeon.nat.utils.NoAddressTranslation;
+import org.aldeon.nat.utils.StaticAddressTranslation;
 import org.aldeon.jetty.JettyModule;
 
 import java.io.IOException;
@@ -17,11 +18,11 @@ public class Main {
 
         Port port = new PortImpl(8080);
         InetAddress address = InetAddress.getLocalHost();
-        ConnectionPolicy policy = new StaticConnectionPolicy(port, port, address, address);
+        AddressTranslation addressTranslation = new NoAddressTranslation(port, address);
 
-        EndpointWithConnectionPolicy endpoint = JettyModule.getEndpoint();
+        EndpointWithAddressTranslation endpoint = JettyModule.getEndpoint();
         endpoint.setObserver(new FooObserver());
-        endpoint.setConnectionPolicy(policy);
+        endpoint.setAddressTranslation(addressTranslation);
         endpoint.start();
 
         try {

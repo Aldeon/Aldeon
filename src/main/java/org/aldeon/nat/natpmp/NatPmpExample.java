@@ -1,4 +1,4 @@
-package org.aldeon.nat;
+package org.aldeon.nat.natpmp;
 
 /*
  * This file is part of jNAT-PMPlib.
