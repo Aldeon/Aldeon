@@ -52,6 +52,7 @@ class JettyHttpEndpoint implements EndpointWithConnectionPolicy {
     public void stop() {
         try {
             server.stop();
+            connectionPolicy.close();
             log.info("Stopped Jetty endpoint");
         } catch (Exception e) {
             log.error("Failed to stop Jetty endpoint", e);

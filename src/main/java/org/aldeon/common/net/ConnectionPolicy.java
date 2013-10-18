@@ -7,4 +7,5 @@ public interface ConnectionPolicy {
     public Port getExternalPort();
     public InetAddress getInternalAddress();
     public InetAddress getExternalAddress();
+    public void close();
 }

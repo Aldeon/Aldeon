@@ -1,4 +1,4 @@
-package org.aldeon.nat;
+package org.aldeon.nat.natpmp;
 
 import org.aldeon.common.net.ConnectionPolicy;
 

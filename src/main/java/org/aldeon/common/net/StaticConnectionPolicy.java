@@ -35,4 +35,9 @@ public class StaticConnectionPolicy implements ConnectionPolicy {
     public InetAddress getExternalAddress() {
         return externalAddress;
     }
+
+    @Override
+    public void close() {
+        // do nothing
+    }
 }
