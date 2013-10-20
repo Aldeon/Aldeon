@@ -7,7 +7,6 @@ import org.aldeon.nat.AddressTranslationFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 public class UpnpExample {
 
@@ -20,9 +19,8 @@ public class UpnpExample {
 
         Port internalPort = new PortImpl(80);
         Port externalPort = new PortImpl(12346);
-        InetAddress ip = InetAddress.getByName("192.168.1.90");
 
-        AddressTranslationFactory factory = UpnpAddressTranslationFactory.create(internalPort, externalPort, ip);
+        AddressTranslationFactory factory = UpnpAddressTranslationFactory.create(internalPort, externalPort);
 
         System.out.println("Trying to map a port...");
 

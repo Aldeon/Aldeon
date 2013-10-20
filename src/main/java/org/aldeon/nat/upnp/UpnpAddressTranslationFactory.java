@@ -17,7 +17,6 @@ public class UpnpAddressTranslationFactory implements AddressTranslationFactory 
     private static final int LEASE_DURATION_SECONDS = 86400; //debug
     private Port desiredInternalPort;
     private Port desiredExternalPort;
-    private InetAddress internalAddress;
     private PortMappingAndIpListener listener;
     private UpnpService upnp;
     private boolean didShutDown = false;
@@ -25,7 +24,7 @@ public class UpnpAddressTranslationFactory implements AddressTranslationFactory 
 
     private UpnpAddressTranslationFactory() {}
 
-    public static UpnpAddressTranslationFactory create(Port desiredInternalPort, Port desiredExternalPort, InetAddress internalAddress) {
+    public static UpnpAddressTranslationFactory create(Port desiredInternalPort, Port desiredExternalPort) {
 
         PortMapping pm = new PortMapping();
         pm.setDescription("Aldeon UPnP TCP");
@@ -33,7 +32,6 @@ public class UpnpAddressTranslationFactory implements AddressTranslationFactory 
         pm.setLeaseDurationSeconds(new UnsignedIntegerFourBytes(LEASE_DURATION_SECONDS));
         pm.setInternalPort(new UnsignedIntegerTwoBytes(desiredInternalPort.getIntValue()));
         pm.setExternalPort(new UnsignedIntegerTwoBytes(desiredExternalPort.getIntValue()));
-        pm.setInternalClient(internalAddress.getHostAddress());
 
         UpnpAddressTranslationFactory factory = new UpnpAddressTranslationFactory();
 
@@ -42,7 +40,6 @@ public class UpnpAddressTranslationFactory implements AddressTranslationFactory 
 
         factory.desiredInternalPort = desiredInternalPort;
         factory.desiredExternalPort = desiredExternalPort;
-        factory.internalAddress = internalAddress;
 
         return factory;
     }
@@ -62,15 +59,15 @@ public class UpnpAddressTranslationFactory implements AddressTranslationFactory 
 
     @Override
     public boolean isReady() {
-        return listener.getExternalIPsOfActivePortMappings().size() > 0;
+        return listener.getActiveMappings().size() > 0;
     }
 
     @Override
     public AddressTranslation getAddressTranslation() {
-        Set<InetAddress> addresses = listener.getExternalIPsOfActivePortMappings();
+        Set<PortMappingAndIpListener.AddressPair> addresses = listener.getActiveMappings();
         if(addresses.size() == 0) return null;
 
-        final InetAddress address = addresses.iterator().next(); //we take only the first one
+        final PortMappingAndIpListener.AddressPair addressPair = addresses.iterator().next(); //we take only the first one
 
         return new AddressTranslation() {
             @Override
@@ -85,12 +82,12 @@ public class UpnpAddressTranslationFactory implements AddressTranslationFactory 
 
             @Override
             public InetAddress getInternalAddress() {
-                return internalAddress;
+                return addressPair.getInternalAddress();
             }
 
             @Override
             public InetAddress getExternalAddress() {
-                return address;
+                return addressPair.getExternalAddress();
             }
 
             @Override

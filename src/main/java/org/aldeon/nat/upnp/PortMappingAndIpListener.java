@@ -11,11 +11,12 @@ import org.fourthline.cling.support.igd.callback.GetExternalIP;
 import org.fourthline.cling.support.igd.callback.PortMappingAdd;
 import org.fourthline.cling.support.igd.callback.PortMappingDelete;
 import org.fourthline.cling.support.model.PortMapping;
+import org.fourthline.cling.transport.spi.NetworkAddressFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,81 +24,99 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+
 class PortMappingAndIpListener extends DefaultRegistryListener {
 
     private static final Logger log = LoggerFactory.getLogger(PortMappingAndIpListener.class);
     private final PortMapping portMapping;
-    private Set<Service> servicesWithActivePortMapping;
-    private Map<Service, InetAddress> externalIpsByService;
+    private Map<Service, AddressPair> activeServices;
 
     public PortMappingAndIpListener(PortMapping portMapping) {
         this.portMapping = portMapping;
-        servicesWithActivePortMapping = new HashSet<>();
-        externalIpsByService = new HashMap<>();
-    }
-
-    synchronized public Set<InetAddress> getExternalIPsOfActivePortMappings() {
-        Set<InetAddress> ret = new HashSet<>();
-        ret.addAll(externalIpsByService.values());
-        return ret;
+        this.activeServices = new HashMap<>();
     }
 
     @Override
     synchronized public void deviceAdded(Registry registry, Device device) {
-
         final Service service = discoverConnectionService(device);
         if(service == null) return;
 
-        log.info("Activating port mapping on " + service);
+        log.info("Detected device: "+ device.getDisplayString());
 
-        new PortMappingAdd(service, registry.getUpnpService().getControlPoint(), portMapping) {
+        final AddressPair ap = new AddressPair();
 
-            @Override
-            public void success(ActionInvocation invocation) {
-                log.info("Added port mapping (" + portMapping +  ") to service " + service);
-                servicesWithActivePortMapping.add(service);
+        try {
+            InetAddress devIp = InetAddress.getByName(device.getDetails().getBaseURL().getHost());
+            log.info("Device address: " + devIp);
 
-                controlPoint.execute(new GetExternalIP(service) {
-                    @Override
-                    protected void success(String externalIPAddress) {
-                        try {
-                            externalIpsByService.put(service, InetAddress.getByName(externalIPAddress));
-                            log.info("External IP address for this service is " + externalIPAddress);
-                        } catch (UnknownHostException e) {
-                            log.warn("Obtained invalid external IP address (" + externalIPAddress + ").");
+            NetworkAddressFactory factory = registry.getConfiguration().createNetworkAddressFactory();
+            Iterator<NetworkInterface> it = factory.getNetworkInterfaces();
+            while(it.hasNext()) {
+                try {
+                    ap.internalAddress = factory.getLocalAddress(it.next(), false, devIp);
+                } catch(IllegalStateException e) {
+                    // this is the interface you're looking for <waves a hand>
+                }
+            }
+        } catch (UnknownHostException e) {
+            log.warn("Device address is invalid.");
+        }
+
+
+        if(ap.internalAddress == null) {
+            log.warn("Could not determine the internal address for the device. Port mapping skipped.");
+        } else {
+            log.info("Activating port mapping on " + device.getDisplayString());
+
+            portMapping.setInternalClient(ap.getInternalAddress().getHostAddress());
+
+            new PortMappingAdd(service, registry.getUpnpService().getControlPoint(), portMapping) {
+
+                @Override
+                public void success(ActionInvocation invocation) {
+                    log.info("Added port mapping: " + portMapping);
+                    activeServices.put(service, ap);
+
+                    controlPoint.execute(new GetExternalIP(service) {
+                        @Override
+                        protected void success(String externalIPAddress) {
+                            try {
+                                activeServices.get(service).externalAddress = InetAddress.getByName(externalIPAddress);
+                                log.info("External IP address for this service is " + externalIPAddress);
+                            } catch (UnknownHostException e) {
+                                log.warn("Obtained invalid external IP address (" + externalIPAddress + ").");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                        log.warn("Failed to obtain an external IP address for this service.");
-                    }
-                });
-            }
+                        @Override
+                        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                            log.warn("Failed to obtain an external IP address for this service.");
+                        }
+                    });
+                }
 
-            @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                log.warn("Failed to add port mapping to service " + service + " (reason: " + defaultMsg + ")");
-            }
+                @Override
+                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                    log.warn("Failed to add port mapping to service " + service + " (reason: " + defaultMsg + ")");
+                }
 
-        }.run();
+            }.run();
+        }
     }
 
     @Override
     synchronized public void deviceRemoved(Registry registry, Device device) {
         for(Service service: device.findServices()) {
-            if(servicesWithActivePortMapping.contains(service)) {
+            if(activeServices.containsKey(service)) {
                 log.warn("Device disappeared, could not delete a port mapping");
-                servicesWithActivePortMapping.remove(service);
-                externalIpsByService.remove(service);
+                activeServices.remove(service);
             }
         }
     }
 
     @Override
     synchronized public void beforeShutdown(Registry registry) {
-
-        final Iterator<Service> it = servicesWithActivePortMapping.iterator();
+        final Iterator<Service> it = activeServices.keySet().iterator();
 
         while(it.hasNext()) {
             final Service service = it.next();
@@ -109,7 +128,7 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
                 public void success(ActionInvocation invocation) {
                     log.info("Port mapping deleted from service " + service);
                     it.remove();
-                    externalIpsByService.remove(service);
+                    activeServices.remove(service);
                 }
 
                 @Override
@@ -143,5 +162,28 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
         }
 
         return ipConnectionService != null ? ipConnectionService : pppConnectionService;
+    }
+
+    public class AddressPair{
+        private InetAddress internalAddress;
+        private InetAddress externalAddress;
+
+        public InetAddress getInternalAddress() {
+            return internalAddress;
+        }
+
+        public InetAddress getExternalAddress() {
+            return externalAddress;
+        }
+    }
+
+    synchronized public Set<AddressPair> getActiveMappings() {
+        Set<AddressPair> result = new HashSet<>();
+        for(AddressPair ap: activeServices.values()) {
+            if(ap.internalAddress != null && ap.externalAddress != null) {
+                result.add(ap);
+            }
+        }
+        return result;
     }
 }
