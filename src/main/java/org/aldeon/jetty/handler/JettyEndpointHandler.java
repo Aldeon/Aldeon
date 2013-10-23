@@ -3,8 +3,9 @@ package org.aldeon.jetty.handler;
 
 import com.google.inject.Inject;
 import org.aldeon.jetty.resolver.QueryResolver;
-import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +14,7 @@ import java.io.IOException;
 
 public class JettyEndpointHandler extends ObserverAwareAbstractHandler {
 
-    private static Logger log = Logger.getLogger(JettyEndpointHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(JettyEndpointHandler.class);
 
     QueryResolver resolver;
 
