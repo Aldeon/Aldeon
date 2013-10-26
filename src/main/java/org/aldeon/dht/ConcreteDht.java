@@ -2,7 +2,7 @@ package org.aldeon.dht;
 
 import org.aldeon.common.model.Identifiable;
 import org.aldeon.common.model.Identifier;
-import org.aldeon.common.net.PeerAddress;
+import org.aldeon.common.net.address.IdentifiablePeerAddress;
 import org.aldeon.utils.collections.ConcreteNeighbourhoodSet;
 import org.aldeon.utils.collections.NeighbourhoodSet;
 import org.aldeon.utils.math.Arithmetic;
@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @param <T>
  */
-public class ConcreteDht<T extends PeerAddress> implements Dht<T> {
+public class ConcreteDht<T extends IdentifiablePeerAddress> implements Dht<T> {
 
     private NeighbourhoodSet<Identifiable> circle;
     private Arithmetic<ByteBuffer> arithmetic;

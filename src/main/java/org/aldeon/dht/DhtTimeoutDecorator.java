@@ -1,7 +1,7 @@
 package org.aldeon.dht;
 
 import org.aldeon.common.model.Identifier;
-import org.aldeon.common.net.TemporaryPeerAddress;
+import org.aldeon.common.net.address.TemporaryIdentifiablePeerAddress;
 import org.aldeon.utils.time.TimeProvider;
 
 import java.util.Comparator;
@@ -15,10 +15,10 @@ import java.util.TreeSet;
  * the Dht for a specific period of time.
  * @param <T>
  */
-public class DhtTimeoutDecorator<T extends TemporaryPeerAddress> implements Dht<T> {
+public class DhtTimeoutDecorator<T extends TemporaryIdentifiablePeerAddress> implements Dht<T> {
 
     private TimeProvider timer;
-    private SortedSet<TemporaryPeerAddress> timeouts;
+    private SortedSet<TemporaryIdentifiablePeerAddress> timeouts;
     private Dht<T> dht;
 
     public DhtTimeoutDecorator(Dht<T> dht, TimeProvider timer) {
@@ -48,18 +48,18 @@ public class DhtTimeoutDecorator<T extends TemporaryPeerAddress> implements Dht<
 
     @SuppressWarnings("unchecked")
     public void refresh() {
-        Set<TemporaryPeerAddress> expired = timeouts.headSet(new AddressStub(timer.getTime()));
+        Set<TemporaryIdentifiablePeerAddress> expired = timeouts.headSet(new AddressStub(timer.getTime()));
 
-        for(TemporaryPeerAddress address: expired) {
+        for(TemporaryIdentifiablePeerAddress address: expired) {
             expired.remove(address);
             dht.remove((T) address);
         }
     }
 
-    private class TimeoutComparator implements Comparator<TemporaryPeerAddress> {
+    private class TimeoutComparator implements Comparator<TemporaryIdentifiablePeerAddress> {
 
         @Override
-        public int compare(TemporaryPeerAddress o1, TemporaryPeerAddress o2) {
+        public int compare(TemporaryIdentifiablePeerAddress o1, TemporaryIdentifiablePeerAddress o2) {
             long diff = o1.getTimeout() - o2.getTimeout();
             if(diff < 0) return -1;
             if(diff > 0) return 1;
@@ -67,7 +67,7 @@ public class DhtTimeoutDecorator<T extends TemporaryPeerAddress> implements Dht<
         }
     }
 
-    private class AddressStub implements TemporaryPeerAddress {
+    private class AddressStub implements TemporaryIdentifiablePeerAddress {
 
         private final long timeout;
 

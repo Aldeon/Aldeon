@@ -1,7 +1,7 @@
 package org.aldeon.dht;
 
 import org.aldeon.common.model.Identifier;
-import org.aldeon.common.net.TemporaryPeerAddress;
+import org.aldeon.common.net.address.TemporaryIdentifiablePeerAddress;
 import org.aldeon.utils.time.TimeProvider;
 import org.junit.Test;
 
@@ -110,7 +110,7 @@ public class DhtTimeoutDecoratorTest {
     }
 
 
-    private class Stub implements TemporaryPeerAddress {
+    private class Stub implements TemporaryIdentifiablePeerAddress {
 
         private final long timeout;
 

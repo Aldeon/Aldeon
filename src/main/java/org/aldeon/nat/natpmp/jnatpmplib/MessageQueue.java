@@ -62,7 +62,7 @@ class MessageQueue implements Runnable {
 
     /**
      * Creates and starts a {@link MessageQueue}. The created MesageQueue is
-     * returned. To use the queue, add {@link Message}s through the
+     * returned. To use the queue, addTask {@link Message}s through the
      * {@link enqueueMessage(Message)} method.
      * @return The creates MessageQueue.
      */

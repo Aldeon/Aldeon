@@ -2,6 +2,9 @@ package org.aldeon.common.net;
 
 import java.net.InetAddress;
 
+/**
+ * Represents how a service is configured locally and how it is visible for others.
+ */
 public interface AddressTranslation {
     public Port getInternalPort();
     public Port getExternalPort();
