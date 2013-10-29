@@ -1,4 +1,4 @@
-package org.aldeon.netty.example_converters;
+package org.aldeon.netty;
 
 import com.google.gson.JsonObject;
 import org.aldeon.protocol.Request;

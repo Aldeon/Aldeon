@@ -6,14 +6,20 @@ import org.aldeon.common.net.AddressTranslation;
 import org.aldeon.common.net.PortImpl;
 import org.aldeon.common.nio.task.InboundRequestTask;
 import org.aldeon.nat.utils.NoAddressTranslation;
-import org.aldeon.netty.example_converters.ExampleRequestDecoder;
-import org.aldeon.netty.example_converters.ExampleResponseEncoder;
+import org.aldeon.netty.converter.FullHttpRequestToStringConverter;
+import org.aldeon.netty.converter.JsonStringToRequestConverter;
+import org.aldeon.netty.converter.ResponseToJsonStringConverter;
+import org.aldeon.netty.converter.StringToFullHttpResponseConverter;
 import org.aldeon.netty.receiver.NettyReceiver;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.example.ExampleDateRequest;
 import org.aldeon.protocol.example.ExampleDateResponse;
+import org.aldeon.utils.conversion.ChainConverter;
 import org.aldeon.utils.conversion.Converter;
+import org.aldeon.utils.json.ClassMapper;
+import org.aldeon.utils.json.ConcreteJsonParser;
+import org.aldeon.utils.json.JsonParser;
 import org.aldeon.utils.various.Callback;
 
 import java.io.IOException;
@@ -24,6 +30,10 @@ import java.util.concurrent.Executors;
 public class ReceiverExample {
     public static void main(String[] args) throws IOException, InterruptedException {
 
+        JsonParser parser = new ConcreteJsonParser();
+        ClassMapper<Request> mapper = new ExampleClassMapper();
+
+
         // Thread pool responsible for handling incoming requests
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
@@ -31,10 +41,14 @@ public class ReceiverExample {
         AddressTranslation translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
 
         // Converters
-        // Converter<FullHttpRequest, Request>   decoder = new ProtocolRequestDecoder();
-        // Converter<Response, FullHttpResponse> encoder = new ProtocolResponseEncoder();
-        Converter<FullHttpRequest, Request>   decoder = new ExampleRequestDecoder();
-        Converter<Response, FullHttpResponse> encoder = new ExampleResponseEncoder();
+        Converter<FullHttpRequest, Request> decoder = new ChainConverter<>(
+                new FullHttpRequestToStringConverter(),
+                new JsonStringToRequestConverter(parser, mapper)
+        );
+        Converter<Response, FullHttpResponse> encoder = new ChainConverter<>(
+                new ResponseToJsonStringConverter(parser),
+                new StringToFullHttpResponseConverter()
+        );
 
         // This is our receiver instance
         final NettyReceiver receiver = new NettyReceiver(translation, executor, encoder, decoder);

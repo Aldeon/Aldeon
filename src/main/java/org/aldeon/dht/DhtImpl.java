@@ -21,12 +21,12 @@ import java.util.Set;
  *
  * @param <T>
  */
-public class ConcreteDht<T extends IdentifiablePeerAddress> implements Dht<T> {
+public class DhtImpl<T extends IdentifiablePeerAddress> implements Dht<T> {
 
     private NeighbourhoodSet<Identifiable> circle;
     private Arithmetic<ByteBuffer> arithmetic;
 
-    public ConcreteDht(Arithmetic<ByteBuffer> arithmetic) {
+    public DhtImpl(Arithmetic<ByteBuffer> arithmetic) {
         this.arithmetic = arithmetic;
         circle = new ConcreteNeighbourhoodSet<>(new IdentifiableArithmetic());
     }
