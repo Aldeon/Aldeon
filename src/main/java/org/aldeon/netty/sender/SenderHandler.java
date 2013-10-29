@@ -4,14 +4,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.common.nio.task.OutboundRequestTask;
+import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.Executor;
 
 public class SenderHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
 

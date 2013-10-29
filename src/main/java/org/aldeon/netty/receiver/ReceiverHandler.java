@@ -10,7 +10,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import org.aldeon.common.nio.task.InboundRequestTask;
+import org.aldeon.common.net.address.IpPeerAddress;
+import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
@@ -28,13 +29,13 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
     private final Converter<FullHttpRequest, Request> decoder;
     private final Converter<Response, FullHttpResponse> encoder;
     private final Executor executor;
-    private final Callback<InboundRequestTask> callback;
+    private final Callback<InboundRequestTask<IpPeerAddress>> callback;
 
     public ReceiverHandler(
             Converter<FullHttpRequest, Request> decoder,
             Converter<Response, FullHttpResponse> encoder,
             Executor executor,
-            Callback<InboundRequestTask> callback
+            Callback<InboundRequestTask<IpPeerAddress>> callback
     ) {
         this.decoder = decoder;
         this.encoder = encoder;
@@ -48,7 +49,8 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
             if(msg.getDecoderResult().isSuccess()) {
                 try {
                     Request req = decoder.convert(msg);
-                    final Task t = new Task(ctx, executor, req, encoder);
+                    //TODO: implement proper address
+                    final Task t = new Task(ctx, executor, req, null, encoder);
                     executor.execute(new Runnable(){
                         @Override
                         public void run() {
@@ -90,24 +92,31 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
         writeEmptyResponse(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private static class Task implements InboundRequestTask {
+    private static class Task implements InboundRequestTask<IpPeerAddress> {
 
         private final ChannelHandlerContext ctx;
         private final Converter<Response, FullHttpResponse> encoder;
         private final Request request;
         private final Executor executor;
+        private final IpPeerAddress address;
         private boolean responseSent = false;
 
-        public Task(ChannelHandlerContext ctx, Executor executor, Request request, Converter<Response, FullHttpResponse> encoder) {
+        public Task(ChannelHandlerContext ctx, Executor executor, Request request, IpPeerAddress address, Converter<Response, FullHttpResponse> encoder) {
             this.ctx = ctx;
             this.request = request;
             this.encoder = encoder;
             this.executor = executor;
+            this.address = address;
         }
 
         @Override
         public Request getRequest() {
             return request;
+        }
+
+        @Override
+        public IpPeerAddress getAddress() {
+            return address;
         }
 
         @Override

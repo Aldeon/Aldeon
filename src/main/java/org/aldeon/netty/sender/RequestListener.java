@@ -1,7 +1,7 @@
 package org.aldeon.netty.sender;
 
 import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.common.nio.task.OutboundRequestTask;
+import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.protocol.Request;
 
 import java.util.concurrent.Executor;

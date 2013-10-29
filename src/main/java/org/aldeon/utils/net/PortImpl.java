@@ -1,4 +1,6 @@
-package org.aldeon.common.net;
+package org.aldeon.utils.net;
+
+import org.aldeon.common.net.Port;
 
 public class PortImpl implements Port {
 

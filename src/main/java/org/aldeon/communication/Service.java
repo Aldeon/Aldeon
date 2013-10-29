@@ -1,4 +1,4 @@
-package org.aldeon.common.nio;
+package org.aldeon.communication;
 
 public interface Service {
     /**

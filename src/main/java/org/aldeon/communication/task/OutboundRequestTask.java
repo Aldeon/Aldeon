@@ -1,4 +1,4 @@
-package org.aldeon.common.nio.task;
+package org.aldeon.communication.task;
 
 import org.aldeon.common.net.address.PeerAddress;
 import org.aldeon.protocol.Response;
@@ -7,14 +7,7 @@ import org.aldeon.protocol.Response;
  * Task related to an outgoing request.
  * @param <T>
  */
-public interface OutboundRequestTask<T extends PeerAddress> extends AsynchronousRequestTask {
-
-    /**
-     * Points to a recipient of this request.
-     * @return
-     */
-    T getAddress();
-
+public interface OutboundRequestTask<T extends PeerAddress> extends AsynchronousRequestTask<T> {
     /**
      * Method to be called if the request completes successfully.
      * @param response

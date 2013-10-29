@@ -1,4 +1,4 @@
-package org.aldeon.common.nio.events;
+package org.aldeon.common.events;
 
 import org.aldeon.utils.various.Callback;
 

@@ -15,8 +15,9 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.nio.task.InboundRequestTask;
-import org.aldeon.common.nio.Receiver;
+import org.aldeon.common.net.address.IpPeerAddress;
+import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.communication.Receiver;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
@@ -30,7 +31,7 @@ import java.util.concurrent.Executor;
  * Netty server implementation. Handles incoming transmissions, parses
  * into http requests and maintains a todolist of requests to respond to.
  */
-public class NettyReceiver implements Receiver{
+public class NettyReceiver implements Receiver<IpPeerAddress>{
 
     private static final Logger log = LoggerFactory.getLogger(NettyReceiver.class);
 
@@ -38,7 +39,7 @@ public class NettyReceiver implements Receiver{
     private ServerBootstrap server;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
-    private Callback<InboundRequestTask> callback = null;
+    private Callback<InboundRequestTask<IpPeerAddress>> callback = null;
 
     public NettyReceiver(
             AddressTranslation addressTranslation,
@@ -95,7 +96,7 @@ public class NettyReceiver implements Receiver{
     }
 
     @Override
-    public void setCallback(Callback<InboundRequestTask> callback) {
+    public void setCallback(Callback<InboundRequestTask<IpPeerAddress>> callback) {
         this.callback = callback;
     }
 }

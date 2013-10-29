@@ -1,5 +1,8 @@
-package org.aldeon.common.nio.events;
+package org.aldeon.communication.nio.events;
 
+import org.aldeon.common.events.Event;
+import org.aldeon.common.events.EventLoop;
+import org.aldeon.core.EventLoopImpl;
 import org.aldeon.utils.various.Callback;
 import org.junit.Test;
 

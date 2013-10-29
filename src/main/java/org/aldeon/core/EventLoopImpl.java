@@ -1,8 +1,10 @@
-package org.aldeon.common.nio.events;
+package org.aldeon.core;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import org.aldeon.common.events.Event;
+import org.aldeon.common.events.EventLoop;
 import org.aldeon.utils.various.Callback;
 
 

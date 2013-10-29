@@ -1,17 +1,12 @@
 package org.aldeon.communication;
 
+import org.aldeon.common.net.address.PeerAddress;
+import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.utils.various.Callback;
+
 /**
- *
- * Used by communication provider to receive messages from medium.
- *
+ * Accepts connections from peers.
  */
-public interface Receiver <Format, Address> {
-
-    void setCommunicationProvider(CommunicationProvider<Format, Address> communicationProvider);
-
-    void start();
-
-    void stop();
-
-    //void setPort(int port); NOT, this configuration is done inside comm provider module
+public interface Receiver<T extends PeerAddress> extends Service{
+    void setCallback(Callback<InboundRequestTask<T>> callback);
 }
