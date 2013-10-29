@@ -9,16 +9,16 @@ import com.google.inject.Inject;
  * and to receiver (so it can invoke receive on this)
  *
  */
-public class CommunicationProvider<Format extends Object> implements ICommunicationProvider{
+public class CommunicationProvider<Format, Address> implements ICommunicationProvider<Address>{
     private final Converter<Format> converter;
-    private final Receiver<Format> receiver;
-    private final Sender<Format> sender;
+    private final Receiver<Format, Address> receiver;
+    private final Sender<Format, Address> sender;
     private Protocol protocol;
 
     @Inject
     public CommunicationProvider(Converter<Format> converter,
-                                 Receiver<Format> receiver,
-                                 Sender<Format> sender) {
+                                 Receiver<Format, Address> receiver,
+                                 Sender<Format, Address> sender) {
         this.converter = converter;
         this.receiver = receiver;
         this.sender = sender;
@@ -26,8 +26,9 @@ public class CommunicationProvider<Format extends Object> implements ICommunicat
         receiver.setCommunicationProvider(this);
     }
 
-    public void send(ProtocolMessage protocolMessage) {
-        sender.send(converter.encode(protocolMessage));
+    @Override
+    public ProtocolMessage send(ProtocolMessage protocolMessage, Address address) {
+        return converter.decode(sender.send(converter.encode(protocolMessage), address));
     }
 
     @Override

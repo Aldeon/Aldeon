@@ -16,6 +16,8 @@ public abstract class ProtocolMessage {
         return null;
     }
 
+    public ResponseCommand responseCommand;
+
     //package visibility - only abstract protocol can trigger this event
     ProtocolMessage onReceive() {
         return onReceiveCallback();
