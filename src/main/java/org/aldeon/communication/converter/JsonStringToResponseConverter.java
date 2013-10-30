@@ -4,6 +4,7 @@ import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
 import org.aldeon.utils.json.ClassMapper;
+import org.aldeon.utils.json.JsonParserImpl;
 import org.aldeon.utils.json.JsonParser;
 import org.aldeon.utils.json.ParseException;
 
@@ -12,9 +13,9 @@ public class JsonStringToResponseConverter implements Converter<String, Response
     private final JsonParser parser;
     private final ClassMapper<Response> mapper;
 
-    public JsonStringToResponseConverter(JsonParser parser, ClassMapper<Response> mapper) {
-        this.parser = parser;
-        this.mapper = mapper;
+    public JsonStringToResponseConverter() {
+        this.parser = new JsonParserImpl();
+        this.mapper = new ResponseClassMapper();
     }
 
     @Override

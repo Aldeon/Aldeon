@@ -3,14 +3,15 @@ package org.aldeon.communication.converter;
 import org.aldeon.protocol.Request;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
+import org.aldeon.utils.json.JsonParserImpl;
 import org.aldeon.utils.json.JsonParser;
 
 public class RequestToJsonStringConverter implements Converter<Request, String> {
 
     private final JsonParser parser;
 
-    public RequestToJsonStringConverter(JsonParser parser) {
-        this.parser = parser;
+    public RequestToJsonStringConverter() {
+        this.parser = new JsonParserImpl();
     }
 
     @Override

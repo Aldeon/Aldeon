@@ -3,12 +3,12 @@ package org.aldeon.utils.json;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class ConcreteJsonParser implements JsonParser {
+public class JsonParserImpl implements JsonParser {
 
     private Gson gson;
     private com.google.gson.JsonParser parser;
 
-    public ConcreteJsonParser() {
+    public JsonParserImpl() {
         gson = new Gson();
         parser = new com.google.gson.JsonParser();
     }

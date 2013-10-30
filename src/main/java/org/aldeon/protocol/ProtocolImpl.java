@@ -25,7 +25,9 @@ public class ProtocolImpl implements Protocol {
              core.getEventLoop()
              core.getSender(addressType)
 
-             ... and more
+             ... and more.
+
+             TODO implement all classes in org.aldeon.communication.converter package
 
          */
 

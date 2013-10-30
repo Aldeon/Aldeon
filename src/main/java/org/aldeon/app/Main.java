@@ -25,7 +25,7 @@ public class Main {
         Protocol protocol = new ProtocolImpl(core);
 
         // Decide how to translate addresses (DEBUG: UPnP disabled for now)
-        AddressTranslation translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getLocalHost());
+        AddressTranslation translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
 
         // Register all senders and receivers we have implemented
         core.registerSender(IpPeerAddress.class, NettyModule.createSender());

@@ -7,8 +7,6 @@ import org.aldeon.common.core.Core;
 import org.aldeon.common.events.EventLoop;
 import org.aldeon.common.model.Storage;
 import org.aldeon.db.DbStub;
-import org.aldeon.protocol.Protocol;
-import org.aldeon.protocol.ProtocolImpl;
 
 public class CoreModule extends AbstractModule {
 
@@ -16,7 +14,6 @@ public class CoreModule extends AbstractModule {
     protected void configure() {
         bind(Core.class).to(CoreImpl.class);
         bind(Storage.class).to(DbStub.class);
-        bind(Protocol.class).to(ProtocolImpl.class);
         bind(EventLoop.class).to(EventLoopImpl.class);
     }
 
