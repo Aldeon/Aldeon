@@ -1,11 +1,11 @@
-package org.aldeon.netty;
+package org.aldeon.communication.netty;
 
 import com.google.gson.JsonObject;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.example.ExampleDateRequest;
 import org.aldeon.utils.json.ClassMapper;
 
-public class ExampleClassMapper implements ClassMapper<Request> {
+public class RequestClassMapper implements ClassMapper<Request> {
     @Override
     public Class<? extends Request> getClass(JsonObject jsonObject) {
         String action = jsonObject.get("action").getAsString();

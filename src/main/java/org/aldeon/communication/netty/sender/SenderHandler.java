@@ -1,4 +1,4 @@
-package org.aldeon.netty.sender;
+package org.aldeon.communication.netty.sender;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

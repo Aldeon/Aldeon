@@ -1,4 +1,4 @@
-package org.aldeon.netty.receiver;
+package org.aldeon.communication.netty.receiver;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -40,10 +40,10 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
     private Callback<InboundRequestTask<IpPeerAddress>> callback = null;
+    private Executor executor;
 
     public NettyReceiver(
             AddressTranslation addressTranslation,
-            final Executor executor,
             final Converter<Response, FullHttpResponse> encoder,
             final Converter<FullHttpRequest, Request> decoder
     ) {
@@ -96,7 +96,8 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
     }
 
     @Override
-    public void setCallback(Callback<InboundRequestTask<IpPeerAddress>> callback) {
+    public void setCallback(Callback<InboundRequestTask<IpPeerAddress>> callback, Executor executor) {
         this.callback = callback;
+        this.executor = executor;
     }
 }

@@ -1,4 +1,4 @@
-package org.aldeon.netty.converter;
+package org.aldeon.communication.netty.converter;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -13,11 +13,11 @@ import org.aldeon.utils.conversion.Converter;
 public class StringToFullHttpResponseConverter implements Converter<String, FullHttpResponse> {
 
     @Override
-    public FullHttpResponse convert(String val) throws ConversionException {
+    public FullHttpResponse convert(String str) throws ConversionException {
         FullHttpResponse response = new DefaultFullHttpResponse(
                 HttpVersion.HTTP_1_1,
                 HttpResponseStatus.OK,
-                Unpooled.copiedBuffer(val, CharsetUtil.UTF_8)
+                Unpooled.copiedBuffer(str, CharsetUtil.UTF_8)
         );
         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
         return response;

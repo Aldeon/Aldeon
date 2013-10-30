@@ -1,4 +1,4 @@
-package org.aldeon.netty.converter;
+package org.aldeon.communication.netty.converter;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;

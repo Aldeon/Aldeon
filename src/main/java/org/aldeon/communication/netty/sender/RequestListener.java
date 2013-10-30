@@ -1,4 +1,4 @@
-package org.aldeon.netty.sender;
+package org.aldeon.communication.netty.sender;
 
 import org.aldeon.common.net.address.IpPeerAddress;
 import org.aldeon.communication.task.OutboundRequestTask;

@@ -1,4 +1,4 @@
-package org.aldeon.netty.sender;
+package org.aldeon.communication.netty.sender;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

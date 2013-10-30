@@ -1,18 +1,12 @@
-package org.aldeon.netty;
+package org.aldeon.communication.netty;
 
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import org.aldeon.common.net.Port;
 import org.aldeon.utils.net.PortImpl;
 import org.aldeon.common.net.address.IpPeerAddress;
 import org.aldeon.communication.Sender;
-import org.aldeon.netty.converter.ProtocolRequestEncoder;
-import org.aldeon.netty.converter.ProtocolResponseDecoder;
-import org.aldeon.netty.sender.NettySender;
-import org.aldeon.netty.sender.RequestListener;
+import org.aldeon.communication.netty.sender.RequestListener;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
-import org.aldeon.utils.conversion.Converter;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,12 +20,8 @@ public class SenderExample {
         // We create a thread pool where all the Listeners are executed.
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
-        // Conversion objects
-        Converter<Request, FullHttpRequest>   encoder = new ProtocolRequestEncoder();
-        Converter<FullHttpResponse, Response> decoder = new ProtocolResponseDecoder();
-
         // Sender object
-        Sender<IpPeerAddress> sender = new NettySender(encoder, decoder);
+        Sender<IpPeerAddress> sender = NettyModule.createSender();
 
         // Let's create a request
         Request request = null;

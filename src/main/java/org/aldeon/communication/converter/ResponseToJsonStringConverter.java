@@ -1,4 +1,4 @@
-package org.aldeon.netty.converter;
+package org.aldeon.communication.converter;
 
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
