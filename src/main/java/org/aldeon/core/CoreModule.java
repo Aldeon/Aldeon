@@ -3,9 +3,9 @@ package org.aldeon.core;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.aldeon.common.core.Core;
-import org.aldeon.common.events.EventLoop;
-import org.aldeon.common.model.Storage;
+import org.aldeon.events.EventLoop;
+import org.aldeon.events.EventLoopImpl;
+import org.aldeon.db.Storage;
 import org.aldeon.db.DbStub;
 
 public class CoreModule extends AbstractModule {

@@ -1,8 +1,7 @@
 package org.aldeon.protocol;
 
 import com.google.inject.AbstractModule;
-import org.aldeon.common.core.Core;
-import org.aldeon.common.protocol.Protocol;
+import org.aldeon.core.Core;
 
 public class ProtocolModule extends AbstractModule {
     @Override

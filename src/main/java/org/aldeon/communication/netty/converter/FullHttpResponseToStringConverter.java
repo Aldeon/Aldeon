@@ -24,8 +24,7 @@ public class FullHttpResponseToStringConverter implements Converter<FullHttpResp
         try {
             return decoder.decode(buf.nioBuffer()).toString();
         } catch (CharacterCodingException e) {
-            log.warn("Failed to decode given ByteBuf to a CharBuffer using UTF8 decoder.");
-            throw new ConversionException();
+            throw new ConversionException("Failed to decode given ByteBuf to a CharBuffer using UTF8 decoder.", e);
         }
     }
 }

@@ -1,17 +1,20 @@
 package org.aldeon.communication.netty;
 
 import com.google.inject.AbstractModule;
-import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.common.communication.Receiver;
-import org.aldeon.common.communication.Sender;
+import org.aldeon.net.AddressTranslation;
+import org.aldeon.net.IpPeerAddress;
+import org.aldeon.communication.Receiver;
+import org.aldeon.communication.Sender;
 import org.aldeon.communication.converter.*;
 import org.aldeon.communication.netty.converter.*;
 import org.aldeon.communication.netty.receiver.NettyReceiver;
 import org.aldeon.communication.netty.sender.NettySender;
 import org.aldeon.utils.conversion.ChainConverter;
 
-
+/**
+ * This class instantiates the Sender and Receiver classes implemented
+ * using the Netty NIO framework.
+ */
 public class NettyModule extends AbstractModule {
     @Override
     protected void configure() {

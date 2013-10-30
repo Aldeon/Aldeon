@@ -1,9 +1,8 @@
 package org.aldeon.dht;
 
-import org.aldeon.common.dht.Dht;
-import org.aldeon.common.model.Identifiable;
-import org.aldeon.common.model.Identifier;
-import org.aldeon.common.net.address.IdentifiablePeerAddress;
+import org.aldeon.model.Identifiable;
+import org.aldeon.model.Identifier;
+import org.aldeon.net.IdentifiablePeerAddress;
 import org.aldeon.utils.collections.ConcreteNeighbourhoodSet;
 import org.aldeon.utils.collections.NeighbourhoodSet;
 import org.aldeon.utils.math.Arithmetic;

@@ -19,7 +19,7 @@ public class StringToFullHttpResponseConverter implements Converter<String, Full
                 HttpResponseStatus.OK,
                 Unpooled.copiedBuffer(str, CharsetUtil.UTF_8)
         );
-        response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/json; charset=UTF-8");
         return response;
     }
 }

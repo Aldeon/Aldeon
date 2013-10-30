@@ -1,10 +1,12 @@
 package org.aldeon.core;
 
-import org.aldeon.common.communication.task.InboundRequestTask;
-import org.aldeon.common.protocol.Protocol;
-import org.aldeon.common.protocol.Request;
-import org.aldeon.common.protocol.Response;
-import org.aldeon.common.events.Callback;
+import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.protocol.Protocol;
+import org.aldeon.protocol.Request;
+import org.aldeon.protocol.Response;
+import org.aldeon.events.Callback;
+
+import java.util.concurrent.Executor;
 
 /**
  * Main responder class.
@@ -12,9 +14,11 @@ import org.aldeon.common.events.Callback;
 public class ResponderCallback implements Callback<InboundRequestTask> {
 
     private final Protocol protocol;
+    private final Executor executor;
 
-    public ResponderCallback(Protocol protocol) {
+    public ResponderCallback(Protocol protocol, Executor executor) {
         this.protocol = protocol;
+        this.executor = executor;
     }
 
     @Override
@@ -30,6 +34,6 @@ public class ResponderCallback implements Callback<InboundRequestTask> {
                 // Send back the response
                 task.sendResponse(response);
             }
-        });
+        }, executor);
     }
 }

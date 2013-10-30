@@ -1,8 +1,7 @@
 package org.aldeon.dht;
 
-import org.aldeon.common.dht.InterestTracker;
-import org.aldeon.common.model.Identifier;
-import org.aldeon.common.net.address.PeerAddress;
+import org.aldeon.model.Identifier;
+import org.aldeon.net.PeerAddress;
 import org.junit.Test;
 
 import java.util.Collection;

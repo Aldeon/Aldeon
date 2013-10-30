@@ -1,7 +1,7 @@
 package org.aldeon.nat.utils;
 
-import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.net.Port;
+import org.aldeon.net.AddressTranslation;
+import org.aldeon.net.Port;
 
 import java.net.InetAddress;
 

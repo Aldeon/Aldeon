@@ -1,8 +1,7 @@
 package org.aldeon.dht;
 
-import org.aldeon.common.dht.Dht;
-import org.aldeon.common.model.Identifier;
-import org.aldeon.common.net.address.TemporaryIdentifiablePeerAddress;
+import org.aldeon.model.Identifier;
+import org.aldeon.net.TemporaryIdentifiablePeerAddress;
 import org.aldeon.utils.time.TimeProvider;
 
 import java.util.Comparator;

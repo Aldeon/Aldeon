@@ -18,9 +18,8 @@ public class StringToFullHttpRequestConverter implements Converter<String, FullH
             );
             request.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
             return request;
-        } catch (UnsupportedEncodingException e) {
-            // Should never happen
-            throw new ConversionException();
+        } catch (Exception e) {
+            throw new ConversionException("Failed to convert given String into a HttpRequest.", e);
         }
     }
 }

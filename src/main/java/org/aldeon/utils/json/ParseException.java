@@ -2,11 +2,11 @@ package org.aldeon.utils.json;
 
 public class ParseException extends Exception {
 
-    public ParseException(String s, Exception e) {
-        super(s,e);
+    public ParseException(String message, Exception cause) {
+        super(message,cause);
     }
 
-    public ParseException() {
-        super();
+    public ParseException(String message) {
+        super(message);
     }
 }

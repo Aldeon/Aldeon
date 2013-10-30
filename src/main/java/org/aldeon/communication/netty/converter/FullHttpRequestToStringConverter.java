@@ -14,7 +14,8 @@ public class FullHttpRequestToStringConverter implements Converter<FullHttpReque
     public String convert(FullHttpRequest val) throws ConversionException {
         String result = getRequestParam(val, "query");
         if(result == null) {
-            throw new ConversionException();
+            throw new ConversionException("Could convert a FullHttpRequest into a String because " +
+                    "the request does not contain a GET field named 'query'.");
         } else {
             return result;
         }

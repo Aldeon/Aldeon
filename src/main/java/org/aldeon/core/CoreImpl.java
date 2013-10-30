@@ -2,17 +2,16 @@ package org.aldeon.core;
 
 
 import com.google.inject.Inject;
-import org.aldeon.common.core.Core;
-import org.aldeon.common.events.EventLoop;
-import org.aldeon.common.model.Storage;
-import org.aldeon.common.net.address.PeerAddress;
-import org.aldeon.common.communication.Receiver;
-import org.aldeon.common.communication.Sender;
-import org.aldeon.common.communication.task.InboundRequestTask;
-import org.aldeon.events.AppClosingEvent;
-import org.aldeon.events.TopicAddedEvent;
-import org.aldeon.common.protocol.Protocol;
-import org.aldeon.common.events.Callback;
+import org.aldeon.events.EventLoop;
+import org.aldeon.db.Storage;
+import org.aldeon.net.PeerAddress;
+import org.aldeon.communication.Receiver;
+import org.aldeon.communication.Sender;
+import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.core.events.AppClosingEvent;
+import org.aldeon.core.events.TopicAddedEvent;
+import org.aldeon.protocol.Protocol;
+import org.aldeon.events.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +27,7 @@ import java.util.concurrent.Executors;
  *
  */
 public class CoreImpl implements Core {
+
     private static final Logger log = LoggerFactory.getLogger(CoreImpl.class);
 
     private final EventLoop eventLoop;
@@ -112,7 +112,7 @@ public class CoreImpl implements Core {
 
     @Override
     public void initReceivers(Protocol protocol) {
-        Callback<InboundRequestTask> callback = new ResponderCallback(protocol);
+        Callback<InboundRequestTask> callback = new ResponderCallback(protocol, serverSideExecutor());
 
         for(Receiver receiver: receivers.values()) {
             receiver.setCallback(callback, serverSideExecutor());

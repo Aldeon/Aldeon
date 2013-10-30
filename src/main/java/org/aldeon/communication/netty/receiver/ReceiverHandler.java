@@ -10,13 +10,13 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.common.communication.task.InboundRequestTask;
-import org.aldeon.common.protocol.Request;
-import org.aldeon.common.protocol.Response;
+import org.aldeon.net.IpPeerAddress;
+import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.protocol.Request;
+import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
-import org.aldeon.common.events.Callback;
+import org.aldeon.events.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +51,7 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
                     Request req = decoder.convert(msg);
                     //TODO: implement proper address
                     final Task t = new Task(ctx, executor, req, null, encoder);
+                    log.info("Dispatched a task to handle request " + req);
                     executor.execute(new Runnable(){
                         @Override
                         public void run() {
@@ -58,13 +59,15 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
                         }
                     });
                 } catch (ConversionException e) {
+                    log.info("Invalid request received, writing (400) BAD REQUEST", e);
                     writeBadRequest(ctx);
                 }
             } else {
+                log.info("Could not decode incoming data into a valid HttpRequest, writing (400) BAD REQUEST");
                 writeBadRequest(ctx);
             }
         } else {
-            log.warn("No callback or executor available for incoming request");
+            log.warn("No callback or executor available for incoming request, writing (500) SERVER ERROR");
             writeServerError(ctx);
         }
     }

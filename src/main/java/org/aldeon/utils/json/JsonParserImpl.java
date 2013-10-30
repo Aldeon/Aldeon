@@ -1,7 +1,17 @@
 package org.aldeon.utils.json;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import org.aldeon.crypt.Signature;
+import org.aldeon.model.Identifier;
+import org.aldeon.model.Message;
+import org.aldeon.utils.base64.Base64Codec;
+import org.aldeon.utils.base64.Base64CodecImpl;
+import org.aldeon.utils.json.adapters.IdentifierDeserializer;
+import org.aldeon.utils.json.adapters.IdentifierSerializer;
+import org.aldeon.utils.json.adapters.MessageSerializer;
+import org.aldeon.utils.json.adapters.SignatureSerializer;
 
 public class JsonParserImpl implements JsonParser {
 
@@ -9,7 +19,18 @@ public class JsonParserImpl implements JsonParser {
     private com.google.gson.JsonParser parser;
 
     public JsonParserImpl() {
-        gson = new Gson();
+
+        GsonBuilder builder = new GsonBuilder();
+
+        Base64Codec base64 = new Base64CodecImpl();
+
+        builder.registerTypeAdapter(Identifier.class, new IdentifierSerializer(base64));
+        builder.registerTypeAdapter(Identifier.class, new IdentifierDeserializer(base64));
+        builder.registerTypeAdapter(Signature.class, new SignatureSerializer(base64));
+        builder.registerTypeAdapter(Message.class, new MessageSerializer());
+
+
+        gson = builder.create();
         parser = new com.google.gson.JsonParser();
     }
 
@@ -27,7 +48,7 @@ public class JsonParserImpl implements JsonParser {
         JsonObject jsonObject = parse(json);
         Class<? extends T> classOfT = mapper.getClass(jsonObject);
         if(classOfT == null) {
-            throw new ParseException("Could not map JSON object to appropriate class", null);
+            throw new ParseException("Could not map JSON object to appropriate class");
         } else {
             try {
                 return gson.fromJson(parse(json), classOfT);

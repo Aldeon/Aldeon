@@ -1,17 +1,15 @@
 package org.aldeon.communication.netty;
 
-import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.common.communication.Receiver;
+import org.aldeon.net.AddressTranslation;
+import org.aldeon.net.IpPeerAddress;
+import org.aldeon.communication.Receiver;
 import org.aldeon.utils.net.PortImpl;
-import org.aldeon.common.communication.task.InboundRequestTask;
+import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.nat.utils.NoAddressTranslation;
-import org.aldeon.common.protocol.Request;
-import org.aldeon.common.protocol.Response;
-import org.aldeon.protocol.example.ExampleDateRequest;
-import org.aldeon.protocol.example.ExampleDateResponse;
+import org.aldeon.protocol.Request;
+import org.aldeon.protocol.Response;
 
-import org.aldeon.common.events.Callback;
+import org.aldeon.events.Callback;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -38,11 +36,7 @@ public class ReceiverExample {
                 Request request = task.getRequest();
 
                 // This is our response
-                Response response;
-                if(request instanceof ExampleDateRequest)
-                    response = new ExampleDateResponse();
-                else
-                    response = null;
+                Response response = null;
 
                 // Let's send the response.
                 task.sendResponse(response);

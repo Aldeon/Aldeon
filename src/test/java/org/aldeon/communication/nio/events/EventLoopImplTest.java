@@ -1,9 +1,9 @@
 package org.aldeon.communication.nio.events;
 
-import org.aldeon.common.events.Event;
-import org.aldeon.common.events.EventLoop;
-import org.aldeon.core.EventLoopImpl;
-import org.aldeon.common.events.Callback;
+import org.aldeon.events.Event;
+import org.aldeon.events.EventLoop;
+import org.aldeon.events.EventLoopImpl;
+import org.aldeon.events.Callback;
 import org.junit.Test;
 
 import java.util.concurrent.Executor;

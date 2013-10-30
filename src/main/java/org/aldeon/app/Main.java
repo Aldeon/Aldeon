@@ -1,12 +1,12 @@
 package org.aldeon.app;
 
-import org.aldeon.common.core.Core;
-import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.common.protocol.Protocol;
+import org.aldeon.core.Core;
+import org.aldeon.net.AddressTranslation;
+import org.aldeon.net.IpPeerAddress;
+import org.aldeon.protocol.Protocol;
 import org.aldeon.communication.netty.NettyModule;
 import org.aldeon.core.CoreModule;
-import org.aldeon.events.AppClosingEvent;
+import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.nat.utils.NoAddressTranslation;
 import org.aldeon.protocol.ProtocolModule;
 import org.aldeon.utils.net.PortImpl;
