@@ -1,9 +1,7 @@
 package org.aldeon.protocol.example;
 
-import org.aldeon.protocol.Request;
+import org.aldeon.common.protocol.Request;
 
-public class ExampleDateRequest extends Request {
-    public ExampleDateRequest() {
-        action = "date";
-    }
+public class ExampleDateRequest implements Request {
+    public String action = "date";
 }

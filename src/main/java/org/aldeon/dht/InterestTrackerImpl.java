@@ -2,6 +2,7 @@ package org.aldeon.dht;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import org.aldeon.common.dht.InterestTracker;
 import org.aldeon.common.model.Identifier;
 import org.aldeon.common.net.address.PeerAddress;
 

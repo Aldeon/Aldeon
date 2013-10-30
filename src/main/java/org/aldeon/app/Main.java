@@ -3,12 +3,12 @@ package org.aldeon.app;
 import org.aldeon.common.core.Core;
 import org.aldeon.common.net.AddressTranslation;
 import org.aldeon.common.net.address.IpPeerAddress;
+import org.aldeon.common.protocol.Protocol;
 import org.aldeon.communication.netty.NettyModule;
 import org.aldeon.core.CoreModule;
 import org.aldeon.events.AppClosingEvent;
 import org.aldeon.nat.utils.NoAddressTranslation;
-import org.aldeon.protocol.Protocol;
-import org.aldeon.protocol.ProtocolImpl;
+import org.aldeon.protocol.ProtocolModule;
 import org.aldeon.utils.net.PortImpl;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class Main {
         Core core = CoreModule.createCore();
 
         // Instantiate the protocol
-        Protocol protocol = new ProtocolImpl(core);
+        Protocol protocol = ProtocolModule.createProtocol(core);
 
         // Decide how to translate addresses (DEBUG: UPnP disabled for now)
         AddressTranslation translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
@@ -34,7 +34,7 @@ public class Main {
         core.initSenders();
         core.initReceivers(protocol);
 
-        // Core awaits the AppClosingEvent to occur. Then it will close.
+        // Core awaits for the AppClosingEvent to occur. Then it will close.
 
         // This should actually be called in GUI
         System.out.println("Press any key to close...");

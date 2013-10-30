@@ -3,7 +3,7 @@ package org.aldeon.db;
 import org.aldeon.common.model.Identifier;
 import org.aldeon.common.model.Message;
 import org.aldeon.common.model.Storage;
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.events.Callback;
 
 import java.util.Collection;
 

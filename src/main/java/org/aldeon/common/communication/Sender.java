@@ -1,7 +1,7 @@
-package org.aldeon.communication;
+package org.aldeon.common.communication;
 
 import org.aldeon.common.net.address.PeerAddress;
-import org.aldeon.communication.task.OutboundRequestTask;
+import org.aldeon.common.communication.task.OutboundRequestTask;
 
 /**
  * Provides a way of sending a request to the remote peer.

@@ -1,7 +1,7 @@
-package org.aldeon.communication.task;
+package org.aldeon.common.communication.task;
 
 import org.aldeon.common.net.address.PeerAddress;
-import org.aldeon.protocol.Response;
+import org.aldeon.common.protocol.Response;
 
 /**
  * Task related to an outgoing request.

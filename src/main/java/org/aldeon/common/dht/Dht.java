@@ -1,4 +1,4 @@
-package org.aldeon.dht;
+package org.aldeon.common.dht;
 
 import org.aldeon.common.model.Identifier;
 import org.aldeon.common.net.address.IdentifiablePeerAddress;

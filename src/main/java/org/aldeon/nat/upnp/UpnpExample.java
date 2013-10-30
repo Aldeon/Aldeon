@@ -3,7 +3,7 @@ package org.aldeon.nat.upnp;
 import org.aldeon.common.net.AddressTranslation;
 import org.aldeon.common.net.Port;
 import org.aldeon.utils.net.PortImpl;
-import org.aldeon.nat.AddressTranslationFactory;
+import org.aldeon.common.net.AddressTranslationFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.IOException;

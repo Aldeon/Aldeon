@@ -1,4 +1,4 @@
-package org.aldeon.communication;
+package org.aldeon.common.communication;
 
 import org.aldeon.common.net.address.PeerAddress;
 

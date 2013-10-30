@@ -1,7 +1,5 @@
 package org.aldeon.common.events;
 
-import org.aldeon.utils.various.Callback;
-
 import java.util.concurrent.Executor;
 
 public interface EventLoop {

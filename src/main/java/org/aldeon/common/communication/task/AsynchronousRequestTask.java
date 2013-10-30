@@ -1,7 +1,7 @@
-package org.aldeon.communication.task;
+package org.aldeon.common.communication.task;
 
 import org.aldeon.common.net.address.PeerAddress;
-import org.aldeon.protocol.Request;
+import org.aldeon.common.protocol.Request;
 import java.util.concurrent.Executor;
 
 /**

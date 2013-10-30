@@ -1,6 +1,4 @@
-package org.aldeon.nat;
-
-import org.aldeon.common.net.AddressTranslation;
+package org.aldeon.common.net;
 
 public interface AddressTranslationFactory {
     public void begin();

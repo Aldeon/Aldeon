@@ -5,7 +5,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import org.aldeon.common.events.Event;
 import org.aldeon.common.events.EventLoop;
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.events.Callback;
 
 
 import java.util.concurrent.Executor;

@@ -18,10 +18,10 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.communication.Sender;
-import org.aldeon.protocol.Request;
-import org.aldeon.protocol.Response;
+import org.aldeon.common.communication.task.OutboundRequestTask;
+import org.aldeon.common.communication.Sender;
+import org.aldeon.common.protocol.Request;
+import org.aldeon.common.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
 
 import java.util.concurrent.CancellationException;

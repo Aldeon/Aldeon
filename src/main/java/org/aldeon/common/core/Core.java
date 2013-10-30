@@ -3,9 +3,9 @@ package org.aldeon.common.core;
 import org.aldeon.common.events.EventLoop;
 import org.aldeon.common.model.Storage;
 import org.aldeon.common.net.address.PeerAddress;
-import org.aldeon.communication.Receiver;
-import org.aldeon.communication.Sender;
-import org.aldeon.protocol.Protocol;
+import org.aldeon.common.communication.Receiver;
+import org.aldeon.common.communication.Sender;
+import org.aldeon.common.protocol.Protocol;
 
 import java.util.concurrent.Executor;
 

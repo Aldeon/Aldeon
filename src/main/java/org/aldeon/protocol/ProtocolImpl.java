@@ -2,8 +2,11 @@ package org.aldeon.protocol;
 
 
 import org.aldeon.common.core.Core;
+import org.aldeon.common.events.Callback;
+import org.aldeon.common.protocol.Protocol;
+import org.aldeon.common.protocol.Request;
+import org.aldeon.common.protocol.Response;
 import org.aldeon.protocol.example.ExampleDateResponse;
-import org.aldeon.utils.various.Callback;
 
 public class ProtocolImpl implements Protocol {
 

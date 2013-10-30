@@ -3,7 +3,7 @@ package org.aldeon.communication.nio.events;
 import org.aldeon.common.events.Event;
 import org.aldeon.common.events.EventLoop;
 import org.aldeon.core.EventLoopImpl;
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.events.Callback;
 import org.junit.Test;
 
 import java.util.concurrent.Executor;

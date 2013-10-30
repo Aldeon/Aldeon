@@ -6,13 +6,13 @@ import org.aldeon.common.core.Core;
 import org.aldeon.common.events.EventLoop;
 import org.aldeon.common.model.Storage;
 import org.aldeon.common.net.address.PeerAddress;
-import org.aldeon.communication.Receiver;
-import org.aldeon.communication.Sender;
-import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.common.communication.Receiver;
+import org.aldeon.common.communication.Sender;
+import org.aldeon.common.communication.task.InboundRequestTask;
 import org.aldeon.events.AppClosingEvent;
 import org.aldeon.events.TopicAddedEvent;
-import org.aldeon.protocol.Protocol;
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.protocol.Protocol;
+import org.aldeon.common.events.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

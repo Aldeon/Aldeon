@@ -2,7 +2,7 @@ package org.aldeon.core;
 
 import org.aldeon.common.core.Core;
 import org.aldeon.events.TopicAddedEvent;
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.events.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -3,10 +3,10 @@ package org.aldeon.communication.netty;
 import org.aldeon.common.net.Port;
 import org.aldeon.utils.net.PortImpl;
 import org.aldeon.common.net.address.IpPeerAddress;
-import org.aldeon.communication.Sender;
+import org.aldeon.common.communication.Sender;
 import org.aldeon.communication.netty.sender.RequestListener;
-import org.aldeon.protocol.Request;
-import org.aldeon.protocol.Response;
+import org.aldeon.common.protocol.Request;
+import org.aldeon.common.protocol.Response;
 
 import java.io.IOException;
 import java.net.InetAddress;

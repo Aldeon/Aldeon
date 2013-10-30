@@ -1,10 +1,10 @@
 package org.aldeon.core;
 
-import org.aldeon.communication.task.InboundRequestTask;
-import org.aldeon.protocol.Protocol;
-import org.aldeon.protocol.Request;
-import org.aldeon.protocol.Response;
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.communication.task.InboundRequestTask;
+import org.aldeon.common.protocol.Protocol;
+import org.aldeon.common.protocol.Request;
+import org.aldeon.common.protocol.Response;
+import org.aldeon.common.events.Callback;
 
 /**
  * Main responder class.

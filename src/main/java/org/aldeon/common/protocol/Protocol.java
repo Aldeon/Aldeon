@@ -1,6 +1,6 @@
-package org.aldeon.protocol;
+package org.aldeon.common.protocol;
 
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.events.Callback;
 
 /**
  * Responsible for creating appropriate responses to each request.

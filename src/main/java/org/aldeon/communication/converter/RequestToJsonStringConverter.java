@@ -1,6 +1,6 @@
 package org.aldeon.communication.converter;
 
-import org.aldeon.protocol.Request;
+import org.aldeon.common.protocol.Request;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
 import org.aldeon.utils.json.JsonParserImpl;

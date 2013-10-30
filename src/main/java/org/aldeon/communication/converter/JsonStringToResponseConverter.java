@@ -1,6 +1,6 @@
 package org.aldeon.communication.converter;
 
-import org.aldeon.protocol.Response;
+import org.aldeon.common.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
 import org.aldeon.utils.json.ClassMapper;

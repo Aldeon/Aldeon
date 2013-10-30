@@ -1,6 +1,6 @@
 package org.aldeon.common.model;
 
-import org.aldeon.utils.various.Callback;
+import org.aldeon.common.events.Callback;
 
 import java.util.Collection;
 
