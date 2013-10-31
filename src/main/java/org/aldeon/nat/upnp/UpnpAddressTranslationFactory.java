@@ -1,8 +1,7 @@
 package org.aldeon.nat.upnp;
 
-import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.net.Port;
-import org.aldeon.nat.AddressTranslationFactory;
+import org.aldeon.net.AddressTranslation;
+import org.aldeon.net.Port;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
@@ -11,20 +10,14 @@ import org.fourthline.cling.support.model.PortMapping;
 
 import java.net.InetAddress;
 import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-public class UpnpAddressTranslationFactory implements AddressTranslationFactory {
+public class UpnpAddressTranslationFactory {
 
-    private static final int LEASE_DURATION_SECONDS = 86400; //debug
-    private Port desiredInternalPort;
-    private Port desiredExternalPort;
-    private PortMappingAndIpListener listener;
-    private UpnpService upnp;
-    private boolean didShutDown = false;
+    private static final int LEASE_DURATION_SECONDS = 120; //debug
 
-
-    private UpnpAddressTranslationFactory() {}
-
-    public static UpnpAddressTranslationFactory create(Port desiredInternalPort, Port desiredExternalPort) {
+    public static Future<AddressTranslation> create(Port desiredInternalPort, Port desiredExternalPort) {
 
         PortMapping pm = new PortMapping();
         pm.setDescription("Aldeon UPnP TCP");
@@ -33,67 +26,90 @@ public class UpnpAddressTranslationFactory implements AddressTranslationFactory 
         pm.setInternalPort(new UnsignedIntegerTwoBytes(desiredInternalPort.getIntValue()));
         pm.setExternalPort(new UnsignedIntegerTwoBytes(desiredExternalPort.getIntValue()));
 
-        UpnpAddressTranslationFactory factory = new UpnpAddressTranslationFactory();
+        FutureImpl future = new FutureImpl();
 
-        factory.listener = new PortMappingAndIpListener(pm);
-        factory.upnp = new UpnpServiceImpl(factory.listener);
+        future.listener = new PortMappingAndIpListener(pm);
+        future.upnp = new UpnpServiceImpl(future.listener);
+        future.desiredInternalPort = desiredInternalPort;
+        future.desiredExternalPort = desiredExternalPort;
 
-        factory.desiredInternalPort = desiredInternalPort;
-        factory.desiredExternalPort = desiredExternalPort;
+        future.upnp.getControlPoint().search();
 
-        return factory;
+        return future;
     }
 
-    @Override
-    public void begin() {
-        upnp.getControlPoint().search();
-    }
+    private static class FutureImpl implements Future<AddressTranslation> {
 
-    @Override
-    public void abort() {
-        if(!didShutDown) {
-            upnp.shutdown();
-            didShutDown = true;
+        private Port desiredInternalPort;
+        private Port desiredExternalPort;
+        private PortMappingAndIpListener listener;
+        private UpnpService upnp;
+        private boolean isCancelled = false;
+        private boolean isDone = false;
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            if(isCancelled || isDone) {
+                return false;
+            } else {
+                upnp.shutdown();
+                isCancelled = true;
+                return true;
+            }
         }
-    }
 
-    @Override
-    public boolean isReady() {
-        return listener.getActiveMappings().size() > 0;
-    }
+        @Override
+        public boolean isCancelled() {
+            return isCancelled;
+        }
 
-    @Override
-    public AddressTranslation getAddressTranslation() {
-        Set<PortMappingAndIpListener.AddressPair> addresses = listener.getActiveMappings();
-        if(addresses.size() == 0) return null;
-
-        final PortMappingAndIpListener.AddressPair addressPair = addresses.iterator().next(); //we take only the first one
-
-        return new AddressTranslation() {
-            @Override
-            public Port getInternalPort() {
-                return desiredInternalPort;
+        @Override
+        public boolean isDone() {
+            if(!isDone) {
+                isDone = listener.getActiveMappings().size() > 0;
             }
+            return isDone;
+        }
 
-            @Override
-            public Port getExternalPort() {
-                return desiredExternalPort;
+        @Override
+        public AddressTranslation get() {
+            if(! isDone()) {
+                return null;
             }
+            Set<PortMappingAndIpListener.AddressPair> addresses = listener.getActiveMappings();
+            final PortMappingAndIpListener.AddressPair addressPair = addresses.iterator().next(); //we take only the first one
 
-            @Override
-            public InetAddress getInternalAddress() {
-                return addressPair.getInternalAddress();
-            }
+            return new AddressTranslation() {
+                @Override
+                public Port getInternalPort() {
+                    return desiredInternalPort;
+                }
 
-            @Override
-            public InetAddress getExternalAddress() {
-                return addressPair.getExternalAddress();
-            }
+                @Override
+                public Port getExternalPort() {
+                    return desiredExternalPort;
+                }
 
-            @Override
-            public void shutdown() {
-                abort();
-            }
-        };
+                @Override
+                public InetAddress getInternalAddress() {
+                    return addressPair.getInternalAddress();
+                }
+
+                @Override
+                public InetAddress getExternalAddress() {
+                    return addressPair.getExternalAddress();
+                }
+
+                @Override
+                public void shutdown() {
+                    upnp.shutdown();
+                }
+            };
+        }
+
+        @Override
+        public AddressTranslation get(long timeout, TimeUnit unit) {
+            throw new IllegalStateException("Not yet supported");
+        }
     }
 }

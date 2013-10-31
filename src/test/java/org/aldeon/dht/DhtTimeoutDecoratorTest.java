@@ -1,7 +1,7 @@
 package org.aldeon.dht;
 
-import org.aldeon.common.model.Identifier;
-import org.aldeon.common.net.TemporaryPeerAddress;
+import org.aldeon.model.Identifier;
+import org.aldeon.net.TemporaryIdentifiablePeerAddress;
 import org.aldeon.utils.time.TimeProvider;
 import org.junit.Test;
 
@@ -14,118 +14,97 @@ public class DhtTimeoutDecoratorTest {
 
     @Test
     public void shouldAddElementIfTimeoutDidNotOccur() {
-
-        Dht<Stub> dhtMock = mock(Dht.class);
+        Dht dhtMock = mock(Dht.class);
         TimeProvider timerMock = mock(TimeProvider.class);
+        TemporaryIdentifiablePeerAddress addressMock = mock(TemporaryIdentifiablePeerAddress.class);
 
         when(timerMock.getTime()).thenReturn((long) 10);
+        when(addressMock.getTimeout()).thenReturn((long) 20);
 
-        DhtTimeoutDecorator<Stub> dht = new DhtTimeoutDecorator<>(dhtMock, timerMock);
-        Stub stub = new Stub(20);
-        dht.insert(stub);
+        DhtTimeoutDecorator dht = new DhtTimeoutDecorator(dhtMock, timerMock);
+        dht.insert(addressMock);
 
-        verify(dhtMock).insert(stub);
+        verify(dhtMock).insert(addressMock);
     }
 
     @Test
     public void shouldNotAddElementIfTimeoutDidOccur() {
-
-        Dht<Stub> dhtMock = mock(Dht.class);
+        Dht dhtMock = mock(Dht.class);
         TimeProvider timerMock = mock(TimeProvider.class);
+        TemporaryIdentifiablePeerAddress addressMock = mock(TemporaryIdentifiablePeerAddress.class);
 
         when(timerMock.getTime()).thenReturn((long) 10);
+        when(addressMock.getTimeout()).thenReturn((long) 5);
 
-        DhtTimeoutDecorator<Stub> dht = new DhtTimeoutDecorator<>(dhtMock, timerMock);
-        Stub stub = new Stub(5);
-        dht.insert(stub);
+        DhtTimeoutDecorator dht = new DhtTimeoutDecorator(dhtMock, timerMock);
+        dht.insert(addressMock);
 
-        verify(dhtMock, never()).insert(stub);
+        verify(dhtMock, never()).insert(addressMock);
     }
 
     @Test
     public void shouldRemoveElement() {
-
-        Dht<Stub> dhtMock = mock(Dht.class);
+        Dht dhtMock = mock(Dht.class);
         TimeProvider timerMock = mock(TimeProvider.class);
+        TemporaryIdentifiablePeerAddress addressMock = mock(TemporaryIdentifiablePeerAddress.class);
 
         when(timerMock.getTime()).thenReturn((long) 10);
+        when(addressMock.getTimeout()).thenReturn((long) 5);
 
-        DhtTimeoutDecorator<Stub> dht = new DhtTimeoutDecorator<>(dhtMock, timerMock);
-        Stub stub = new Stub(5);
-        dht.remove(stub);
+        DhtTimeoutDecorator dht = new DhtTimeoutDecorator(dhtMock, timerMock);
+        dht.remove(addressMock);
 
-        verify(dhtMock).remove(stub);
+        verify(dhtMock).remove(addressMock);
     }
 
     @Test
     public void shouldNotRemoveElementBeforeTimeout() {
-
-        Dht<Stub> dhtMock = mock(Dht.class);
+        Dht dhtMock = mock(Dht.class);
         TimeProvider timerMock = mock(TimeProvider.class);
+        TemporaryIdentifiablePeerAddress addressMock = mock(TemporaryIdentifiablePeerAddress.class);
 
         when(timerMock.getTime()).thenReturn((long) 0);
+        when(addressMock.getTimeout()).thenReturn((long) 5);
 
-        DhtTimeoutDecorator<Stub> dht = new DhtTimeoutDecorator<>(dhtMock, timerMock);
-        Stub stub = new Stub(5);
-        dht.insert(stub);
+        DhtTimeoutDecorator dht = new DhtTimeoutDecorator(dhtMock, timerMock);
+        dht.insert(addressMock);
         dht.refresh();
 
-        verify(dhtMock, never()).remove(stub);
+        verify(dhtMock, never()).remove(addressMock);
     }
 
     @Test
     public void shouldRemoveElementAfterTimeout() {
-
-        Dht<Stub> dhtMock = mock(Dht.class);
+        Dht dhtMock = mock(Dht.class);
         TimeProvider timerMock = mock(TimeProvider.class);
+        TemporaryIdentifiablePeerAddress addressMock = mock(TemporaryIdentifiablePeerAddress.class);
 
         when(timerMock.getTime()).thenReturn((long) 0);
+        when(addressMock.getTimeout()).thenReturn((long) 5);
 
-        DhtTimeoutDecorator<Stub> dht = new DhtTimeoutDecorator<>(dhtMock, timerMock);
-        Stub stub = new Stub(5);
-        dht.insert(stub);
+        DhtTimeoutDecorator dht = new DhtTimeoutDecorator(dhtMock, timerMock);
+        dht.insert(addressMock);
 
         when(timerMock.getTime()).thenReturn((long) 10);
 
         dht.refresh();
 
-        verify(dhtMock).remove(stub);
+        verify(dhtMock).remove(addressMock);
     }
 
     @Test
     public void shouldAskUnderlyingDhtForNearestValues() {
-
-        Dht<Stub> dhtMock = mock(Dht.class);
+        Dht dhtMock = mock(Dht.class);
         TimeProvider timerMock = mock(TimeProvider.class);
-        Set<Stub> setMock = mock(Set.class);
+        Set setMock = mock(Set.class);
         Identifier idMock = mock(Identifier.class);
         int maxValues = 42;
 
         when(timerMock.getTime()).thenReturn((long) 0);
         when(dhtMock.getNearest(idMock, maxValues)).thenReturn(setMock);
 
-        DhtTimeoutDecorator<Stub> dht = new DhtTimeoutDecorator<>(dhtMock, timerMock);
+        DhtTimeoutDecorator dht = new DhtTimeoutDecorator(dhtMock, timerMock);
 
         assertEquals(setMock, dht.getNearest(idMock, maxValues));
-    }
-
-
-    private class Stub implements TemporaryPeerAddress {
-
-        private final long timeout;
-
-        public Stub(long timeout) {
-            this.timeout = timeout;
-        }
-
-        @Override
-        public long getTimeout() {
-            return timeout;
-        }
-
-        @Override
-        public Identifier getIdentifier() {
-            return null;
-        }
     }
 }

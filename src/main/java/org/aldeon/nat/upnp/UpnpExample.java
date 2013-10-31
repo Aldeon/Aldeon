@@ -1,12 +1,13 @@
 package org.aldeon.nat.upnp;
 
-import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.net.Port;
-import org.aldeon.common.net.PortImpl;
-import org.aldeon.nat.AddressTranslationFactory;
+import org.aldeon.net.AddressTranslation;
+import org.aldeon.net.Port;
+import org.aldeon.utils.net.PortImpl;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class UpnpExample {
 
@@ -15,29 +16,27 @@ public class UpnpExample {
         SLF4JBridgeHandler.install();
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 
         Port internalPort = new PortImpl(80);
-        Port externalPort = new PortImpl(12346);
+        Port externalPort = new PortImpl(12348);
 
-        AddressTranslationFactory factory = UpnpAddressTranslationFactory.create(internalPort, externalPort);
+        Future<AddressTranslation> future = UpnpAddressTranslationFactory.create(internalPort, externalPort);
 
         System.out.println("Trying to map a port...");
 
-        factory.begin();
-
         int cycles = 0;
 
-        while(!factory.isReady()) {
+        while(!future.isDone()) {
             Thread.sleep(100);
             if(++cycles > 50) break;
         }
 
-        AddressTranslation addressTranslation = factory.getAddressTranslation();
+        AddressTranslation addressTranslation = future.get();
 
         if(addressTranslation == null) {
             System.out.println("No address translation obtained.");
-            factory.abort();
+            future.cancel(true);
             return;
         }
 
@@ -49,6 +48,8 @@ public class UpnpExample {
         System.out.println("External IP   : " + addressTranslation.getExternalAddress());
 
         System.in.read();
+
+        System.out.println("Shutting down...");
 
         addressTranslation.shutdown();
     }

@@ -1,7 +1,14 @@
 package org.aldeon.nat.natpmp;
 
-import org.aldeon.nat.AddressTranslationFactory;
+import org.aldeon.net.AddressTranslation;
 
-public abstract class NatPmpAddressTranslationFactory implements AddressTranslationFactory {
-    //Todo: implement NAT-PMP port forwarding
+import java.util.concurrent.Future;
+
+public class NatPmpAddressTranslationFactory {
+
+    public static Future<AddressTranslation> create() {
+        //Todo: implement NAT-PMP port forwarding
+
+        return null;
+    }
 }

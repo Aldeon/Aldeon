@@ -1,35 +1,53 @@
 package org.aldeon.app;
 
-import org.aldeon.common.EndpointWithAddressTranslation;
-import org.aldeon.common.net.PortImpl;
-import org.aldeon.common.net.AddressTranslation;
-import org.aldeon.common.net.Port;
+import org.aldeon.core.Core;
+import org.aldeon.net.AddressTranslation;
+import org.aldeon.net.IpPeerAddress;
+import org.aldeon.protocol.Protocol;
+import org.aldeon.communication.netty.NettyModule;
+import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.nat.utils.NoAddressTranslation;
-import org.aldeon.nat.utils.StaticAddressTranslation;
-import org.aldeon.jetty.JettyModule;
+import org.aldeon.protocol.ProtocolModule;
+import org.aldeon.utils.net.PortImpl;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class Main {
 
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args) throws IOException {
 
-        Port port = new PortImpl(8080);
-        InetAddress address = InetAddress.getLocalHost();
-        AddressTranslation addressTranslation = new NoAddressTranslation(port, address);
+        // Instantiate the core
+        Core core = CoreModule.createCore();
 
-        EndpointWithAddressTranslation endpoint = JettyModule.getEndpoint();
-        endpoint.setObserver(new FooObserver());
-        endpoint.setAddressTranslation(addressTranslation);
-        endpoint.start();
+        // Instantiate the protocol
+        Protocol protocol = ProtocolModule.createProtocol(core);
 
-        try {
-            System.in.read();
-        } catch (IOException e) {}
+        // Decide how to translate addresses (DEBUG: UPnP disabled for now)
+        AddressTranslation translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
 
-        endpoint.stop();
+        // Register all senders and receivers we have implemented
+        core.registerSender(IpPeerAddress.class, NettyModule.createSender());
+        core.registerReceiver(IpPeerAddress.class, NettyModule.createReceiver(translation));
+
+        core.initSenders();
+        core.initReceivers(protocol);
+
+        /*
+            Now everything should work.
+            To see the results, go to:
+
+            http://localhost:8080?query={"type":"get_message","id":"CaKjxIm3DbrEmeCsso5hFX8AyagHBrv1UBiSrpN8vjE-"}
+         */
+
+
+        // Core awaits for the AppClosingEvent to occur. Then it will close.
+
+        // This should actually be called in GUI
+        System.out.println("Press any key to close...");
+        System.in.read();
+        core.getEventLoop().notify(new AppClosingEvent());
     }
 
 }

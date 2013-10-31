@@ -1,6 +1,6 @@
 package org.aldeon.crypt;
 
-import org.aldeon.common.model.ByteSource;
+import org.aldeon.model.ByteSource;
 import java.nio.ByteBuffer;
 
 /**

@@ -1,19 +1,14 @@
 package org.aldeon.communication;
 
-/**
- *
- * Used by communication provider to send messages over medium.
- * Our application acts as a client, asking recipient for data.
- *
- */
-public interface Sender <Format, Address> {
+import org.aldeon.net.PeerAddress;
+import org.aldeon.communication.task.OutboundRequestTask;
 
+/**
+ * Provides a way of sending a request to the remote peer.
+ */
+public interface Sender<T extends PeerAddress> extends Service {
     /**
-     * Sends request to remote peer and retrieves response.
-     *
-     * @param formattedMessage request which will be sent to recipient
-     * @param recipientAddress to whom this message shall be sent
-     * @return response from recipient
+     * @param task
      */
-    Format send(Format formattedMessage, Address recipientAddress);
+    void addTask(OutboundRequestTask<T> task);
 }
