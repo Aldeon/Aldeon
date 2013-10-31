@@ -5,6 +5,8 @@ import org.aldeon.protocol.Response;
 
 public class MessageFoundResponse implements Response {
 
+    public static final String TYPE = "message_found";
+
     public MessageFoundResponse() {
 
     }
@@ -13,6 +15,6 @@ public class MessageFoundResponse implements Response {
         this.message = m;
     }
 
-    public String type = "message_found";
+    public String type = TYPE;
     public Message message;
 }

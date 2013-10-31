@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.IdentifierImpl;
 import org.aldeon.utils.base64.Base64Codec;
+import org.aldeon.utils.conversion.ConversionException;
 
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
@@ -24,7 +25,14 @@ public class IdentifierDeserializer implements JsonDeserializer<Identifier> {
 
         System.out.println("str: " + json.getAsString());
 
-        ByteBuffer result = base64.decode(json.getAsString());
+        ByteBuffer result;
+
+        try {
+            result = base64.decode(json.getAsString());
+        } catch (ConversionException e) {
+            throw new JsonParseException("JSON representation of Identifier is invalid", e);
+        }
+
         try {
             return new IdentifierImpl(result, false);
         } catch(IllegalArgumentException e) {

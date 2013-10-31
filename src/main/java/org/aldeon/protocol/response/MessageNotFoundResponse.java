@@ -3,5 +3,8 @@ package org.aldeon.protocol.response;
 import org.aldeon.protocol.Response;
 
 public class MessageNotFoundResponse implements Response {
-    public String type = "message_not_found";
+
+    public static final String TYPE = "message_not_found";
+
+    public String type = TYPE;
 }
