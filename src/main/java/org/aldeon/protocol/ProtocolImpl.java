@@ -26,8 +26,6 @@ public class ProtocolImpl implements Protocol {
     @Override
     public void createResponse(Request request, final Callback<Response> onResponse, Executor executor) {
 
-        /* --- we are inside the core.getServerSideExecutor() --- */
-
         /*
              We have access to the application core
 
@@ -37,8 +35,13 @@ public class ProtocolImpl implements Protocol {
 
              ... and more.
 
-             TODO implement all classes in org.aldeon.communication.converter package
+         */
 
+        /*
+            TODO: Implement the conversion mechanism
+
+                - org.aldeon.communication.converter    <---  Request/Response <=> String
+                - org.aldeon.utils.json                 <---  Serializers & deserializers for GSON
          */
 
         // Here we (eventually, somehow) generate the response
@@ -46,7 +49,7 @@ public class ProtocolImpl implements Protocol {
             getMessageAction.respond((GetMessageRequest) request, onResponse, executor);
         }
         /*
-            elseif, elseif...
+            else if, else if...
          */
         else {
             log.warn("Failed to convert a request into a response.");

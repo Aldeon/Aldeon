@@ -16,6 +16,12 @@ public class RequestClassMapper implements ClassMapper<Request> {
     @Override
     public Class<? extends Request> getClass(JsonObject jsonObject) {
 
+        /*
+            We assume that each request has a field named 'type'.
+            By reading this value, we can figure out what this
+            message should be converted to.
+
+         */
         JsonElement typeElement = jsonObject.get(TYPE_FIELD);
 
         if(typeElement != null) {
@@ -25,6 +31,9 @@ public class RequestClassMapper implements ClassMapper<Request> {
             if(action.equals(GetMessageRequest.TYPE)) {
                 return GetMessageRequest.class;
             }
+            /*
+                else if, else if...
+             */
         }
 
         return null;

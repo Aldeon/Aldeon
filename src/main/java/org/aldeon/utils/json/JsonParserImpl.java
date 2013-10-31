@@ -24,11 +24,20 @@ public class JsonParserImpl implements JsonParser {
 
         Base64Codec base64 = new Base64CodecImpl();
 
+        /*
+            Here we register serializers and deserializers for all important components
+            of Requests and responses, for example:
+                - Identifiers
+                - Signatures
+                - Public keys
+                - Addresses
+                - Messages
+         */
+
         builder.registerTypeAdapter(Identifier.class, new IdentifierSerializer(base64));
         builder.registerTypeAdapter(Identifier.class, new IdentifierDeserializer(base64));
         builder.registerTypeAdapter(Signature.class, new SignatureSerializer(base64));
         builder.registerTypeAdapter(Message.class, new MessageSerializer());
-
 
         gson = builder.create();
         parser = new com.google.gson.JsonParser();

@@ -2,10 +2,20 @@ package org.aldeon.model;
 
 import java.nio.ByteBuffer;
 
-public class FixedSizeByteBufferSource implements ByteSource {
+/**
+ *  Holds an immutable ByteBuffer of a specified size.
+ */
+public class FixedSizeImmutableByteBufferSource implements ByteSource {
     private ByteBuffer buffer;
 
-    public FixedSizeByteBufferSource(ByteBuffer buffer, boolean shouldCopy, int expectedLength) throws IllegalArgumentException{
+    /**
+     * Registers a ByteBuffer with specified parameters
+     * @param buffer source buffer
+     * @param shouldCopy indicates if the source buffer should be duplicated before being registered.
+     * @param expectedLength defines how long the buffer should be.
+     * @throws IllegalArgumentException
+     */
+    public FixedSizeImmutableByteBufferSource(ByteBuffer buffer, boolean shouldCopy, int expectedLength) throws IllegalArgumentException{
 
         if(buffer.capacity() == expectedLength) {
             buffer.clear();

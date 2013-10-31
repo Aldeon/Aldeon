@@ -10,6 +10,14 @@ import org.aldeon.utils.json.ClassMapper;
 public class ResponseClassMapper implements ClassMapper<Response> {
     @Override
     public Class<? extends Response> getClass(JsonObject jsonObject) {
+
+        /*
+
+            This should be implemented before we start writing
+            the client part of the application.
+
+         */
+
         return null;
     }
 }

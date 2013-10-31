@@ -12,7 +12,7 @@ public interface Protocol {
      * Accept the request and generate the response in near future.
      * @param request request to respond to
      * @param onResponse short and non-blocking callback to be called when the response is ready.
-     * @param executor where the callback should be called
+     * @param executor provides a thread pool to execute processor-heavy tasks, if necessary.
      */
     void createResponse(Request request, Callback<Response> onResponse, Executor executor);
 }
