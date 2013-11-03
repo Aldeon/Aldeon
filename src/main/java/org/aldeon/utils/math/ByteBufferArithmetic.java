@@ -3,6 +3,26 @@ package org.aldeon.utils.math;
 import java.nio.ByteBuffer;
 
 public class ByteBufferArithmetic implements Arithmetic<ByteBuffer> {
+
+    @Override
+    public ByteBuffer xor(ByteBuffer a, ByteBuffer b) {
+        int n = Math.max(a.capacity(), b.capacity());
+
+        ByteBufferReader aa = new ByteBufferReader(a, n);
+        ByteBufferReader bb = new ByteBufferReader(b, n);
+
+        ByteBuffer c = ByteBuffer.allocate(n);
+
+        int xor;
+
+        for(int i = n-1; i >=0; --i) {
+            xor = aa.get(i) ^ bb.get(i);
+            c.put(i, toByte(xor));
+        }
+        c.clear();
+        return c;
+    }
+
     @Override
     public ByteBuffer add(ByteBuffer a, ByteBuffer b) {
         int n = Math.max(a.capacity(), b.capacity());

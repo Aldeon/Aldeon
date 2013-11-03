@@ -96,6 +96,12 @@ public class DhtImpl<T extends IdentifiablePeerAddress> implements Dht<T> {
         }
 
         @Override
+        public Identifiable xor(Identifiable a, Identifiable b) {
+            ByteBuffer result = arithmetic.xor(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            return new IdentifiableStub(new IdentifierStub(result));
+        }
+
+        @Override
         public int compare(Identifiable o1, Identifiable o2) {
             return arithmetic.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
         }
