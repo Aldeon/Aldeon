@@ -3,7 +3,10 @@ package org.aldeon.communication.converter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.aldeon.protocol.Request;
+import org.aldeon.protocol.request.CompareTreesForceRequest;
+import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
+import org.aldeon.protocol.request.GetPeersInterestedRequest;
 import org.aldeon.utils.json.ClassMapper;
 
 /**
@@ -30,10 +33,13 @@ public class RequestClassMapper implements ClassMapper<Request> {
 
             if(action.equals(GetMessageRequest.TYPE)) {
                 return GetMessageRequest.class;
+            } else if (action.equals(GetPeersInterestedRequest.TYPE)) {
+                return GetPeersInterestedRequest.class;
+            } else if (action.equals(CompareTreesRequest.TYPE)) {
+                return CompareTreesRequest.class;
+            } else if (action.equals(CompareTreesForceRequest.TYPE)) {
+                return CompareTreesForceRequest.class;
             }
-            /*
-                else if, else if...
-             */
         }
 
         return null;

@@ -5,6 +5,7 @@ import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetPeersInterestedRequest;
 import org.aldeon.protocol.response.MessageNotFoundResponse;
+import org.aldeon.protocol.response.RelevantPeersResponse;
 
 import java.util.concurrent.Executor;
 
@@ -15,7 +16,8 @@ public class GetPeersInterestedAction implements Action<GetPeersInterestedReques
 
     @Override
     public void respond(GetPeersInterestedRequest request, Callback<Response> onResponse, Executor executor) {
-
+        onResponse.call(new MessageNotFoundResponse());
+        //onResponse.call(new RelevantPeersResponse());
     }
 }
 
