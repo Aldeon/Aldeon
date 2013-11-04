@@ -16,8 +16,7 @@ public class GetPeersInterestedAction implements Action<GetPeersInterestedReques
 
     @Override
     public void respond(GetPeersInterestedRequest request, Callback<Response> onResponse, Executor executor) {
-        onResponse.call(new MessageNotFoundResponse());
-        //onResponse.call(new RelevantPeersResponse());
+        onResponse.call(new RelevantPeersResponse());
     }
 }
 

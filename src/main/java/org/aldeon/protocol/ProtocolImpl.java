@@ -57,7 +57,7 @@ public class ProtocolImpl implements Protocol {
         } else if (request instanceof GetPeersInterestedRequest) {
             (new GetPeersInterestedAction()).respond((GetPeersInterestedRequest) request, onResponse, executor);
         } else if (request instanceof CompareTreesRequest) {
-            (new CompareTreesAction()).respond((CompareTreesRequest) request, onResponse, executor);
+            (new CompareTreesAction(core)).respond((CompareTreesRequest) request, onResponse, executor);
         } else if (request instanceof CompareTreesForceRequest) {
             (new CompareTreesForceAction()).respond((CompareTreesForceRequest) request, onResponse, executor);
         } else {
