@@ -8,11 +8,8 @@ import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.response.ChildrenResponse;
 import org.aldeon.protocol.response.LuckyGuessResponse;
-import org.aldeon.protocol.response.MessageFoundResponse;
-import org.aldeon.protocol.response.MessageNotFoundResponse;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 /**
@@ -47,10 +44,10 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
                             onResponse.call(new LuckyGuessResponse(val));
                         } else { //if there is no XOR match (lucky guess failed) fall back to comparing trees layer by layer
 
-                            core.getStorage().getMessagesByParent(request.parent_id, new Callback<ArrayList<Identifier>>() {
+                            core.getStorage().getMessagesByParent(request.parent_id, new Callback<Set<Identifier>>() {
 
                                 @Override
-                                public void call(ArrayList<Identifier> val) {
+                                public void call(Set<Identifier> val) {
                                     onResponse.call(new ChildrenResponse(val));
                                 }
                             }, executor);

@@ -10,6 +10,9 @@ public class LuckyGuessResponse implements Response {
     public static final String TYPE = "lucky_guess";
     public String type = TYPE;
 
+    /**
+     * Suggests that the person making a request is looking for this branch.
+     */
     public Identifier id;
 
     public LuckyGuessResponse() { }

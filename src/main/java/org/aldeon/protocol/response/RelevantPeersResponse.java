@@ -4,6 +4,8 @@ import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Response;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -14,15 +16,15 @@ public class RelevantPeersResponse implements Response {
 
     public int id = 4;
     //public ArrayList<Integer> lista = new ArrayList<Integer>();
-    public ArrayList<PeerAddress> haveInfo;
-    public ArrayList<PeerAddress> askedForIt;
-    public ArrayList<PeerAddress> closestInDHT;
+    public Set<PeerAddress> haveInfo;
+    public Set<PeerAddress> askedForIt;
+    public Set<PeerAddress> closestInDHT;
 
     public RelevantPeersResponse() {
 
-        haveInfo = new ArrayList<PeerAddress>();
-        askedForIt = new ArrayList<PeerAddress>();
-        closestInDHT = new ArrayList<PeerAddress>();
+        haveInfo = new HashSet<PeerAddress>();
+        askedForIt = new HashSet<PeerAddress>();
+        closestInDHT = new HashSet<PeerAddress>();
 
 //        lista.add(1);
 //        lista.add(2);

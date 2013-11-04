@@ -9,10 +9,7 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.MessageImpl;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 public class DbStub implements Storage {
@@ -58,11 +55,11 @@ public class DbStub implements Storage {
     }
 
     @Override
-    public void getMessagesByParent(Identifier parent, Callback<ArrayList<Identifier>> callback, Executor executor) {
+    public void getMessagesByParent(Identifier parent, Callback<Set<Identifier>> callback, Executor executor) {
         if(parent == null) {
             callback.call(null);
         } else {
-            ArrayList<Identifier> children = new ArrayList<Identifier>();
+            Set<Identifier> children = new HashSet<>();
 
             children.add(new IdentifierImpl(randomBuffer(Identifier.LENGTH_BYTES), false));
             children.add(new IdentifierImpl(randomBuffer(Identifier.LENGTH_BYTES), false));
