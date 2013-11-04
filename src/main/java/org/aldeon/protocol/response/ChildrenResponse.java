@@ -3,7 +3,8 @@ package org.aldeon.protocol.response;
 import org.aldeon.model.Identifier;
 import org.aldeon.protocol.Response;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -12,12 +13,12 @@ public class ChildrenResponse implements Response {
     public static final String TYPE = "children";
     public String type = TYPE;
 
-    public ArrayList<Identifier> children;
+    public Set<Identifier> children;
 
     public ChildrenResponse() {
-        children = new ArrayList<>();
+        children = new HashSet<>();
     }
-    public ChildrenResponse(ArrayList<Identifier> children) {
+    public ChildrenResponse(Set<Identifier> children) {
         this.children = children;
     }
 }
