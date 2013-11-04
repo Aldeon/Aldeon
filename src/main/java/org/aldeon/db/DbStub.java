@@ -9,6 +9,7 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.MessageImpl;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
@@ -52,8 +53,22 @@ public class DbStub implements Storage {
     }
 
     @Override
-    public void getMessagesByParent(Identifier parent, Callback<Collection<Identifier>> callback, Executor executor) {
-        callback.call(Collections.EMPTY_SET);
+    public void getMessageXorByIdentifier(Identifier id, Callback<Identifier> callback, Executor executor) {
+        callback.call(null);
+    }
+
+    @Override
+    public void getMessagesByParent(Identifier parent, Callback<ArrayList<Identifier>> callback, Executor executor) {
+        if(parent == null) {
+            callback.call(null);
+        } else {
+            ArrayList<Identifier> children = new ArrayList<Identifier>();
+
+            children.add(new IdentifierImpl(randomBuffer(Identifier.LENGTH_BYTES), false));
+            children.add(new IdentifierImpl(randomBuffer(Identifier.LENGTH_BYTES), false));
+            children.add(new IdentifierImpl(randomBuffer(Identifier.LENGTH_BYTES), false));
+            callback.call(children);
+        }
     }
 
     public static ByteBuffer randomBuffer(int size) {
