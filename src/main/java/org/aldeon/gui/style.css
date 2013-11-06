@@ -1,0 +1,42 @@
+#content{
+    -fx-background-color:#444444;
+}
+
+#sidebar{
+    -fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #222222, #222222 90%, #1b1b1b 100%);
+    -fx-border-color:transparent #2f2f2f transparent transparent;
+}
+#logo{
+    -fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #1d1d1d, #1d1d1d 90%, #1b1b1b 100%);
+}
+#threadCreator{
+    -fx-background-radius:10px;
+    -fx-background-color:#222222;
+}
+#threadName{
+    -fx-background-color:#1f1f1f;
+    -fx-background-radius:5px;
+    -fx-text-fill: #ffffff;
+    -fx-font: 12px Verdana;
+}
+#createButton{
+    -fx-background-color:#151515;
+    -fx-background-radius:5px;
+    -fx-text-fill:#006464;
+    -fx-font:7px Verdana;
+}
+
+#sidebar StackPane{
+    -fx-border-color:transparent transparent #333333 transparent;
+}
+
+Text{
+    -fx-font:12px Verdana;
+    -fx-fill:#ffffff;
+}
+CheckBox{
+    -fx-fill:#000000;
+    -fx-background-color: #000000;
+}
+
+
