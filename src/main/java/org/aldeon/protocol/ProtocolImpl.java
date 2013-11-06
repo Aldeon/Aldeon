@@ -4,10 +4,8 @@ package org.aldeon.protocol;
 import org.aldeon.core.Core;
 import org.aldeon.events.Callback;
 import org.aldeon.protocol.action.CompareTreesAction;
-import org.aldeon.protocol.action.CompareTreesForceAction;
 import org.aldeon.protocol.action.GetMessageAction;
 import org.aldeon.protocol.action.GetPeersInterestedAction;
-import org.aldeon.protocol.request.CompareTreesForceRequest;
 import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetPeersInterestedRequest;
@@ -58,8 +56,6 @@ public class ProtocolImpl implements Protocol {
             (new GetPeersInterestedAction()).respond((GetPeersInterestedRequest) request, onResponse, executor);
         } else if (request instanceof CompareTreesRequest) {
             (new CompareTreesAction(core)).respond((CompareTreesRequest) request, onResponse, executor);
-        } else if (request instanceof CompareTreesForceRequest) {
-            (new CompareTreesForceAction()).respond((CompareTreesForceRequest) request, onResponse, executor);
         } else {
             log.warn("Failed to convert a request into a response.");
             executor.execute(new Runnable() {
