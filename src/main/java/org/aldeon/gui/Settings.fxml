@@ -83,6 +83,6 @@
         </VBox>
     </left>
     <stylesheets>
-        <URL value="@../../../../resources/gui/style.css" />
+        <URL value="@style.css" />
     </stylesheets>
 </BorderPane>

@@ -1,4 +1,4 @@
-package demo;
+package org.aldeon.gui.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,6 +16,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.aldeon.gui.GUIController;
+
 import java.awt.Paint;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -70,7 +72,7 @@ public class IdentityController extends BorderPane implements Initializable {
                 children(name, hash, additionalInfo).
                 alignment(Pos.CENTER).padding(new Insets(5,5,5,5)).spacing(10).build(),250,250);
         scene.setFill(Color.web("#222222"));
-        scene.getStylesheets().add("demo/style.css");
+        scene.getStylesheets().add("org/aldeon/gui/style.css");
         dialogStage.setScene(scene);
         dialogStage.setTitle("Friend information");
         dialogStage.show();
