@@ -4,6 +4,7 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
@@ -15,4 +16,5 @@ public interface Storage {
     void getMessageXorByIdentifier(Identifier id, Callback<Identifier> callback, Executor executor);
     void getMessageIdentifierByXor(Identifier xor, Callback<Identifier> callback, Executor executor);
     void getMessagesByParent(Identifier parent, Callback<Set<Identifier>> callback, Executor executor);
+    void getIdsAndXorsByParent(Identifier parent, Callback<Map<Identifier, Identifier>> callback, Executor executor);
 }
