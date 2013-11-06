@@ -14,26 +14,18 @@ import java.util.Set;
 public class ChildrenResponse implements Response {
 
     public static final String TYPE = "children";
-
     public String type = TYPE;
     /**
      * A collection of pairs (id,xor). Id is unique.
+     * TODO change to Map (abstract) and handle instantiating in GSON
      */
-    public Set<IdAndXor> children;
+    public HashMap<Identifier, Identifier> children;
 
     public ChildrenResponse() {
-        children = new HashSet<>();
+        children = new HashMap<Identifier, Identifier>();
     }
 
-    public static class IdAndXor{
-        public Identifier id;
-        public Identifier xor;
-
-        public IdAndXor(Identifier id, Identifier xor) {
-            this.id = id;
-            this.xor = xor;
-        }
-
-        public IdAndXor() {}
+    public ChildrenResponse(HashMap<Identifier, Identifier> children) {
+        this.children = children;
     }
 }
