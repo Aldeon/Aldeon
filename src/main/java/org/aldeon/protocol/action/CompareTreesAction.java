@@ -37,6 +37,11 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
                 //zrobic jedna klase ktora bedzie zawierala jakis ciag bajtow
 
                 //first - attempt a lucky guess
+
+                /*
+                    TODO: Take the request.force flag into account
+                 */
+
                 core.getStorage().getMessageIdentifierByXor(guess_xor, new Callback<Identifier>() {
                     @Override
                     public void call(Identifier val) {
