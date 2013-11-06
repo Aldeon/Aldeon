@@ -1,5 +1,7 @@
 package org.aldeon.core;
 
+import org.aldeon.dht.Dht;
+import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
 import org.aldeon.db.Storage;
 import org.aldeon.net.PeerAddress;
@@ -10,6 +12,9 @@ import org.aldeon.protocol.Protocol;
 import java.util.concurrent.Executor;
 
 public interface Core {
+    Dht getDht();
+    InterestTracker getInterestTracker();
+
     /**
      * Returns the global message storace class.
      * @return
