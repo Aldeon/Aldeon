@@ -55,15 +55,9 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
                                 public void call(Map<Identifier, Identifier> identifierMap) {
 
                                     ChildrenResponse resp = new ChildrenResponse();
-
-                                    for(Map.Entry<Identifier, Identifier> pair: identifierMap.entrySet()) {
-                                        resp.children.add(new ChildrenResponse.IdAndXor(
-                                            pair.getKey(),      // Message Id
-                                            pair.getValue()     // Message XOR
-                                        ));
-                                    }
-
+                                    resp.children = identifierMap;
                                     onResponse.call(resp);
+
                                 }
                             }, executor);
                         }

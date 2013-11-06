@@ -6,4 +6,8 @@ public class IdentifierImpl extends FixedSizeImmutableByteBufferSource implement
     public IdentifierImpl(ByteBuffer buffer, boolean shouldCopy) throws IllegalArgumentException{
         super(buffer, shouldCopy, Identifier.LENGTH_BYTES);
     }
+
+    public static IdentifierImpl zeroIdentifier() {
+        return new IdentifierImpl(ByteBuffer.allocate(Identifier.LENGTH_BYTES), false);
+    }
 }
