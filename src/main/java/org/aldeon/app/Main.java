@@ -1,6 +1,8 @@
 package org.aldeon.app;
 
+import javafx.application.Application;
 import org.aldeon.core.Core;
+import org.aldeon.gui.GUIController;
 import org.aldeon.net.AddressTranslation;
 import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Protocol;
@@ -43,7 +45,8 @@ public class Main {
 
 
         // Core awaits for the AppClosingEvent to occur. Then it will close.
-
+        //Launch GUI
+        Application.launch(GUIController.class, (java.lang.String[]) null);
         // This should actually be called in GUI
         System.out.println("Press any key to close...");
         System.in.read();
