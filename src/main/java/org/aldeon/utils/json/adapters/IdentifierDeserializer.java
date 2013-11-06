@@ -23,8 +23,6 @@ public class IdentifierDeserializer implements JsonDeserializer<Identifier> {
     @Override
     public Identifier deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-        System.out.println("str: " + json.getAsString());
-
         ByteBuffer result;
 
         try {

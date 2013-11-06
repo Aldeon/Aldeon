@@ -68,6 +68,11 @@ public class DbStub implements Storage {
         }
     }
 
+    @Override
+    public void getIdsAndXorsByParent(Identifier parent, Callback<Map<Identifier, Identifier>> callback, Executor executor) {
+
+    }
+
     public static ByteBuffer randomBuffer(int size) {
         byte[] b = new byte[size];
         new Random().nextBytes(b);
