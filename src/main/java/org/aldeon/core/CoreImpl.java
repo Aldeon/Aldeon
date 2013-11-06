@@ -2,6 +2,8 @@ package org.aldeon.core;
 
 
 import com.google.inject.Inject;
+import org.aldeon.dht.Dht;
+import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
 import org.aldeon.db.Storage;
 import org.aldeon.net.PeerAddress;
@@ -61,6 +63,16 @@ public class CoreImpl implements Core {
                 close();
             }
         }, clientSideExecutor());
+    }
+
+    @Override
+    public Dht getDht() {
+        return null;//TODO
+    }
+
+    @Override
+    public InterestTracker getInterestTracker() {
+        return null;//TODO
     }
 
     @Override

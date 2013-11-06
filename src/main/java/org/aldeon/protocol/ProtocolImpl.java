@@ -53,7 +53,7 @@ public class ProtocolImpl implements Protocol {
         if(request instanceof GetMessageRequest) {
             getMessageAction.respond((GetMessageRequest) request, onResponse, executor);
         } else if (request instanceof GetPeersInterestedRequest) {
-            (new GetPeersInterestedAction()).respond((GetPeersInterestedRequest) request, onResponse, executor);
+            (new GetPeersInterestedAction(core)).respond((GetPeersInterestedRequest) request, onResponse, executor);
         } else if (request instanceof CompareTreesRequest) {
             (new CompareTreesAction(core)).respond((CompareTreesRequest) request, onResponse, executor);
         } else {
