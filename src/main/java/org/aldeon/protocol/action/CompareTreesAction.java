@@ -36,31 +36,33 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
                     Identifier guess_xor = null;
                     //Identifier guess_xor =  arithmetic.xor(val, request.parent_xor)
 
-                        //attempt a lucky guess
-                        core.getStorage().getMessageIdentifierByXor(guess_xor, new Callback<Identifier>() {
-                            @Override
-                            public void call(Identifier val) {
-                                if (val != null) { //msg found = lucky guess successful
-                                    onResponse.call(new LuckyGuessResponse(val));
-                                } else { //there is no XOR match (lucky guess failed) fall back to comparing trees layer by layer
+                    /*
+                    TODO: Take the request.force flag into account before attempting a lucky guess
+                    */
 
-                                    core.getStorage().getIdsAndXorsByParent(request.parent_id, new Callback<Map<Identifier, Identifier>>() {
-                                        @Override
-                                        public void call(Map<Identifier, Identifier> identifierMap) {
-                                            onResponse.call(new ChildrenResponse((HashMap<Identifier, Identifier>)identifierMap));
-                                            }
-                                    }, executor);
-                                }
+                    //attempt a lucky guess
+                    core.getStorage().getMessageIdentifierByXor(guess_xor, new Callback<Identifier>() {
+                        @Override
+                        public void call(Identifier val) {
+                            if (val != null) { //msg found = lucky guess successful
+                                onResponse.call(new LuckyGuessResponse(val));
+                            } else { //there is no XOR match (lucky guess failed) fall back to comparing trees layer by layer
+                                core.getStorage().getIdsAndXorsByParent(request.parent_id, new Callback<Map<Identifier, Identifier>>() {
+                                    @Override
+                                    public void call(Map<Identifier, Identifier> identifierMap) {
+                                        onResponse.call(new ChildrenResponse(identifierMap));
+                                    }
+                                }, executor);
                             }
-                        }, executor);
-
+                        }
+                    }, executor);
                 }
             }, executor );
         } else {    //if client is forcing us to do layer-by-layer cmp
             core.getStorage().getIdsAndXorsByParent(request.parent_id, new Callback<Map<Identifier, Identifier>>() {
                 @Override
                 public void call(Map<Identifier, Identifier> identifierMap) {
-                    onResponse.call(new ChildrenResponse((HashMap<Identifier, Identifier>)identifierMap));
+                    onResponse.call(new ChildrenResponse(identifierMap));
                     }
             }, executor);
         }
