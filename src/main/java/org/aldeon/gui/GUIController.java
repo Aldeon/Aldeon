@@ -11,6 +11,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.aldeon.app.Main;
+import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.gui.controllers.*;
 
 import java.io.InputStream;
@@ -36,6 +38,12 @@ public class GUIController extends Application {
         } catch (Exception ex) {
             Logger.getLogger(GUIController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        Main.getCore().getEventLoop().notify(new AppClosingEvent());
     }
 
     public void changeMode(MouseEvent event) throws Exception{
