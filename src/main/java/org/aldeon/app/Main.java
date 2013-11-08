@@ -1,6 +1,8 @@
 package org.aldeon.app;
 
+import javafx.application.Application;
 import org.aldeon.core.Core;
+import org.aldeon.gui.GUIController;
 import org.aldeon.net.AddressTranslation;
 import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Protocol;
@@ -16,10 +18,13 @@ import java.net.InetAddress;
 
 public class Main {
 
+    private static Core core;
+    public static Core getCore() { return core; }
+
     public static void main(String[] args) throws IOException {
 
         // Instantiate the core
-        Core core = CoreModule.createCore();
+        core = CoreModule.createCore();
 
         // Instantiate the protocol
         Protocol protocol = ProtocolModule.createProtocol(core);
@@ -34,20 +39,16 @@ public class Main {
         core.initSenders();
         core.initReceivers(protocol);
 
+        // Core awaits for the AppClosingEvent to occur. Then it will close.
+        //Launch GUI
+        Application.launch(GUIController.class, (java.lang.String[]) null);
+
         /*
             Now everything should work.
             To see the results, go to:
 
             http://localhost:8080?query={"type":"get_message","id":"CaKjxIm3DbrEmeCsso5hFX8AyagHBrv1UBiSrpN8vjE-"}
          */
-
-
-        // Core awaits for the AppClosingEvent to occur. Then it will close.
-
-        // This should actually be called in GUI
-        System.out.println("Press any key to close...");
-        System.in.read();
-        core.getEventLoop().notify(new AppClosingEvent());
     }
 
 }
