@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-public interface Storage {
+public interface Db {
     void getMessageByIdentifier(Identifier identifier, Callback<Message> callback, Executor executor);
     void putMessage(Message message);
     void dropMessage(Identifier identifier);

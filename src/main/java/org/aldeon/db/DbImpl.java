@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.Executor;
 
-public class DbStub implements Storage {
+public class DbImpl implements Db {
 
     @Override
     public void getMessageByIdentifier(Identifier identifier, final Callback<Message> callback, Executor executor) {
