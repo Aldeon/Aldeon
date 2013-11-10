@@ -3,7 +3,7 @@ package org.aldeon.sync;
 import com.google.common.collect.Sets;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.db.Storage;
+import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.IdentifierImpl;
@@ -34,12 +34,12 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
     public static final int TIMEOUT = 5000;
     private final T peer;
     private final Executor executor;
-    private final Storage storage;
+    private final Db storage;
     private final Sender<T> sender;
 
     private CompareTreesRequest request;
 
-    public BranchSyncTask(T peer, Identifier branch, Identifier xor, Sender<T> sender, Executor executor, Storage storage) {
+    public BranchSyncTask(T peer, Identifier branch, Identifier xor, Sender<T> sender, Executor executor, Db storage) {
 
         this.peer = peer;
         this.executor = executor;
@@ -129,7 +129,7 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
      * @param response
      */
     private void onChildren(final ChildrenResponse response) {
-        storage.getIdsAndXorsByParent(request.parent_id, new Callback<Map<Identifier, Identifier>>() {
+        storage.getIdsAndXorsByParentId(request.parent_id, new Callback<Map<Identifier, Identifier>>() {
             @Override
             public void call(Map<Identifier, Identifier> map) {
 
@@ -148,7 +148,7 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
                         // Same state, do nothing
                     } else {
                         // There is a difference. Let's see if we have a differing branch
-                        storage.getMessageIdentifierByXor(xor, new Callback<Identifier>() {
+                        storage.getMessageIdByXor(xor, new Callback<Identifier>() {
                             @Override
                             public void call(Identifier val) {
 

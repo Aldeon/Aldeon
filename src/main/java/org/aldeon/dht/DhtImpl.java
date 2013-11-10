@@ -62,7 +62,7 @@ public class DhtImpl<T extends IdentifiablePeerAddress> implements Dht<T> {
         }
 
         @Override
-        public Identifier getIdentifier() {
+        public Identifier getMsgIdentifier() {
             return identifier;
         }
     }
@@ -85,25 +85,25 @@ public class DhtImpl<T extends IdentifiablePeerAddress> implements Dht<T> {
 
         @Override
         public Identifiable add(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            ByteBuffer result = arithmetic.add(a.getMsgIdentifier().getByteBuffer(), b.getMsgIdentifier().getByteBuffer());
             return new IdentifiableStub(new IdentifierStub(result));
         }
 
         @Override
         public Identifiable sub(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            ByteBuffer result = arithmetic.add(a.getMsgIdentifier().getByteBuffer(), b.getMsgIdentifier().getByteBuffer());
             return new IdentifiableStub(new IdentifierStub(result));
         }
 
         @Override
         public Identifiable xor(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.xor(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            ByteBuffer result = arithmetic.xor(a.getMsgIdentifier().getByteBuffer(), b.getMsgIdentifier().getByteBuffer());
             return new IdentifiableStub(new IdentifierStub(result));
         }
 
         @Override
         public int compare(Identifiable o1, Identifiable o2) {
-            return arithmetic.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
+            return arithmetic.compare(o1.getMsgIdentifier().getByteBuffer(), o2.getMsgIdentifier().getByteBuffer());
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.aldeon.sync;
 
 import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.db.Storage;
+import org.aldeon.db.Db;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.net.PeerAddress;
@@ -25,9 +25,9 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
     private final GetMessageRequest request;
     private final Executor executor;
     private final Identifier expectedParent;
-    private final Storage storage;
+    private final Db storage;
 
-    public DownloadMessageTask(T peer, Identifier id, Identifier parent, Executor executor, Storage storage) {
+    public DownloadMessageTask(T peer, Identifier id, Identifier parent, Executor executor, Db storage) {
         this.peer = peer;
         this.executor = executor;
         this.expectedParent = parent;
@@ -78,9 +78,9 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
     private void onMessageFound(MessageFoundResponse response) {
         Message msg = response.message;
 
-        if(Identifiers.equal(msg.getIdentifier(), request.id)) {
+        if(Identifiers.equal(msg.getMsgIdentifier(), request.id)) {
             if(expectedParent == null || Identifiers.equal(msg.getParentMessageIdentifier(), expectedParent)) {
-                storage.putMessage(msg);
+                storage.insertMessage(msg);
                 return;
             }
         }

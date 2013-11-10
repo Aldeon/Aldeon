@@ -3,14 +3,14 @@ package org.aldeon.model;
 import org.aldeon.crypt.Signature;
 
 public class MessageImpl implements Message {
-    private final Identifier identifier;
+    private final Identifier msgIdentifier;
     private final Identifier authorIdentifier;
     private final Identifier parentIdentifier;
     private final Signature signature;
     private final String content;
 
     public MessageImpl(Identifier id, Identifier authorId, Identifier parentId, Signature sig, String content) {
-        this.identifier = id;
+        this.msgIdentifier = id;
         this.authorIdentifier = authorId;
         this.parentIdentifier = parentId;
         this.signature = sig;
@@ -38,7 +38,7 @@ public class MessageImpl implements Message {
     }
 
     @Override
-    public Identifier getIdentifier() {
-        return identifier;
+    public Identifier getMsgIdentifier() {
+        return msgIdentifier;
     }
 }
