@@ -81,7 +81,7 @@ public class DhtTimeoutDecorator<T extends TemporaryIdentifiablePeerAddress> imp
         }
 
         @Override
-        public Identifier getIdentifier() {
+        public Identifier getMsgIdentifier() {
             return null;
         }
     }

@@ -2,10 +2,10 @@ package org.aldeon.core;
 
 
 import com.google.inject.Inject;
+import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
-import org.aldeon.db.Storage;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
@@ -33,7 +33,7 @@ public class CoreImpl implements Core {
     private static final Logger log = LoggerFactory.getLogger(CoreImpl.class);
 
     private final EventLoop eventLoop;
-    private final Storage storage;
+    private final Db storage;
     private final ExecutorService clientSideExecutor;
     private final ExecutorService serverSideExecutor;
 
@@ -41,7 +41,7 @@ public class CoreImpl implements Core {
     private final Map<Class, Receiver> receivers;
 
     @Inject
-    public CoreImpl(Storage storage, EventLoop eventLoop) {
+    public CoreImpl(Db storage, EventLoop eventLoop) {
         this.storage = storage;
         this.eventLoop = eventLoop;
         this.clientSideExecutor = Executors.newFixedThreadPool(2);
@@ -76,7 +76,7 @@ public class CoreImpl implements Core {
     }
 
     @Override
-    public Storage getStorage() {
+    public Db getStorage() {
         return storage;
     }
 

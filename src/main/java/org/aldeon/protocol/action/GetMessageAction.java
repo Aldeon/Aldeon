@@ -28,7 +28,7 @@ public class GetMessageAction implements Action<GetMessageRequest> {
             the database has the result.
          */
 
-        core.getStorage().getMessageByIdentifier(request.id, new Callback<Message>() {
+        core.getStorage().getMessageById(request.id, new Callback<Message>() {
 
             /*
                 This callback is called when the database completes the search
@@ -42,7 +42,7 @@ public class GetMessageAction implements Action<GetMessageRequest> {
                     So, did we find the message?
                  */
 
-                if(val == null) {
+                if (val == null) {
                     // Nope, message not found.
                     onResponse.call(new MessageNotFoundResponse());
                 } else {

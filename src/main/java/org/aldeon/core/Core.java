@@ -1,9 +1,9 @@
 package org.aldeon.core;
 
+import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
-import org.aldeon.db.Storage;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
@@ -19,7 +19,7 @@ public interface Core {
      * Returns the global message storace class.
      * @return
      */
-    Storage getStorage();
+    Db getStorage();
 
     /**
      * Returns the main event loop used to communicate between UI and program logic

@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 public interface Db {
-    void getMessageByIdentifier(Identifier identifier, Callback<Message> callback, Executor executor);
-    void putMessage(Message message);
-    void dropMessage(Identifier identifier);
+    void getMessageById(Identifier msgId, Callback<Message> callback, Executor executor);
+    void insertMessage(Message message);
+    void deleteMessage(Identifier msgId);
 
-    void getMessageXorByIdentifier(Identifier id, Callback<Identifier> callback, Executor executor);
-    void getMessageIdentifierByXor(Identifier xor, Callback<Identifier> callback, Executor executor);
-    void getMessagesByParent(Identifier parent, Callback<Set<Identifier>> callback, Executor executor);
-    void getIdsAndXorsByParent(Identifier parent, Callback<Map<Identifier, Identifier>> callback, Executor executor);
+    void getMessageXorById(Identifier msgId, Callback<Identifier> callback, Executor executor);
+    void getMessageIdByXor(Identifier msgXor, Callback<Identifier> callback, Executor executor);
+    void getMessagesByParentId(Identifier parentId, Callback<Set<Identifier>> callback, Executor executor);
+    void getIdsAndXorsByParentId(Identifier parentId, Callback<Map<Identifier, Identifier>> callback, Executor executor);
 }
