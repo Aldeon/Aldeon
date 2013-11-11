@@ -17,11 +17,15 @@
       <StackPane fx:id="idCreator" onMouseClicked="#createId">
         <children>
           <Rectangle arcHeight="10.0" arcWidth="10.0" fill="#222222" height="135.0" width="90.0" />
-          <Text StackPane.alignment="TOP_CENTER">
-            <StackPane.margin>
-              <Insets top="20.0" />
-            </StackPane.margin>
-          </Text>
+            <Text StackPane.alignment="TOP_CENTER">
+                <StackPane.margin>
+                   <Insets top="20.0"/>
+                </StackPane.margin>
+                            New ID
+            </Text>
+            <Text StackPane.alignment="CENTER">
+                +
+            </Text>
           <Text StackPane.alignment="CENTER" />
         </children>
       </StackPane>
