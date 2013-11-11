@@ -27,3 +27,7 @@ target/
 build
 out
 gen
+
+#Aldeon
+aldeon.db
+
