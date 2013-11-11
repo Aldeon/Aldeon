@@ -12,21 +12,7 @@
 
 <BorderPane fx:id="main" prefHeight="700.0" prefWidth="796.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.MainController">
     <center>
-        <GridPane fx:id="content">
-            <children>
-                <ImageView fitHeight="700.0" fitWidth="699.0" pickOnBounds="true" preserveRatio="false" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <image>
-                        <Image url="@main.png" />
-                    </image>
-                </ImageView>
-            </children>
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-        </GridPane>
+        <Pane fx:id="contents"/>
     </center>
     <left>
         <VBox fx:id="sidebar" prefHeight="800.0" prefWidth="97.0">

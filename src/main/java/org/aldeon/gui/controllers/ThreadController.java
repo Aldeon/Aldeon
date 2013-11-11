@@ -116,10 +116,6 @@ public class ThreadController extends BorderPane implements Initializable {
         this.root=root;
     }
 
-    public void changeMode(MouseEvent event) throws Exception{
-        root.changeMode(event);
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         threadCount=1;

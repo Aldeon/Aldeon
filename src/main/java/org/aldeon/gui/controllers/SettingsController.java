@@ -26,10 +26,6 @@ public class SettingsController  extends BorderPane implements Initializable {
     private GUIController root;
     private int optCount;
 
-    public void changeMode(MouseEvent event) throws Exception{
-        root.changeMode(event);
-    }
-
     public void setRoot(GUIController root){
         this.root=root;
     }

@@ -29,10 +29,6 @@ public class FriendsController  extends BorderPane implements Initializable {
     private GUIController root;
     private int idCount;
 
-    public void changeMode(MouseEvent event) throws Exception{
-        root.changeMode(event);
-    }
-
     public void setRoot(GUIController root){
         this.root=root;
     }
