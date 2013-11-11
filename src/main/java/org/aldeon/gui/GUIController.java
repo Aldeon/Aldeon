@@ -46,37 +46,6 @@ public class GUIController extends Application {
         Main.getCore().getEventLoop().notify(new AppClosingEvent());
     }
 
-    public void changeMode(MouseEvent event) throws Exception{
-        String target="";
-        if(event.getTarget().getClass()!=StackPane.class){
-            if(event.getTarget().getClass()==ImageView.class){
-                target=(((ImageView)event.getTarget()).getParent()).getId();
-            }
-            if(event.getTarget().getClass()==Text.class){
-                target=(((Text)event.getTarget()).getParent()).getId();
-            }
-        }else{
-            target=((StackPane)event.getTarget()).getId();
-        }
-        switch(target){
-            case "Identities":
-                IdentityController idc = (IdentityController) changeFxml("Identities.fxml");
-                idc.setRoot(this);
-                break;
-            case "Threads":
-                ThreadController thc = (ThreadController) changeFxml("Threads.fxml");
-                thc.setRoot(this);
-                break;
-            case "Friends":
-                FriendsController frc = (FriendsController) changeFxml("Friends.fxml");
-                frc.setRoot(this);
-                break;
-            case "Settings":
-                SettingsController stc = (SettingsController) changeFxml("Settings.fxml");
-                stc.setRoot(this);
-                break;
-        }
-    }
     private void launchMain() {
         try {
             MainController profile = (MainController) changeFxml("Main.fxml");
