@@ -3,6 +3,7 @@ package org.aldeon.gui.controllers;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -20,7 +21,7 @@ import java.util.ResourceBundle;
 public class MainController extends BorderPane implements Initializable {
     public VBox sidebar;
     public StackPane logo;
-    public Pane contents;
+    public ScrollPane contents;
     public StackPane Identities;
     public StackPane Threads;
     public StackPane Friends;
@@ -28,9 +29,10 @@ public class MainController extends BorderPane implements Initializable {
     private GUIController root;
 
     private void changeFxml(String pathToFxml) {
-        contents.getChildren().clear();
+       // contents.getChildren().clear();
         try {
-            contents.getChildren().add((Node)FXMLLoader.load(getClass().getResource(pathToFxml)));
+            //contents.getChildren().add((Node)FXMLLoader.load(getClass().getResource(pathToFxml)));
+            contents.setContent((Node)FXMLLoader.load(getClass().getResource(pathToFxml)));
         } catch (IOException e) {
             //invalid path
             e.printStackTrace();
@@ -55,7 +57,7 @@ public class MainController extends BorderPane implements Initializable {
                 changeFxml("../Identities.fxml");
                 break;
             case "Threads":
-                changeFxml("../Threads.fxml");
+                changeFxml("../TopicMsgs.fxml");
                 break;
             case "Friends":
                 changeFxml("../Friends.fxml");

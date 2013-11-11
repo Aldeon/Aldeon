@@ -1,22 +1,25 @@
 package org.aldeon.gui.controllers;
 
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.aldeon.gui.GUIController;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -37,6 +40,24 @@ public class ThreadController extends BorderPane implements Initializable {
     private GUIController root;
     private int threadCount;
 
+    private String weirdText = "1. Przecz skrżytało pogaństwo a ludzie myślili są prozność? \n" +
+            "2. Przystajali są krolowie ziemszczy a książęta seszli są sie na gromadę przeciwo Gospodnu i przeciwo \n" +
+            "jego pomazańcu. \n" +
+            "3. Roztargajmy jich przekowy i srzucimy s nas jarzmo jich. \n" +
+            "4. Jen przebywa na niebiesiech, pośmieje sie jim, i Gospodzin zwala śmiech w nich. \n" +
+            "5. Tegdy mołwić będzie k nim w gniewie swojem i w rosierdziu swojem zamąci je.  2\n" +
+            "6. Ale ja postawion jeśm krol od niego na Syjon, gorze świętej jego, \n" +
+            "przepowiadaję kaźń jego. \n" +
+            "7. Gospodzin rzekł ku mnie: Syn moj jeś ty, ja dzisia porodził jeśm cie. \n" +
+            "8. Pożędaj ote mnie, i dam ci pogany w dziedzicstwo twoje i w trzymanie twoje kraje ziemskie. \n" +
+            "9. Włodać będziesz nad nimi w mietle żelaznej a jako ssąd zdunowy \n" +
+            "rozbijesz je. \n" +
+            "10. A już, krolowie, rozumiejcie, nauczcie sie, cso sądzicie ziemię. \n" +
+            "11. Służycie Bogu w strasze i wiesielcie sie jemu se drżenim. \n" +
+            "12. Przyjmicie pokaźnienie, bo snadź rozgniewa sie Gospodzin, i \n" +
+            "zginiecie z drogi prawej. \n" +
+            "13. Gdy rozżgą na krotce gniew jego, błogosławieni wszystcy, jiż imają w niem pwę";
+
     public void createThread(MouseEvent event){
         content.add(createField(threadName.getText(),false,getColorForId()),0,threadCount);
         threadName.setText("");
@@ -46,22 +67,52 @@ public class ThreadController extends BorderPane implements Initializable {
         return Color.web("#ffffff");        //Based on a fair dice roll
     }
 
+    private Parent constructResponse(String text) {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("../Resp.fxml"));
+        Parent parent=null;
+        try {
+            parent = (Parent) loader.load(getClass().getResource("../Resp.fxml").openStream());
+        } catch (IOException e) {
+        }
+        ResponseController rc = (ResponseController) loader.<ResponseController>getController();
+        rc.setMessage(text, 0);
+
+        return parent;
+    }
+
     public void inspectThread(Text header){   //Root message number to get data from database
-        GridPane pane = new GridPane();
+        GridPane gpane = new GridPane();
+        //ListView pane = new ListView();
+        FlowPane pane = new FlowPane();
+        //pane.setGridLinesVisible(true);
         threadCount=0;
-        pane.add(createField(header.getText(),true,getColorForId()),0,threadCount);
-        pane.add(createResponse("RESP1", "USER1"),0,threadCount);     //Add all responses from database
-        pane.add(createResponse("RESP2", "USER1"),0,threadCount);
-        pane.add(createResponse("RESP3", "USER1"),0,threadCount);
+        //pane.add(createField(header.getText(),true,getColorForId()),0,threadCount);
+        //pane.add(createResponse("RESP1", "USER1"),0,threadCount);     //Add all responses from database
+        //pane.add(createResponse("RESP2", "USER1"),0,threadCount);
+        //pane.add(createResponse("RESP3", "USER1"),0,threadCount);
+
+        pane.getChildren().add(constructResponse(weirdText));
+        pane.getChildren().add(constructResponse(weirdText));
+        ScrollPane sp = new ScrollPane();
+        sp.setContent(pane);
+        sp.setFitToHeight(true);
+        sp.setFitToWidth(true);
+        gpane.add(sp, 0, 1);
+        //pane.add(constructResponse(weirdText),0,threadCount++);
+        //pane.add(constructResponse(weirdText),0,threadCount++);
+
         pane.setVgap(20);
         pane.setHgap(20);
         pane.setPadding(new Insets(20, 0, 0, 10));
         pane.setId("content");
-        content=pane;
+        content=gpane;
         main.setCenter(content);
     }
 
     public StackPane createResponse(String msg, String user){
+
+
         StackPane resp = new StackPane();
         Rectangle field = new Rectangle(350,50);
         field.setArcHeight(10);

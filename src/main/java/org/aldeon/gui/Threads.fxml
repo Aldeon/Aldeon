@@ -11,7 +11,7 @@
 <?import java.net.URL?>
 <BorderPane fx:id="main" prefHeight="700.0" prefWidth="796.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.ThreadController">
   <center>
-    <GridPane fx:id="content" depthTest="DISABLE" hgap="20.0" vgap="20.0">
+    <GridPane fx:id="content" depthTest="DISABLE" gridLinesVisible="true" hgap="20.0" vgap="20.0">
       <children>
         <StackPane fx:id="threadCreator" prefHeight="50.0" prefWidth="450.0">
           <TextField fx:id="threadName" prefWidth="120.0" StackPane.alignment="CENTER_LEFT">
@@ -19,13 +19,11 @@
               <Insets left="20.0" right="80.0" />
             </StackPane.margin>
           </TextField>
-
-            <Button fx:id="createButton" onMouseClicked="#createThread" StackPane.alignment="CENTER_RIGHT">
-                <StackPane.margin>
-                    <Insets right="10.0" />
-                </StackPane.margin>
-                Create Thread
-            </Button>
+          <Button fx:id="createButton" onMouseClicked="#createThread" StackPane.alignment="CENTER_RIGHT">
+            <StackPane.margin>
+              <Insets right="10.0" />
+            </StackPane.margin>
+          </Button>
           <padding>
             <Insets />
           </padding>
