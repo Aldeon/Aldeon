@@ -4,14 +4,13 @@ import org.aldeon.model.ByteSource;
 
 import java.nio.ByteBuffer;
 
-public interface Hash {
+public interface Signer {
     void clear();
 
     void add(ByteBuffer buffer);
     void add(ByteSource byteSource);
     void add(byte[] bytes);
 
-    ByteBuffer calculate();
-
-    int length();
+    Signature sign(Key key);
+    boolean verify(Key key, Signature signature);
 }

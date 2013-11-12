@@ -1,35 +1,15 @@
 package org.aldeon.crypt;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java.nio.ByteBuffer;
 
-import java.security.*;
+public interface KeyGen {
 
-public class KeyGen {
-    static{
-        Security.addProvider(new BouncyCastleProvider());
-    }
+    KeyPair generate();
+    Key parsePublicKey(ByteBuffer data) throws IllegalArgumentException;
+    Key parsePrivateKey(ByteBuffer data) throws IllegalArgumentException;
 
-
-    public static KeyPair generateKeyPair(SecureRandom seed){
-        try{
-            KeyPairGenerator keyGen= KeyPairGenerator.getInstance("RSA","BC");
-            keyGen.initialize(1024,seed);           //Length of RSA key
-            return keyGen.generateKeyPair();
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return null;
-    }
-
-    public static KeyPair generateKeyPair(){
-        try{
-            SecureRandom seed = SecureRandom.getInstance("SHA1PRNG");
-            KeyPairGenerator keyGen= KeyPairGenerator.getInstance("RSA","BC");
-            keyGen.initialize(1024,seed);           //Length of RSA key
-            return keyGen.generateKeyPair();
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return null;
+    public class KeyPair {
+        public Key publicKey;
+        public Key privateKey;
     }
 }

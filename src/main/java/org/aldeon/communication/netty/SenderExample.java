@@ -54,7 +54,7 @@ public class SenderExample {
     }
 
     /**
-     * Example implementation of IpPeerAddress.
+     * ExampleEncDec implementation of IpPeerAddress.
      * IpPeerAddress is an interface for peers reachable through an IP address and port.
      */
     public static class SomeAddress implements IpPeerAddress {

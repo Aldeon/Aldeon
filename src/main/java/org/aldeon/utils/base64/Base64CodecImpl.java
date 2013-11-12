@@ -6,7 +6,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
 
 /**
- * Example base64 codec.
+ * ExampleEncDec base64 codec.
  *
  * ACHTUNG: the '=' char is replaced with '-'.
  * This way the identifiers are not escaped when sent in json, so we avoid
