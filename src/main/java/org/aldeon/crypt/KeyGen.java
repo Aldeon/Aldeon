@@ -1,8 +1,15 @@
 package org.aldeon.crypt;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import java.security.*;
 
 public class KeyGen {
+    static{
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
+
     public static KeyPair generateKeyPair(SecureRandom seed){
         try{
             KeyPairGenerator keyGen= KeyPairGenerator.getInstance("RSA","BC");

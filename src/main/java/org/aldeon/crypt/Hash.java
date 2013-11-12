@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Hash {
-    public static ByteBuffer createHashFromByteBuffer(ByteBuffer data) {
+    public static ByteBuffer getHashFromByteBuffer(ByteBuffer data) {
         MessageDigest sha256 = null;
         try {
             sha256 = MessageDigest.getInstance("SHA-256");
@@ -15,5 +15,13 @@ public class Hash {
         }finally {
             return ByteBuffer.wrap(sha256.digest(data.array()));
         }
+    }
+    public static String getHexStringFromHash(ByteBuffer hash){
+        byte hashBytes[]=hash.array();
+        StringBuilder hexString = new StringBuilder();
+        for (int i: hashBytes) {
+            hexString.append(Integer.toHexString(0XFF & i));
+        }
+        return new String(hexString);
     }
 }
