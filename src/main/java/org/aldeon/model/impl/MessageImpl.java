@@ -1,6 +1,8 @@
-package org.aldeon.model;
+package org.aldeon.model.impl;
 
 import org.aldeon.crypt.Signature;
+import org.aldeon.model.Identifier;
+import org.aldeon.model.Message;
 
 public class MessageImpl implements Message {
     private final Identifier msgIdentifier;

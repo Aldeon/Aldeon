@@ -5,11 +5,11 @@ import org.aldeon.crypt.SignatureImpl;
 import org.aldeon.db.queries.Queries;
 import org.aldeon.events.Callback;
 import org.aldeon.model.*;
+import org.aldeon.model.impl.MessageImpl;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.base64.MiGBase64Impl;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -43,12 +43,6 @@ public class DbImpl implements Db {
         prepareDbConnection();
     }
 
-    public static ByteBuffer randomBuffer(int size) {
-        byte[] b = new byte[size];
-        new Random().nextBytes(b);
-        return ByteBuffer.wrap(b);
-    }
-
     @Override
     public void getMessageById(Identifier msgId, final Callback<Message> callback, Executor executor) {
         if(msgId == null || connection == null || base64Codec == null) {
@@ -61,19 +55,18 @@ public class DbImpl implements Db {
             setBase64InPreparedStatement(1, msgId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
-            Identifier msgIdentifier = new IdentifierImpl(result.getString("msg_id"), false);
-            Identifier authorIdentifier = new IdentifierImpl(result.getString("author_id"), false);
-            Identifier parentIdentifier = new IdentifierImpl(result.getString("parent_msg_id"), false);
+            Identifier msgIdentifier = Id.fromBase64(result.getString("msg_id"));
+            Identifier authorIdentifier = Id.fromBase64(result.getString("author_id"));
+            Identifier parentIdentifier = Id.fromBase64(result.getString("parent_msg_id"));
             Signature signature = new SignatureImpl(result.getString("msg_sig"), false);
             String content = result.getString("content");
 
             Message message = new MessageImpl(msgIdentifier, authorIdentifier, parentIdentifier, signature, content);
             callback.call(message);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("ERROR: Error in getMessageById.");
             e.printStackTrace();
             callback.call(null);
-            return;
         }
     }
 
@@ -130,10 +123,10 @@ public class DbImpl implements Db {
             ResultSet result = preparedStatement.executeQuery();
 
             //TODO: is it always only one record?
-            Identifier msgId = new IdentifierImpl(result.getString("msg_id"), false);
+            Identifier msgId = Id.fromBase64(result.getString("msg_id"));
 
             callback.call(msgId);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("ERROR: Error in getMessageIdByXor.");
             e.printStackTrace();
             callback.call(null);
@@ -153,10 +146,10 @@ public class DbImpl implements Db {
             setBase64InPreparedStatement(1, msgId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
-            Identifier nodeXor = new IdentifierImpl(result.getString("node_xor"), false);
+            Identifier nodeXor = Id.fromBase64(result.getString("node_xor"));
 
             callback.call(nodeXor);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("ERROR: Error in getMessageXorById.");
             e.printStackTrace();
             callback.call(null);
@@ -179,12 +172,12 @@ public class DbImpl implements Db {
             Set<Identifier> children = new HashSet<>();
 
             while (result.next()) {
-                Identifier msgIdentifier = new IdentifierImpl(result.getString("msg_id"), false);
+                Identifier msgIdentifier = Id.fromBase64(result.getString("msg_id"));
                 children.add(msgIdentifier);
             }
 
             callback.call(children);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("ERROR: Error in getMessagesByParentId.");
             e.printStackTrace();
             callback.call(null);
@@ -204,16 +197,16 @@ public class DbImpl implements Db {
             setBase64InPreparedStatement(1, parentId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
-            Map<Identifier, Identifier> idsAndXors = new IdentityHashMap<>();
+            Map<Identifier, Identifier> idsAndXors = new HashMap<>();
 
             while (result.next()) {
-                Identifier msgIdentifier = new IdentifierImpl(result.getString("msg_id"), false);
-                Identifier nodeXor = new IdentifierImpl(result.getString("node_xor"), false);
+                Identifier msgIdentifier = Id.fromBase64(result.getString("msg_id"));
+                Identifier nodeXor = Id.fromBase64(result.getString("node_xor"));
                 idsAndXors.put(msgIdentifier, nodeXor);
             }
 
             callback.call(idsAndXors);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("ERROR: Error in getIdsAndXorsByParentId.");
             e.printStackTrace();
             callback.call(null);

@@ -5,8 +5,8 @@ import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
+import org.aldeon.model.Id;
 import org.aldeon.model.Identifier;
-import org.aldeon.model.IdentifierImpl;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
@@ -15,16 +15,10 @@ import org.aldeon.protocol.response.BranchInSyncResponse;
 import org.aldeon.protocol.response.ChildrenResponse;
 import org.aldeon.protocol.response.LuckyGuessResponse;
 import org.aldeon.protocol.response.MessageNotFoundResponse;
-import org.aldeon.utils.helpers.Identifiers;
-import org.aldeon.utils.math.Arithmetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTask<T> {
@@ -142,9 +136,9 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
                 for(final Identifier id: Sets.intersection(storedMap.keySet(), remoteMap.keySet())) {
 
-                    final Identifier xor = Identifiers.xor(storedMap.get(id), remoteMap.get(id));
+                    final Identifier xor = Id.xor(storedMap.get(id), remoteMap.get(id));
 
-                    if(Identifiers.isEmpty(xor)) {
+                    if(Id.isEmpty(xor)) {
                         // Same state, do nothing
                     } else {
                         // There is a difference. Let's see if we have a differing branch
@@ -154,7 +148,7 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
                                 if(val == null) {
                                     // we must go deeper
-                                    OutboundRequestTask<T> nestedTask = new BranchSyncTask<T>(peer, id, xor, sender, executor, storage);
+                                    OutboundRequestTask<T> nestedTask = new BranchSyncTask<>(peer, id, xor, sender, executor, storage);
                                     sender.addTask(nestedTask);
 
                                 } else {

@@ -1,4 +1,6 @@
-package org.aldeon.model;
+package org.aldeon.model.impl;
+
+import org.aldeon.model.ByteSource;
 
 import java.nio.ByteBuffer;
 
