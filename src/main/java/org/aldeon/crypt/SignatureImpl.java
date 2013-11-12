@@ -1,6 +1,6 @@
 package org.aldeon.crypt;
 
-import org.aldeon.model.FixedSizeImmutableByteBufferSource;
+import org.aldeon.model.impl.FixedSizeImmutableByteBufferSource;
 import org.aldeon.utils.base64.MiGBase64Impl;
 
 import java.nio.ByteBuffer;
