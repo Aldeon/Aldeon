@@ -7,20 +7,16 @@ import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
-import org.aldeon.core.events.TopicAddedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.DhtImpl;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
-import org.aldeon.events.Callback;
-import org.aldeon.events.CallbackAndExecutor;
 import org.aldeon.events.EventLoop;
 import org.aldeon.net.Ipv4PeerAddress;
 import org.aldeon.net.Ipv6PeerAddress;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.protocol.Protocol;
 import org.aldeon.utils.math.Arithmetic;
 import org.aldeon.utils.math.ByteBufferArithmetic;
 import org.slf4j.Logger;
@@ -69,12 +65,6 @@ public class CoreImpl implements Core {
 
         log.debug("Initialized the core.");
 
-        registerEventCallbacks();
-    }
-
-    private void registerEventCallbacks() {
-        getEventLoop().assign(TopicAddedEvent.class, new CallbackAndExecutor<>(new TopicManagerCallback(this), clientSideExecutor()));
-
         getEventLoop().assign(AppClosingEvent.class, new ACB<AppClosingEvent>(clientSideExecutor()) {
             @Override
             public void react(AppClosingEvent val) {
@@ -91,7 +81,7 @@ public class CoreImpl implements Core {
 
     @Override
     public InterestTracker getInterestTracker() {
-        return null;//TODO
+        return null; // TODO
     }
 
     @Override
@@ -144,6 +134,11 @@ public class CoreImpl implements Core {
     @Override
     public void initReceivers() {
         AsyncCallback<InboundRequestTask> callback = new ACB<InboundRequestTask>(serverSideExecutor()) {
+
+            /*
+                Notify all listeners that the new request arrived
+             */
+
             @Override
             protected void react(InboundRequestTask val) {
                 getEventLoop().notify(new InboundRequestEvent(val));

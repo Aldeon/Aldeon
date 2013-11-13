@@ -4,8 +4,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.aldeon.communication.netty.NettyModule;
+import org.aldeon.core.events.TopicAddedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.db.DbImpl;
+import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
+import org.aldeon.events.CallbackAndExecutor;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.EventLoopImpl;
 import org.aldeon.nat.utils.NoAddressTranslation;
@@ -15,6 +19,7 @@ import org.aldeon.utils.net.PortImpl;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.Executor;
 
 public class CoreModule extends AbstractModule {
 
@@ -35,16 +40,17 @@ public class CoreModule extends AbstractModule {
         Injector injector = Guice.createInjector(new CoreModule());
         Core core = injector.getInstance(Core.class);
 
-        setup(core);
+        setupNetworking(core);
+        setupCallbacks(core);
 
         return core;
     }
 
     /**
-     * Perform standard setup tasks
+     * Perform the networking-related tasks
      * @param core
      */
-    private static void setup(Core core) {
+    private static void setupNetworking(Core core) {
         try {
             // Decide how to translate addresses (DEBUG: UPnP disabled for now)
             AddressTranslation translation = null;
@@ -58,6 +64,27 @@ public class CoreModule extends AbstractModule {
         } catch (UnknownHostException e) {
             e.printStackTrace();// This should never happen
         }
+    }
+
+    /**
+     * Register the callbacks
+     * @param core
+     */
+    private static void setupCallbacks(Core core) {
+
+        // For client-related tasks we use a clientSideExecutor
+        Executor cse = core.clientSideExecutor();
+
+        /*
+            Here go all the callbacks we need
+         */
+
+        // topic added
+        core.getEventLoop().assign(TopicAddedEvent.class, async(new TopicAddedCallback(core), cse));
+        // user added
+        // topic removed
+        // settings updated
+        // lots of other shizzle-wizzle
     }
 
     /**
@@ -77,5 +104,11 @@ public class CoreModule extends AbstractModule {
      */
     public static void setInstance(Core core) {
         CoreModule.core = core;
+    }
+
+    // --- helper methods -------------------------------------
+
+    private static <T> AsyncCallback<T> async(Callback<T> callback, Executor executor) {
+        return new CallbackAndExecutor<T>(callback, executor);
     }
 }

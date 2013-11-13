@@ -3,7 +3,6 @@ package org.aldeon.communication.netty;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.ACB;
-import org.aldeon.events.Callback;
 import org.aldeon.nat.utils.NoAddressTranslation;
 import org.aldeon.net.AddressTranslation;
 import org.aldeon.net.IpPeerAddress;

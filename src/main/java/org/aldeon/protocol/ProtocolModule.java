@@ -12,7 +12,7 @@ public class ProtocolModule extends AbstractModule {
 
     }
 
-    public static Protocol createProtocol() {
+    private static Protocol createProtocol() {
         return new ProtocolImpl();
     }
 

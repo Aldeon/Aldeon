@@ -12,7 +12,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.AsyncCallback;
-import org.aldeon.events.Callback;
 import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
@@ -20,8 +19,6 @@ import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.Executor;
 
 public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
@@ -48,7 +45,7 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
                 try {
                     Request req = decoder.convert(msg);
                     //TODO: implement proper address
-                    final Task t = new Task(ctx, callback.getExecutor(), req, null, encoder);
+                    final Task t = new Task(ctx, req, null, encoder);
                     log.info("Dispatched a task to handle request " + req);
                     callback.call(t);
 
@@ -61,7 +58,7 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
                 writeBadRequest(ctx);
             }
         } else {
-            log.warn("No callback or executor available for incoming request, writing (500) SERVER ERROR");
+            log.warn("No callback available for incoming request, writing (500) SERVER ERROR");
             writeServerError(ctx);
         }
     }
@@ -94,15 +91,13 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
         private final ChannelHandlerContext ctx;
         private final Converter<Response, FullHttpResponse> encoder;
         private final Request request;
-        private final Executor executor;
         private final IpPeerAddress address;
         private boolean responseSent = false;
 
-        public Task(ChannelHandlerContext ctx, Executor executor, Request request, IpPeerAddress address, Converter<Response, FullHttpResponse> encoder) {
+        public Task(ChannelHandlerContext ctx, Request request, IpPeerAddress address, Converter<Response, FullHttpResponse> encoder) {
             this.ctx = ctx;
             this.request = request;
             this.encoder = encoder;
-            this.executor = executor;
             this.address = address;
         }
 
@@ -135,11 +130,6 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
         @Override
         public void discard() {
             ctx.close();
-        }
-
-        @Override
-        public Executor getExecutor() {
-            return executor;
         }
     }
 }

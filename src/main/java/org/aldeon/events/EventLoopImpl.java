@@ -4,8 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
-import java.util.concurrent.Executor;
-
 public class EventLoopImpl implements EventLoop {
 
     private SetMultimap<Class, AsyncCallback> callbacks;

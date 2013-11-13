@@ -7,7 +7,6 @@ import org.aldeon.dht.Dht;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.protocol.Protocol;
 
 import java.util.concurrent.Executor;
 
