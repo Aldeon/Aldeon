@@ -63,8 +63,7 @@ public interface Core {
     void initSenders();
 
     /**
-     * Initializes all the receivers, sets them to return answers according to a specified protocol.
-     * @param protocol
+     * Initializes all the receivers. Incoming messages will be registered as IncomingMessageEvent.
      */
-    void initReceivers(Protocol protocol);
+    void initReceivers();
 }

@@ -6,12 +6,16 @@ import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.core.events.AppClosingEvent;
+import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.core.events.TopicAddedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.DhtImpl;
 import org.aldeon.dht.InterestTracker;
+import org.aldeon.events.ACB;
+import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
+import org.aldeon.events.CallbackAndExecutor;
 import org.aldeon.events.EventLoop;
 import org.aldeon.net.Ipv4PeerAddress;
 import org.aldeon.net.Ipv6PeerAddress;
@@ -69,13 +73,14 @@ public class CoreImpl implements Core {
     }
 
     private void registerEventCallbacks() {
-        getEventLoop().assign(TopicAddedEvent.class, new TopicManagerCallback(this), clientSideExecutor());
-        getEventLoop().assign(AppClosingEvent.class, new Callback<AppClosingEvent>() {
+        getEventLoop().assign(TopicAddedEvent.class, new CallbackAndExecutor<>(new TopicManagerCallback(this), clientSideExecutor()));
+
+        getEventLoop().assign(AppClosingEvent.class, new ACB<AppClosingEvent>(clientSideExecutor()) {
             @Override
-            public void call(AppClosingEvent val) {
+            public void react(AppClosingEvent val) {
                 close();
             }
-        }, clientSideExecutor());
+        });
     }
 
     @Override
@@ -137,11 +142,16 @@ public class CoreImpl implements Core {
     }
 
     @Override
-    public void initReceivers(Protocol protocol) {
-        Callback<InboundRequestTask> callback = new ResponderCallback(protocol, serverSideExecutor());
+    public void initReceivers() {
+        AsyncCallback<InboundRequestTask> callback = new ACB<InboundRequestTask>(serverSideExecutor()) {
+            @Override
+            protected void react(InboundRequestTask val) {
+                getEventLoop().notify(new InboundRequestEvent(val));
+            }
+        };
 
         for(Receiver receiver: receivers.values()) {
-            receiver.setCallback(callback, serverSideExecutor());
+            receiver.setCallback(callback);
             receiver.start();
         }
     }

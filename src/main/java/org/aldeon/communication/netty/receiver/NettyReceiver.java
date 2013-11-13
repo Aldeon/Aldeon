@@ -16,7 +16,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.task.InboundRequestTask;
-import org.aldeon.events.Callback;
+import org.aldeon.events.AsyncCallback;
 import org.aldeon.net.AddressTranslation;
 import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Request;
@@ -24,8 +24,6 @@ import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.Executor;
 
 /**
  * Netty server implementation. Handles incoming transmissions, parses
@@ -39,8 +37,7 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
     private ServerBootstrap server;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
-    private Callback<InboundRequestTask<IpPeerAddress>> callback = null;
-    private Executor executor;
+    private AsyncCallback<InboundRequestTask<IpPeerAddress>> callback = null;
 
     public NettyReceiver(
             AddressTranslation addressTranslation,
@@ -74,7 +71,7 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
                 p.addLast("encoder",    new HttpResponseEncoder());
 
                 // request handling
-                p.addLast("handler",    new ReceiverHandler(decoder, encoder, executor, callback));
+                p.addLast("handler",    new ReceiverHandler(decoder, encoder, callback));
 
                 log.info("Created a pipeline for incoming request");
             }
@@ -96,8 +93,7 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
     }
 
     @Override
-    public void setCallback(Callback<InboundRequestTask<IpPeerAddress>> callback, Executor executor) {
+    public void setCallback(AsyncCallback<InboundRequestTask<IpPeerAddress>> callback) {
         this.callback = callback;
-        this.executor = executor;
     }
 }

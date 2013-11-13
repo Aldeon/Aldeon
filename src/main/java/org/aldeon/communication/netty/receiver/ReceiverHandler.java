@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
 import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Request;
@@ -28,36 +29,29 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
     private final Converter<FullHttpRequest, Request> decoder;
     private final Converter<Response, FullHttpResponse> encoder;
-    private final Executor executor;
-    private final Callback<InboundRequestTask<IpPeerAddress>> callback;
+    private final AsyncCallback<InboundRequestTask<IpPeerAddress>> callback;
 
     public ReceiverHandler(
             Converter<FullHttpRequest, Request> decoder,
             Converter<Response, FullHttpResponse> encoder,
-            Executor executor,
-            Callback<InboundRequestTask<IpPeerAddress>> callback
+            AsyncCallback<InboundRequestTask<IpPeerAddress>> callback
     ) {
         this.decoder = decoder;
         this.encoder = encoder;
-        this.executor = executor;
         this.callback = callback;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
-        if(callback != null && executor != null) {
+        if(callback != null) {
             if(msg.getDecoderResult().isSuccess()) {
                 try {
                     Request req = decoder.convert(msg);
                     //TODO: implement proper address
-                    final Task t = new Task(ctx, executor, req, null, encoder);
+                    final Task t = new Task(ctx, callback.getExecutor(), req, null, encoder);
                     log.info("Dispatched a task to handle request " + req);
-                    executor.execute(new Runnable(){
-                        @Override
-                        public void run() {
-                            callback.call(t);
-                        }
-                    });
+                    callback.call(t);
+
                 } catch (ConversionException e) {
                     log.info("Invalid request received, writing (400) BAD REQUEST", e);
                     writeBadRequest(ctx);

@@ -1,5 +1,6 @@
 package org.aldeon.communication.nio.events;
 
+import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Event;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.EventLoopImpl;
@@ -16,20 +17,12 @@ public class EventLoopImplTest {
 
     @Test
     public void shouldCallOnTriggeredEvent() {
-
-        Executor executor = new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-        };
-
-        Callback<EventStub> callback = mock(Callback.class);
+        AsyncCallback<EventStub> callback = mock(AsyncCallback.class);
 
         EventLoop loop = new EventLoopImpl();
         EventStub stub = new EventStub();
 
-        loop.assign(EventStub.class, callback, executor);
+        loop.assign(EventStub.class, callback);
         loop.notify(stub);
 
         verify(callback).call(stub);
@@ -37,20 +30,12 @@ public class EventLoopImplTest {
 
     @Test
     public void shouldNotCallRevokedCallback() {
-
-        Executor executor = new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-        };
-
-        Callback<EventStub> callback = mock(Callback.class);
+        AsyncCallback<EventStub> callback = mock(AsyncCallback.class);
 
         EventLoop loop = new EventLoopImpl();
         EventStub stub = new EventStub();
 
-        loop.assign(EventStub.class, callback, executor);
+        loop.assign(EventStub.class, callback);
         loop.resign(EventStub.class, callback);
         loop.notify(stub);
 
