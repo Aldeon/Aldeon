@@ -1,8 +1,10 @@
 package org.aldeon.protocol.action;
 
-import org.aldeon.core.Core;
-import org.aldeon.events.Callback;
+import org.aldeon.db.Db;
+import org.aldeon.events.ACB;
+import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Message;
+import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetMessageRequest;
@@ -13,14 +15,16 @@ import java.util.concurrent.Executor;
 
 public class GetMessageAction implements Action<GetMessageRequest> {
 
-    private final Core core;
+    private final Db storage;
 
-    public GetMessageAction(Core core) {
-        this.core = core;
+    public GetMessageAction(Db storage) {
+        this.storage = storage;
     }
 
     @Override
-    public void respond(GetMessageRequest request, final Callback<Response> onResponse, Executor executor) {
+    public void respond(PeerAddress peer, GetMessageRequest request, final AsyncCallback<Response> onResponse) {
+
+        final Executor e = onResponse.getExecutor();
 
         /*
             A peer has asked if we have a message with a certain ID.
@@ -28,7 +32,7 @@ public class GetMessageAction implements Action<GetMessageRequest> {
             the database has the result.
          */
 
-        core.getStorage().getMessageById(request.id, new Callback<Message>() {
+        storage.getMessageById(request.id, new ACB<Message>(e) {
 
             /*
                 This callback is called when the database completes the search
@@ -36,7 +40,7 @@ public class GetMessageAction implements Action<GetMessageRequest> {
              */
 
             @Override
-            public void call(Message val) {
+            public void react(Message val) {
 
                 /*
                     So, did we find the message?
@@ -51,10 +55,9 @@ public class GetMessageAction implements Action<GetMessageRequest> {
                 }
 
             }
-        }, executor); /*  <---- Someone who called this action gave us an executor so all the
+        });           /*  <---- Someone who called this action gave us an executor so all the
                                 hard work should be performed there. We pass this executor on
                                 to the database so the onResponse.call() is executed in there.
-
-        */
+                       */
     }
 }

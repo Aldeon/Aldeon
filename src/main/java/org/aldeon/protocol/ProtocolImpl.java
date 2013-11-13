@@ -2,7 +2,9 @@ package org.aldeon.protocol;
 
 
 import org.aldeon.core.Core;
-import org.aldeon.events.Callback;
+import org.aldeon.core.CoreModule;
+import org.aldeon.events.AsyncCallback;
+import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.action.CompareTreesAction;
 import org.aldeon.protocol.action.GetMessageAction;
 import org.aldeon.protocol.action.GetPeersInterestedAction;
@@ -12,23 +14,25 @@ import org.aldeon.protocol.request.GetPeersInterestedRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executor;
-
 public class ProtocolImpl implements Protocol {
 
     private static final Logger log = LoggerFactory.getLogger(ProtocolImpl.class);
 
-    private final Core core;
     private final Action<GetMessageRequest> getMessageAction;
+    private final Action<GetPeersInterestedRequest> getPeersInterestedAction;
+    private final Action<CompareTreesRequest> compareTreesAction;
 
-    public ProtocolImpl(Core core) {
-        this.core = core;
+    public ProtocolImpl() {
 
-        this.getMessageAction = new GetMessageAction(core);
+        Core core = CoreModule.getInstance();
+
+        this.getMessageAction           = new GetMessageAction(core.getStorage());
+        this.getPeersInterestedAction   = new GetPeersInterestedAction(core);
+        this.compareTreesAction         = new CompareTreesAction(core);
     }
 
     @Override
-    public void createResponse(Request request, final Callback<Response> onResponse, Executor executor) {
+    public void createResponse(PeerAddress peer, Request request, final AsyncCallback<Response> onResponse) {
 
         /*
              We have access to the application core
@@ -51,19 +55,14 @@ public class ProtocolImpl implements Protocol {
         // Here we (eventually, somehow) generate the response
 
         if(request instanceof GetMessageRequest) {
-            getMessageAction.respond((GetMessageRequest) request, onResponse, executor);
+            getMessageAction.respond(peer, (GetMessageRequest) request, onResponse);
         } else if (request instanceof GetPeersInterestedRequest) {
-            (new GetPeersInterestedAction(core)).respond((GetPeersInterestedRequest) request, onResponse, executor);
+            getPeersInterestedAction.respond(peer, (GetPeersInterestedRequest) request, onResponse);
         } else if (request instanceof CompareTreesRequest) {
-            (new CompareTreesAction(core)).respond((CompareTreesRequest) request, onResponse, executor);
+            compareTreesAction.respond(peer, (CompareTreesRequest) request, onResponse);
         } else {
             log.warn("Failed to convert a request into a response.");
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    onResponse.call(null);
-                }
-            });
+            onResponse.call(null);
         }
     }
 }

@@ -1,10 +1,11 @@
 package org.aldeon.core;
 
 import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.events.ACB;
+import org.aldeon.events.Callback;
 import org.aldeon.protocol.Protocol;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
-import org.aldeon.events.Callback;
 
 import java.util.concurrent.Executor;
 
@@ -28,12 +29,12 @@ public class ResponderCallback implements Callback<InboundRequestTask> {
         Request request = task.getRequest();
 
         // We ask the protocol for an answer and then send it back
-        protocol.createResponse(request, new Callback<Response>() {
+        protocol.createResponse(task.getAddress(), request, new ACB<Response>(executor) {
             @Override
-            public void call(Response response) {
+            public void react(Response response) {
                 // Send back the response
                 task.sendResponse(response);
             }
-        }, executor);
+        });
     }
 }

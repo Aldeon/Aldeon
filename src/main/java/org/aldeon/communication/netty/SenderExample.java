@@ -1,16 +1,13 @@
 package org.aldeon.communication.netty;
 
-import org.aldeon.net.Port;
-import org.aldeon.utils.net.PortImpl;
-import org.aldeon.net.IpPeerAddress;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.netty.sender.RequestListener;
+import org.aldeon.net.IpPeerAddress;
+import org.aldeon.net.Ipv4PeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,7 +24,7 @@ public class SenderExample {
         Request request = null;
 
         // Who are we sending the request to?
-        IpPeerAddress address = new SomeAddress("123.123.123.123", 8080);
+        IpPeerAddress address = Ipv4PeerAddress.parse("123.123.123.123", 8080);
 
         // Send the request and register a Listener
         sender.addTask(new RequestListener(executor, request, address) {
@@ -53,28 +50,4 @@ public class SenderExample {
         executor.shutdown();
     }
 
-    /**
-     * Example implementation of IpPeerAddress.
-     * IpPeerAddress is an interface for peers reachable through an IP address and port.
-     */
-    public static class SomeAddress implements IpPeerAddress {
-
-        private InetAddress host;
-        private Port port;
-
-        public SomeAddress(String host, int port) throws UnknownHostException {
-            this.host = InetAddress.getByName(host);
-            this.port = new PortImpl(port);
-        }
-
-        @Override
-        public Port getPort() {
-            return port;
-        }
-
-        @Override
-        public InetAddress getHost() {
-            return host;
-        }
-    }
 }

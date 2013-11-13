@@ -80,7 +80,7 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
 
         if(Id.equal(msg.getMsgIdentifier(), request.id)) {
             if(expectedParent == null || Id.equal(msg.getParentMessageIdentifier(), expectedParent)) {
-                storage.insertMessage(msg);
+                storage.insertMessage(msg, getExecutor());
                 return;
             }
         }

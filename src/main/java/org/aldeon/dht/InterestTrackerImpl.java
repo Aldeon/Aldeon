@@ -5,7 +5,7 @@ import com.google.common.collect.SetMultimap;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 
-import java.util.Collection;
+import java.util.Set;
 
 public class InterestTrackerImpl<T extends PeerAddress> implements InterestTracker<T> {
 
@@ -21,7 +21,7 @@ public class InterestTrackerImpl<T extends PeerAddress> implements InterestTrack
     }
 
     @Override
-    public Collection<T> getInterestedPeers(Identifier identifier) {
+    public Set<T> getInterestedPeers(Identifier identifier) {
         return addresses.get(identifier);
     }
 }

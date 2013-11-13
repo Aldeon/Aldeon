@@ -3,15 +3,26 @@ package org.aldeon.db;
 import org.aldeon.crypt.Signature;
 import org.aldeon.crypt.SignatureImpl;
 import org.aldeon.db.queries.Queries;
-import org.aldeon.events.Callback;
-import org.aldeon.model.*;
+import org.aldeon.events.AsyncCallback;
+import org.aldeon.model.ByteSource;
+import org.aldeon.model.Id;
+import org.aldeon.model.Identifier;
+import org.aldeon.model.Message;
 import org.aldeon.model.impl.MessageImpl;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.base64.MiGBase64Impl;
 
 import java.io.File;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 public class DbImpl implements Db {
@@ -44,7 +55,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageById(Identifier msgId, final Callback<Message> callback, Executor executor) {
+    public void getMessageById(Identifier msgId, final AsyncCallback<Message> callback) {
         if(msgId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -71,7 +82,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertMessage(Message message) {
+    public void insertMessage(Message message, Executor executor) {
         if (message == null || connection == null || base64Codec == null)  {
             return;
         }
@@ -94,7 +105,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void deleteMessage(Identifier msgId) {
+    public void deleteMessage(Identifier msgId, Executor executor) {
         if (msgId == null || connection == null || base64Codec == null)  {
             return;
         }
@@ -111,7 +122,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageIdByXor(Identifier msgXor, Callback<Identifier> callback, Executor executor) {
+    public void getMessageIdByXor(Identifier msgXor, AsyncCallback<Identifier> callback) {
         if(msgXor == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -135,7 +146,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageXorById(Identifier msgId, Callback<Identifier> callback, Executor executor) {
+    public void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback) {
         if(msgId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -158,7 +169,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessagesByParentId(Identifier parentId, Callback<Set<Identifier>> callback, Executor executor) {
+    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
         if(parentId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -186,7 +197,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getIdsAndXorsByParentId(Identifier parentId, Callback<Map<Identifier, Identifier>> callback, Executor executor) {
+    public void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback) {
         if(parentId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;

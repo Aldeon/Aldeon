@@ -2,21 +2,27 @@ package org.aldeon.core;
 
 
 import com.google.inject.Inject;
-import org.aldeon.db.Db;
-import org.aldeon.dht.Dht;
-import org.aldeon.dht.InterestTracker;
-import org.aldeon.events.EventLoop;
-import org.aldeon.net.PeerAddress;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.TopicAddedEvent;
-import org.aldeon.protocol.Protocol;
+import org.aldeon.db.Db;
+import org.aldeon.dht.Dht;
+import org.aldeon.dht.DhtImpl;
+import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.Callback;
+import org.aldeon.events.EventLoop;
+import org.aldeon.net.Ipv4PeerAddress;
+import org.aldeon.net.Ipv6PeerAddress;
+import org.aldeon.net.PeerAddress;
+import org.aldeon.protocol.Protocol;
+import org.aldeon.utils.math.Arithmetic;
+import org.aldeon.utils.math.ByteBufferArithmetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -39,6 +45,7 @@ public class CoreImpl implements Core {
 
     private final Map<Class, Sender> senders;
     private final Map<Class, Receiver> receivers;
+    private final Map<Class<? extends PeerAddress>, Dht> dhts;
 
     @Inject
     public CoreImpl(Db storage, EventLoop eventLoop) {
@@ -49,6 +56,12 @@ public class CoreImpl implements Core {
 
         senders = new HashMap<>();
         receivers = new HashMap<>();
+        dhts = new HashMap<>();
+
+        Arithmetic<ByteBuffer> a = new ByteBufferArithmetic();
+
+        dhts.put(Ipv4PeerAddress.class, new DhtImpl<Ipv4PeerAddress>(a));
+        dhts.put(Ipv6PeerAddress.class, new DhtImpl<Ipv6PeerAddress>(a));
 
         log.debug("Initialized the core.");
 
@@ -66,8 +79,9 @@ public class CoreImpl implements Core {
     }
 
     @Override
-    public Dht getDht() {
-        return null;//TODO
+    public <T extends PeerAddress> Dht<T> getDht(Class<T> addressType) {
+        Dht dht = dhts.get(addressType);
+        return dht;
     }
 
     @Override

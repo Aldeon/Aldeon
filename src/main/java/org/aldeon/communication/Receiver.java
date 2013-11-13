@@ -1,8 +1,8 @@
 package org.aldeon.communication;
 
-import org.aldeon.net.PeerAddress;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.Callback;
+import org.aldeon.net.PeerAddress;
 
 import java.util.concurrent.Executor;
 

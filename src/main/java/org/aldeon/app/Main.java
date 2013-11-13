@@ -1,47 +1,29 @@
 package org.aldeon.app;
 
-import javafx.application.Application;
 import org.aldeon.core.Core;
-import org.aldeon.gui.GUIController;
-import org.aldeon.net.AddressTranslation;
-import org.aldeon.net.IpPeerAddress;
-import org.aldeon.protocol.Protocol;
-import org.aldeon.communication.netty.NettyModule;
 import org.aldeon.core.CoreModule;
-import org.aldeon.core.events.AppClosingEvent;
-import org.aldeon.nat.utils.NoAddressTranslation;
+import org.aldeon.gui.GuiModule;
+import org.aldeon.protocol.Protocol;
 import org.aldeon.protocol.ProtocolModule;
-import org.aldeon.utils.net.PortImpl;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 public class Main {
 
-    private static Core core;
-    public static Core getCore() { return core; }
-
     public static void main(String[] args) throws IOException {
 
-        // Instantiate the core
-        core = CoreModule.createCore();
-
         // Instantiate the protocol
-        Protocol protocol = ProtocolModule.createProtocol(core);
+        Protocol protocol = ProtocolModule.createProtocol();
 
-        // Decide how to translate addresses (DEBUG: UPnP disabled for now)
-        AddressTranslation translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
-
-        // Register all senders and receivers we have implemented
-        core.registerSender(IpPeerAddress.class, NettyModule.createSender());
-        core.registerReceiver(IpPeerAddress.class, NettyModule.createReceiver(translation));
+        // Instantiate the core
+        Core core = CoreModule.getInstance();
 
         core.initSenders();
         core.initReceivers(protocol);
 
         // Core awaits for the AppClosingEvent to occur. Then it will close.
         //Launch GUI
-        Application.launch(GUIController.class, (java.lang.String[]) null);
+        GuiModule.launch();
 
         /*
             Now everything should work.

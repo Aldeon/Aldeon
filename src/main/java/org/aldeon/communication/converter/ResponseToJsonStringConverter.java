@@ -3,8 +3,8 @@ package org.aldeon.communication.converter;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
-import org.aldeon.utils.json.JsonParserImpl;
 import org.aldeon.utils.json.JsonParser;
+import org.aldeon.utils.json.JsonParserImpl;
 
 /**
  * This class is used as part of a conversion chain used when encoding a response
