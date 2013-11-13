@@ -2,7 +2,7 @@ package org.aldeon.communication.netty;
 
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.task.InboundRequestTask;
-import org.aldeon.events.Callback;
+import org.aldeon.events.ACB;
 import org.aldeon.nat.utils.NoAddressTranslation;
 import org.aldeon.net.AddressTranslation;
 import org.aldeon.net.IpPeerAddress;
@@ -25,11 +25,11 @@ public class ReceiverExample {
         AddressTranslation translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
 
         // This is our receiver instance
-        final Receiver receiver = NettyModule.createReceiver(translation);
+        final Receiver<IpPeerAddress> receiver = NettyModule.createReceiver(translation);
 
-        receiver.setCallback(new Callback<InboundRequestTask<IpPeerAddress>>() {
+        receiver.setCallback(new ACB<InboundRequestTask<IpPeerAddress>>(executor) {
             @Override
-            public void call(InboundRequestTask<IpPeerAddress> task) {
+            public void react(InboundRequestTask<IpPeerAddress> task) {
 
                 // This is a request sent to us by a peer
                 Request request = task.getRequest();
@@ -43,7 +43,7 @@ public class ReceiverExample {
                 // We could also discard the response.
                 // task.discard();
             }
-        }, executor);
+        });
 
         // Let's start the service
         receiver.start();

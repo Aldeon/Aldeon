@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 /**
  * This callback is triggered when a new topic is added by the user.
  */
-public class TopicManagerCallback implements Callback<TopicAddedEvent> {
+public class TopicAddedCallback implements Callback<TopicAddedEvent> {
 
-    private static final Logger log = LoggerFactory.getLogger(TopicManagerCallback.class);
+    private static final Logger log = LoggerFactory.getLogger(TopicAddedCallback.class);
 
     private final Core core;
 
-    public TopicManagerCallback(Core core) {
+    public TopicAddedCallback(Core core) {
         this.core = core;
     }
 
@@ -23,14 +23,6 @@ public class TopicManagerCallback implements Callback<TopicAddedEvent> {
 
         log.info("Whoa! User just subscribed to topic " + evt.getTopicIdentifier() + "!");
 
-        core.clientSideExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-
-                // We should do something about this.
-
-            }
-        });
-
+        // We should do something about this.
     }
 }
