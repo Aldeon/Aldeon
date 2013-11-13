@@ -9,7 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -18,7 +23,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.aldeon.gui.GUIController;
 
-import java.awt.Paint;
 import java.net.URL;
 import java.util.ResourceBundle;
 

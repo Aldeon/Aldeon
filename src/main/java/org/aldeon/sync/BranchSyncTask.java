@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.db.Db;
-import org.aldeon.events.Callback;
+import org.aldeon.events.ACB;
 import org.aldeon.model.Id;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
@@ -123,9 +123,9 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
      * @param response
      */
     private void onChildren(final ChildrenResponse response) {
-        storage.getIdsAndXorsByParentId(request.parent_id, new Callback<Map<Identifier, Identifier>>() {
+        storage.getIdsAndXorsByParentId(request.parent_id, new ACB<Map<Identifier, Identifier>>(executor) {
             @Override
-            public void call(Map<Identifier, Identifier> map) {
+            public void react(Map<Identifier, Identifier> map) {
 
                 // 0. These are our collections we need to analyse
 
@@ -142,9 +142,9 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
                         // Same state, do nothing
                     } else {
                         // There is a difference. Let's see if we have a differing branch
-                        storage.getMessageIdByXor(xor, new Callback<Identifier>() {
+                        storage.getMessageIdByXor(xor, new ACB<Identifier>(executor) {
                             @Override
-                            public void call(Identifier val) {
+                            public void react(Identifier val) {
 
                                 if(val == null) {
                                     // we must go deeper
@@ -157,7 +157,7 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
                                 }
 
                             }
-                        }, executor);
+                        });
                     }
                 }
 
@@ -174,7 +174,7 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
                 }
 
             }
-        }, executor);
+        });
     }
 
     /**

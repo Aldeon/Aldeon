@@ -3,10 +3,6 @@ package org.aldeon.events;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import org.aldeon.events.Event;
-import org.aldeon.events.EventLoop;
-import org.aldeon.events.Callback;
-
 
 import java.util.concurrent.Executor;
 

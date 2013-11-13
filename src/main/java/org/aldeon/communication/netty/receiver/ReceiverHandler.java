@@ -10,13 +10,13 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import org.aldeon.net.IpPeerAddress;
 import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.events.Callback;
+import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
-import org.aldeon.events.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

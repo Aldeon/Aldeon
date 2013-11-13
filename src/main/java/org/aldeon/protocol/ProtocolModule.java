@@ -1,7 +1,6 @@
 package org.aldeon.protocol;
 
 import com.google.inject.AbstractModule;
-import org.aldeon.core.Core;
 
 public class ProtocolModule extends AbstractModule {
     @Override
@@ -9,7 +8,7 @@ public class ProtocolModule extends AbstractModule {
 
     }
 
-    public static Protocol createProtocol(Core core) {
-        return new ProtocolImpl(core);
+    public static Protocol createProtocol() {
+        return new ProtocolImpl();
     }
 }

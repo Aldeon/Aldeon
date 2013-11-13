@@ -1,6 +1,6 @@
 package org.aldeon.db;
 
-import org.aldeon.events.Callback;
+import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 public interface Db {
-    void getMessageById(Identifier msgId, Callback<Message> callback, Executor executor);
-    void insertMessage(Message message);
-    void deleteMessage(Identifier msgId);
+    void getMessageById(Identifier msgId, AsyncCallback<Message> callback);
+    void insertMessage(Message message, Executor executor);
+    void deleteMessage(Identifier msgId, Executor executor);
 
-    void getMessageXorById(Identifier msgId, Callback<Identifier> callback, Executor executor);
-    void getMessageIdByXor(Identifier msgXor, Callback<Identifier> callback, Executor executor);
-    void getMessagesByParentId(Identifier parentId, Callback<Set<Identifier>> callback, Executor executor);
-    void getIdsAndXorsByParentId(Identifier parentId, Callback<Map<Identifier, Identifier>> callback, Executor executor);
+    void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback);
+    void getMessageIdByXor(Identifier msgXor, AsyncCallback<Identifier> callback);
+    void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback);
+    void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback);
 }

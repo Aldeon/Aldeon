@@ -5,15 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.aldeon.app.Main;
+import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.AppClosingEvent;
-import org.aldeon.gui.controllers.*;
+import org.aldeon.gui.controllers.MainController;
 
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -43,7 +39,7 @@ public class GUIController extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-        Main.getCore().getEventLoop().notify(new AppClosingEvent());
+        CoreModule.getInstance().getEventLoop().notify(new AppClosingEvent());
     }
 
     private void launchMain() {

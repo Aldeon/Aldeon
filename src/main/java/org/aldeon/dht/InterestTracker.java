@@ -3,9 +3,9 @@ package org.aldeon.dht;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 
-import java.util.Collection;
+import java.util.Set;
 
 public interface InterestTracker<T extends PeerAddress> {
     void add(T address, Identifier interest);
-    Collection<T> getInterestedPeers(Identifier identifier);
+    Set<T> getInterestedPeers(Identifier identifier);
 }

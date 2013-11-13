@@ -1,8 +1,7 @@
 package org.aldeon.protocol;
 
-import org.aldeon.events.Callback;
-
-import java.util.concurrent.Executor;
+import org.aldeon.events.AsyncCallback;
+import org.aldeon.net.PeerAddress;
 
 /**
  * Responsible for creating appropriate responses to each request.
@@ -14,5 +13,5 @@ public interface Protocol {
      * @param onResponse short and non-blocking callback to be called when the response is ready.
      * @param executor provides a thread pool to execute processor-heavy tasks, if necessary.
      */
-    void createResponse(Request request, Callback<Response> onResponse, Executor executor);
+    void createResponse(PeerAddress peer, Request request, AsyncCallback<Response> onResponse);
 }
