@@ -1,7 +1,6 @@
 package org.aldeon.model.impl;
 
 import org.aldeon.model.ByteSource;
-import org.aldeon.utils.helpers.ByteBuffers;
 
 import java.nio.ByteBuffer;
 
@@ -36,22 +35,6 @@ public class FixedSizeImmutableByteBufferSource implements ByteSource {
 
     @Override
     public ByteBuffer getByteBuffer() {
-        ByteBuffer readOnly = buffer.asReadOnlyBuffer();
-        readOnly.clear();
-        return readOnly;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        Class<?> thisClass = this.getClass();
-        Class<?> thatClass = obj.getClass();
-
-        if(thisClass.equals(thatClass)) {
-            FixedSizeImmutableByteBufferSource that = (FixedSizeImmutableByteBufferSource) obj;
-            return ByteBuffers.equal(this.getByteBuffer(), that.getByteBuffer());
-        }
-
-        return false;
+        return buffer.asReadOnlyBuffer();
     }
 }

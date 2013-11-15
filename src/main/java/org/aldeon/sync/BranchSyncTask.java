@@ -5,7 +5,6 @@ import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.db.Db;
 import org.aldeon.events.ACB;
-import org.aldeon.model.Id;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Request;
@@ -136,9 +135,10 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
                 for(final Identifier id: Sets.intersection(storedMap.keySet(), remoteMap.keySet())) {
 
-                    final Identifier xor = Id.xor(storedMap.get(id), remoteMap.get(id));
 
-                    if(Id.isEmpty(xor)) {
+                    final Identifier xor = storedMap.get(id).xor(remoteMap.get(id));
+
+                    if(xor.isEmpty()) {
                         // Same state, do nothing
                     } else {
                         // There is a difference. Let's see if we have a differing branch

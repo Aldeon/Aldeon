@@ -4,7 +4,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import org.aldeon.model.Id;
 import org.aldeon.model.Identifier;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.conversion.ConversionException;
@@ -32,7 +31,7 @@ public class IdentifierDeserializer implements JsonDeserializer<Identifier> {
         }
 
         try {
-            return Id.fromByteBuffer(result, false);
+            return Identifier.fromByteBuffer(result, false);
         } catch(IllegalArgumentException e) {
             throw new JsonParseException("Base64 representation of Identifier has invalid size (detected "
                     + result.capacity() + " bytes, should be " + Identifier.LENGTH_BYTES + ")");

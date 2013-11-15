@@ -67,32 +67,18 @@ public class DhtImpl<T extends PeerAddress> implements Dht<T> {
         }
     }
 
-    private class IdentifierStub implements Identifier {
-
-        private ByteBuffer buffer;
-
-        public IdentifierStub(ByteBuffer buffer) {
-            this.buffer = buffer;
-        }
-
-        @Override
-        public ByteBuffer getByteBuffer() {
-            return buffer;
-        }
-    }
-
     private class IdentifiableArithmetic implements Arithmetic<Identifiable> {
 
         @Override
         public Identifiable add(Identifiable a, Identifiable b) {
             ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
-            return new IdentifiableStub(new IdentifierStub(result));
+            return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override
         public Identifiable sub(Identifiable a, Identifiable b) {
             ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
-            return new IdentifiableStub(new IdentifierStub(result));
+            return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override

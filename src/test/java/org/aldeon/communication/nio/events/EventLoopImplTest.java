@@ -4,10 +4,7 @@ import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Event;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.EventLoopImpl;
-import org.aldeon.events.Callback;
 import org.junit.Test;
-
-import java.util.concurrent.Executor;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
