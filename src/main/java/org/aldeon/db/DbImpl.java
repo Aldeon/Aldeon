@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -123,7 +124,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageIdByXor(Identifier msgXor, AsyncCallback<Identifier> callback) {
+    public void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback) {
         if(msgXor == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -135,9 +136,11 @@ public class DbImpl implements Db {
             ResultSet result = preparedStatement.executeQuery();
 
             //TODO: is it always only one record?
+            // Nope, there WILL be multiple results
             Identifier msgId = fromB64(result.getString("msg_id"));
 
-            callback.call(msgId);
+            // callback.call(msgId);
+            callback.call(Collections.EMPTY_SET);
         } catch (Exception e) {
             System.err.println("ERROR: Error in getMessageIdByXor.");
             e.printStackTrace();

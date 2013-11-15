@@ -7,15 +7,17 @@ import org.aldeon.model.Identifier;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class XorManagerTest {
+public class XorManagerImplTest {
 
     @Test
     public void shouldStoreTopic() throws UnknownIdentifierException, UnknownParentException, IdentifierAlreadyPresentException {
 
-        XorManager mgr = new XorManager();
+        XorManagerImpl mgr = new XorManagerImpl();
 
         Identifier id = mock(Identifier.class);
         Identifier topic = mock(Identifier.class);
@@ -25,13 +27,13 @@ public class XorManagerTest {
 
         mgr.putId(id, topic);
 
-        assertEquals(mgr.getXor(id), id);
+        assertTrue(mgr.contains(id));
     }
 
     @Test(expected = UnknownParentException.class)
     public void shouldThrowExceptionWhenInsertingResponseToUnknownParent() throws UnknownParentException, UnknownIdentifierException, IdentifierAlreadyPresentException {
 
-        XorManager mgr = new XorManager();
+        XorManagerImpl mgr = new XorManagerImpl();
 
         Identifier id = mock(Identifier.class);
         Identifier parent = mock(Identifier.class);
@@ -45,7 +47,7 @@ public class XorManagerTest {
     @Test(expected = UnknownIdentifierException.class)
     public void shouldThrowExceptionWhenFetchingUnknownIdentifier() throws UnknownIdentifierException {
 
-        XorManager mgr = new XorManager();
+        XorManagerImpl mgr = new XorManagerImpl();
         Identifier id = mock(Identifier.class);
 
         mgr.getXor(id);
@@ -54,7 +56,7 @@ public class XorManagerTest {
     @Test(expected = IdentifierAlreadyPresentException.class)
     public void shouldNotAllowZeroIdentifier() throws UnknownParentException, IdentifierAlreadyPresentException {
 
-        XorManager mgr = new XorManager();
+        XorManagerImpl mgr = new XorManagerImpl();
 
         Identifier id = mock(Identifier.class);
         Identifier parent = mock(Identifier.class);
@@ -68,7 +70,7 @@ public class XorManagerTest {
     @Test
     public void shouldStoreIdentifierWhenParentIsPresent() throws UnknownParentException, UnknownIdentifierException, IdentifierAlreadyPresentException {
 
-        XorManager mgr = new XorManager();
+        XorManagerImpl mgr = new XorManagerImpl();
 
         Identifier id = mock(Identifier.class);
         Identifier parent = mock(Identifier.class);
@@ -81,13 +83,13 @@ public class XorManagerTest {
         mgr.putId(parent, topic);
         mgr.putId(id, parent);
 
-        assertEquals(mgr.getXor(id), id);
+        assertTrue(mgr.contains(id));
     }
 
     @Test
     public void shouldUpdateParentXorWhenChildIsInserted() throws UnknownParentException, IdentifierAlreadyPresentException, UnknownIdentifierException {
 
-        XorManager mgr = new XorManager();
+        XorManagerImpl mgr = new XorManagerImpl();
 
         Identifier id = mock(Identifier.class);
         Identifier parent = mock(Identifier.class);
@@ -108,10 +110,10 @@ public class XorManagerTest {
         assertEquals(mgr.getXor(parent), xor);
     }
 
-    @Test(expected = UnknownIdentifierException.class)
+    @Test
     public void shouldRemoveChildWhenParentIsRemoved() throws UnknownParentException, IdentifierAlreadyPresentException, UnknownIdentifierException {
 
-        XorManager mgr = new XorManager();
+        XorManagerImpl mgr = new XorManagerImpl();
 
         Identifier id = mock(Identifier.class);
         Identifier parent = mock(Identifier.class);
@@ -126,6 +128,6 @@ public class XorManagerTest {
 
         mgr.delId(parent);
 
-        mgr.getXor(id);
+        assertFalse(mgr.contains(id));
     }
 }

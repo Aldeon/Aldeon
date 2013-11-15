@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTask<T> {
@@ -142,20 +143,25 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
                         // Same state, do nothing
                     } else {
                         // There is a difference. Let's see if we have a differing branch
-                        storage.getMessageIdByXor(xor, new ACB<Identifier>(executor) {
+                        storage.getMessageIdsByXor(xor, new ACB<Set<Identifier>>(executor){
                             @Override
-                            public void react(Identifier val) {
+                            protected void react(Set<Identifier> matchingBranches) {
 
-                                if(val == null) {
+                                /*
+                                    Choose which one is the branch we are looking for
+                                 */
+
+                                Identifier differingBranch = null;
+
+                                if(differingBranch == null) {
                                     // we must go deeper
                                     OutboundRequestTask<T> nestedTask = new BranchSyncTask<>(peer, id, xor, sender, executor, storage);
                                     sender.addTask(nestedTask);
 
                                 } else {
                                     // Hey, we have a differing branch. Let's inform the server.
-                                    offerMessage(val);
+                                    offerMessage(differingBranch);
                                 }
-
                             }
                         });
                     }

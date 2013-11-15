@@ -14,7 +14,7 @@ public interface Db {
     void deleteMessage(Identifier msgId, Executor executor);
 
     void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback);
-    void getMessageIdByXor(Identifier msgXor, AsyncCallback<Identifier> callback);
+    void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback);
     void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback);
     void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback);
 }
