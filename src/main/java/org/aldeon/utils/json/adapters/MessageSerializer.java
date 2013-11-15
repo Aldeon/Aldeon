@@ -18,7 +18,7 @@ public class MessageSerializer implements JsonSerializer<Message> {
 
         Type t = null;
 
-        object.add("id",        context.serialize(src.getMsgIdentifier(), Identifier.class));
+        object.add("id",        context.serialize(src.getIdentifier(), Identifier.class));
         object.add("parent",    context.serialize(src.getParentMessageIdentifier(), Identifier.class));
         object.add("author",    context.serialize(src.getAuthorIdentifier(), Identifier.class));
         object.add("signature", context.serialize(src.getSignature(), Signature.class));

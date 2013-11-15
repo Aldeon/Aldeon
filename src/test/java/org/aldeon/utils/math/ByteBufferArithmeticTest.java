@@ -35,6 +35,8 @@ public class ByteBufferArithmeticTest {
         //    70    --->    0100 0110
         //   203    --->              1100 1011
 
+        assertEquals(0, c.position());
+        assertEquals(2, c.capacity());
         assertEquals((byte)70,  c.get(0));
         assertEquals((byte)203, c.get(1));
     }
@@ -66,6 +68,8 @@ public class ByteBufferArithmeticTest {
         //   126    --->    0111 1110
         //   197    --->              1100 0101
 
+        assertEquals(0, c.position());
+        assertEquals(2, c.capacity());
         assertEquals((byte)126, c.get(0));
         assertEquals((byte)197, c.get(1));
     }
@@ -86,6 +90,8 @@ public class ByteBufferArithmeticTest {
         ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
         ByteBuffer c = arithmetic.add(a, b);
 
+        assertEquals(0, c.position());
+        assertEquals(2, c.capacity());
         assertEquals((byte)255, c.get(0));
         assertEquals((byte)254, c.get(1));
     }
@@ -105,6 +111,8 @@ public class ByteBufferArithmeticTest {
         ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
         ByteBuffer c = arithmetic.add(a, b);
 
+        assertEquals(0, c.position());
+        assertEquals(2, c.capacity());
         assertEquals((byte)0,   c.get(0));
         assertEquals((byte)254, c.get(1));
     }
@@ -125,6 +133,8 @@ public class ByteBufferArithmeticTest {
         ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
         ByteBuffer c = arithmetic.add(a, b);
 
+        assertEquals(0, c.position());
+        assertEquals(3, c.capacity());
         assertEquals((byte)1,   c.get(0));
         assertEquals((byte)0,   c.get(1));
         assertEquals((byte)254, c.get(2));

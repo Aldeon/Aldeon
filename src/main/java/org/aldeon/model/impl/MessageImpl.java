@@ -40,7 +40,7 @@ public class MessageImpl implements Message {
     }
 
     @Override
-    public Identifier getMsgIdentifier() {
+    public Identifier getIdentifier() {
         return msgIdentifier;
     }
 }

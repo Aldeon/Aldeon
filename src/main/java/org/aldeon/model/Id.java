@@ -4,6 +4,7 @@ import org.aldeon.model.impl.IdentifierImpl;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.base64.MiGBase64Impl;
 import org.aldeon.utils.conversion.ConversionException;
+import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.math.Arithmetic;
 import org.aldeon.utils.math.ByteBufferArithmetic;
 
@@ -14,13 +15,11 @@ public class Id {
 
     private final static Identifier emptyId;
     private final static Random rand;
-    private final static Arithmetic<ByteBuffer> arithmetic;
     private final static Base64Codec codec;
 
     static {
         emptyId = new IdentifierImpl(ByteBuffer.allocate(Identifier.LENGTH_BYTES), false);
         rand = new Random();
-        arithmetic = new ByteBufferArithmetic();
         codec = new MiGBase64Impl();
     }
 
@@ -45,7 +44,7 @@ public class Id {
     }
 
     public static boolean equal(Identifier a, Identifier b) {
-        return arithmetic.compare(a.getByteBuffer(), b.getByteBuffer()) == 0;
+        return 0 == ByteBuffers.compare(a.getByteBuffer(), b.getByteBuffer());
     }
 
     @Deprecated
@@ -56,7 +55,7 @@ public class Id {
     }
 
     public static Identifier xor(Identifier a, Identifier b) {
-        return new IdentifierImpl(arithmetic.xor(a.getByteBuffer(), b.getByteBuffer()), false);
+        return new IdentifierImpl(ByteBuffers.xor(a.getByteBuffer(), b.getByteBuffer()), false);
     }
 
     public static String toString(Identifier a) {

@@ -78,7 +78,7 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
     private void onMessageFound(MessageFoundResponse response) {
         Message msg = response.message;
 
-        if(Id.equal(msg.getMsgIdentifier(), request.id)) {
+        if(Id.equal(msg.getIdentifier(), request.id)) {
             if(expectedParent == null || Id.equal(msg.getParentMessageIdentifier(), expectedParent)) {
                 storage.insertMessage(msg, getExecutor());
                 return;

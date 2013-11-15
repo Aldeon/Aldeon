@@ -89,12 +89,12 @@ public class DbImpl implements Db {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
-            setBase64InPreparedStatement(1, message.getMsgIdentifier(), preparedStatement);
+            setBase64InPreparedStatement(1, message.getIdentifier(), preparedStatement);
             setBase64InPreparedStatement(2, message.getSignature(), preparedStatement);
             setBase64InPreparedStatement(3, message.getAuthorIdentifier(), preparedStatement);
             preparedStatement.setString(4, message.getContent());
             //TODO: node_xor == msg_id?
-            setBase64InPreparedStatement(5, message.getMsgIdentifier(), preparedStatement);
+            setBase64InPreparedStatement(5, message.getIdentifier(), preparedStatement);
             setBase64InPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

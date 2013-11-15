@@ -13,7 +13,7 @@ public class ConcreteNeighbourhoodSetTest {
     @Test
     public void shouldFindNearestValues() {
 
-        ConcreteNeighbourhoodSet<Integer> set = new ConcreteNeighbourhoodSet<Integer>(new IntegerArithmetic());
+        ConcreteNeighbourhoodSet<Integer> set = new ConcreteNeighbourhoodSet<>(new IntegerArithmetic());
 
         set.add(3);
         set.add(5);
@@ -33,7 +33,7 @@ public class ConcreteNeighbourhoodSetTest {
 
     @Test
     public void shouldReturnAllElementsWhenRequestedResultCountExceedsSetSize() {
-        ConcreteNeighbourhoodSet<Integer> set = new ConcreteNeighbourhoodSet<Integer>(new IntegerArithmetic());
+        ConcreteNeighbourhoodSet<Integer> set = new ConcreteNeighbourhoodSet<>(new IntegerArithmetic());
 
         set.add(3);
 
@@ -45,7 +45,7 @@ public class ConcreteNeighbourhoodSetTest {
 
     @Test
     public void shouldPreferGreaterWhenBothSidesAreEquallyFar() {
-        ConcreteNeighbourhoodSet<Integer> set = new ConcreteNeighbourhoodSet<Integer>(new IntegerArithmetic());
+        ConcreteNeighbourhoodSet<Integer> set = new ConcreteNeighbourhoodSet<>(new IntegerArithmetic());
 
         set.add(2);
         set.add(4);
@@ -68,11 +68,6 @@ public class ConcreteNeighbourhoodSetTest {
         @Override
         public Integer sub(Integer a, Integer b) {
             return a-b;
-        }
-
-        @Override
-        public Integer xor(Integer a, Integer b) {
-            return a^b;
         }
 
         @Override
