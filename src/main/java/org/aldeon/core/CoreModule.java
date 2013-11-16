@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import org.aldeon.communication.netty.NettyModule;
 import org.aldeon.core.events.TopicAddedEvent;
 import org.aldeon.db.Db;
-import org.aldeon.db.DbImpl;
+import org.aldeon.dbstub.DbStubModule;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
 import org.aldeon.events.CallbackAndExecutor;
@@ -28,7 +28,7 @@ public class CoreModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Core.class).to(CoreImpl.class);
-        bind(Db.class).to(DbImpl.class);
+        bind(Db.class).toProvider(DbStubModule.class);
         bind(EventLoop.class).to(EventLoopImpl.class);
     }
 

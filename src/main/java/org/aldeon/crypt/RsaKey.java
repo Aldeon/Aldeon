@@ -17,11 +17,13 @@ class RsaKey implements Key {
     private final ByteBuffer raw;
     private final SecureRandom seed;
     private final java.security.Key key;
+    private final Type type;
 
-    public RsaKey(java.security.Key key, ByteBuffer buf, SecureRandom seed) {
+    public RsaKey(java.security.Key key, ByteBuffer buf, SecureRandom seed, Type type) {
         this.raw = buf;
         this.key = key;
         this.seed = seed;
+        this.type = type;
     }
 
     private ByteBuffer process(ByteBuffer input, int mode)
@@ -71,6 +73,11 @@ class RsaKey implements Key {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 
     @Override

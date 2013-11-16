@@ -9,4 +9,10 @@ public interface Key extends ByteSource {
     ByteBuffer encrypt(ByteBuffer data);
     ByteBuffer decrypt(ByteBuffer data);
 
+    Type getType();
+
+    public static enum Type {
+        PUBLIC,
+        PRIVATE
+    }
 }

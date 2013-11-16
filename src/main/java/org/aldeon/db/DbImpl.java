@@ -7,10 +7,10 @@ import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.ByteSource;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
-import org.aldeon.model.impl.MessageImpl;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.base64.MiGBase64Impl;
 import org.aldeon.utils.conversion.ConversionException;
+import org.aldeon.utils.helpers.Messages;
 
 import java.io.File;
 import java.sql.Connection;
@@ -74,7 +74,7 @@ public class DbImpl implements Db {
             Signature signature = new SignatureImpl(result.getString("msg_sig"), false);
             String content = result.getString("content");
 
-            Message message = new MessageImpl(msgIdentifier, authorIdentifier, parentIdentifier, signature, content);
+            Message message = Messages.create(msgIdentifier, authorIdentifier, null, content, signature);
             callback.call(message);
         } catch (Exception e) {
             System.err.println("ERROR: Error in getMessageById.");
@@ -93,7 +93,7 @@ public class DbImpl implements Db {
             PreparedStatement preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
             setBase64InPreparedStatement(1, message.getIdentifier(), preparedStatement);
             setBase64InPreparedStatement(2, message.getSignature(), preparedStatement);
-            setBase64InPreparedStatement(3, message.getAuthorIdentifier(), preparedStatement);
+            setBase64InPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
             preparedStatement.setString(4, message.getContent());
             //TODO: node_xor == msg_id?
             setBase64InPreparedStatement(5, message.getIdentifier(), preparedStatement);

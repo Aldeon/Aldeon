@@ -1,5 +1,6 @@
 package org.aldeon.utils.helpers;
 
+import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
 
 public class ByteBuffers {
@@ -115,5 +116,9 @@ public class ByteBuffers {
         return pos < pad
                 ? 0
                 : toInt(buf.get(buf.position() + pos - pad));
+    }
+
+    public static ByteBuffer fromHex(String hex) {
+        return ByteBuffer.wrap(DatatypeConverter.parseHexBinary(hex));
     }
 }
