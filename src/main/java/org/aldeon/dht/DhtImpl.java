@@ -62,22 +62,8 @@ public class DhtImpl<T extends PeerAddress> implements Dht<T> {
         }
 
         @Override
-        public Identifier getMsgIdentifier() {
+        public Identifier getIdentifier() {
             return identifier;
-        }
-    }
-
-    private class IdentifierStub implements Identifier {
-
-        private ByteBuffer buffer;
-
-        public IdentifierStub(ByteBuffer buffer) {
-            this.buffer = buffer;
-        }
-
-        @Override
-        public ByteBuffer getByteBuffer() {
-            return buffer;
         }
     }
 
@@ -85,25 +71,19 @@ public class DhtImpl<T extends PeerAddress> implements Dht<T> {
 
         @Override
         public Identifiable add(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getMsgIdentifier().getByteBuffer(), b.getMsgIdentifier().getByteBuffer());
-            return new IdentifiableStub(new IdentifierStub(result));
+            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override
         public Identifiable sub(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getMsgIdentifier().getByteBuffer(), b.getMsgIdentifier().getByteBuffer());
-            return new IdentifiableStub(new IdentifierStub(result));
-        }
-
-        @Override
-        public Identifiable xor(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.xor(a.getMsgIdentifier().getByteBuffer(), b.getMsgIdentifier().getByteBuffer());
-            return new IdentifiableStub(new IdentifierStub(result));
+            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override
         public int compare(Identifiable o1, Identifiable o2) {
-            return arithmetic.compare(o1.getMsgIdentifier().getByteBuffer(), o2.getMsgIdentifier().getByteBuffer());
+            return arithmetic.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
         }
     }
 }

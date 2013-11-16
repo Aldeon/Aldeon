@@ -1,5 +1,6 @@
 package org.aldeon.model;
 
+import org.aldeon.crypt.Key;
 import org.aldeon.crypt.Signature;
 
 /**
@@ -9,10 +10,10 @@ import org.aldeon.crypt.Signature;
 public interface Message extends Identifiable{
 
     /**
-     * Identifier of the author of the message.
+     * Identifies the author of the message.
      * @return
      */
-    Identifier getAuthorIdentifier();
+    Key getAuthorPublicKey();
 
     /**
      * Identifier of the parent message. In other words, the
@@ -29,7 +30,7 @@ public interface Message extends Identifiable{
     String getContent();
 
     /**
-     * Proves that the getAuthorIdentifier() points to a real author.
+     * Proves that the getAuthorPublicKey() points to a real author.
      * @return
      */
     Signature getSignature();

@@ -35,8 +35,6 @@ public class FixedSizeImmutableByteBufferSource implements ByteSource {
 
     @Override
     public ByteBuffer getByteBuffer() {
-        ByteBuffer readOnly = buffer.asReadOnlyBuffer();
-        readOnly.clear();
-        return readOnly;
+        return buffer.asReadOnlyBuffer();
     }
 }

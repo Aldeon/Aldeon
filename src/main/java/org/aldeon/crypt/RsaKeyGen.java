@@ -55,8 +55,8 @@ public class RsaKeyGen implements KeyGen {
         java.security.Key prv = kp.getPrivate();
 
         KeyPair pair = new KeyPair();
-        pair.publicKey  = new RsaKey(pub, ByteBuffer.wrap(pub.getEncoded()), seed);
-        pair.privateKey = new RsaKey(prv, ByteBuffer.wrap(prv.getEncoded()), seed);
+        pair.publicKey  = new RsaKey(pub, ByteBuffer.wrap(pub.getEncoded()), seed, Key.Type.PUBLIC);
+        pair.privateKey = new RsaKey(prv, ByteBuffer.wrap(prv.getEncoded()), seed, Key.Type.PRIVATE);
 
         return pair;
     }
@@ -65,7 +65,7 @@ public class RsaKeyGen implements KeyGen {
     public Key parsePublicKey(ByteBuffer data) {
         try {
             ByteBuffer copy = cloneBuf(data);
-            return new RsaKey(keyFactory.generatePublic(new X509EncodedKeySpec(copy.array())), copy, seed);
+            return new RsaKey(keyFactory.generatePublic(new X509EncodedKeySpec(copy.array())), copy, seed, Key.Type.PUBLIC);
         } catch (InvalidKeySpecException e) {
             throw new IllegalArgumentException("Invalid key structure", e);
         }
@@ -75,7 +75,7 @@ public class RsaKeyGen implements KeyGen {
     public Key parsePrivateKey(ByteBuffer data) {
         try {
             ByteBuffer copy = cloneBuf(data);
-            return new RsaKey(keyFactory.generatePrivate(new PKCS8EncodedKeySpec(copy.array())), copy, seed);
+            return new RsaKey(keyFactory.generatePrivate(new PKCS8EncodedKeySpec(copy.array())), copy, seed, Key.Type.PRIVATE);
         } catch (InvalidKeySpecException e) {
             throw new IllegalArgumentException("Invalid key structure", e);
         }

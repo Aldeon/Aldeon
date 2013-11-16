@@ -18,7 +18,7 @@ public class HiddenBehindIpv4PeerAddress implements PeerAddress {
     }
 
     @Override
-    public Identifier getMsgIdentifier() {
+    public Identifier getIdentifier() {
         throw new IllegalStateException("Not yet implemented");
     }
 }

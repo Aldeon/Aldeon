@@ -25,7 +25,7 @@ public class Ipv6PeerAddress implements IpPeerAddress {
     }
 
     @Override
-    public Identifier getMsgIdentifier() {
+    public Identifier getIdentifier() {
         throw new IllegalStateException("Not yet implemented");
     }
 }

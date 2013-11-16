@@ -1,7 +1,7 @@
 package org.aldeon.crypt;
 
-import org.aldeon.model.Id;
 import org.aldeon.model.Identifier;
+import org.aldeon.utils.helpers.Identifiers;
 
 public class ExampleSigner {
     public static void main(String[] args) {
@@ -17,7 +17,7 @@ public class ExampleSigner {
 
 
         // -----------------------------------------------------
-        Identifier identifier = Id.random();
+        Identifier identifier = Identifiers.random();
 
         // 1. Sign data using a private key
         signer.add("This is some signed content.".getBytes());

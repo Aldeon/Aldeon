@@ -41,7 +41,7 @@ public class Ipv4PeerAddress implements IpPeerAddress {
     }
 
     @Override
-    public Identifier getMsgIdentifier() {
+    public Identifier getIdentifier() {
         throw new IllegalStateException("Not yet implemented");
     }
 }

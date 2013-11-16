@@ -2,7 +2,6 @@ package org.aldeon.sync;
 
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.db.Db;
-import org.aldeon.model.Id;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.net.PeerAddress;
@@ -50,7 +49,7 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
 
     @Override
     public void onFailure(Throwable cause) {
-        log.info("Failed to download message " + Id.toString(request.id), cause);
+        log.info("Failed to download message " + request.id, cause);
     }
 
     @Override
@@ -78,8 +77,8 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
     private void onMessageFound(MessageFoundResponse response) {
         Message msg = response.message;
 
-        if(Id.equal(msg.getMsgIdentifier(), request.id)) {
-            if(expectedParent == null || Id.equal(msg.getParentMessageIdentifier(), expectedParent)) {
+        if(request.id.equals(msg.getIdentifier())) {
+            if(expectedParent == null || expectedParent.equals(msg.getParentMessageIdentifier())) {
                 storage.insertMessage(msg, getExecutor());
                 return;
             }
@@ -89,6 +88,6 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
     }
 
     private void onMessageNotFound(MessageNotFoundResponse response) {
-        log.info("Message " + Id.toString(request.id) + " not found on the server");
+        log.info("Message " + request.id + " not found on the server");
     }
 }

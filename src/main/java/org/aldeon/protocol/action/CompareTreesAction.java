@@ -12,6 +12,7 @@ import org.aldeon.protocol.response.ChildrenResponse;
 import org.aldeon.protocol.response.LuckyGuessResponse;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 /**
@@ -43,11 +44,19 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
                     */
 
                     //attempt a lucky guess
-                    core.getStorage().getMessageIdByXor(guess_xor, new ACB<Identifier>(e) {
+                    core.getStorage().getMessageIdsByXor(guess_xor, new ACB<Set<Identifier>>(e) {
                         @Override
-                        public void react(Identifier val) {
-                            if (val != null) { //msg found = lucky guess successful
-                                onResponse.call(new LuckyGuessResponse(val));
+                        protected void react(Set<Identifier> matchingBranches) {
+
+                            /*
+                                Many branches can gave the same xor. Here we decide
+                                which branch are we going to suggest.
+                             */
+
+                            Identifier ourGuess = null;
+
+                            if (ourGuess != null) { // lucky guess successful
+                                onResponse.call(new LuckyGuessResponse(ourGuess));
                             } else { //there is no XOR match (lucky guess failed) fall back to comparing trees layer by layer
                                 core.getStorage().getIdsAndXorsByParentId(request.parent_id, new ACB<Map<Identifier, Identifier>>(e) {
                                     @Override

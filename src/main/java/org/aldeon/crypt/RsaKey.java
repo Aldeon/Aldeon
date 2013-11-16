@@ -1,5 +1,8 @@
 package org.aldeon.crypt;
 
+import org.aldeon.crypt.exception.DecryptionFailedException;
+import org.aldeon.crypt.exception.EncryptionFailedException;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -17,11 +20,13 @@ class RsaKey implements Key {
     private final ByteBuffer raw;
     private final SecureRandom seed;
     private final java.security.Key key;
+    private final Type type;
 
-    public RsaKey(java.security.Key key, ByteBuffer buf, SecureRandom seed) {
+    public RsaKey(java.security.Key key, ByteBuffer buf, SecureRandom seed, Type type) {
         this.raw = buf;
         this.key = key;
         this.seed = seed;
+        this.type = type;
     }
 
     private ByteBuffer process(ByteBuffer input, int mode)
@@ -50,27 +55,33 @@ class RsaKey implements Key {
             input.get(in);
         }
 
-        return ByteBuffer.wrap(cipher.doFinal(in));
+        ByteBuffer result =  ByteBuffer.wrap(cipher.doFinal(in));
+
+        result.clear();
+        return result;
     }
 
     @Override
-    public ByteBuffer encrypt(ByteBuffer data) {
+    public ByteBuffer encrypt(ByteBuffer data) throws EncryptionFailedException {
         try {
             return process(data, Cipher.ENCRYPT_MODE);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new EncryptionFailedException("Could not encrypt the given data", e);
         }
     }
 
     @Override
-    public ByteBuffer decrypt(ByteBuffer data) {
+    public ByteBuffer decrypt(ByteBuffer data) throws DecryptionFailedException {
         try {
             return process(data, Cipher.DECRYPT_MODE);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new DecryptionFailedException("Could not decrypt the given data", e);
         }
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 
     @Override
