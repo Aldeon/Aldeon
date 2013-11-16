@@ -13,8 +13,15 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
+/**
+ * Imitates the real database. Thread safe, not thread efficient.
+ *
+ * All tasks should be performed in the callback.getExecutor()'s, but
+ * we can ignore it here. After all, this is just for debugging purposes.
+ */
 public class DbStub implements Db {
 
     private static final Logger log = LoggerFactory.getLogger(DbStub.class);
@@ -34,7 +41,7 @@ public class DbStub implements Db {
     protected XorManager mgr;
 
     protected DbStub(XorManager mgr) {
-        messages = new HashMap<>();
+        messages = new ConcurrentHashMap<>();
         this.mgr = mgr;
     }
 
@@ -104,7 +111,9 @@ public class DbStub implements Db {
         for(Identifier child: mgr.getChildren(parentId)) {
             try {
                 result.put(child, mgr.getXor(child));
-            } catch (UnknownIdentifierException e) { }
+            } catch (UnknownIdentifierException e) {
+                // State changed between queries
+            }
         }
 
         callback.call(result);
