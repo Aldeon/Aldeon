@@ -1,5 +1,7 @@
 package org.aldeon.crypt;
 
+import org.aldeon.crypt.exception.DecryptionFailedException;
+import org.aldeon.crypt.exception.EncryptionFailedException;
 import org.aldeon.model.ByteSource;
 import org.aldeon.utils.math.ByteBufferArithmetic;
 
@@ -12,13 +14,13 @@ public class SignerImpl implements Signer {
     private Comparator<ByteBuffer> equalityVerifier;
 
     public SignerImpl() {
-        clear();
+        hash = new Sha256();
         equalityVerifier = new ByteBufferArithmetic();
     }
 
     @Override
     public void clear() {
-        hash = new Sha256();
+        hash.clear();
     }
 
     @Override
@@ -39,11 +41,19 @@ public class SignerImpl implements Signer {
 
     @Override
     public Signature sign(Key key) {
-        return new SignatureImpl(key.encrypt(hash.calculate()), false);
+        try {
+            return new SignatureImpl(key.encrypt(hash.calculate()), false);
+        } catch (EncryptionFailedException e) {
+            throw new IllegalArgumentException("Failed to encrypt the data using given key", e);
+        }
     }
 
     @Override
     public boolean verify(Key key, Signature signature) {
-        return 0 == equalityVerifier.compare(hash.calculate(), key.decrypt(signature.getByteBuffer()));
+        try {
+            return 0 == equalityVerifier.compare(hash.calculate(), key.decrypt(signature.getByteBuffer()));
+        } catch (DecryptionFailedException e) {
+            return false;
+        }
     }
 }

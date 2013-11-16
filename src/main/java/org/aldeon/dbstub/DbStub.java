@@ -7,6 +7,8 @@ import org.aldeon.db.exception.UnknownParentException;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,13 +17,18 @@ import java.util.concurrent.Executor;
 
 public class DbStub implements Db {
 
+    private static final Logger log = LoggerFactory.getLogger(DbStub.class);
 
-    protected static final int PUT_SUCCESS = 1;
-    protected static final int PUT_NO_PARENT = 2;
-    protected static final int PUT_MSG_EXISTS = 3;
+    protected static enum PutStatus {
+        SUCCESS,
+        NO_PARENT,
+        MSG_EXISTS
+    }
 
-    protected static final int DEL_SUCCESS = 1;
-    protected static final int DEL_ID_UNKNOWN = 2;
+    protected static enum DelStatus {
+        SUCCESS,
+        ID_UNKNOWN
+    }
 
     protected Map<Identifier, Message> messages;
     protected XorManager mgr;
@@ -31,26 +38,26 @@ public class DbStub implements Db {
         this.mgr = mgr;
     }
 
-    protected int put(Message message) {
+    protected PutStatus put(Message message) {
         try {
             mgr.putId(message.getIdentifier(), message.getParentMessageIdentifier());
         } catch (UnknownParentException e) {
-            return PUT_NO_PARENT;
+            return PutStatus.NO_PARENT;
         } catch (IdentifierAlreadyPresentException e) {
-            return PUT_MSG_EXISTS;
+            return PutStatus.MSG_EXISTS;
         }
         messages.put(message.getIdentifier(), message);
-        return PUT_SUCCESS;
+        return PutStatus.SUCCESS;
     }
 
-    protected int del(Identifier id) {
+    protected DelStatus del(Identifier id) {
         try {
             mgr.delId(id);
             messages.remove(id);
         } catch (UnknownIdentifierException e) {
-            return DEL_ID_UNKNOWN;
+            return DelStatus.ID_UNKNOWN;
         }
-        return DEL_SUCCESS;
+        return DelStatus.SUCCESS;
     }
 
     @Override
@@ -60,12 +67,14 @@ public class DbStub implements Db {
 
     @Override
     public void insertMessage(Message message, Executor executor) {
-        put(message);
+        PutStatus s = put(message);
+        log.debug("DB INSERT: " + s);
     }
 
     @Override
     public void deleteMessage(Identifier msgId, Executor executor) {
-        del(msgId);
+        DelStatus s = del(msgId);
+        log.debug("DB REMOVE: " + s);
     }
 
     @Override
