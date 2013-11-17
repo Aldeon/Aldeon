@@ -13,21 +13,22 @@
   <center>
     <GridPane fx:id="content" depthTest="DISABLE" gridLinesVisible="true" hgap="20.0" vgap="20.0">
       <children>
-        <StackPane fx:id="threadCreator" prefHeight="50.0" prefWidth="450.0">
+        <StackPane fx:id="threadCreator" prefHeight="50.0" prefWidth="450.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
           <TextField fx:id="threadName" prefWidth="120.0" StackPane.alignment="CENTER_LEFT">
             <StackPane.margin>
               <Insets left="20.0" right="80.0" />
             </StackPane.margin>
           </TextField>
+          <padding>
+            <Insets />
+          </padding>
           <Button fx:id="createButton" onMouseClicked="#createThread" StackPane.alignment="CENTER_RIGHT">
             <StackPane.margin>
               <Insets right="10.0" />
             </StackPane.margin>
           </Button>
-          <padding>
-            <Insets />
-          </padding>
         </StackPane>
+        <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
       </children>
       <columnConstraints>
         <ColumnConstraints />

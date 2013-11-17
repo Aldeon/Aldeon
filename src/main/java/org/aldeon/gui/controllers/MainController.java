@@ -57,7 +57,7 @@ public class MainController extends BorderPane implements Initializable {
                 changeFxml("../Identities.fxml");
                 break;
             case "Threads":
-                changeFxml("../TopicMsgs.fxml");
+                changeFxml("../TopicList.fxml");
                 break;
             case "Friends":
                 changeFxml("../Friends.fxml");

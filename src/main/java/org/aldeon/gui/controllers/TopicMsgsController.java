@@ -49,18 +49,26 @@ public class TopicMsgsController extends ScrollPane implements Initializable{
         return parent;
     }
 
+    public void appendMsg(String content, int nestingLevel) {
+        fpane.getChildren().add(constructResponse(content, nestingLevel));
+    }
+
+    //or parent hash instead of nestingLevel
+    public void insertMsg(String content, int nestingLevel) {
+
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //Node msg = constructResponse(weirdText);
-        fpane.getChildren().add(constructResponse(weirdText, 0));
-        fpane.getChildren().add(constructResponse(weirdText, 1));
-        fpane.getChildren().add(constructResponse(weirdText, 2));
-        fpane.getChildren().add(constructResponse(weirdText, 3));
-        fpane.getChildren().add(constructResponse(weirdText, 4));
-        fpane.getChildren().add(constructResponse(weirdText, 5));
-        fpane.getChildren().add(constructResponse(weirdText, 6));
-        fpane.getChildren().add(constructResponse(weirdText, 7));
-        fpane.getChildren().add(constructResponse(weirdText, 8));
+//        fpane.getChildren().add(constructResponse(weirdText, 0));
+//        fpane.getChildren().add(constructResponse(weirdText, 1));
+//        fpane.getChildren().add(constructResponse(weirdText, 2));
+//        fpane.getChildren().add(constructResponse(weirdText, 3));
+//        fpane.getChildren().add(constructResponse(weirdText, 4));
+//        fpane.getChildren().add(constructResponse(weirdText, 5));
+//        fpane.getChildren().add(constructResponse(weirdText, 6));
+//        fpane.getChildren().add(constructResponse(weirdText, 7));
+//        fpane.getChildren().add(constructResponse(weirdText, 8));
     }
 }
