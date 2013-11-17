@@ -3,6 +3,7 @@ package org.aldeon.dbstub;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.InboundMessageEvent;
+import org.aldeon.core.events.RemoveMessageEvent;
 import org.aldeon.db.Db;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Identifier;
@@ -34,14 +35,13 @@ public class DbDecorator implements Db {
 
     @Override
     public void insertMessage(Message message, Executor executor) {
-        System.out.println("PRZED NOTYFIKACJA");
         CoreModule.getInstance().getEventLoop().notify(new InboundMessageEvent(message));
-        System.out.println("PO NOTYFIKACJI");
         db.insertMessage(message,executor);
     }
 
     @Override
     public void deleteMessage(Identifier msgId, Executor executor) {
+        CoreModule.getInstance().getEventLoop().notify(new RemoveMessageEvent(msgId));
         db.deleteMessage(msgId,executor);
     }
 
