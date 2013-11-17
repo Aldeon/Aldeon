@@ -35,7 +35,7 @@ public class TopicMsgsController extends ScrollPane implements Initializable{
             "zginiecie z drogi prawej. \n" +
             "13. Gdy rozżgą na krotce gniew jego, błogosławieni wszystcy, jiż imają w niem pwę";
 
-    private Parent constructResponse(String text, int nestingLevel) {
+    private Parent constructResponse(String text, int nestingLevel, ResponseControlListener listener) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../Resp.fxml"));
         Parent parent=null;
@@ -44,13 +44,14 @@ public class TopicMsgsController extends ScrollPane implements Initializable{
         } catch (IOException e) {
         }
         ResponseController rc = (ResponseController) loader.<ResponseController>getController();
+        rc.registerListener(listener);
         rc.setMessage(text, nestingLevel);
 
         return parent;
     }
 
-    public void appendMsg(String content, int nestingLevel) {
-        fpane.getChildren().add(constructResponse(content, nestingLevel));
+    public void appendMsg(String content, int nestingLevel, ResponseControlListener listener) {
+        fpane.getChildren().add(constructResponse(content, nestingLevel, listener));
     }
 
     //or parent hash instead of nestingLevel

@@ -3,6 +3,7 @@ package org.aldeon.gui.controllers;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -57,7 +58,20 @@ public class MainController extends BorderPane implements Initializable {
                 changeFxml("../Identities.fxml");
                 break;
             case "Threads":
-                changeFxml("../TopicList.fxml");
+                //changeFxml("../TopicList.fxml");
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("../TopicList.fxml"));
+                Parent parent=null;
+                try {
+                    parent = (Parent) loader.load(getClass().getResource("../TopicList.fxml").openStream());
+                } catch (IOException e) {
+                }
+                TopicListController topicListController = (TopicListController) loader.<TopicListController>getController();
+                topicListController.setMainController(this);
+                //rc.setMessage(text, 0);
+
+                contents.setContent(parent);
+
                 break;
             case "Friends":
                 changeFxml("../Friends.fxml");
@@ -68,6 +82,31 @@ public class MainController extends BorderPane implements Initializable {
         }
     }
 
+    public void showTopicMsgs(String rootMsg) {
+        //TODO pass root msg identifier in argument
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("../TopicMsgs.fxml"));
+        Parent parent=null;
+        try {
+            parent = (Parent) loader.load(getClass().getResource("../TopicMsgs.fxml").openStream());
+        } catch (IOException e) {
+        }
+        TopicMsgsController topicMsgsController = (TopicMsgsController) loader.<TopicMsgsController>getController();
+        topicMsgsController.appendMsg(rootMsg, 0, null);
+        topicMsgsController.appendMsg("dumb", 1, null);
+        topicMsgsController.appendMsg("stream", 2, null);
+        topicMsgsController.appendMsg("of", 1, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.appendMsg("responses", 2, null);
+
+        contents.setContent(parent);
+    }
     public void setRoot(GUIController root){
         this.root=root;
     }
