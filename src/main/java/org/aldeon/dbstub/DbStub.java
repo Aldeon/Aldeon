@@ -75,13 +75,11 @@ public class DbStub implements Db {
     @Override
     public void insertMessage(Message message, Executor executor) {
         PutStatus s = put(message);
-        log.debug("DB INSERT: " + s);
     }
 
     @Override
     public void deleteMessage(Identifier msgId, Executor executor) {
         DelStatus s = del(msgId);
-        log.debug("DB REMOVE: " + s);
     }
 
     @Override

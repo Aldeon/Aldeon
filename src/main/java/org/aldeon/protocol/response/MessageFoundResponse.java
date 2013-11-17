@@ -11,6 +11,8 @@ public class MessageFoundResponse implements Response {
     public static final String TYPE = "message_found";
     public String type = TYPE;
 
+    public Message message;
+
     /**
      * Empty constructor required so the parser can instantiate it.
      */
@@ -19,6 +21,4 @@ public class MessageFoundResponse implements Response {
     public MessageFoundResponse(Message m) {
         this.message = m;
     }
-
-    public Message message;
 }

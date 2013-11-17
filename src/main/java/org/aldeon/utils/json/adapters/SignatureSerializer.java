@@ -9,15 +9,8 @@ import org.aldeon.utils.base64.Base64Codec;
 
 import java.lang.reflect.Type;
 
-public class SignatureSerializer implements JsonSerializer<Signature> {
-    private final Base64Codec base64;
-
+public class SignatureSerializer extends ByteSourceSerializer<Signature> {
     public SignatureSerializer(Base64Codec base64) {
-        this.base64 = base64;
-    }
-
-    @Override
-    public JsonElement serialize(Signature src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(base64.encode(src.getByteBuffer()));
+        super(base64);
     }
 }
