@@ -21,12 +21,12 @@
               <children>
                 <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                    <Image url="file:/home/franek/repozytoria/Aldeon/src/main/resources/gui/icons/icons/spechbubble_icon&amp;24.png" />
+                    <Image url="@/gui/icons/icons/spechbubble_icon24.png" />
                   </image>
                 </ImageView>
                 <ImageView fitHeight="24.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                    <Image url="file:/home/franek/repozytoria/Aldeon/src/main/resources/gui/icons/icons/delete_icon&amp;24.png" />
+                    <Image url="@/gui/icons/icons/delete_icon24.png" />
                   </image>
                 </ImageView>
               </children>
