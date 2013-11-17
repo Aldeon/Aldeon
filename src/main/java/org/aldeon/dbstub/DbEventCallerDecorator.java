@@ -1,9 +1,8 @@
 package org.aldeon.dbstub;
 
-import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
-import org.aldeon.core.events.InboundMessageEvent;
-import org.aldeon.core.events.RemoveMessageEvent;
+import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.core.events.MessageRemovedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Identifier;
@@ -13,19 +12,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Prophet
- * Date: 17.11.13
- * Time: 11:41
- * To change this template use File | Settings | File Templates.
- */
-public class DbDecorator implements Db {
 
-    private Db db;
+public class DbEventCallerDecorator implements Db {
 
-    public DbDecorator(Db db){
-        this.db=db;
+    private final Db db;
+
+    public DbEventCallerDecorator(Db db){
+        this.db = db;
     }
 
     @Override
@@ -35,13 +28,13 @@ public class DbDecorator implements Db {
 
     @Override
     public void insertMessage(Message message, Executor executor) {
-        CoreModule.getInstance().getEventLoop().notify(new InboundMessageEvent(message));
+        CoreModule.getInstance().getEventLoop().notify(new MessageAddedEvent(message));
         db.insertMessage(message,executor);
     }
 
     @Override
     public void deleteMessage(Identifier msgId, Executor executor) {
-        CoreModule.getInstance().getEventLoop().notify(new RemoveMessageEvent(msgId));
+        CoreModule.getInstance().getEventLoop().notify(new MessageRemovedEvent(msgId));
         db.deleteMessage(msgId,executor);
     }
 
