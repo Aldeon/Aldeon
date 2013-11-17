@@ -3,10 +3,10 @@ package org.aldeon.core.events;
 import org.aldeon.events.Event;
 import org.aldeon.model.Identifier;
 
-public class RemoveMessageEvent implements Event {
+public class MessageRemovedEvent implements Event {
     private final Identifier msgId;
 
-    public RemoveMessageEvent(Identifier msgId) {
+    public MessageRemovedEvent(Identifier msgId) {
         this.msgId = msgId;
     }
 

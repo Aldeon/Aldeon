@@ -59,7 +59,7 @@ public class DbStubModule implements Provider<Db> {
         // Debug
         addExampleData(db);
 
-        db=new DbDecorator(db);
+        db = new DbEventCallerDecorator(db);
 
         return db;
     }

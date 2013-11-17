@@ -1,4 +1,4 @@
-package org.aldeon.core;
+package org.aldeon.gui.callbacks;
 
 import org.aldeon.core.events.TopicAddedEvent;
 import org.aldeon.events.Callback;
@@ -11,12 +11,6 @@ import org.slf4j.LoggerFactory;
 public class TopicAddedCallback implements Callback<TopicAddedEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(TopicAddedCallback.class);
-
-    private final Core core;
-
-    public TopicAddedCallback(Core core) {
-        this.core = core;
-    }
 
     @Override
     public void call(TopicAddedEvent evt) {
