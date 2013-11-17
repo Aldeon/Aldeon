@@ -57,8 +57,15 @@ public class DbStubModule implements Provider<Db> {
         Db db = new DbStub(mgr);
 
         // Debug
+        //addExampleData(db);
+        System.out.println("PREDEBUG CORNER");
+        db=new DbDecorator(db);
+        System.out.println("DEBUG CORNER");
+        //DEBUG/////////////////////////////////////////////////////
         addExampleData(db);
 
+        //TUTAJ DEKORATOR
+        System.out.println("FINISZ");
         return db;
     }
 }

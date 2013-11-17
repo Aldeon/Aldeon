@@ -3,6 +3,7 @@ package org.aldeon.protocol;
 import com.google.inject.AbstractModule;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.InboundMessageEvent;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.events.ACB;
 
@@ -49,6 +50,12 @@ public class ProtocolModule extends AbstractModule {
                         event.getTask().sendResponse(response);
                     }
                 });
+            }
+        });
+        core.getEventLoop().assign(InboundMessageEvent.class, new ACB<InboundMessageEvent>(core.serverSideExecutor()) {
+            @Override
+            protected void react(final InboundMessageEvent event) {
+                System.out.println("NOWA WIADOMOSC!!!!!!!!!!!!\n"+event.getMessage().getContent());
             }
         });
     }
