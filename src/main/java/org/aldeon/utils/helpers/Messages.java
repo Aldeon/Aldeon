@@ -166,6 +166,15 @@ public class Messages {
         public Identifier getIdentifier() {
             return msgIdentifier;
         }
+
+        @Override
+        public String toString() {
+            return      "ID      : " + getIdentifier() + "\n"
+                    +   "Parent  : " + getParentMessageIdentifier() + "\n"
+                    +   "Author  : " + getAuthorPublicKey() + "\n"
+                    +   "Sig     : " + getSignature() + "\n"
+                    +   "Content : " + getContent();
+        }
     }
 
 }
