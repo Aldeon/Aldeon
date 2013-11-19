@@ -5,7 +5,7 @@ import org.aldeon.events.Callback;
 
 public class TopicRemovedCallback implements Callback<TopicRemovedEvent> {
 
-    // Topic removed -> delete root + all children
+    // TopicState removed -> delete root + all children
 
     @Override
     public void call(TopicRemovedEvent event) {

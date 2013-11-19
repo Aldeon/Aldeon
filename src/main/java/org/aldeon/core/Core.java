@@ -4,6 +4,7 @@ import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
+import org.aldeon.dht.Ring;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
 import org.aldeon.net.PeerAddress;
@@ -13,7 +14,7 @@ import java.util.concurrent.Executor;
 public interface Core {
 
     /**
-     * Find the appropriate Dht for a given address type.
+     * Find the appropriate Ring for a given address type.
      * @param addressType
      * @param <T>
      * @return

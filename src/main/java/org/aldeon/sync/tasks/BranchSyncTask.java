@@ -1,4 +1,4 @@
-package org.aldeon.sync;
+package org.aldeon.sync.tasks;
 
 import com.google.common.collect.Sets;
 import org.aldeon.communication.Sender;

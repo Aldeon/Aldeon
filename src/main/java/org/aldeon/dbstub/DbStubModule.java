@@ -41,6 +41,8 @@ public class DbStubModule implements Provider<Db> {
         db.insertMessage(response1, e);
         db.insertMessage(response11, e);
         db.insertMessage(otherBranch2, e);
+
+        System.out.println(topic);
     }
 
     @Override

@@ -16,8 +16,13 @@ public class InterestTrackerImpl<T extends PeerAddress> implements InterestTrack
     }
 
     @Override
-    public void add(T address, Identifier interest) {
+    public void addEntry(T address, Identifier interest) {
         addresses.put(interest, address);
+    }
+
+    @Override
+    public void delEntry(T address, Identifier interest) {
+        addresses.remove(interest, address);
     }
 
     @Override

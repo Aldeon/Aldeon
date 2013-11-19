@@ -28,7 +28,7 @@ public class ProtocolImpl implements Protocol {
 
         this.getMessageAction           = new GetMessageAction(core.getStorage());
         this.getPeersInterestedAction   = new GetPeersInterestedAction(core);
-        this.compareTreesAction         = new CompareTreesAction(core);
+        this.compareTreesAction         = new CompareTreesAction(core.getStorage());
     }
 
     @Override
