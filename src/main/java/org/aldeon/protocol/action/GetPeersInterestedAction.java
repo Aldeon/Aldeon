@@ -9,6 +9,7 @@ import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetPeersInterestedRequest;
 import org.aldeon.protocol.response.RelevantPeersResponse;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,11 +35,11 @@ public class GetPeersInterestedAction implements Action<GetPeersInterestedReques
 
         Set<PeerAddress> closestPeers = new HashSet<>();
 
-        Set<Class<? extends PeerAddress>> types = null;
+        Set<Class<? extends PeerAddress>> types = Collections.EMPTY_SET;
 
         // Iterate through requested address types
         for(Class<? extends PeerAddress> type: types) {
-            Ring ring = core.getDht(type);
+            Ring ring = core.getDht(type).getRing();
             if(ring != null) {
                 closestPeers.addAll(ring.getNearest(request.target, CLOSEST_PEERS_LIMIT));
             }

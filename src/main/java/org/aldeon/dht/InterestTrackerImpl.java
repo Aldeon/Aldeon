@@ -21,6 +21,11 @@ public class InterestTrackerImpl<T extends PeerAddress> implements InterestTrack
     }
 
     @Override
+    public void delEntry(T address, Identifier interest) {
+        addresses.remove(interest, address);
+    }
+
+    @Override
     public Set<T> getInterestedPeers(Identifier identifier) {
         return addresses.get(identifier);
     }
