@@ -9,7 +9,8 @@ import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
-import org.aldeon.dht.DhtImpl;
+import org.aldeon.dht.Ring;
+import org.aldeon.dht.RingImpl;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
@@ -45,7 +46,6 @@ public class CoreImpl implements Core {
 
     private final Map<Class, Sender> senders;
     private final Map<Class, Receiver> receivers;
-    private final Map<Class<? extends PeerAddress>, Dht> dhts;
 
     @Inject
     public CoreImpl(Db storage, EventLoop eventLoop) {
@@ -56,12 +56,6 @@ public class CoreImpl implements Core {
 
         senders = new HashMap<>();
         receivers = new HashMap<>();
-        dhts = new HashMap<>();
-
-        Arithmetic<ByteBuffer> a = new ByteBufferArithmetic();
-
-        dhts.put(Ipv4PeerAddress.class, new DhtImpl<Ipv4PeerAddress>(a));
-        dhts.put(Ipv6PeerAddress.class, new DhtImpl<Ipv6PeerAddress>(a));
 
         log.debug("Initialized the core.");
 
@@ -75,8 +69,7 @@ public class CoreImpl implements Core {
 
     @Override
     public <T extends PeerAddress> Dht<T> getDht(Class<T> addressType) {
-        Dht dht = dhts.get(addressType);
-        return dht;
+        return null;
     }
 
     @Override

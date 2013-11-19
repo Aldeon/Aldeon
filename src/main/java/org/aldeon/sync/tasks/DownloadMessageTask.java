@@ -1,4 +1,4 @@
-package org.aldeon.sync;
+package org.aldeon.sync.tasks;
 
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.db.Db;

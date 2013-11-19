@@ -1,4 +1,4 @@
-package org.aldeon.sync;
+package org.aldeon.sync.tasks;
 
 public class InvalidResponseException extends Exception {
 

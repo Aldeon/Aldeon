@@ -20,7 +20,7 @@ public class InterestTrackerImplTest {
         PeerAddress addressMock = mock(PeerAddress.class);
         Identifier identifierMock = mock(Identifier.class);
 
-        tracker.add(addressMock, identifierMock);
+        tracker.addEntry(addressMock, identifierMock);
 
         Collection result = tracker.getInterestedPeers(identifierMock);
 
@@ -35,7 +35,7 @@ public class InterestTrackerImplTest {
         Identifier identifierMock = mock(Identifier.class);
         Identifier otherIdentifierMock = mock(Identifier.class);
 
-        tracker.add(addressMock, identifierMock);
+        tracker.addEntry(addressMock, identifierMock);
 
         Collection result = tracker.getInterestedPeers(otherIdentifierMock);
 

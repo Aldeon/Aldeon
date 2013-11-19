@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Class implementing the Dht interface. The closeness of PeerAddresses
+ * Class implementing the Ring interface. The closeness of PeerAddresses
  * is defined as the difference of their corresponding ByteBuffers,
  * interpreted as byte-stored integers of arbitrary size.
  *
@@ -21,12 +21,12 @@ import java.util.Set;
  *
  * @param <T>
  */
-public class DhtImpl<T extends PeerAddress> implements Dht<T> {
+public class RingImpl<T extends PeerAddress> implements Ring<T> {
 
     private NeighbourhoodSet<Identifiable> circle;
     private Arithmetic<ByteBuffer> arithmetic;
 
-    public DhtImpl(Arithmetic<ByteBuffer> arithmetic) {
+    public RingImpl(Arithmetic<ByteBuffer> arithmetic) {
         this.arithmetic = arithmetic;
         circle = new ConcreteNeighbourhoodSet<>(new IdentifiableArithmetic());
     }

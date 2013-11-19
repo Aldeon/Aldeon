@@ -1,7 +1,7 @@
 package org.aldeon.protocol.action;
 
 import org.aldeon.core.Core;
-import org.aldeon.dht.Dht;
+import org.aldeon.dht.Ring;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Action;
@@ -38,9 +38,9 @@ public class GetPeersInterestedAction implements Action<GetPeersInterestedReques
 
         // Iterate through requested address types
         for(Class<? extends PeerAddress> type: types) {
-            Dht dht = core.getDht(type);
-            if(dht != null) {
-                closestPeers.addAll(dht.getNearest(request.target, CLOSEST_PEERS_LIMIT));
+            Ring ring = core.getDht(type);
+            if(ring != null) {
+                closestPeers.addAll(ring.getNearest(request.target, CLOSEST_PEERS_LIMIT));
             }
         }
 
