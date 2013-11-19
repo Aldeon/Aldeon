@@ -5,8 +5,14 @@ import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.*;
 import org.aldeon.events.ACB;
+import org.apache.log4j.helpers.LogLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProtocolModule extends AbstractModule {
+
+    private static final Logger log = LoggerFactory.getLogger(ProtocolModule.class);
+
     @Override
     protected void configure() {
 
@@ -26,23 +32,21 @@ public class ProtocolModule extends AbstractModule {
         // Handle incoming requests
         core.getEventLoop().assign(InboundRequestEvent.class, new ACB<InboundRequestEvent>(core.serverSideExecutor()) {
 
-            // A wild request appears
-
             @Override
             protected void react(final InboundRequestEvent event) {
 
-                // MB used protocol
+                try {
+                    protocol.createResponse(event.getTask().getAddress(), event.getTask().getRequest(), new ACB<Response>(getExecutor()) {
 
-                protocol.createResponse(event.getTask().getAddress(), event.getTask().getRequest(), new ACB<Response>(getExecutor()) {
-
-                    @Override
-                    protected void react(Response response) {
-
-                        // It's super effective
-
-                        event.getTask().sendResponse(response);
-                    }
-                });
+                        @Override
+                        protected void react(Response response) {
+                            event.getTask().sendResponse(response);
+                        }
+                    });
+                } catch (Exception e) {
+                    log.warn("Failed to create a response", e);
+                    event.getTask().sendResponse(null);
+                }
             }
         });
     }

@@ -9,21 +9,15 @@ import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
-import org.aldeon.dht.Ring;
-import org.aldeon.dht.RingImpl;
-import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
 import org.aldeon.net.Ipv4PeerAddress;
 import org.aldeon.net.Ipv6PeerAddress;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.utils.math.Arithmetic;
-import org.aldeon.utils.math.ByteBufferArithmetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -41,8 +35,11 @@ public class CoreImpl implements Core {
 
     private final EventLoop eventLoop;
     private final Db storage;
-    private final ExecutorService clientSideExecutor;
-    private final ExecutorService serverSideExecutor;
+    private final ExecutorService clientSideExecutorService;
+    private final ExecutorService serverSideExecutorService;
+    private final Executor clientSideExecutor;
+    private final Executor serverSideExecutor;
+    private final Map<Class, Dht> dhts;
 
     private final Map<Class, Sender> senders;
     private final Map<Class, Receiver> receivers;
@@ -51,11 +48,17 @@ public class CoreImpl implements Core {
     public CoreImpl(Db storage, EventLoop eventLoop) {
         this.storage = storage;
         this.eventLoop = eventLoop;
-        this.clientSideExecutor = Executors.newFixedThreadPool(2);
-        this.serverSideExecutor = Executors.newFixedThreadPool(2);
+        this.clientSideExecutorService = Executors.newFixedThreadPool(2);
+        this.serverSideExecutorService = Executors.newFixedThreadPool(2);
+        clientSideExecutor = new ExceptionInterceptorDecorator(clientSideExecutorService);
+        serverSideExecutor = new ExceptionInterceptorDecorator(serverSideExecutorService);
 
         senders = new HashMap<>();
         receivers = new HashMap<>();
+        dhts = new HashMap<>();
+
+        dhts.put(Ipv4PeerAddress.class, new DhtImpl<Ipv4PeerAddress>());
+        dhts.put(Ipv6PeerAddress.class, new DhtImpl<Ipv6PeerAddress>());
 
         log.debug("Initialized the core.");
 
@@ -69,7 +72,7 @@ public class CoreImpl implements Core {
 
     @Override
     public <T extends PeerAddress> Dht<T> getDht(Class<T> addressType) {
-        return null;
+        return dhts.get(addressType);
     }
 
     @Override
@@ -154,8 +157,8 @@ public class CoreImpl implements Core {
             receiver.close();
         }
 
-        clientSideExecutor.shutdown();
-        serverSideExecutor.shutdown();
+        clientSideExecutorService.shutdown();
+        serverSideExecutorService.shutdown();
         log.debug("Core closed successfully.");
     }
 

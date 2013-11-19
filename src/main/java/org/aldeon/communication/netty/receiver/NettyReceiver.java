@@ -25,6 +25,8 @@ import org.aldeon.utils.conversion.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Netty server implementation. Handles incoming transmissions, parses
  * into http requests and maintains a todolist of requests to respond to.
@@ -87,9 +89,19 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
     }
 
     public void close() {
-        log.info("Stopping netty server");
+        log.info("Stopping netty server...");
         bossGroup.shutdownGracefully();
         workGroup.shutdownGracefully();
+        try {
+            bossGroup.awaitTermination(5, TimeUnit.SECONDS);
+            workGroup.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) { }
+
+        if(bossGroup.isShutdown() && workGroup.isShutdown()) {
+            log.info("Stopped");
+        } else {
+            log.warn("Netty server takes too long to terminate...");
+        }
     }
 
     @Override

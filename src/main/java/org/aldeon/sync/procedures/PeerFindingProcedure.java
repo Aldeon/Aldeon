@@ -37,7 +37,7 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
                 }
             };
 
-            dht.getHeadHunter().addBounty(bounty);
+            dht.addBounty(bounty);
         }
 
     }
