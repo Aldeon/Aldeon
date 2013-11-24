@@ -73,7 +73,7 @@ public class ResponseController extends Pane implements Initializable {
         //respPane.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
         backgroundRectangle.setHeight(
                 Math.max(message.layoutBoundsProperty().get().getHeight()
-                        + message.getLayoutY() - backgroundRectangle.getLayoutY(),
+                        + message.getLayoutY() + 50,
                         initialHeight));
 
         colorRectangle.setHeight(

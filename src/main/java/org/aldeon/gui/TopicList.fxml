@@ -2,6 +2,7 @@
 
 <?import java.lang.*?>
 <?import java.util.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
@@ -14,5 +15,10 @@
         <Button mnemonicParsing="false" onMouseClicked="#createTopic" text="Create thread" />
       </children>
     </HBox>
+    <FlowPane fx:id="fpane" prefHeight="300.0" prefWidth="600.0">
+      <padding>
+        <Insets left="50.0" />
+      </padding>
+    </FlowPane>
   </children>
 </VBox>
