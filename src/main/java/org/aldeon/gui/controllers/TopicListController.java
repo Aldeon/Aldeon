@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
 /**
  *
  */
-public class TopicListController extends VBox implements Initializable, ResponseControlListener, TopicControlListener {
+public class TopicListController extends VBox implements Initializable, TopicControlListener {
     public VBox mainWindow;
     public TextField topicName;
     private TopicMsgsController topicList;
@@ -23,8 +23,22 @@ public class TopicListController extends VBox implements Initializable, Response
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+//        FXMLLoader loader = new FXMLLoader(
+//                getClass().getResource("../TopicMsgs.fxml"));
+//        Parent parent=null;
+//        try {
+//            parent = (Parent) loader.load(getClass().getResource("../TopicMsgs.fxml").openStream());
+//        } catch (IOException e) {
+//        }
+//        topicList = (TopicMsgsController) loader.<TopicMsgsController>getController();
+//        for (int i = 0; i < 10; i++) {
+//            topicList.appendMsg("topic " + i, 0, this);
+//        }
+//        mainWindow.getChildren().add(parent);
+
         for ( int i = 0; i < 7; i++)
             fpane.getChildren().add(createTopic("topic with very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long first message " + i));
+
     }
 
     public Parent createTopic(String topicText) {
@@ -38,32 +52,21 @@ public class TopicListController extends VBox implements Initializable, Response
         TopicController tc = (TopicController) loader.<TopicController>getController();
         tc.setTopicText(topicText);
         tc.registerListener(this);
+        //topicList = (TopicMsgsController) loader.<TopicMsgsController>getController();
+        //for (int i = 0; i < 10; i++) {
+        //    topicList.appendMsg("topic " + i, 0, this);
+        //}
+        //mainWindow.getChildren().add(parent);
 
         return parent;
     }
 
     public void createTopic(MouseEvent event){
-        topicList.appendMsg(topicName.getText(), 0, this);
+        //topicList.appendMsg(topicName.getText(), 0, this);
     }
 
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
-    }
-
-    @Override
-    public void responseClicked(ResponseController rc, String text) {
-        System.out.println("the response was clicked!");
-        mainController.showTopicMsgs(text);
-    }
-
-    @Override
-    public void responseRespondClicked(Parent rc) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void responseDeleteClicked(ResponseController rc) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

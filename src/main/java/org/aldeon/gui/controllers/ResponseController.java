@@ -32,6 +32,8 @@ public class ResponseController extends Pane implements Initializable {
 
     public Parent toPass;
 
+    private int nestingLevel;
+
     private static final double initialHeight = 80;
 
     ResponseControlListener listener;
@@ -53,7 +55,7 @@ public class ResponseController extends Pane implements Initializable {
     public void writeResponseClicked(MouseEvent event) {
         //powiadomic widok o koniecznosci dodania nowego okienka pod tym
         System.out.println("write response clicked");
-        if (listener != null) listener.responseRespondClicked(toPass);
+        if (listener != null) listener.responseRespondClicked(toPass, nestingLevel);
     }
 
     public void mouseOnIcon(MouseEvent event) {
@@ -66,6 +68,7 @@ public class ResponseController extends Pane implements Initializable {
 
     public void setMessage(String msg, int nestingLevel) {
         this.message.setText(msg);
+        this.nestingLevel = nestingLevel;
 
         //borderPane.prefWidthProperty().bind(root.widthProperty());
         //respPane.prefHeightProperty().bind(colorRectangle.heightProperty());

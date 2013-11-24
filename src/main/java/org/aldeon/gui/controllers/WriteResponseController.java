@@ -1,6 +1,7 @@
 package org.aldeon.gui.controllers;
 
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
@@ -14,11 +15,21 @@ public class WriteResponseController extends HBox {
     public TextArea responseContent;
     public HBox windowContainer;
 
+    private int nestingLevel;
+    private Parent wrcNode;
+    private WriteResponseControlListener listener;
+
+    public void setNode(Parent parent) {
+        wrcNode = parent;
+    }
+    public void registerListener(WriteResponseControlListener listener) {
+        this.listener = listener;
+    }
     public void setNestingLevel(int nestingLevel) {
-        System.out.println("set nesting level invoked");
-        windowContainer.setPadding(new Insets(0,10,0,50 * nestingLevel)); //top right bottom left
+        this.nestingLevel = nestingLevel;
+        windowContainer.setPadding(new Insets(0,10,0,30 + 50 * nestingLevel)); //top right bottom left
     }
     public void sendResponseClicked(MouseEvent event) {
-        System.out.println("send response clicked");
+        listener.createdResponse(wrcNode, responseContent.getText(), nestingLevel);
     }
 }

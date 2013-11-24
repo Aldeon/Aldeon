@@ -14,7 +14,8 @@ import java.util.ResourceBundle;
 /**
  *
  */
-public class TopicMsgsController extends ScrollPane implements Initializable, ResponseControlListener{
+public class TopicMsgsController extends ScrollPane
+        implements Initializable, ResponseControlListener, WriteResponseControlListener {
 
     public FlowPane fpane;
     private MainController mainController;
@@ -37,7 +38,7 @@ public class TopicMsgsController extends ScrollPane implements Initializable, Re
             "zginiecie z drogi prawej. \n" +
             "13. Gdy rozżgą na krotce gniew jego, błogosławieni wszystcy, jiż imają w niem pwę";
 
-    private Parent constructResponse(String text, int nestingLevel, ResponseControlListener listener) {
+    private Parent constructResponse(String text, int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../Resp.fxml"));
         Parent parent=null;
@@ -50,32 +51,15 @@ public class TopicMsgsController extends ScrollPane implements Initializable, Re
         rc.toPass = parent;
         rc.setMessage(text, nestingLevel);
 
-        //fpane.getChildren().indexOf(caller)
-        //jak juz poznamy index to wstawiamy za nim okienko z odpowiedzia
         return parent;
     }
 
     public void appendMsg(String content, int nestingLevel, ResponseControlListener listener) {
-        fpane.getChildren().add(constructResponse(content, nestingLevel, listener));
-    }
-
-    //or parent hash instead of nestingLevel
-    public void insertMsg(String content, int nestingLevel) {
-
+        fpane.getChildren().add(constructResponse(content, nestingLevel));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        //Node msg = constructResponse(weirdText);
-//        fpane.getChildren().add(constructResponse(weirdText, 0));
-//        fpane.getChildren().add(constructResponse(weirdText, 1));
-//        fpane.getChildren().add(constructResponse(weirdText, 2));
-//        fpane.getChildren().add(constructResponse(weirdText, 3));
-//        fpane.getChildren().add(constructResponse(weirdText, 4));
-//        fpane.getChildren().add(constructResponse(weirdText, 5));
-//        fpane.getChildren().add(constructResponse(weirdText, 6));
-//        fpane.getChildren().add(constructResponse(weirdText, 7));
-//        fpane.getChildren().add(constructResponse(weirdText, 8));
     }
 
     @Override
@@ -84,7 +68,7 @@ public class TopicMsgsController extends ScrollPane implements Initializable, Re
     }
 
     @Override
-    public void responseRespondClicked(Parent rc) {
+    public void responseRespondClicked(Parent rc, int nestingLevel) {
         System.out.println("response respond clicked in topic msgs controller");
 
         FXMLLoader loader = new FXMLLoader(
@@ -94,17 +78,13 @@ public class TopicMsgsController extends ScrollPane implements Initializable, Re
             parent = (Parent) loader.load(getClass().getResource("../WriteResponse.fxml").openStream());
         } catch (IOException e) {
         }
-        //ResponseController rc2 = (ResponseController) loader.<ResponseController>getController();
-        //rc2.registerListener(this);
-        //rc2.setMessage("HHHHHHHHH", 1);
 
         WriteResponseController wrc = (WriteResponseController) loader.<WriteResponseController>getController();
-        wrc.setNestingLevel(1);
+        wrc.setNestingLevel(nestingLevel);
+        wrc.setNode(parent);
+        wrc.registerListener(this);
 
         fpane.getChildren().add(fpane.getChildren().indexOf(rc)+1, parent);
-        //System.out.println(fpane.getChildren().indexOf(rc));
-
-
     }
 
     @Override
@@ -113,5 +93,13 @@ public class TopicMsgsController extends ScrollPane implements Initializable, Re
 
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
+    }
+
+    @Override
+    public void createdResponse(Parent wrcNode, String responseText, int nestingLevel) {
+        fpane.getChildren().add(fpane.getChildren().indexOf(wrcNode),
+                                constructResponse(responseText, nestingLevel+1));
+        fpane.getChildren().remove(wrcNode);
+        System.out.println("response text: " + responseText);
     }
 }
