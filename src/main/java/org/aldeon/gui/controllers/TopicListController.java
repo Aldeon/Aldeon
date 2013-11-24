@@ -51,7 +51,7 @@ public class TopicListController extends VBox implements Initializable, Response
     }
 
     @Override
-    public void responseRespondClicked(ResponseController rc) {
+    public void responseRespondClicked(Parent rc) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

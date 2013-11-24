@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+
+<HBox fx:id="windowContainer" prefHeight="210.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.WriteResponseController">
+  <children>
+    <StackPane prefHeight="150.0" prefWidth="200.0">
+      <children>
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="210.0" stroke="BLACK" strokeType="INSIDE" width="400.0" />
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#202020" height="210.0" stroke="BLACK" strokeType="INSIDE" width="350.0">
+          <StackPane.margin>
+            <Insets left="20.0" right="20.0" />
+          </StackPane.margin>
+        </Rectangle>
+        <VBox id="VBox" alignment="CENTER" spacing="5.0">
+          <children>
+            <TextArea fx:id="responseContent" prefWidth="200.0" wrapText="true" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="70.0" prefWidth="200.0">
+              <children>
+                <Button fx:id="sendResponse" mnemonicParsing="false" onMouseClicked="#sendResponseClicked" text="Button" />
+              </children>
+              <padding>
+                <Insets right="20.0" />
+              </padding>
+            </HBox>
+          </children>
+          <StackPane.margin>
+            <Insets left="30.0" right="30.0" top="10.0" />
+          </StackPane.margin>
+        </VBox>
+      </children>
+    </StackPane>
+  </children>
+</HBox>

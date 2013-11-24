@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
+import org.aldeon.app.Main;
 
 import java.io.IOException;
 import java.net.URL;
@@ -13,9 +14,10 @@ import java.util.ResourceBundle;
 /**
  *
  */
-public class TopicMsgsController extends ScrollPane implements Initializable{
+public class TopicMsgsController extends ScrollPane implements Initializable, ResponseControlListener{
 
     public FlowPane fpane;
+    private MainController mainController;
 
     private String weirdText = "1. Przecz skrżytało pogaństwo a ludzie myślili są proz? \n" +
             "2. Przystajali są krolowie ziemszczy a książęta seszli są sie na gromadę przeciwo Gospodnu i przeciwo \n" +
@@ -44,9 +46,12 @@ public class TopicMsgsController extends ScrollPane implements Initializable{
         } catch (IOException e) {
         }
         ResponseController rc = (ResponseController) loader.<ResponseController>getController();
-        rc.registerListener(listener);
+        rc.registerListener(this);
+        rc.toPass = parent;
         rc.setMessage(text, nestingLevel);
 
+        //fpane.getChildren().indexOf(caller)
+        //jak juz poznamy index to wstawiamy za nim okienko z odpowiedzia
         return parent;
     }
 
@@ -71,5 +76,42 @@ public class TopicMsgsController extends ScrollPane implements Initializable{
 //        fpane.getChildren().add(constructResponse(weirdText, 6));
 //        fpane.getChildren().add(constructResponse(weirdText, 7));
 //        fpane.getChildren().add(constructResponse(weirdText, 8));
+    }
+
+    @Override
+    public void responseClicked(ResponseController rc, String text) {
+        System.out.println("response text clicked");
+    }
+
+    @Override
+    public void responseRespondClicked(Parent rc) {
+        System.out.println("response respond clicked in topic msgs controller");
+
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("../WriteResponse.fxml"));
+        Parent parent=null;
+        try {
+            parent = (Parent) loader.load(getClass().getResource("../WriteResponse.fxml").openStream());
+        } catch (IOException e) {
+        }
+        //ResponseController rc2 = (ResponseController) loader.<ResponseController>getController();
+        //rc2.registerListener(this);
+        //rc2.setMessage("HHHHHHHHH", 1);
+
+        WriteResponseController wrc = (WriteResponseController) loader.<WriteResponseController>getController();
+        wrc.setNestingLevel(1);
+
+        fpane.getChildren().add(fpane.getChildren().indexOf(rc)+1, parent);
+        //System.out.println(fpane.getChildren().indexOf(rc));
+
+
+    }
+
+    @Override
+    public void responseDeleteClicked(ResponseController rc) {
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
     }
 }

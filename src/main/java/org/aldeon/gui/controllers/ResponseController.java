@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -29,6 +30,8 @@ public class ResponseController extends Pane implements Initializable {
     public Pane respPane;
     public HBox windowContainer;
 
+    public Parent toPass;
+
     private static final double initialHeight = 80;
 
     ResponseControlListener listener;
@@ -45,6 +48,12 @@ public class ResponseController extends Pane implements Initializable {
 
     public void respondClicked(MouseEvent event) {
         if (listener != null) listener.responseClicked(this, message.getText());
+    }
+
+    public void writeResponseClicked(MouseEvent event) {
+        //powiadomic widok o koniecznosci dodania nowego okienka pod tym
+        System.out.println("write response clicked");
+        if (listener != null) listener.responseRespondClicked(toPass);
     }
 
     public void mouseOnIcon(MouseEvent event) {
