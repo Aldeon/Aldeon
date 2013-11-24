@@ -23,7 +23,7 @@
             <TextArea fx:id="responseContent" prefWidth="200.0" wrapText="true" />
             <HBox alignment="CENTER_RIGHT" prefHeight="70.0" prefWidth="200.0">
               <children>
-                <Button fx:id="sendResponse" mnemonicParsing="false" onMouseClicked="#sendResponseClicked" text="Button" />
+                <Button fx:id="sendResponse" mnemonicParsing="false" onMouseClicked="#sendResponseClicked" text="Send" />
               </children>
               <padding>
                 <Insets right="20.0" />

@@ -38,28 +38,20 @@ public class ResponseController extends Pane implements Initializable {
 
     ResponseControlListener listener;
 
-    //po kliknieciu przycisku usuń powiadamiamy bazę danych, która usuwa wiadomość,
-    //a następnie powiadamia gui o usunięciu wiadomości?
-    //albo: powiadamiamy DB i GUI osobno (może być trochę szybciej)
-
-    //ikona odpowiedz:
-    //po kliknieciu pojawia sie okienko edytora ponizej tej odpowiedzi
-    //czyli sterowanie musi przejsc poziom wyzej - do rodzica,
-    //ktory takie okienko utworzy
-    //czyli ta klasa musi wiedziec o innej klasie ktora bedzie sluchac na te zdarzenia
+    public void deleteClicked(MouseEvent event) {
+        if (listener != null) listener.responseDeleteClicked(toPass);
+    }
 
     public void respondClicked(MouseEvent event) {
         if (listener != null) listener.responseClicked(this, message.getText());
     }
 
     public void writeResponseClicked(MouseEvent event) {
-        //powiadomic widok o koniecznosci dodania nowego okienka pod tym
         System.out.println("write response clicked");
         if (listener != null) listener.responseRespondClicked(toPass, nestingLevel);
     }
 
     public void mouseOnIcon(MouseEvent event) {
-
     }
 
     public void registerListener(ResponseControlListener listener) {

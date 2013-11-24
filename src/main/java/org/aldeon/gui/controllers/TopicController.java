@@ -1,5 +1,6 @@
 package org.aldeon.gui.controllers;
 
+import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
@@ -16,6 +17,7 @@ public class TopicController extends HBox {
 
     private String fullTopicText;
     private TopicControlListener listener;
+    private Parent topicNode;
 
     public void registerListener(TopicControlListener topicControlListener) {
         listener = topicControlListener;
@@ -34,5 +36,13 @@ public class TopicController extends HBox {
     public void topicTextClicked(MouseEvent event) {
         if (listener != null) listener.topicClicked(fullTopicText);
         System.out.println("diz iz hepenin");
+    }
+
+    public void setTopicNode(Parent topicNode) {
+        this.topicNode = topicNode;
+    }
+
+    public void deleteTopicClicked(MouseEvent event) {
+        if (listener != null) listener.deleteTopicClicked(topicNode);
     }
 }

@@ -88,7 +88,10 @@ public class TopicMsgsController extends ScrollPane
     }
 
     @Override
-    public void responseDeleteClicked(ResponseController rc) {
+    public void responseDeleteClicked(Parent responseNode) {
+        fpane.getChildren().remove(responseNode);
+        //TODO delete nodes recursively
+        //TODO notify DB through event loop
     }
 
     public void setMainController(MainController mainController) {

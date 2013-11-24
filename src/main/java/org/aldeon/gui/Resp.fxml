@@ -24,7 +24,7 @@
                     <Image url="@/gui/icons/icons/spechbubble_icon24.png" />
                   </image>
                 </ImageView>
-                <ImageView fitHeight="24.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="24.0" fitWidth="32.0" onMouseClicked="#deleteClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                   <image>
                     <Image url="@/gui/icons/icons/delete_icon24.png" />
                   </image>

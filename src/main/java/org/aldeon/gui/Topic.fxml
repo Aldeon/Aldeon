@@ -19,7 +19,7 @@
           <children>
             <HBox alignment="TOP_RIGHT" prefHeight="20.0" prefWidth="200.0" spacing="5.0">
               <children>
-                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="16.0" fitWidth="16.0" onMouseClicked="#deleteTopicClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                   <image>
                     <Image url="@/gui/icons/icons/delete_icon16.png" backgroundLoading="true" />
                   </image>
