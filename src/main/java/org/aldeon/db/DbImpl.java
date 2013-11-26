@@ -29,11 +29,14 @@ import java.util.concurrent.Executor;
 public class DbImpl implements Db {
 
     //TODO: Extract to Settings/Program Constans?
-    public static final String DEFAULT_DRIVER_CLASS_NAME = "org.sqlite.JDBC";
-    public static final String DEFAULT_DRIVER_NAME = "jdbc:sqlite:";
+    public static final String DEFAULT_DRIVER_CLASS_NAME = "org.hsqldb.jdbcDriver";
+    public static final String DEFAULT_DRIVER_NAME = "jdbc:hsqldb:file:";
     //TODO: change default path according to detected OS vvv
     public static final String DEFAULT_DB_PATH = "aldeon.db";
     public static final int DEFAULT_QUERY_TIMEOUT = 30;
+    public static final String DB_USER =   "sa";
+    public static final String DB_PASSWORD = "";
+    public static final String DB = "HSQL";
 
     private Connection connection;
     private String driverClassName;
@@ -250,7 +253,7 @@ public class DbImpl implements Db {
                 dbFileExists = false;
             }
 
-            connection = DriverManager.getConnection(DEFAULT_DRIVER_NAME + dbPath);
+            connection = DriverManager.getConnection(DEFAULT_DRIVER_NAME + dbPath, DB_USER, DB_PASSWORD);
         } catch (SQLException e) {
             System.err.println("ERROR: Can not connect to database.");
             e.printStackTrace();
@@ -258,6 +261,17 @@ public class DbImpl implements Db {
 
         if (!dbFileExists) {
             createDbSchema();
+        }
+    }
+
+    public void closeDbConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("ERROR: Can not close database connection.");
+            e.printStackTrace();
         }
     }
 
