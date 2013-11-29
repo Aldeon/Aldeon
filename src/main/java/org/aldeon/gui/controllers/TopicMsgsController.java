@@ -77,13 +77,10 @@ public class TopicMsgsController extends ScrollPane
 
     @Override
     public void responseClicked(ResponseController rc, String text) {
-        System.out.println("response text clicked");
     }
 
     @Override
     public void responseRespondClicked(Parent rc, int nestingLevel) {
-        System.out.println("response respond clicked in topic msgs controller");
-
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../WriteResponse.fxml"));
         Parent parent=null;

@@ -47,7 +47,6 @@ public class ResponseController extends Pane implements Initializable {
     }
 
     public void writeResponseClicked(MouseEvent event) {
-        System.out.println("write response clicked");
         if (listener != null) listener.responseRespondClicked(toPass, nestingLevel);
     }
 
