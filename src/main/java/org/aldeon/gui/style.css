@@ -30,9 +30,30 @@
     -fx-border-color:transparent transparent #333333 transparent;
 }
 
+.highlight {
+    -fx-fill: #00E0FF;
+}
+
+.button {
+    -fx-background-color:#151515;
+    -fx-background-radius:5px;
+    -fx-text-fill:#00E0FF;
+    -fx-cursor: hand;
+    -fx-padding: 5 10 5 10;
+}
+
+.button:hover {
+    -fx-background-color: #00E0FF;
+    -fx-text-fill: #FFF;
+}
+.text-input {
+    -fx-background-color:#222222;
+    -fx-text-fill: #00E0FF;
+    -fx-padding: 5 10 5 10;
+}
 Text{
     -fx-font:12px Verdana;
-    -fx-fill:#ffffff;
+    -fx-fill:#ccc;
 }
 CheckBox{
     -fx-fill:#000000;

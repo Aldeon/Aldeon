@@ -113,6 +113,8 @@ public class MainController extends BorderPane implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //ImageView im = new ImageView()
+        changeFxml("../dashboard.fxml");
     }
 
 }

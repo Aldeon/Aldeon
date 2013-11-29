@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
@@ -16,7 +17,7 @@
         <StackPane id="StackPane">
           <children>
             <Rectangle fx:id="colorRectangle" arcHeight="20.0" arcWidth="20.0" fill="#ff3333" height="131.0001220703125" smooth="true" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="411.0" />
-            <Rectangle fx:id="backgroundRectangle" arcHeight="5.0" arcWidth="5.0" fill="#4b4340" height="131.0001220703125" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="383.0" />
+            <Rectangle fx:id="backgroundRectangle" arcHeight="0.0" arcWidth="0.0" fill="#222222" height="131.0001220703125" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="383.0" />
             <HBox prefHeight="48.99993896484375" prefWidth="85.0" spacing="6.0" StackPane.alignment="CENTER_LEFT">
               <children>
                 <ImageView fitHeight="24.0" fitWidth="24.0" onMouseClicked="#writeResponseClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
@@ -50,4 +51,7 @@
       </padding>
     </HBox>
   </children>
+  <stylesheets>
+    <URL value="@style.css" />
+  </stylesheets>
 </Pane>
