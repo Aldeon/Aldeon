@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<HBox fx:id="topicBox" padding="$x1" prefHeight="80.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.TopicController">
+  <children>
+    <StackPane prefHeight="80.0" prefWidth="600.0">
+      <children>
+        <Rectangle fx:id="colorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="60.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
+        <Rectangle fx:id="backgroundRectangle" arcHeight="5.0" arcWidth="5.0" fill="#444444" height="60.0" stroke="BLACK" strokeType="INSIDE" width="580.0" />
+        <VBox prefHeight="70.0" prefWidth="600.0">
+          <children>
+            <HBox alignment="TOP_RIGHT" prefHeight="20.0" prefWidth="200.0" spacing="5.0">
+              <children>
+                <ImageView fitHeight="16.0" fitWidth="16.0" onMouseClicked="#deleteTopicClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                  <image>
+                    <Image url="@/gui/icons/icons/delete_icon16.png" backgroundLoading="true" />
+                  </image>
+                </ImageView>
+              </children>
+              <padding>
+                <Insets right="15.0" />
+              </padding>
+            </HBox>
+            <Text fx:id="topicText" onMouseClicked="#topicTextClicked" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-cursor: hand;" text="topic msg cropped" wrappingWidth="0.0">
+              <VBox.margin>
+                <Insets left="15.0" />
+              </VBox.margin>
+            </Text>
+            <HBox alignment="TOP_RIGHT" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
+              <children>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="msg #" />
+                <Text fill="#00e0ff" strokeType="OUTSIDE" strokeWidth="0.0" text="new #" />
+              </children>
+              <padding>
+                <Insets right="30.0" />
+              </padding>
+              <VBox.margin>
+                <Insets fx:id="x1" />
+              </VBox.margin>
+            </HBox>
+          </children>
+          <padding>
+            <Insets top="13.0" />
+          </padding>
+        </VBox>
+      </children>
+    </StackPane>
+  </children>
+</HBox>

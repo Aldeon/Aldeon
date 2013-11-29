@@ -8,74 +8,67 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane fx:id="main" prefHeight="700.0" prefWidth="796.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.MainController">
-    <center>
-        <Pane fx:id="contents"/>
-    </center>
-    <left>
-        <VBox fx:id="sidebar" prefHeight="800.0" prefWidth="97.0">
-            <children>
-                <StackPane fx:id="logo" prefHeight="51.0" prefWidth="95.0">
-                    <children>
-                        <ImageView fitHeight="47.0" fitWidth="62.666666666666664" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@/gui/icons/Logo.png" />
-                            </image>
-                        </ImageView>
-                    </children>
-                </StackPane>
-                <StackPane fx:id="Identities" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
-                    <children>
-                        <ImageView fitHeight="20.135595321655273" fitWidth="45.692312215413324" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@/gui/icons/Identities.png" />
-                            </image>
-                        </ImageView>
-                        <Text StackPane.alignment="BOTTOM_CENTER">
-                            Identities
-                        </Text>
-                    </children>
-                </StackPane>
-                <StackPane fx:id="Threads" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
-                    <children>
-                        <ImageView fitHeight="29.6727237701416" fitWidth="45.333326836325874" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@/gui/icons/Threads.png" />
-                            </image>
-                        </ImageView>
-                        <Text StackPane.alignment="BOTTOM_CENTER">
-                            Threads
-                        </Text>
-                    </children>
-                </StackPane>
-                <StackPane fx:id="Friends" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
-                    <children>
-                        <ImageView fitHeight="36.1356201171875" fitWidth="36.1356201171875" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@/gui/icons/Friends.png" />
-                            </image>
-                        </ImageView>
-                        <Text StackPane.alignment="BOTTOM_CENTER">
-                            Friends
-                        </Text>
-                    </children>
-                </StackPane>
-                <StackPane fx:id="Settings" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
-                    <children>
-                        <ImageView fitHeight="36.13560485839844" fitWidth="36.13560485839844" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@/gui/icons/Settings.png" />
-                            </image>
-                        </ImageView>
-                        <Text StackPane.alignment="BOTTOM_CENTER">
-                            Settings
-                        </Text>
-                    </children>
-                </StackPane>
-            </children>
-        </VBox>
-    </left>
-    <stylesheets>
-        <URL value="@style.css" />
-    </stylesheets>
+  <center>
+    <ScrollPane fx:id="contents" content="$null" fitToHeight="true" fitToWidth="true" hbarPolicy="AS_NEEDED" prefHeight="200.0" prefWidth="200.0" vbarPolicy="AS_NEEDED" visible="true" />
+  </center>
+  <left>
+    <VBox fx:id="sidebar" prefHeight="800.0" prefWidth="97.0">
+      <children>
+        <StackPane fx:id="logo" prefHeight="51.0" prefWidth="95.0">
+          <children>
+            <ImageView fitHeight="47.0" fitWidth="62.666666666666664" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@/gui/icons/Logo.png" />
+              </image>
+            </ImageView>
+          </children>
+        </StackPane>
+        <StackPane fx:id="Identities" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
+          <children>
+            <ImageView fitHeight="20.135595321655273" fitWidth="45.692312215413324" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@/gui/icons/Identities.png" />
+              </image>
+            </ImageView>
+            <Text StackPane.alignment="BOTTOM_CENTER" />
+          </children>
+        </StackPane>
+        <StackPane fx:id="Threads" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
+          <children>
+            <ImageView fitHeight="29.6727237701416" fitWidth="45.333326836325874" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@/gui/icons/Threads.png" />
+              </image>
+            </ImageView>
+            <Text StackPane.alignment="BOTTOM_CENTER" />
+          </children>
+        </StackPane>
+        <StackPane fx:id="Friends" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
+          <children>
+            <ImageView fitHeight="36.1356201171875" fitWidth="36.1356201171875" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@/gui/icons/Friends.png" />
+              </image>
+            </ImageView>
+            <Text StackPane.alignment="BOTTOM_CENTER" />
+          </children>
+        </StackPane>
+        <StackPane fx:id="Settings" onMouseClicked="#changeMode" prefHeight="66.0" prefWidth="95.0">
+          <children>
+            <ImageView fitHeight="36.13560485839844" fitWidth="36.13560485839844" pickOnBounds="true" preserveRatio="true">
+              <image>
+                <Image url="@/gui/icons/Settings.png" />
+              </image>
+            </ImageView>
+            <Text StackPane.alignment="BOTTOM_CENTER" />
+          </children>
+        </StackPane>
+      </children>
+    </VBox>
+  </left>
+  <stylesheets>
+    <URL value="@style.css" />
+  </stylesheets>
 </BorderPane>
