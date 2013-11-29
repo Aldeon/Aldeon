@@ -9,6 +9,8 @@ import org.aldeon.app.Main;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 /**
@@ -18,7 +20,16 @@ public class TopicMsgsController extends ScrollPane
         implements Initializable, ResponseControlListener, WriteResponseControlListener {
 
     public FlowPane fpane;
-    private MainController mainController;
+    private ArrayList<MsgWithInt> msgs = new ArrayList<MsgWithInt>();
+    private class MsgWithInt {
+        public Parent node;
+        public int indent;
+
+        public MsgWithInt(Parent node, int indent) {
+            this.indent = indent;
+            this.node = node;
+        }
+    }
 
     private String weirdText = "1. Przecz skrżytało pogaństwo a ludzie myślili są proz? \n" +
             "2. Przystajali są krolowie ziemszczy a książęta seszli są sie na gromadę przeciwo Gospodnu i przeciwo \n" +
@@ -55,7 +66,9 @@ public class TopicMsgsController extends ScrollPane
     }
 
     public void appendMsg(String content, int nestingLevel, ResponseControlListener listener) {
-        fpane.getChildren().add(constructResponse(content, nestingLevel));
+        Parent msg = constructResponse(content, nestingLevel);
+        fpane.getChildren().add(msg);
+        msgs.add(new MsgWithInt(msg, nestingLevel));
     }
 
     @Override
@@ -89,20 +102,40 @@ public class TopicMsgsController extends ScrollPane
 
     @Override
     public void responseDeleteClicked(Parent responseNode) {
-        fpane.getChildren().remove(responseNode);
-        //TODO delete nodes recursively
-        //TODO notify DB through event loop
-    }
 
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
+        Iterator<MsgWithInt> it = msgs.iterator();
+        boolean delete = false;
+        int nesting = 0;
+
+        while (it.hasNext()) {
+            MsgWithInt curr = it.next();
+            if (curr.node == responseNode) {
+                delete = true;
+                nesting = curr.indent;
+                fpane.getChildren().remove(curr.node);
+                it.remove();
+                continue;
+            }
+
+            if (delete == true && curr.indent > nesting) {
+                fpane.getChildren().remove(curr.node);
+                it.remove();
+            } else if (delete == true && curr.indent <= nesting) {
+                break;
+            }
+        }
+
+
+        //TODO notify DB through event loop
+        //DB should delete children by itself?
     }
 
     @Override
     public void createdResponse(Parent wrcNode, String responseText, int nestingLevel) {
-        fpane.getChildren().add(fpane.getChildren().indexOf(wrcNode),
-                                constructResponse(responseText, nestingLevel+1));
+        int creationIndex = fpane.getChildren().indexOf(wrcNode);
+        Parent msg = constructResponse(responseText, nestingLevel+1);
+        msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1));
+        fpane.getChildren().add(creationIndex,msg);
         fpane.getChildren().remove(wrcNode);
-        System.out.println("response text: " + responseText);
     }
 }

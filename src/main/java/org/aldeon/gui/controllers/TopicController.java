@@ -35,7 +35,6 @@ public class TopicController extends HBox {
     }
     public void topicTextClicked(MouseEvent event) {
         if (listener != null) listener.topicClicked(fullTopicText);
-        System.out.println("diz iz hepenin");
     }
 
     public void setTopicNode(Parent topicNode) {
