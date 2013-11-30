@@ -1,4 +1,4 @@
-package org.aldeon.dht;
+package org.aldeon.dht.slots;
 
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;

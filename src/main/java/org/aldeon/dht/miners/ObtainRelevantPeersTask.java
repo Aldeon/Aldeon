@@ -1,4 +1,4 @@
-package org.aldeon.dht.tasks;
+package org.aldeon.dht.miners;
 
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.events.Callback;

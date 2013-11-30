@@ -9,6 +9,7 @@ import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
+import org.aldeon.dht.DhtModule;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
@@ -57,9 +58,6 @@ public class CoreImpl implements Core {
         receivers = new HashMap<>();
         dhts = new HashMap<>();
 
-        dhts.put(Ipv4PeerAddress.class, null);
-        dhts.put(Ipv6PeerAddress.class, null);
-
         log.debug("Initialized the core.");
 
         getEventLoop().assign(AppClosingEvent.class, new ACB<AppClosingEvent>(clientSideExecutor()) {
@@ -98,6 +96,9 @@ public class CoreImpl implements Core {
     @Override
     public <T extends PeerAddress> void registerSender(Class<T> addressType, Sender<T> sender) {
         senders.put(addressType, sender);
+
+        // Dht is registered as soon as a sender is available
+        dhts.put(addressType, DhtModule.createDht(sender, clientSideExecutor(), addressType));
     }
 
     @Override

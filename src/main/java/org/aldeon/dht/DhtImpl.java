@@ -1,21 +1,28 @@
 package org.aldeon.dht;
 
+import org.aldeon.dht.miners.DemandWatcher;
+import org.aldeon.dht.ring.Ring;
+import org.aldeon.dht.ring.RingImpl;
+import org.aldeon.dht.slots.AddressAllocator;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.utils.collections.Provider;
 import org.aldeon.utils.math.ByteBufferArithmetic;
 
+import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BaseDhtImpl<T extends PeerAddress> implements Dht<T> {
+public class DhtImpl<T extends PeerAddress> implements Dht<T>, DemandWatcher {
 
     private final AddressAllocator<T> addressAllocator;
     private final Ring<T> ring;
+    private final Set<Callback<Identifier>> callbacks;
 
-    public BaseDhtImpl() {
+    public DhtImpl() {
         addressAllocator = new AddressAllocator<>();
         ring = new RingImpl<>(new ByteBufferArithmetic());
+        callbacks = new HashSet<>();
     }
 
     @Override
@@ -63,9 +70,17 @@ public abstract class BaseDhtImpl<T extends PeerAddress> implements Dht<T> {
         demandPossiblyChanged(topic);
     }
 
-    protected Provider<Integer> getDemand(Identifier topic) {
+    private void demandPossiblyChanged(Identifier topic) {
+        for(Callback<Identifier> cb: callbacks) {
+            cb.call(topic);
+        }
+    }
+
+    public Provider<Integer> getDemand(Identifier topic) {
         return addressAllocator.getDemandProvider(topic);
     }
 
-    protected abstract void demandPossiblyChanged(Identifier topic);
+    public void onUpdate(Callback<Identifier> callback) {
+        callbacks.add(callback);
+    }
 }
