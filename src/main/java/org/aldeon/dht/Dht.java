@@ -7,6 +7,7 @@ import java.util.Set;
 
 public interface Dht<T extends PeerAddress> {
 
+    void registerUncertainAddress(T address, Identifier topic);
     void registerAddress(T address, Identifier topic);
     void removeAddress(T address);
 

@@ -25,13 +25,10 @@ public class GetRelevantPeersAction implements Action<GetRelevantPeersRequest> {
         Set<PeerAddress> interested = new HashSet<>();
         Set<PeerAddress> nearValues = new HashSet<>();
 
-        for(Class<? extends PeerAddress> addressType: request.acceptedTypes) {
+        Dht dht = core.getDht(peer.getClass());
 
-            Dht dht = core.getDht(addressType);
-
-            nearValues.addAll(dht.getNearest(request.target, LIMIT));
-            interested.addAll(dht.getInterested(request.target, LIMIT));
-        }
+        nearValues.addAll(dht.getNearest(request.target, LIMIT));
+        interested.addAll(dht.getInterested(request.target, LIMIT));
 
         onResponse.call(new RelevantPeersResponse(interested, nearValues));
     }

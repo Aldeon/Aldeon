@@ -14,9 +14,5 @@ public class GetRelevantPeersRequest implements Request {
 
     public String type = TYPE;
     public Identifier target;
-    public Set<Class<? extends PeerAddress>> acceptedTypes;
 
-    public GetRelevantPeersRequest() {
-        acceptedTypes = new HashSet<>();
-    }
 }

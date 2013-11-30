@@ -67,15 +67,13 @@ public class JsonParserImplTest {
 
         GetRelevantPeersRequest req = new GetRelevantPeersRequest();
         req.target = Identifier.empty();
-        req.acceptedTypes.add(Ipv4PeerAddress.class);
-        req.acceptedTypes.add(Ipv6PeerAddress.class);
 
         JsonParser parser = new JsonParserImpl();
 
         String json = parser.toJson(req);
 
         assertEquals(
-                "{\"type\":\"get_relevant_peers\",\"target\":" + emptyId + ",\"types\":[\"ipv6\",\"ipv4\"]}",
+                "{\"type\":\"get_relevant_peers\",\"target\":" + emptyId + "}",
                 json
 
         );
@@ -84,8 +82,6 @@ public class JsonParserImplTest {
 
         assertEquals(req.type, res.type);
         assertEquals(req.target, res.target);
-        assertTrue(res.acceptedTypes.contains(Ipv4PeerAddress.class));
-        assertTrue(res.acceptedTypes.contains(Ipv6PeerAddress.class));
     }
 
     @Test
@@ -116,6 +112,5 @@ public class JsonParserImplTest {
         assertEquals(a0.getHost(), a1.getHost());
         assertEquals(a1.getPort(), a1.getPort());
 
-        System.out.println(json);
     }
 }

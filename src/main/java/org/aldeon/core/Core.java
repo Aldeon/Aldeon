@@ -20,12 +20,6 @@ public interface Core {
     <T extends PeerAddress> Dht<T> getDht(Class<T> addressType);
 
     /**
-     * TODO: make comment
-     * @return
-     */
-    InterestTracker getInterestTracker();
-
-    /**
      * Returns the global message storace class.
      * @return
      */

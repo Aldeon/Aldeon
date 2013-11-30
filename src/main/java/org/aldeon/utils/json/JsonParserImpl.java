@@ -48,9 +48,6 @@ public class JsonParserImpl implements JsonParser {
 
         builder.registerTypeAdapter(PeerAddress.class, new PeerAddressDeserializer());
 
-        builder.registerTypeAdapter(GetRelevantPeersRequest.class, new GetPeersInterestedRequestSerializer());
-        builder.registerTypeAdapter(GetRelevantPeersRequest.class, new GetPeersInterestedRequestDeserializer());
-
         gson = builder.create();
         parser = new com.google.gson.JsonParser();
     }

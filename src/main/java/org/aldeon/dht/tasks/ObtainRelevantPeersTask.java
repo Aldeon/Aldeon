@@ -6,7 +6,9 @@ import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
+import org.aldeon.protocol.exception.UnexpectedResponseTypeException;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
+import org.aldeon.protocol.response.RelevantPeersResponse;
 
 import java.util.concurrent.Executor;
 
@@ -15,10 +17,10 @@ public class ObtainRelevantPeersTask<T extends PeerAddress> implements OutboundR
     private final GetRelevantPeersRequest request;
     private final T address;
     private final Executor executor;
-    private final Callback<Response> onResponse;
+    private final Callback<RelevantPeersResponse> onResponse;
     private final Callback<Throwable> onThrowable;
 
-    public ObtainRelevantPeersTask(T address, Identifier topic, Executor executor, Callback<Response> onResponse, Callback<Throwable> onThrowable) {
+    public ObtainRelevantPeersTask(T address, Identifier topic, Executor executor, Callback<RelevantPeersResponse> onResponse, Callback<Throwable> onThrowable) {
         this.request = new GetRelevantPeersRequest();
         this.request.target = topic;
         this.address = address;
@@ -29,7 +31,11 @@ public class ObtainRelevantPeersTask<T extends PeerAddress> implements OutboundR
 
     @Override
     public void onSuccess(Response response) {
-        onResponse.call(response);
+        if(response instanceof RelevantPeersResponse) {
+            onResponse.call((RelevantPeersResponse) response);
+        } else {
+            onThrowable.call(new UnexpectedResponseTypeException());
+        }
     }
 
     @Override

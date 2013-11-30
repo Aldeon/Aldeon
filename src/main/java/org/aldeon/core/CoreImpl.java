@@ -57,8 +57,8 @@ public class CoreImpl implements Core {
         receivers = new HashMap<>();
         dhts = new HashMap<>();
 
-        dhts.put(Ipv4PeerAddress.class, new DhtImpl<Ipv4PeerAddress>());
-        dhts.put(Ipv6PeerAddress.class, new DhtImpl<Ipv6PeerAddress>());
+        dhts.put(Ipv4PeerAddress.class, null);
+        dhts.put(Ipv6PeerAddress.class, null);
 
         log.debug("Initialized the core.");
 
@@ -73,11 +73,6 @@ public class CoreImpl implements Core {
     @Override
     public <T extends PeerAddress> Dht<T> getDht(Class<T> addressType) {
         return dhts.get(addressType);
-    }
-
-    @Override
-    public InterestTracker getInterestTracker() {
-        return null; // TODO
     }
 
     @Override
