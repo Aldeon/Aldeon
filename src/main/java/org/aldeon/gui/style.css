@@ -30,8 +30,21 @@
     -fx-border-color:transparent transparent #333333 transparent;
 }
 
+.author {
+    -fx-font:20px Verdana;
+}
 .highlight {
     -fx-fill: #00E0FF;
+}
+
+.clickable {
+    -fx-cursor: hand;
+}
+
+.separator *.line {
+    -fx-border-style: solid;
+    -fx-border-width: 1px;
+    -fx-width: 2px;
 }
 
 .button {
