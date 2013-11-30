@@ -16,11 +16,15 @@
         <Button mnemonicParsing="false" onMouseClicked="#createTopic" text="Create thread" />
       </children>
     </HBox>
-    <FlowPane fx:id="fpane" prefHeight="300.0" prefWidth="600.0">
-      <padding>
-        <Insets left="50.0" />
-      </padding>
-    </FlowPane>
+    <HBox id="HBox" alignment="CENTER" spacing="5.0">
+      <children>
+        <FlowPane fx:id="fpane" alignment="CENTER" columnHalignment="CENTER" maxWidth="600.0" prefHeight="300.0" prefWidth="600.0" prefWrapLength="300.0">
+          <padding>
+            <Insets />
+          </padding>
+        </FlowPane>
+      </children>
+    </HBox>
   </children>
   <stylesheets>
     <URL value="@style.css" />
