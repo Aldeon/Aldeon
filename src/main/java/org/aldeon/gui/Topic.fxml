@@ -27,7 +27,7 @@
                 </ImageView>
               </children>
               <padding>
-                <Insets right="15.0" />
+                <Insets right="18.0" top="3.0" />
               </padding>
             </HBox>
             <Text fx:id="topicText" onMouseClicked="#topicTextClicked" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-cursor: hand;" text="topic msg cropped" wrappingWidth="0.0">

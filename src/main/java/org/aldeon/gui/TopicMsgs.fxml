@@ -2,6 +2,7 @@
 
 <?import java.lang.*?>
 <?import java.util.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
@@ -9,4 +10,7 @@
   <children>
     <FlowPane fx:id="fpane" prefHeight="400.0" prefWidth="600.0" />
   </children>
+  <padding>
+    <Insets left="25.0" />
+  </padding>
 </HBox>

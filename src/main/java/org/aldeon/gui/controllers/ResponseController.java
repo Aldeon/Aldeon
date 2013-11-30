@@ -79,7 +79,7 @@ public class ResponseController extends Pane implements Initializable {
         //separator.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
         separator.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
 
-        windowContainer.setPadding(new Insets(0,10,0,50 * nestingLevel)); //top right bottom left
+        windowContainer.setPadding(new Insets(0,10,0,35 * nestingLevel)); //top right bottom left
     }
 
     @Override
