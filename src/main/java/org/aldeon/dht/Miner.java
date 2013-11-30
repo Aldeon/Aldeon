@@ -6,11 +6,11 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.response.RelevantPeersResponse;
+import org.aldeon.utils.collections.Pair;
 import org.aldeon.utils.collections.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 /**
@@ -23,18 +23,20 @@ public class Miner<T extends PeerAddress>{
     private final Identifier topic;
     private final Sender<T> sender;
     private final Executor executor;
-    private final Dht<T> dht;
     private final Class<T> classOfT;
     private final Provider<Integer> demand;
+    private final Provider<T> targetProvider;
+    private final Callback<Pair<Identifier, T>> onFound;
     private boolean working = false;
 
-    public Miner(Identifier topic, Sender<T> sender, Executor executor, Dht<T> dht, Class<T> classOfT, Provider<Integer> demand) {
+    public Miner(Identifier topic, Sender<T> sender, Executor executor, Class<T> classOfT, Provider<Integer> demand, Callback<Pair<Identifier, T>> onFound, Provider<T> targetProvider) {
         this.topic = topic;
         this.sender = sender;
         this.executor = executor;
-        this.dht = dht;
         this.classOfT = classOfT;
         this.demand = demand;
+        this.onFound = onFound;
+        this.targetProvider = targetProvider;
     }
 
     public boolean isWorking() {
@@ -51,10 +53,10 @@ public class Miner<T extends PeerAddress>{
     private void dig() {
 
         // Decide who to ask
-        T peer = fetchClosestAddress();
+        T peer = targetProvider.get();
 
         if(peer != null) {
-            sender.addTask(new ObtainRelevantPeersTask<T>(peer, topic, executor, onResponse(), onThrowable()));
+            sender.addTask(new ObtainRelevantPeersTask<>(peer, topic, executor, onResponse(), onThrowable()));
         } else {
             working = false;
         }
@@ -75,11 +77,6 @@ public class Miner<T extends PeerAddress>{
         };
     }
 
-    private T fetchClosestAddress() {
-        Set<T> closest = dht.getNearest(topic, 1);
-        return closest.isEmpty() ? null : closest.iterator().next();
-    }
-
     private Callback<RelevantPeersResponse> onResponse() {
         return new Callback<RelevantPeersResponse>() {
             @Override
@@ -87,7 +84,7 @@ public class Miner<T extends PeerAddress>{
                 for(PeerAddress address: response.closestIds) {
 
                     if(classOfT.isInstance(address)) {
-                        dht.registerUncertainAddress((T) address, null);
+                        onFound.call(new Pair<>((Identifier) null, (T) address));
                     } else {
                         log.info("Response contains inappropriate address type");
                     }
@@ -95,7 +92,7 @@ public class Miner<T extends PeerAddress>{
 
                 for(PeerAddress address: response.interested) {
                     if(classOfT.isInstance(address)) {
-                        dht.registerUncertainAddress((T) address, topic);
+                        onFound.call(new Pair<>(topic, (T) address));
                     } else {
                         log.info("Response contains inappropriate address type");
                     }

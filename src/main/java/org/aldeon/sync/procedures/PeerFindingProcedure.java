@@ -2,7 +2,6 @@ package org.aldeon.sync.procedures;
 
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
-import org.aldeon.dht.Bounty;
 import org.aldeon.dht.Dht;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;

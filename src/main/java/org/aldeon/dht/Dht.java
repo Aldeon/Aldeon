@@ -1,5 +1,6 @@
 package org.aldeon.dht;
 
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 
@@ -14,6 +15,6 @@ public interface Dht<T extends PeerAddress> {
     Set<T> getInterested(Identifier topic, int maxResults);
     Set<T> getNearest(Identifier topic, int maxResults);
 
-    void addBounty(Bounty<T> bounty);
-    void delBounty(Bounty<T> bounty);
+    void addBounty(Identifier topic, Callback<T> callback);
+    void delBounty(Identifier topic, Callback<T> callback);
 }

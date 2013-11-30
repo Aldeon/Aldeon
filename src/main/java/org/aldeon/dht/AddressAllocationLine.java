@@ -1,9 +1,10 @@
-package org.aldeon.ndht;
+package org.aldeon.dht;
 
 import org.aldeon.events.Callback;
 import org.aldeon.net.PeerAddress;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class AddressAllocationLine<T extends PeerAddress> {
@@ -75,7 +76,26 @@ public class AddressAllocationLine<T extends PeerAddress> {
     }
 
     public Set<T> getAddresses(int maxResults) {
-        return null;
+
+        Set<T> result = new HashSet<>();
+
+        Iterator<T> it = unassigned.iterator();
+
+        for(int i = 0; i < maxResults; ++i) {
+            if(it.hasNext()) {
+                result.add(it.next());
+            } else break;
+        }
+
+        Iterator<Entry> eit = assignedSlots.iterator();
+
+        for(int i = result.size(); i < maxResults; ++i) {
+            if(eit.hasNext()) {
+                result.add(eit.next().address);
+            } else break;
+        }
+
+        return result;
     }
 
     public boolean isCompletelyEmpty() {
@@ -83,11 +103,7 @@ public class AddressAllocationLine<T extends PeerAddress> {
     }
 
     private boolean addressKnown(T address) {
-        if(unassigned.contains(address)) {
-            return true;
-        } else {
-            return findEntryByAddress(address) != null;
-        }
+        return unassigned.contains(address) || findEntryByAddress(address) != null;
     }
 
     private void addSlotAndTrigger(Callback<T> slot, T address) {
