@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.aldeon.core.CoreModule;
@@ -28,6 +29,7 @@ public class GUIController extends Application {
             stage.setTitle("Aldeon");
             stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
             stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+            stage.getIcons().add(new Image("/gui/appIcon.png"));
             launchMain();
             //gotoId();
             primaryStage.show();
