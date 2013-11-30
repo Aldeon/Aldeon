@@ -11,6 +11,7 @@ import org.aldeon.events.EventLoopImpl;
 import org.aldeon.nat.utils.NoAddressTranslation;
 import org.aldeon.net.AddressTranslation;
 import org.aldeon.net.IpPeerAddress;
+import org.aldeon.net.Ipv4PeerAddress;
 import org.aldeon.utils.net.PortImpl;
 
 import java.net.InetAddress;
@@ -52,7 +53,7 @@ public class CoreModule extends AbstractModule {
             translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
 
             // Register all senders and receivers we have implemented
-            core.registerSender(IpPeerAddress.class, NettyModule.createSender());
+            core.registerSender(Ipv4PeerAddress.class, NettyModule.createSender(Ipv4PeerAddress.class));
             core.registerReceiver(IpPeerAddress.class, NettyModule.createReceiver(translation));
 
         } catch (UnknownHostException e) {

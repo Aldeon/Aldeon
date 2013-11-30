@@ -26,7 +26,7 @@ import org.aldeon.utils.conversion.Converter;
 
 import java.util.concurrent.CancellationException;
 
-public class NettySender implements Sender<IpPeerAddress> {
+public class NettySender<T extends IpPeerAddress> implements Sender<T> {
 
     private Bootstrap bootstrap;
     private EventLoopGroup group;
@@ -66,7 +66,7 @@ public class NettySender implements Sender<IpPeerAddress> {
     }
 
     @Override
-    public void addTask(final OutboundRequestTask<IpPeerAddress> task) {
+    public void addTask(final OutboundRequestTask<T> task) {
         task.getExecutor().execute(new Runnable() {
             @Override
             public void run() {
@@ -91,11 +91,11 @@ public class NettySender implements Sender<IpPeerAddress> {
     }
 
     private static class ConnectionListener implements ChannelFutureListener {
-        private final OutboundRequestTask<IpPeerAddress> task;
+        private final OutboundRequestTask<? extends IpPeerAddress> task;
         private final FullHttpRequest request;
 
         public ConnectionListener(
-                OutboundRequestTask<IpPeerAddress> task,
+                OutboundRequestTask<? extends IpPeerAddress> task,
                 FullHttpRequest request
         ) {
             this.task = task;
