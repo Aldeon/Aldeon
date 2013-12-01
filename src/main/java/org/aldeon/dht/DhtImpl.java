@@ -46,6 +46,7 @@ public class DhtImpl<T extends PeerAddress> implements Dht<T>, DemandWatcher {
     @Override
     public void removeAddress(T address) {
         ring.remove(address);
+        addressAllocator.delAddressFromAllLines(address);
     }
 
     @Override

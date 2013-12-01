@@ -116,4 +116,22 @@ public class DbStub implements Db {
 
         callback.call(result);
     }
+
+    @Override
+    public void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback) {
+        Identifier current = descendant;
+        while(current != null && !current.isEmpty()) {
+            Message m = messages.get(current);
+            if(m == null) {
+                break;
+            } else {
+                current = m.getParentMessageIdentifier();
+                if(current.equals(ancestor)) {
+                    callback.call(true);
+                    return;
+                }
+            }
+        }
+        callback.call(false);
+    }
 }

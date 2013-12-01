@@ -17,4 +17,5 @@ public interface Db {
     void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback);
     void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback);
     void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback);
+    void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback);
 }

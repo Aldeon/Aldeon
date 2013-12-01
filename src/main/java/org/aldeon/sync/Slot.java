@@ -62,6 +62,11 @@ public interface Slot<T extends PeerAddress> {
     SlotType getSlotType();
 
     /**
+     * Used to revoke the associated address
+     */
+    void onRevoke(Runnable revoke);
+
+    /**
      * Points to a desired peer type
      * @return
      */
