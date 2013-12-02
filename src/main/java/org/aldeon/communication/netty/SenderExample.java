@@ -18,7 +18,7 @@ public class SenderExample {
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
         // Sender object
-        Sender<IpPeerAddress> sender = NettyModule.createSender();
+        Sender<IpPeerAddress> sender = NettyModule.createSender(IpPeerAddress.class);
 
         // Let's create a request
         Request request = null;

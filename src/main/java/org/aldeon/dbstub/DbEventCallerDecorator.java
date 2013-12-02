@@ -55,11 +55,16 @@ public class DbEventCallerDecorator implements Db {
 
     @Override
     public void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback) {
-        db.getIdsAndXorsByParentId(parentId,callback);
+        db.getIdsAndXorsByParentId(parentId, callback);
     }
 
     @Override
     public void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback) {
         db.checkAncestry(descendant, ancestor, callback);
+    }
+
+    @Override
+    public void getClock(AsyncCallback<Long> callback) {
+        db.getClock(callback);
     }
 }

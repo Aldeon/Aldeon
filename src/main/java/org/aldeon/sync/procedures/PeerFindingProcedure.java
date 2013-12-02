@@ -21,8 +21,6 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
     @Override
     public <T extends PeerAddress> void call(final Slot<T> slot, final Identifier topicId) {
 
-        slot.setInProgress(true);
-
         Core core = CoreModule.getInstance();
         final Dht<T> dht = core.getDht(slot.getAddressType());
 

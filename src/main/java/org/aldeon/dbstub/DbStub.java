@@ -134,4 +134,10 @@ public class DbStub implements Db {
         }
         callback.call(false);
     }
+
+    @Override
+    public void getClock(AsyncCallback<Long> callback) {
+        // TODO: implement
+        callback.call(0l);
+    }
 }

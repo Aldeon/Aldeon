@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.request.CompareTreesRequest;
+import org.aldeon.protocol.request.GetClockRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
 import org.aldeon.protocol.request.IndicateInterestRequest;
@@ -39,6 +40,8 @@ public class RequestClassMapper implements ClassMapper<Request> {
                 return CompareTreesRequest.class;
             } else if (action.equals(IndicateInterestRequest.TYPE)) {
                 return IndicateInterestRequest.class;
+            } else if (action.equals(GetClockRequest.TYPE)) {
+                return GetClockRequest.class;
             }
         }
 
