@@ -1,53 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="respPane" maxHeight="1.7976931348623157E308" padding="$x1" pickOnBounds="true" prefHeight="169.99990000000253" prefWidth="450.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.ResponseController">
+<Pane fx:id="respPane" maxHeight="1.7976931348623157E308" pickOnBounds="true" prefHeight="169.99990000000253" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.ResponseController">
   <children>
-    <HBox id="HBox" fx:id="windowContainer" alignment="CENTER" layoutX="25.0" layoutY="12.0" spacing="5.0">
+    <HBox id="HBox" fx:id="windowContainer" alignment="CENTER" layoutX="5.0" layoutY="12.0" padding="$x1" spacing="5.0">
       <children>
         <StackPane id="StackPane">
           <children>
-            <Rectangle fx:id="colorRectangle" arcHeight="20.0" arcWidth="20.0" fill="#ff3333" height="131.0001220703125" smooth="true" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="411.0" />
-            <Rectangle fx:id="backgroundRectangle" arcHeight="5.0" arcWidth="5.0" fill="#4b4340" height="131.0001220703125" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="383.0" />
-            <HBox prefHeight="48.99993896484375" prefWidth="85.0" spacing="6.0" StackPane.alignment="CENTER_LEFT">
+            <Rectangle fx:id="colorRectangle" arcHeight="20.0" arcWidth="20.0" fill="#5cff21" height="131.0001220703125" smooth="true" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="630.0">
+              <effect>
+                <DropShadow color="#0000009b" offsetY="5.0" />
+              </effect>
+            </Rectangle>
+            <Rectangle fx:id="backgroundRectangle" arcHeight="0.0" arcWidth="0.0" fill="#222222" height="131.0001220703125" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="600.0" />
+            <HBox id="HBox" alignment="TOP_RIGHT" spacing="5.0" StackPane.margin="$x1">
               <children>
-                <ImageView fitHeight="24.0" fitWidth="24.0" onMouseClicked="#writeResponseClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
-                  <image>
-                    <Image url="@/gui/icons/icons/spechbubble_icon24.png" />
-                  </image>
-                </ImageView>
-                <ImageView fitHeight="24.0" fitWidth="32.0" onMouseClicked="#deleteClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
-                  <image>
-                    <Image url="@/gui/icons/icons/delete_icon24.png" />
-                  </image>
-                </ImageView>
+                <VBox id="VBox" alignment="TOP_LEFT" prefWidth="400.0" spacing="5.0">
+                  <children>
+                    <HBox alignment="TOP_RIGHT" fillHeight="true" prefHeight="-1.0" prefWidth="350.0" spacing="6.0">
+                      <children>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" onMouseClicked="#writeResponseClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                          <image>
+                            <Image url="@/gui/icons/icons/spechbubble_icon24.png" />
+                          </image>
+                        </ImageView>
+                        <ImageView fitHeight="24.0" fitWidth="32.0" onMouseClicked="#deleteClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                          <image>
+                            <Image url="@/gui/icons/icons/delete_icon24.png" />
+                          </image>
+                        </ImageView>
+                      </children>
+                      <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                      </padding>
+                    </HBox>
+                    <Text fx:id="message" fill="#cccccc" onMouseClicked="#respondClicked" scaleX="1.0" scaleY="1.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-cursor: hand;" text="Msg text goes here" textAlignment="JUSTIFY" wrappingWidth="370.0">
+                      <font>
+                        <Font name="SansSerif Bold" size="12.0" />
+                      </font>
+                    </Text>
+                  </children>
+                  <padding>
+                    <Insets left="10.0" />
+                  </padding>
+                </VBox>
+                <Separator fx:id="separator" opacity="0.2" orientation="VERTICAL" prefHeight="100.0" prefWidth="4.0">
+                  <effect>
+                    <DropShadow blurType="ONE_PASS_BOX" height="1.0" offsetX="-2.0" radius="0.5" width="3.0" />
+                  </effect>
+                </Separator>
+                <VBox prefHeight="100.0" prefWidth="170.0" spacing="15.0">
+                  <children>
+                    <HBox alignment="TOP_RIGHT" prefHeight="30.0" prefWidth="200.0">
+                      <children>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" styleClass="clickable">
+                          <image>
+                            <Image url="@/gui/icons/icons/cancel_icon24.png" backgroundLoading="true" />
+                          </image>
+                        </ImageView>
+                      </children>
+                      <padding>
+                        <Insets right="10.0" top="10.0" />
+                      </padding>
+                    </HBox>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="author" text="Anon">
+                      <VBox.margin>
+                        <Insets fx:id="x1" />
+                      </VBox.margin>
+                    </Text>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="4DF987680E37F6042D06AAD3CSAESCD" wrappingWidth="123.0" />
+                  </children>
+                  <padding>
+                    <Insets left="15.0" />
+                  </padding>
+                  <HBox.margin>
+                    <Insets right="20.0" />
+                  </HBox.margin>
+                </VBox>
               </children>
-              <padding>
-                <Insets bottom="10.0" left="330.0" right="10.0" top="10.0" />
-              </padding>
             </HBox>
-            <Text fx:id="message" fill="#cccccc" onMouseClicked="#respondClicked" scaleX="1.0" scaleY="1.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-cursor: hand;" text="Msg text goes here" wrappingWidth="350.0" StackPane.alignment="TOP_LEFT">
-              <font>
-                <Font name="SansSerif Bold" size="12.0" />
-              </font>
-              <StackPane.margin>
-                <Insets left="20.0" top="40.0" />
-              </StackPane.margin>
-            </Text>
           </children>
         </StackPane>
       </children>
-      <padding>
-        <Insets fx:id="x1" />
-      </padding>
     </HBox>
   </children>
+  <padding>
+    <Insets fx:id="x1" />
+  </padding>
+  <stylesheets>
+    <URL value="@style.css" />
+  </stylesheets>
 </Pane>

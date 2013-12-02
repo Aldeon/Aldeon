@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
@@ -13,31 +14,37 @@
   <children>
     <StackPane prefHeight="80.0" prefWidth="600.0">
       <children>
-        <Rectangle fx:id="colorRectangle" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="60.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
-        <Rectangle fx:id="backgroundRectangle" arcHeight="5.0" arcWidth="5.0" fill="#444444" height="60.0" stroke="BLACK" strokeType="INSIDE" width="580.0" />
+        <Rectangle fx:id="colorRectangle" arcHeight="200.0" arcWidth="15.0" fill="DODGERBLUE" height="60.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" style="-fx-effect: dropshadow( gaussian, rgba(0,0,0,0.7), 10, 0, 0, 5);" width="600.0" />
+        <Rectangle fx:id="backgroundRectangle" arcHeight="0.0" arcWidth="0.0" fill="#222222" height="60.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="580.0" />
         <VBox prefHeight="70.0" prefWidth="600.0">
           <children>
             <HBox alignment="TOP_RIGHT" prefHeight="20.0" prefWidth="200.0" spacing="5.0">
               <children>
                 <ImageView fitHeight="16.0" fitWidth="16.0" onMouseClicked="#deleteTopicClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                   <image>
-                    <Image url="@/gui/icons/icons/delete_icon16.png" backgroundLoading="true" />
+                    <Image url="@/gui/icons/icons/delete_icon16.png" backgroundLoading="false" />
                   </image>
                 </ImageView>
               </children>
               <padding>
-                <Insets right="15.0" />
+                <Insets right="18.0" top="3.0" />
               </padding>
             </HBox>
             <Text fx:id="topicText" onMouseClicked="#topicTextClicked" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-cursor: hand;" text="topic msg cropped" wrappingWidth="0.0">
+              <fill>
+                <Color blue="0.800" green="0.800" red="0.800" fx:id="x2" />
+              </fill>
+              <font>
+                <Font name="System Bold" size="13.0" />
+              </font>
               <VBox.margin>
                 <Insets left="15.0" />
               </VBox.margin>
             </Text>
             <HBox alignment="TOP_RIGHT" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
               <children>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="msg #" />
-                <Text fill="#00e0ff" strokeType="OUTSIDE" strokeWidth="0.0" text="new #" />
+                <Text fill="$x2" strokeType="OUTSIDE" strokeWidth="0.0" text="msg #" />
+                <Text fill="#00e0ff" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="highlight" text="new #" />
               </children>
               <padding>
                 <Insets right="30.0" />
@@ -54,4 +61,7 @@
       </children>
     </StackPane>
   </children>
+  <stylesheets>
+    <URL value="@style.css" />
+  </stylesheets>
 </HBox>

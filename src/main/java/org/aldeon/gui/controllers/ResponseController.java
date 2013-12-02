@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -29,12 +30,13 @@ public class ResponseController extends Pane implements Initializable {
     public Rectangle colorRectangle;
     public Pane respPane;
     public HBox windowContainer;
+    public Separator separator;
 
     public Parent toPass;
 
     private int nestingLevel;
 
-    private static final double initialHeight = 80;
+    private static final double initialHeight = 132;
 
     ResponseControlListener listener;
 
@@ -67,15 +69,17 @@ public class ResponseController extends Pane implements Initializable {
         //respPane.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
         backgroundRectangle.setHeight(
                 Math.max(message.layoutBoundsProperty().get().getHeight()
-                        + message.getLayoutY() + 50,
+                        + message.getLayoutY(),
                         initialHeight));
 
         colorRectangle.setHeight(
-                backgroundRectangle.getHeight());
+                backgroundRectangle.getHeight()-2);
         respPane.setPrefHeight(colorRectangle.getHeight() + 30);
         respPane.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
+        //separator.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
+        separator.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
 
-        windowContainer.setPadding(new Insets(0,10,0,50 * nestingLevel)); //top right bottom left
+        windowContainer.setPadding(new Insets(0,10,0,35 * nestingLevel)); //top right bottom left
     }
 
     @Override

@@ -27,7 +27,7 @@ public class WriteResponseController extends HBox {
     }
     public void setNestingLevel(int nestingLevel) {
         this.nestingLevel = nestingLevel;
-        windowContainer.setPadding(new Insets(0,10,0,30 + 50 * nestingLevel)); //top right bottom left
+        windowContainer.setPadding(new Insets(0,10,0,30 + 35 * nestingLevel)); //top right bottom left
     }
     public void sendResponseClicked(MouseEvent event) {
         listener.createdResponse(wrcNode, responseContent.getText(), nestingLevel);
