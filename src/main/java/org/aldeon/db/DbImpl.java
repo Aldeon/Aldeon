@@ -70,9 +70,16 @@ public class DbImpl implements Db {
                 Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
 
                 ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
+
                 Signature signature = new SignatureImpl(signatureBuffer, false);
 
                 String content = result.getString("content");
+
+                System.out.println(BufPrint.hex(msgIdentifier));
+                System.out.println(BufPrint.hex(parentIdentifier));
+                System.out.println(BufPrint.hex(pubKey));
+                System.out.println(BufPrint.hex(content.getBytes()));
+                System.out.println(BufPrint.hex(signatureBuffer));
 
                 Message message = Messages.create(msgIdentifier, parentIdentifier, pubKey, content, signature);
                 callback.call(message);
@@ -345,6 +352,14 @@ public class DbImpl implements Db {
         insertMessage(otherBranch2, e);
 
         System.out.println(topic);
+
+        System.out.println(BufPrint.hex(topic.getIdentifier()));
+        System.out.println(BufPrint.hex(topic.getParentMessageIdentifier()));
+        System.out.println(BufPrint.hex(topic.getAuthorPublicKey()));
+        System.out.println(BufPrint.hex(topic.getContent().getBytes()));
+        System.out.println(BufPrint.hex(topic.getSignature()));
+        System.out.println("----------------------------------------------------");
+        System.out.println("a z bazy wyciagnieto:");
 
         this.getMessageById(topic.getIdentifier(), new ACB<Message>(e) {
             @Override

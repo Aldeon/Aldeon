@@ -4,7 +4,7 @@ public class Queries {
     public static final String CREATE_MESSAGE_TABLE = "CREATE TABLE messages (" +
                                                       "msg_id BIT(256) NOT NULL," +
                                                       "msg_sign BIT(1024) NOT NULL," +
-                                                      "author_id BIT(2048) NOT NULL," +
+                                                      "author_id BIT(1024) NOT NULL," +
                                                       "content nvarchar(1024) NOT NULL," +
                                                       "node_xor BIT(256) NOT NULL," +
                                                       "parent_msg_id BIT(256) NOT NULL," +

@@ -1,8 +1,18 @@
 package org.aldeon.utils.helpers;
 
+import org.aldeon.model.ByteSource;
+
 import java.nio.ByteBuffer;
 
 public class BufPrint {
+
+    public static String hex(ByteSource bs) {
+        return hex(bs.getByteBuffer());
+    }
+
+    public static String hex(byte[] bytes) {
+        return hex(ByteBuffer.wrap(bytes));
+    }
 
     public static String hex(ByteBuffer buf) {
 

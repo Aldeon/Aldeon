@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -98,5 +99,17 @@ public class RsaKeyGenTest {
         ByteBuffer result = pair.privateKey.decrypt(crypt);
 
         assertTrue(ByteBuffers.equal(input, result));
+    }
+
+    @Test
+    public void keyRepresentedAsByteBufferShouldHaveAppropriateSize() {
+
+        KeyGen gen = new RsaKeyGen();
+
+        KeyGen.KeyPair pair = gen.generate();
+
+        ByteBuffer bytePubKey = pair.publicKey.getByteBuffer();
+
+        assertEquals(bytePubKey.capacity(), RsaKeyGen.SIZE_BYTES);
     }
 }
