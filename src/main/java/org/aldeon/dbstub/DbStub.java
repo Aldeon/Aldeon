@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,7 +98,21 @@ public class DbStub implements Db {
     }
 
     @Override
-    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback) {
+        Set<Message> result = new HashSet<>();
+
+        for(Identifier child: mgr.getChildren(parentId)) {
+            Message msg = messages.get(child);
+            if(msg != null) {
+                result.add(msg);
+            }
+        }
+
+        callback.call(result);
+    }
+
+    @Override
+    public void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
         callback.call(mgr.getChildren(parentId));
     }
 
