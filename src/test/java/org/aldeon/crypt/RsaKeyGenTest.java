@@ -2,6 +2,7 @@ package org.aldeon.crypt;
 
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
+import org.aldeon.crypt.exception.KeyParseException;
 import org.aldeon.utils.helpers.BufPrint;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.junit.Test;
@@ -79,5 +80,23 @@ public class RsaKeyGenTest {
 
         assertFalse(ByteBuffers.equal(pair1.publicKey.getByteBuffer(), pair2.publicKey.getByteBuffer()));
         assertFalse(ByteBuffers.equal(pair1.privateKey.getByteBuffer(), pair2.privateKey.getByteBuffer()));
+    }
+
+    @Test
+    public void parsedKeyShouldBeIdenticalToOriginalKey() throws EncryptionFailedException, DecryptionFailedException, KeyParseException {
+
+        KeyGen gen = new RsaKeyGen();
+
+        KeyGen.KeyPair pair = gen.generate();
+
+        ByteBuffer input = ByteBuffer.wrap(inputBytes);
+
+        ByteBuffer bytePubKey = pair.publicKey.getByteBuffer();
+        Key decodedPubKey = gen.parsePublicKey(bytePubKey);
+
+        ByteBuffer crypt = decodedPubKey.encrypt(input);
+        ByteBuffer result = pair.privateKey.decrypt(crypt);
+
+        assertTrue(ByteBuffers.equal(input, result));
     }
 }
