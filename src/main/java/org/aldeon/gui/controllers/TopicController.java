@@ -5,6 +5,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.aldeon.model.Message;
 
 /**
  *
@@ -18,13 +19,18 @@ public class TopicController extends HBox {
     private String fullTopicText;
     private TopicControlListener listener;
     private Parent topicNode;
+    private Message message;
 
     public void registerListener(TopicControlListener topicControlListener) {
         listener = topicControlListener;
     }
 
+    public void setMessage(Message m) {
+        message = m;
+        setTopicText(m.getContent());
+    }
 
-    public void setTopicText(String topicText) {
+    private void setTopicText(String topicText) {
         fullTopicText = topicText;
 
         if (topicText.length() > 60) {
@@ -34,7 +40,7 @@ public class TopicController extends HBox {
 
     }
     public void topicTextClicked(MouseEvent event) {
-        if (listener != null) listener.topicClicked(fullTopicText);
+        if (listener != null) listener.topicClicked(message);
     }
 
     public void setTopicNode(Parent topicNode) {

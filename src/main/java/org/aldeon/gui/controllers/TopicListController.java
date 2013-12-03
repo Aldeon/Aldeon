@@ -1,5 +1,6 @@
 package org.aldeon.gui.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -7,9 +8,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.events.ACB;
+import org.aldeon.model.Identifier;
+import org.aldeon.model.Message;
+import org.aldeon.utils.helpers.Messages;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  *
@@ -22,11 +31,27 @@ public class TopicListController extends VBox implements Initializable, TopicCon
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        for ( int i = 0; i < 7; i++)
-            fpane.getChildren().add(createTopic("topic with very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long first message " + i));
+        CoreModule.getInstance().getStorage().getMessagesByParentId(Identifier.empty(),
+                new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
+                    @Override
+                    protected void react(Set<Message> val) {
+                        for (Message message : val) {
+                            final Message m = message;
+
+//the code below will be executed by FX thread. Only that thread can update GUI elements.
+//any attempt of doing this in another thread will cause "Not on FX application thread" exception
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fpane.getChildren().add(createTopic(m));
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
-    public Parent createTopic(String topicText) {
+    public Parent createTopic(Message message) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../Topic.fxml"));
         Parent parent=null;
@@ -35,15 +60,25 @@ public class TopicListController extends VBox implements Initializable, TopicCon
         } catch (IOException e) {
         }
         TopicController tc = (TopicController) loader.<TopicController>getController();
-        tc.setTopicText(topicText);
+        tc.setMessage(message);
         tc.registerListener(this);
         tc.setTopicNode(parent);
+
+        //dodawanie wiadomosci
+        //dodawanie topicow to to samo tylko ze dodatkowo dajemy parent empty
+//        CoreModule.getInstance().getEventLoop().notify(new MessageAddedEvent(
+//                Messages.createAndSign(, ,,)
+//        ));
+
+        //dodawanie identity
+        // notify identityAdded
+        // new Identity(String name);
 
         return parent;
     }
 
     public void createTopic(MouseEvent event){
-        fpane.getChildren().add(createTopic(topicName.getText()));
+        //TODO fire topic subscription event
     }
 
     public void setMainController(MainController mainController) {
@@ -51,8 +86,8 @@ public class TopicListController extends VBox implements Initializable, TopicCon
     }
 
     @Override
-    public void topicClicked(String topicText) {
-        mainController.showTopicMsgs(topicText);
+    public void topicClicked(Message topicMessage) {
+        mainController.showTopicMsgs(topicMessage);
     }
 
     @Override

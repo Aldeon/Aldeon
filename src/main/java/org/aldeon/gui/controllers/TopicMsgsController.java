@@ -1,17 +1,23 @@
 package org.aldeon.gui.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import org.aldeon.app.Main;
+import org.aldeon.core.CoreModule;
+import org.aldeon.events.ACB;
+import org.aldeon.model.Identifier;
+import org.aldeon.model.Message;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  *
@@ -21,6 +27,8 @@ public class TopicMsgsController extends ScrollPane
 
     public FlowPane fpane;
     private ArrayList<MsgWithInt> msgs = new ArrayList<MsgWithInt>();
+    private Message topicMessage;
+
     private class MsgWithInt {
         public Parent node;
         public int indent;
@@ -63,6 +71,28 @@ public class TopicMsgsController extends ScrollPane
         rc.setMessage(text, nestingLevel);
 
         return parent;
+    }
+
+    public void setTopicMessage(Message topicMessage) {
+        this.topicMessage = topicMessage;
+        appendMsg(topicMessage.getContent(), 0, null);
+
+        CoreModule.getInstance().getStorage().getMessagesByParentId(topicMessage.getIdentifier(),
+                new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
+                    @Override
+                    protected void react(Set<Message> val) {
+                        for (Message message : val) {
+
+                            final Message m = message;
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    appendMsg(m.getContent(), 1, null);
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
     public void appendMsg(String content, int nestingLevel, ResponseControlListener listener) {
