@@ -13,17 +13,8 @@ import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.helpers.Messages;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 public class DbImpl implements Db {

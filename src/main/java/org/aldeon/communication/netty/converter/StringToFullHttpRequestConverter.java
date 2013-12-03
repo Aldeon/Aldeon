@@ -1,10 +1,6 @@
 package org.aldeon.communication.netty.converter;
 
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
 

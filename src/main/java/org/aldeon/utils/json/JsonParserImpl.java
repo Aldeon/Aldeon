@@ -5,17 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.Signature;
-import org.aldeon.model.ByteSource;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.base64.Base64CodecImpl;
-import org.aldeon.utils.json.adapters.ByteSourceSerializer;
-import org.aldeon.utils.json.adapters.IdentifierDeserializer;
-import org.aldeon.utils.json.adapters.IdentifierSerializer;
-import org.aldeon.utils.json.adapters.KeySerializer;
-import org.aldeon.utils.json.adapters.MessageSerializer;
-import org.aldeon.utils.json.adapters.SignatureSerializer;
+import org.aldeon.utils.json.adapters.*;
 
 public class JsonParserImpl implements JsonParser {
 

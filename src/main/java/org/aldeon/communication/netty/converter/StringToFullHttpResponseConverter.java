@@ -1,11 +1,7 @@
 package org.aldeon.communication.netty.converter;
 
 import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;

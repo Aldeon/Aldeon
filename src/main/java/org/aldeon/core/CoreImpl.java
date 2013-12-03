@@ -9,27 +9,16 @@ import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
-import org.aldeon.dht.Ring;
-import org.aldeon.dht.RingImpl;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
-import org.aldeon.net.Ipv4PeerAddress;
-import org.aldeon.net.Ipv6PeerAddress;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.utils.math.Arithmetic;
-import org.aldeon.utils.math.ByteBufferArithmetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,6 +36,9 @@ public class CoreImpl implements Core {
     private final Db storage;
     private final ExecutorService clientSideExecutor;
     private final ExecutorService serverSideExecutor;
+    private final Executor wrappedClientExecutor;
+    private final Executor wrappedServerExecutor;
+
 
     private final Map<Class, Sender> senders;
     private final Map<Class, Receiver> receivers;
@@ -59,6 +51,8 @@ public class CoreImpl implements Core {
         this.identies = new HashSet<>();
         this.clientSideExecutor = Executors.newFixedThreadPool(2);
         this.serverSideExecutor = Executors.newFixedThreadPool(2);
+        this.wrappedClientExecutor = new ThrowableInterceptor(clientSideExecutor);
+        this.wrappedServerExecutor = new ThrowableInterceptor(serverSideExecutor);
 
         senders = new HashMap<>();
         receivers = new HashMap<>();
@@ -110,12 +104,12 @@ public class CoreImpl implements Core {
 
     @Override
     public Executor serverSideExecutor() {
-        return serverSideExecutor;
+        return wrappedServerExecutor;
     }
 
     @Override
     public Executor clientSideExecutor() {
-        return clientSideExecutor;
+        return wrappedClientExecutor;
     }
 
     @Override
