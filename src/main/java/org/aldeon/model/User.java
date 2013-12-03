@@ -7,6 +7,7 @@ import org.aldeon.crypt.Key;
  *
  * TODO: should there be any username?
  */
-public interface User extends Identifiable {
+public interface User {
     Key getPublicKey();
+    String getName();
 }
