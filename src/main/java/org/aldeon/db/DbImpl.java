@@ -1,35 +1,22 @@
 package org.aldeon.db;
 
-import org.aldeon.crypt.KeyGen;
-import org.aldeon.crypt.RsaKeyGen;
-import org.aldeon.crypt.Signature;
-import org.aldeon.crypt.SignatureImpl;
+import org.aldeon.crypt.*;
 import org.aldeon.db.queries.Queries;
+import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.ByteSource;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.base64.MiGBase64Impl;
-import org.aldeon.utils.conversion.ConversionException;
+import org.aldeon.utils.helpers.BufPrint;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 public class DbImpl implements Db {
@@ -40,7 +27,7 @@ public class DbImpl implements Db {
     //TODO: change default path according to detected OS vvv
     public static final String DEFAULT_DB_PATH = "aldeon.db";
     public static final int DEFAULT_QUERY_TIMEOUT = 30;
-    public static final String DB_USER =   "sa";
+    public static final String DB_USER = "sa";
     public static final String DB_PASSWORD = "";
 
     private Connection connection;
@@ -48,8 +35,7 @@ public class DbImpl implements Db {
     private String dbPath;
     private Base64Codec base64Codec;
 
-    public DbImpl()
-    {
+    public DbImpl() {
         this.base64Codec = new MiGBase64Impl();
         this.driverClassName = DEFAULT_DRIVER_CLASS_NAME;
         this.dbPath = DEFAULT_DB_PATH;
@@ -65,7 +51,7 @@ public class DbImpl implements Db {
 
     @Override
     public void getMessageById(Identifier msgId, final AsyncCallback<Message> callback) {
-        if(msgId == null || connection == null || base64Codec == null) {
+        if (msgId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
         }
@@ -75,15 +61,24 @@ public class DbImpl implements Db {
             setBinaryInPreparedStatement(1, msgId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
+            if (result.next()) {
+                Identifier msgIdentifier = Identifier.fromBytes(result.getBytes("msg_id"), false);
+                Identifier parentIdentifier = Identifier.fromBytes(result.getBytes("parent_msg_id"), false);
 
-            Identifier msgIdentifier = fromB64(result.getString("msg_id"));
-            Identifier authorIdentifier = fromB64(result.getString("author_id"));
-            Identifier parentIdentifier = fromB64(result.getString("parent_msg_id"));
-            Signature signature = new SignatureImpl(result.getString("msg_sig"), false);
-            String content = result.getString("content");
+                ByteBuffer pubKeyBuffer = ByteBuffer.wrap(result.getBytes("author_id"));
+                RsaKeyGen rsa = new RsaKeyGen();
+                Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
 
-            Message message = Messages.create(msgIdentifier, authorIdentifier, null, content, signature);
-            callback.call(message);
+                ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
+                Signature signature = new SignatureImpl(signatureBuffer, false);
+
+                String content = result.getString("content");
+
+                Message message = Messages.create(msgIdentifier, parentIdentifier, pubKey, content, signature);
+                callback.call(message);
+            } else {
+                callback.call(null);
+            }
         } catch (Exception e) {
             System.err.println("ERROR: Error in getMessageById.");
             e.printStackTrace();
@@ -93,19 +88,30 @@ public class DbImpl implements Db {
 
     @Override
     public void insertMessage(Message message, Executor executor) {
-        if (message == null || connection == null || base64Codec == null)  {
+        if (message == null || connection == null || base64Codec == null) {
             return;
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
+            final PreparedStatement preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
             setBinaryInPreparedStatement(1, message.getIdentifier(), preparedStatement);
             setBinaryInPreparedStatement(2, message.getSignature(), preparedStatement);
             setBinaryInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
             preparedStatement.setString(4, message.getContent());
             setBinaryInPreparedStatement(5, message.getIdentifier(), preparedStatement);
             setBinaryInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
-            preparedStatement.executeUpdate();
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        preparedStatement.executeUpdate();
+                    } catch (SQLException e) {
+                        System.err.println("ERROR: Error in insertMessage.");
+                        e.printStackTrace();
+                        return;
+                    }
+                }
+            });
         } catch (SQLException e) {
             System.err.println("ERROR: Error in insertMessage.");
             e.printStackTrace();
@@ -116,14 +122,25 @@ public class DbImpl implements Db {
 
     @Override
     public void deleteMessage(Identifier msgId, Executor executor) {
-        if (msgId == null || connection == null || base64Codec == null)  {
+        if (msgId == null || connection == null || base64Codec == null) {
             return;
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.DELETE_MSG_BY_ID);
+            final PreparedStatement preparedStatement = connection.prepareStatement(Queries.DELETE_MSG_BY_ID);
             setBinaryInPreparedStatement(1, msgId, preparedStatement);
-            preparedStatement.executeUpdate();
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        preparedStatement.executeUpdate();
+                    } catch (SQLException e) {
+                        System.err.println("ERROR: Error in deleteMessage.");
+                        e.printStackTrace();
+                        return;
+                    }
+                }
+            });
         } catch (SQLException e) {
             System.err.println("ERROR: Error in deleteMessage.");
             e.printStackTrace();
@@ -133,7 +150,7 @@ public class DbImpl implements Db {
 
     @Override
     public void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback) {
-        if(msgXor == null || connection == null || base64Codec == null) {
+        if (msgXor == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
         }
@@ -145,7 +162,7 @@ public class DbImpl implements Db {
 
             //TODO: is it always only one record?
             // Nope, there WILL be multiple results
-            Identifier msgId = fromB64(result.getString("msg_id"));
+            Identifier msgId = Identifier.fromBytes(result.getBytes("msg_id"), false);
 
             // callback.call(msgId);
             callback.call(Collections.EMPTY_SET);
@@ -164,7 +181,7 @@ public class DbImpl implements Db {
 
     @Override
     public void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback) {
-        if(msgId == null || connection == null || base64Codec == null) {
+        if (msgId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
         }
@@ -174,7 +191,7 @@ public class DbImpl implements Db {
             setBinaryInPreparedStatement(1, msgId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
-            Identifier nodeXor = fromB64(result.getString("node_xor"));
+            Identifier nodeXor = Identifier.fromBytes(result.getBytes("node_xor"), false);
 
             callback.call(nodeXor);
         } catch (Exception e) {
@@ -200,7 +217,7 @@ public class DbImpl implements Db {
             Set<Identifier> children = new HashSet<>();
 
             while (result.next()) {
-                Identifier msgIdentifier = fromB64(result.getString("msg_id"));
+                Identifier msgIdentifier = Identifier.fromBytes(result.getBytes("msg_id"), false);
                 children.add(msgIdentifier);
             }
 
@@ -215,7 +232,7 @@ public class DbImpl implements Db {
 
     @Override
     public void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback) {
-        if(parentId == null || connection == null || base64Codec == null) {
+        if (parentId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
         }
@@ -228,8 +245,8 @@ public class DbImpl implements Db {
             Map<Identifier, Identifier> idsAndXors = new HashMap<>();
 
             while (result.next()) {
-                Identifier msgIdentifier = fromB64(result.getString("msg_id"));
-                Identifier nodeXor = fromB64(result.getString("node_xor"));
+                Identifier msgIdentifier = Identifier.fromBytes(result.getBytes("msg_id"), false);
+                Identifier nodeXor = Identifier.fromBytes(result.getBytes("node_xor"), false);
                 idsAndXors.put(msgIdentifier, nodeXor);
             }
 
@@ -238,7 +255,7 @@ public class DbImpl implements Db {
             System.err.println("ERROR: Error in getIdsAndXorsByParentId.");
             e.printStackTrace();
             callback.call(null);
-            return;
+
         }
     }
 
@@ -266,7 +283,6 @@ public class DbImpl implements Db {
 
         if (!dbFileExists) {
             createDbSchema();
-            insertTestData();
         }
     }
 
@@ -281,7 +297,7 @@ public class DbImpl implements Db {
         }
     }
 
-    private void createDbSchema()  {
+    private void createDbSchema() {
         try {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(DEFAULT_QUERY_TIMEOUT);
@@ -299,7 +315,7 @@ public class DbImpl implements Db {
         }
     }
 
-    private void insertTestData() {
+    public void insertTestData() {
         // Synchronous executor
         Executor e = new Executor() {
             @Override
@@ -313,7 +329,7 @@ public class DbImpl implements Db {
         KeyGen rsa = new RsaKeyGen();
 
         KeyGen.KeyPair alice = rsa.generate();
-        KeyGen.KeyPair bob   = rsa.generate();
+        KeyGen.KeyPair bob = rsa.generate();
 
         Message topic = Messages.createAndSign(null, alice.publicKey, alice.privateKey, "Some topic");
 
@@ -329,14 +345,14 @@ public class DbImpl implements Db {
         insertMessage(otherBranch2, e);
 
         System.out.println(topic);
-    }
 
-    private void setBase64InPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
-        try {
-            preparedStatement.setString(parameterIndex, base64Codec.encode(byteSource.getByteBuffer()));
-        } catch (SQLException e) {
-            throw e;
-        }
+        this.getMessageById(topic.getIdentifier(), new ACB<Message>(e) {
+            @Override
+            protected void react(Message val) {
+                System.out.println("wyciagnieto z bazy wiadomosc: ");
+                System.out.println(val);
+            }
+        });
     }
 
     private void setBinaryInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
@@ -351,14 +367,6 @@ public class DbImpl implements Db {
             preparedStatement.setBytes(parameterIndex, bytes);
         } catch (SQLException e) {
             throw e;
-        }
-    }
-
-    private Identifier fromB64(String b64) {
-        try {
-            return Identifier.fromByteBuffer(base64Codec.decode(b64), false);
-        } catch (ConversionException e) {
-            return null;
         }
     }
 }
