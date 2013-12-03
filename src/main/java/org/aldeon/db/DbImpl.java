@@ -150,6 +150,11 @@ public class DbImpl implements Db {
     }
 
     @Override
+    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback) {
+        callback.call(Collections.EMPTY_SET);
+    }
+
+    @Override
     public void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback) {
         if(msgId == null || connection == null || base64Codec == null) {
             callback.call(null);
@@ -173,7 +178,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
         if(parentId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -193,7 +198,7 @@ public class DbImpl implements Db {
 
             callback.call(children);
         } catch (Exception e) {
-            System.err.println("ERROR: Error in getMessagesByParentId.");
+            System.err.println("ERROR: Error in getMessageIdsByParentId.");
             e.printStackTrace();
             callback.call(null);
             return;

@@ -49,8 +49,13 @@ public class DbEventCallerDecorator implements Db {
     }
 
     @Override
-    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
-        db.getMessagesByParentId(parentId,callback);
+    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback) {
+        db.getMessagesByParentId(parentId, callback);
+    }
+
+    @Override
+    public void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
+        db.getMessageIdsByParentId(parentId, callback);
     }
 
     @Override

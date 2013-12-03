@@ -15,6 +15,7 @@ public interface Db {
 
     void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback);
     void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback);
-    void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback);
+    void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback);
+    void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback);
     void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback);
 }
