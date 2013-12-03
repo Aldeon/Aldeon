@@ -1,7 +1,7 @@
 package org.aldeon.utils.helpers;
 
 import javax.xml.bind.DatatypeConverter;
-import java.nio.ByteBuffer;
+import java.nio.*;
 
 public class ByteBuffers {
 
@@ -130,10 +130,9 @@ public class ByteBuffers {
     // cut about 20% off of the time for long arrays.
     // (Edit: When I say it's faster than the alternatives, I mean the alternative code offered in the discussions.
     // Performance is equivalent to Commons Codec, which uses very similar code.)
-    public static String toHex(ByteBuffer a) {
-        // Better safe than sorry
-        a = a.asReadOnlyBuffer();
-        byte[] bytes = a.array();
+    public static String toHex(ByteBuffer byteBuffer) {
+        byteBuffer = clone(byteBuffer);
+        byte[] bytes = byteBuffer.array();
 
         char[] hexChars = new char[bytes.length * 2];
         int v;
@@ -143,5 +142,14 @@ public class ByteBuffers {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static ByteBuffer clone(ByteBuffer buffer) {
+        ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity());
+        buffer.rewind();
+        newBuffer.put(buffer);
+        buffer.rewind();
+        newBuffer.flip();
+        return newBuffer;
     }
 }

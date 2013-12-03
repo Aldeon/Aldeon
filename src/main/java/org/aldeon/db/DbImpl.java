@@ -12,11 +12,13 @@ import org.aldeon.model.Message;
 import org.aldeon.utils.base64.Base64Codec;
 import org.aldeon.utils.base64.MiGBase64Impl;
 import org.aldeon.utils.conversion.ConversionException;
+import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -101,7 +103,6 @@ public class DbImpl implements Db {
             setBinaryInPreparedStatement(2, message.getSignature(), preparedStatement);
             setBinaryInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
             preparedStatement.setString(4, message.getContent());
-            //TODO: node_xor == msg_id?
             setBinaryInPreparedStatement(5, message.getIdentifier(), preparedStatement);
             setBinaryInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
             preparedStatement.executeUpdate();
@@ -110,6 +111,7 @@ public class DbImpl implements Db {
             e.printStackTrace();
             return;
         }
+
     }
 
     @Override
@@ -339,9 +341,14 @@ public class DbImpl implements Db {
 
     private void setBinaryInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
         try {
-            byte[] bytes = byteSource.getByteBuffer().asReadOnlyBuffer().array();
-            InputStream byteArrayStream =  new ByteArrayInputStream(bytes);
-            preparedStatement.setBinaryStream(parameterIndex, byteArrayStream);
+            ByteBuffer byteBuffer = byteSource.getByteBuffer();
+
+            if (byteBuffer.isReadOnly()) {
+                byteBuffer = ByteBuffers.clone(byteBuffer);
+            }
+
+            byte[] bytes = byteBuffer.array();
+            preparedStatement.setBytes(parameterIndex, bytes);
         } catch (SQLException e) {
             throw e;
         }
