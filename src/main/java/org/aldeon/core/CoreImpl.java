@@ -15,6 +15,7 @@ import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
+import org.aldeon.model.Identity;
 import org.aldeon.net.Ipv4PeerAddress;
 import org.aldeon.net.Ipv6PeerAddress;
 import org.aldeon.net.PeerAddress;
@@ -24,8 +25,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,11 +50,13 @@ public class CoreImpl implements Core {
 
     private final Map<Class, Sender> senders;
     private final Map<Class, Receiver> receivers;
+    private final Set<Identity> identies;
 
     @Inject
     public CoreImpl(Db storage, EventLoop eventLoop) {
         this.storage = storage;
         this.eventLoop = eventLoop;
+        this.identies = new HashSet<>();
         this.clientSideExecutor = Executors.newFixedThreadPool(2);
         this.serverSideExecutor = Executors.newFixedThreadPool(2);
 
@@ -85,6 +91,21 @@ public class CoreImpl implements Core {
     @Override
     public EventLoop getEventLoop() {
         return eventLoop;
+    }
+
+    @Override
+    public Set<Identity> getAllIdentities() {
+        return Collections.unmodifiableSet(identies);
+    }
+
+    @Override
+    public void addIdentity(Identity identity) {
+        identies.add(identity);
+    }
+
+    @Override
+    public void delIdentity(Identity identity) {
+        identies.remove(identity);
     }
 
     @Override

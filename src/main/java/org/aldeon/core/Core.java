@@ -7,8 +7,10 @@ import org.aldeon.dht.Dht;
 import org.aldeon.dht.Ring;
 import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
+import org.aldeon.model.Identity;
 import org.aldeon.net.PeerAddress;
 
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 public interface Core {
@@ -38,6 +40,22 @@ public interface Core {
      * @return
      */
     EventLoop getEventLoop();
+
+    /**
+     * Returns all locally stored identites
+     * @return
+     */
+    Set<Identity> getAllIdentities();
+
+    /**
+     *
+     */
+    void addIdentity(Identity identity);
+
+    /**
+     *
+     */
+    void delIdentity(Identity identity);
 
     /**
      * Executor. Should be used to handle client-related tasks
