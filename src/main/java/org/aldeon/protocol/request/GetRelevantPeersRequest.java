@@ -1,11 +1,7 @@
 package org.aldeon.protocol.request;
 
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Request;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 public class GetRelevantPeersRequest implements Request {

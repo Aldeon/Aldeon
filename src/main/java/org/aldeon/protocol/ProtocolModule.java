@@ -3,9 +3,8 @@ package org.aldeon.protocol;
 import com.google.inject.AbstractModule;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
-import org.aldeon.core.events.*;
+import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.events.ACB;
-import org.apache.log4j.helpers.LogLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

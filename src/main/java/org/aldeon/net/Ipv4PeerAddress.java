@@ -3,7 +3,6 @@ package org.aldeon.net;
 import org.aldeon.crypt.Hash;
 import org.aldeon.crypt.Sha256;
 import org.aldeon.model.Identifier;
-import org.aldeon.utils.helpers.BufPrint;
 import org.aldeon.utils.net.PortImpl;
 
 import java.net.Inet4Address;
