@@ -7,11 +7,13 @@ import org.aldeon.events.AsyncCallback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.action.CompareTreesAction;
 import org.aldeon.protocol.action.GetClockAction;
+import org.aldeon.protocol.action.GetDiffAction;
 import org.aldeon.protocol.action.GetMessageAction;
 import org.aldeon.protocol.action.GetRelevantPeersAction;
 import org.aldeon.protocol.action.IndicateInterestAction;
 import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.request.GetClockRequest;
+import org.aldeon.protocol.request.GetDiffRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
 import org.aldeon.protocol.request.IndicateInterestRequest;
@@ -27,6 +29,7 @@ public class ProtocolImpl implements Protocol {
     private final Action<CompareTreesRequest> compareTreesAction;
     private final Action<IndicateInterestRequest> indicateInterestAction;
     private final Action<GetClockRequest> getClockAction;
+    private final Action<GetDiffRequest> getDiffAction;
 
     public ProtocolImpl() {
 
@@ -37,6 +40,7 @@ public class ProtocolImpl implements Protocol {
         this.compareTreesAction         = new CompareTreesAction(core.getStorage());
         this.indicateInterestAction     = new IndicateInterestAction();
         this.getClockAction             = new GetClockAction(core.getStorage());
+        this.getDiffAction              = new GetDiffAction(core.getStorage());
     }
 
     @Override
@@ -53,6 +57,8 @@ public class ProtocolImpl implements Protocol {
             indicateInterestAction.respond(peer, (IndicateInterestRequest) request, onResponse);
         } else if (request instanceof GetClockRequest) {
             getClockAction.respond(peer, (GetClockRequest) request, onResponse);
+        } else if (request instanceof GetDiffRequest) {
+            getDiffAction.respond(peer, (GetDiffRequest) request, onResponse);
         } else {
             throw new IllegalArgumentException("Unknown request type");
         }

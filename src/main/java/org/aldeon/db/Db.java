@@ -20,5 +20,5 @@ public interface Db {
     void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback);
     void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback);
     void getClock(AsyncCallback<Long> callback);
-    void getMessageIdsAfterClock(Identifier topic, long clock, Callback<Set<Identifier>> callback);
+    void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback);
 }

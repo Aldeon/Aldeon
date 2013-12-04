@@ -5,11 +5,13 @@ import org.aldeon.db.exception.IdentifierAlreadyPresentException;
 import org.aldeon.db.exception.UnknownIdentifierException;
 import org.aldeon.db.exception.UnknownParentException;
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -139,5 +141,12 @@ public class DbStub implements Db {
     public void getClock(AsyncCallback<Long> callback) {
         // TODO: implement
         callback.call(0l);
+    }
+
+    @Override
+    public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
+
+        // TODO: implement
+        callback.call(Collections.EMPTY_SET);
     }
 }

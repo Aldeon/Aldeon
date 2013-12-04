@@ -3,6 +3,8 @@ package org.aldeon.core;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.aldeon.communication.Receiver;
+import org.aldeon.communication.Sender;
 import org.aldeon.communication.netty.NettyModule;
 import org.aldeon.db.Db;
 import org.aldeon.dbstub.DbStubModule;
@@ -53,8 +55,13 @@ public class CoreModule extends AbstractModule {
             translation = new NoAddressTranslation(new PortImpl(8080), InetAddress.getByName("0.0.0.0"));
 
             // Register all senders and receivers we have implemented
-            core.registerSender(Ipv4PeerAddress.class, NettyModule.createSender(Ipv4PeerAddress.class));
-            core.registerReceiver(IpPeerAddress.class, NettyModule.createReceiver(translation));
+
+            // TODO: fix sender/receiver types
+            Sender<Ipv4PeerAddress> sender = NettyModule.createSender();
+            Receiver<IpPeerAddress> receiver = NettyModule.createReceiver(translation);
+
+            core.registerSender(Ipv4PeerAddress.class, sender);
+            core.registerReceiver(IpPeerAddress.class, receiver);
 
         } catch (UnknownHostException e) {
             e.printStackTrace();// This should never happen
