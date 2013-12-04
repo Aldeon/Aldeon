@@ -12,19 +12,24 @@ import org.aldeon.sync.Slot;
 import org.aldeon.sync.SlotState;
 import org.aldeon.sync.SlotStateUpgradeProcedure;
 import org.aldeon.sync.tasks.BranchSyncTask;
+import org.aldeon.utils.collections.Provider;
 
 import java.util.concurrent.Executor;
 
-public class SynchronisationProcedure implements SlotStateUpgradeProcedure {
+public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
 
     public static final int RETRIES = 3;
+    private final Provider<Long> timeProvider;
 
-    @Override
-    public <T extends PeerAddress> void call(final Slot<T> slot, final Identifier topicId) {
+    public SynchronizationProcedure(Provider<Long> timeProvider) {
+        this.timeProvider = timeProvider;
+    }
+
+    private <T extends PeerAddress> void work(Class<T> addressType, final T peer, final Slot slot, final Identifier topicId) {
 
         Core core = CoreModule.getInstance();
 
-        final Sender<T> sender = core.getSender(slot.getAddressType());
+        final Sender<T> sender = core.getSender(addressType);
         final Executor executor = core.clientSideExecutor();
         final Db storage = core.getStorage();
 
@@ -35,13 +40,13 @@ public class SynchronisationProcedure implements SlotStateUpgradeProcedure {
                     downgrade(slot);
                     slot.setInProgress(false);
                } else {
-                   retry(RETRIES, topicId, sender, slot.getPeerAddress(), storage, executor, new Callback<Boolean>() {
+                   retry(RETRIES, topicId, sender, peer, storage, executor, new Callback<Boolean>() {
                        @Override
                        public void call(Boolean success) {
                            if (success) {
                                slot.setSlotState(SlotState.IN_SYNC_TIMEOUT);
                                slot.setClock(clockValue);
-                               slot.setLastUpdated(0);
+                               slot.setLastUpdated(timeProvider.get());
                            } else {
                                downgrade(slot);
                            }
@@ -83,5 +88,13 @@ public class SynchronisationProcedure implements SlotStateUpgradeProcedure {
     private void downgrade(Slot slot) {
         slot.setSlotState(SlotState.EMPTY);
         slot.getRevoke().run();
+    }
+
+    @Override
+    public void handle(Slot slot, Identifier topic) {
+
+        PeerAddress peer = slot.getPeerAddress();
+
+        work(peer.getClass(), peer, slot, topic);
     }
 }

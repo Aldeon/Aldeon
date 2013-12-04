@@ -7,6 +7,7 @@ import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
 import org.aldeon.net.PeerAddress;
+import org.aldeon.sync.TopicManager;
 
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -65,7 +66,6 @@ public interface Core {
     <T extends PeerAddress> void registerReceiver(Class<T> addressType, Receiver<T> receiver);
 
     <T extends PeerAddress> Sender<T> getSender(Class<T> addressType);
-    <T extends PeerAddress> Receiver<T> getReceiver(Class<T> addressType);
 
     /**
      * Initializes all the senders.
@@ -76,4 +76,9 @@ public interface Core {
      * Initializes all the receivers. Incoming messages will be registered as IncomingMessageEvent.
      */
     void initReceivers();
+
+    /**
+     *
+     */
+    TopicManager getTopicManager();
 }

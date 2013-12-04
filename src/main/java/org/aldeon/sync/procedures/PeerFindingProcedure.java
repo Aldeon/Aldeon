@@ -18,11 +18,10 @@ import org.aldeon.sync.SlotStateUpgradeProcedure;
  */
 public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
 
-    @Override
-    public <T extends PeerAddress> void call(final Slot<T> slot, final Identifier topicId) {
+    private <T extends PeerAddress> void work(Class<T> addressType, final Slot slot, final Identifier topicId) {
 
         Core core = CoreModule.getInstance();
-        final Dht<T> dht = core.getDht(slot.getAddressType());
+        final Dht<T> dht = core.getDht(addressType);
 
         Callback<T> callback = new ACB<T>(core.clientSideExecutor()) {
             @Override
@@ -43,5 +42,10 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
         };
 
         dht.addBounty(topicId, callback);
+    }
+
+    @Override
+    public void handle(Slot slot, Identifier topicId) {
+        work(slot.getPeerAddress().getClass(), slot, topicId);
     }
 }

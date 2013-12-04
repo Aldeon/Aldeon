@@ -15,6 +15,7 @@ import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
 import org.aldeon.net.PeerAddress;
+import org.aldeon.sync.TopicManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,12 +49,14 @@ public class CoreImpl implements Core {
     private final Map<Class, Receiver> receivers;
     private final Set<Identity> identies;
     private final Map<Class, Dht> dhts;
+    private final TopicManager topicManager;
 
 
     @Inject
     public CoreImpl(Db storage, EventLoop eventLoop) {
         this.storage = storage;
         this.eventLoop = eventLoop;
+        this.topicManager = new TopicManager();
 
         this.identies = new HashSet<>();
         this.clientSideExecutor = Executors.newFixedThreadPool(2);
@@ -136,11 +139,6 @@ public class CoreImpl implements Core {
     }
 
     @Override
-    public <T extends PeerAddress> Receiver<T> getReceiver(Class<T> addressType) {
-        return receivers.get(addressType);
-    }
-
-    @Override
     public void initSenders() {
         for(Sender sender: senders.values()) {
             sender.start();
@@ -165,6 +163,11 @@ public class CoreImpl implements Core {
             receiver.setCallback(callback);
             receiver.start();
         }
+    }
+
+    @Override
+    public TopicManager getTopicManager() {
+        return topicManager;
     }
 
     private void close() {

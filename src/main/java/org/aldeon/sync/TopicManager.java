@@ -2,20 +2,46 @@ package org.aldeon.sync;
 
 import org.aldeon.model.Identifier;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Holds the states of topics the user is interested in.
  */
-public interface TopicManager {
+public class TopicManager {
+
+    private Map<Identifier, TopicState> topics;
+
+    public TopicManager() {
+        topics = new HashMap<>();
+    }
+
 
     /**
      * Registers user's interest in a particular topic
-     * @param topicId topic in which the user wishes to participate in.
-     * @param slots requested number of
+     * @param topic topic in which the user wishes to participate in.
      */
-    void addTopic(Identifier topicId, int slots);
-    void delTopic(Identifier topicId);
+    void addTopic(Identifier topic) {
 
-    Set<TopicState> getTopicStates();
+        topics.put(topic, createTopicState(topic));
+    }
+
+    void delTopic(Identifier topicId) {
+        // TODO: wait until all slots are not in progress, then revoke and remove
+    }
+
+    Set<TopicState> getTopicStates() {
+     return new HashSet<>(topics.values());
+    }
+
+    private TopicState createTopicState(Identifier topic) {
+
+        TopicState state = new TopicState(topic);
+
+        state.addSlot(new Slot(SlotType.NORMAL));
+
+        return state;
+    }
 }
