@@ -4,7 +4,6 @@ import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
-import org.aldeon.dht.InterestTracker;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
 import org.aldeon.net.PeerAddress;
@@ -21,12 +20,6 @@ public interface Core {
      * @return
      */
     <T extends PeerAddress> Dht<T> getDht(Class<T> addressType);
-
-    /**
-     * TODO: make comment
-     * @return
-     */
-    InterestTracker getInterestTracker();
 
     /**
      * Returns the global message storace class.

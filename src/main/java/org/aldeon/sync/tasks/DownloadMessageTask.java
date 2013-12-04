@@ -2,6 +2,8 @@ package org.aldeon.sync.tasks;
 
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.db.Db;
+import org.aldeon.events.ACB;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.net.PeerAddress;
@@ -25,12 +27,16 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
     private final Executor executor;
     private final Identifier expectedParent;
     private final Db storage;
+    private final Callback<Boolean> onFinished;
+    private final boolean checkAncestry;
 
-    public DownloadMessageTask(T peer, Identifier id, Identifier parent, Executor executor, Db storage) {
+    public DownloadMessageTask(T peer, Identifier id, Identifier parent, boolean checkAncestry, Executor executor, Db storage, Callback<Boolean> onFinished) {
         this.peer = peer;
         this.executor = executor;
         this.expectedParent = parent;
         this.storage = storage;
+        this.onFinished = onFinished;
+        this.checkAncestry = checkAncestry;
 
         this.request = new GetMessageRequest();
         request.id = id;
@@ -50,6 +56,7 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
     @Override
     public void onFailure(Throwable cause) {
         log.info("Failed to download message " + request.id, cause);
+        onFinished.call(false);
     }
 
     @Override
@@ -74,20 +81,45 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
 
     /////////////////////////////////////
 
+    private void checkRelation(Message msg, final Callback<Boolean> callback) {
+
+        if(expectedParent == null || expectedParent.equals(msg.getParentMessageIdentifier())) {
+            callback.call(true);
+        } else if(checkAncestry) {
+            storage.checkAncestry(msg.getParentMessageIdentifier(), expectedParent, new ACB<Boolean>(executor) {
+                @Override
+                protected void react(Boolean val) {
+                    callback.call(val);
+                }
+            });
+        } else {
+            callback.call(false);
+        }
+    }
+
     private void onMessageFound(MessageFoundResponse response) {
-        Message msg = response.message;
+
+        final Message msg = response.message;
 
         if(request.id.equals(msg.getIdentifier())) {
-            if(expectedParent == null || expectedParent.equals(msg.getParentMessageIdentifier())) {
-                storage.insertMessage(msg, getExecutor());
-                return;
-            }
+            checkRelation(msg, new Callback<Boolean>() {
+                @Override
+                public void call(Boolean matchesCriteria) {
+                    if(matchesCriteria) {
+                        storage.insertMessage(msg, getExecutor());
+                        onFinished.call(true);
+                    } else {
+                        onFailure(new InvalidResponseException("Message does not match the expected parameters"));
+                    }
+                }
+            });
+        } else {
+            onFailure(new InvalidResponseException("Message does not match the expected parameters"));
         }
-
-        onFailure(new InvalidResponseException("Message does not match the expected parameters"));
     }
 
     private void onMessageNotFound(MessageNotFoundResponse response) {
         log.info("Message " + request.id + " not found on the server");
+        onFinished.call(false);
     }
 }

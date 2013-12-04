@@ -27,9 +27,9 @@ public class NettyModule extends AbstractModule {
         // We are probably going to declare JsonParser dependencies here in the near future.
     }
 
-    public static Sender<IpPeerAddress> createSender() {
+    public static <T extends IpPeerAddress> Sender<T> createSender() {
 
-        return new NettySender(
+        return new NettySender<>(
             new ChainConverter<>(
                 new RequestToJsonStringConverter(),
                 new StringToFullHttpRequestConverter()

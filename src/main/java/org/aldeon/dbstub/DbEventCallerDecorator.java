@@ -5,6 +5,7 @@ import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.core.events.MessageRemovedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
@@ -60,6 +61,21 @@ public class DbEventCallerDecorator implements Db {
 
     @Override
     public void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback) {
-        db.getIdsAndXorsByParentId(parentId,callback);
+        db.getIdsAndXorsByParentId(parentId, callback);
+    }
+
+    @Override
+    public void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback) {
+        db.checkAncestry(descendant, ancestor, callback);
+    }
+
+    @Override
+    public void getClock(AsyncCallback<Long> callback) {
+        db.getClock(callback);
+    }
+
+    @Override
+    public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
+
     }
 }

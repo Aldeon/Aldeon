@@ -4,6 +4,7 @@ import org.aldeon.crypt.Signature;
 import org.aldeon.crypt.SignatureImpl;
 import org.aldeon.db.queries.Queries;
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.model.ByteSource;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
@@ -223,6 +224,24 @@ public class DbImpl implements Db {
             callback.call(null);
             return;
         }
+    }
+
+    @Override
+    public void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback) {
+        // TODO: implement
+        callback.call(false);
+    }
+
+    @Override
+    public void getClock(AsyncCallback<Long> callback) {
+        // TODO: implement
+        callback.call(0l);
+    }
+
+    @Override
+    public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
+        // TODO: implement
+        callback.call(Collections.EMPTY_SET);
     }
 
     private void prepareDbConnection() {

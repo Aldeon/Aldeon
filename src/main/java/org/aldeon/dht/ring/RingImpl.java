@@ -1,4 +1,4 @@
-package org.aldeon.dht;
+package org.aldeon.dht.ring;
 
 import org.aldeon.model.Identifiable;
 import org.aldeon.model.Identifier;

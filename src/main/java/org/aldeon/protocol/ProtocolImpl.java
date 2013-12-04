@@ -6,11 +6,17 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.action.CompareTreesAction;
+import org.aldeon.protocol.action.GetClockAction;
+import org.aldeon.protocol.action.GetDiffAction;
 import org.aldeon.protocol.action.GetMessageAction;
-import org.aldeon.protocol.action.GetPeersInterestedAction;
+import org.aldeon.protocol.action.GetRelevantPeersAction;
+import org.aldeon.protocol.action.IndicateInterestAction;
 import org.aldeon.protocol.request.CompareTreesRequest;
+import org.aldeon.protocol.request.GetClockRequest;
+import org.aldeon.protocol.request.GetDiffRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
-import org.aldeon.protocol.request.GetPeersInterestedRequest;
+import org.aldeon.protocol.request.GetRelevantPeersRequest;
+import org.aldeon.protocol.request.IndicateInterestRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,50 +25,42 @@ public class ProtocolImpl implements Protocol {
     private static final Logger log = LoggerFactory.getLogger(ProtocolImpl.class);
 
     private final Action<GetMessageRequest> getMessageAction;
-    private final Action<GetPeersInterestedRequest> getPeersInterestedAction;
+    private final Action<GetRelevantPeersRequest> getPeersInterestedAction;
     private final Action<CompareTreesRequest> compareTreesAction;
+    private final Action<IndicateInterestRequest> indicateInterestAction;
+    private final Action<GetClockRequest> getClockAction;
+    private final Action<GetDiffRequest> getDiffAction;
 
     public ProtocolImpl() {
 
         Core core = CoreModule.getInstance();
 
         this.getMessageAction           = new GetMessageAction(core.getStorage());
-        this.getPeersInterestedAction   = new GetPeersInterestedAction(core);
+        this.getPeersInterestedAction   = new GetRelevantPeersAction();
         this.compareTreesAction         = new CompareTreesAction(core.getStorage());
+        this.indicateInterestAction     = new IndicateInterestAction();
+        this.getClockAction             = new GetClockAction(core.getStorage());
+        this.getDiffAction              = new GetDiffAction(core.getStorage());
     }
 
     @Override
     public void createResponse(PeerAddress peer, Request request, final AsyncCallback<Response> onResponse) {
 
-        /*
-             We have access to the application core
-
-             core.getStorage()
-             core.getEventLoop()
-             core.getSender(addressType)
-
-             ... and more.
-
-         */
-
-        /*
-            TODO: Implement the conversion mechanism
-
-                - org.aldeon.communication.converter    <---  Request/Response <=> String
-                - org.aldeon.utils.json                 <---  Serializers & deserializers for GSON
-         */
-
-        // Here we (eventually, somehow) generate the response
 
         if(request instanceof GetMessageRequest) {
             getMessageAction.respond(peer, (GetMessageRequest) request, onResponse);
-        } else if (request instanceof GetPeersInterestedRequest) {
-            getPeersInterestedAction.respond(peer, (GetPeersInterestedRequest) request, onResponse);
+        } else if (request instanceof GetRelevantPeersRequest) {
+            getPeersInterestedAction.respond(peer, (GetRelevantPeersRequest) request, onResponse);
         } else if (request instanceof CompareTreesRequest) {
             compareTreesAction.respond(peer, (CompareTreesRequest) request, onResponse);
+        } else if (request instanceof IndicateInterestRequest) {
+            indicateInterestAction.respond(peer, (IndicateInterestRequest) request, onResponse);
+        } else if (request instanceof GetClockRequest) {
+            getClockAction.respond(peer, (GetClockRequest) request, onResponse);
+        } else if (request instanceof GetDiffRequest) {
+            getDiffAction.respond(peer, (GetDiffRequest) request, onResponse);
         } else {
-            log.warn("Failed to convert a request into a response.");
-            onResponse.call(null);
+            throw new IllegalArgumentException("Unknown request type");
         }
     }
 }

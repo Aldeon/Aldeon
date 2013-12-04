@@ -56,10 +56,29 @@ public interface Slot<T extends PeerAddress> {
     void setClock(long clock);
 
     /**
+     * Sets the point in time when last delta was downloaded
+     * @param lastUpdated
+     */
+    void setLastUpdated(long lastUpdated);
+
+    /**
+     * Point in time when last delta was downloaded
+     * @return
+     */
+    long getLastUpdated();
+
+
+    /**
      * Indicated the desired behavior related to this state (ex. how to cope with timeouts)
      * @return
      */
     SlotType getSlotType();
+
+    /**
+     * Used to revoke the associated address
+     */
+    void onRevoke(Runnable revoke);
+    Runnable getRevoke();
 
     /**
      * Points to a desired peer type

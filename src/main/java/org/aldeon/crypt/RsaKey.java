@@ -82,6 +82,10 @@ class RsaKey implements Key {
 
     @Override
     public ByteBuffer getByteBuffer() {
+
+
+        // TODO: fix the bytebuffer conversion
+
         ByteBuffer buf = raw.asReadOnlyBuffer();
         buf.rewind();
         return buf;

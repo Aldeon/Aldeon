@@ -23,6 +23,8 @@ public class Supervisor  implements Runnable{
                     // Here we pick an appropriate procedure
                     final SlotStateUpgradeProcedure proc = null;
 
+                    slot.setInProgress(true);
+
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {

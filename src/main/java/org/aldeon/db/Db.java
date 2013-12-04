@@ -1,6 +1,7 @@
 package org.aldeon.db;
 
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
@@ -18,4 +19,7 @@ public interface Db {
     void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback);
     void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback);
     void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback);
+    void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback);
+    void getClock(AsyncCallback<Long> callback);
+    void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback);
 }
