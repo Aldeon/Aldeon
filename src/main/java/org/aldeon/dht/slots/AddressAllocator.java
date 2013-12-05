@@ -3,7 +3,7 @@ package org.aldeon.dht.slots;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.utils.collections.Provider;
+import org.aldeon.utils.various.Provider;
 
 import java.util.HashMap;
 import java.util.Map;

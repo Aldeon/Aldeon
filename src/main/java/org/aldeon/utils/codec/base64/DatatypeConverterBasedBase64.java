@@ -1,11 +1,12 @@
-package org.aldeon.utils.base64;
+package org.aldeon.utils.codec.base64;
 
+import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.conversion.ConversionException;
 
 import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
 
-class DatatypeConverterBasedBase64 implements Base64 {
+class DatatypeConverterBasedBase64 implements Codec {
 
     @Override
     public String encode(ByteBuffer buffer) {

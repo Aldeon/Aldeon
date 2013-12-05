@@ -1,5 +1,6 @@
-package org.aldeon.crypt;
+package org.aldeon.crypt.rsa;
 
+import org.aldeon.crypt.Key;
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
 

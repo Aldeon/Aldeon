@@ -1,8 +1,8 @@
 package org.aldeon.model;
 
 import org.aldeon.model.impl.FixedSizeImmutableByteBufferSource;
-import org.aldeon.utils.base64.Base64;
-import org.aldeon.utils.base64.Base64Module;
+import org.aldeon.utils.codec.Codec;
+import org.aldeon.utils.codec.base64.Base64Module;
 import org.aldeon.utils.helpers.ByteBuffers;
 
 import java.nio.ByteBuffer;
@@ -15,13 +15,13 @@ public /* final */ class Identifier extends FixedSizeImmutableByteBufferSource {
     public static final int LENGTH_BYTES = LENGTH_BITS / 8;
 
     private final static Identifier emptyId;
-    private static final Base64 base64;
+    private static final Codec CODEC;
 
     //////////////////////////////////////////////////////////////////////////////
 
     static {
         emptyId = new Identifier(ByteBuffer.allocate(Identifier.LENGTH_BYTES), false);
-        base64 = new Base64Module().get();
+        CODEC = new Base64Module().get();
     }
 
     public static Identifier fromByteBuffer(ByteBuffer buf, boolean copy) {
@@ -67,6 +67,6 @@ public /* final */ class Identifier extends FixedSizeImmutableByteBufferSource {
 
     @Override
     public String toString() {
-        return base64.encode(getByteBuffer());
+        return CODEC.encode(getByteBuffer());
     }
 }

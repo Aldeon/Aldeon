@@ -4,7 +4,7 @@ import org.aldeon.sync.procedures.CheckTimeoutProcedure;
 import org.aldeon.sync.procedures.DeltaDownloadingProcedure;
 import org.aldeon.sync.procedures.PeerFindingProcedure;
 import org.aldeon.sync.procedures.SynchronizationProcedure;
-import org.aldeon.utils.collections.Provider;
+import org.aldeon.utils.various.Provider;
 
 import java.util.HashMap;
 import java.util.Map;

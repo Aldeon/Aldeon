@@ -3,7 +3,7 @@ package org.aldeon.crypt;
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
 import org.aldeon.crypt.exception.KeyParseException;
-import org.aldeon.utils.helpers.BufPrint;
+import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.junit.Test;
 

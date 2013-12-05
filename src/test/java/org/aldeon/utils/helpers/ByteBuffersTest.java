@@ -1,4 +1,4 @@
-package org.aldeon.utils.math;
+package org.aldeon.utils.helpers;
 
 import org.junit.Test;
 
@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertEquals;
 
-public class ByteBufferArithmeticTest {
+public class ByteBuffersTest {
 
     @Test
     public void shouldSubProperly() {
@@ -29,8 +29,7 @@ public class ByteBufferArithmeticTest {
         b.put((byte) 188);
         b.clear();
 
-        ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
-        ByteBuffer c = arithmetic.sub(a, b);
+        ByteBuffer c = ByteBuffers.sub(a, b);
         // 18123    --->    0100 0110 1100 1011     // 26247 - 8124 = 18123
         //    70    --->    0100 0110
         //   203    --->              1100 1011
@@ -62,8 +61,7 @@ public class ByteBufferArithmeticTest {
         b.put((byte) 113);
         b.clear();
 
-        ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
-        ByteBuffer c = arithmetic.sub(a, b);
+        ByteBuffer c = ByteBuffers.sub(a, b);
         // 32453    --->    0111 1110 1100 0101     // 12598 - 45681 = -33083, -33083 + 2^16 = 32453
         //   126    --->    0111 1110
         //   197    --->              1100 0101
@@ -87,8 +85,7 @@ public class ByteBufferArithmeticTest {
         b.put((byte) 255);
         b.clear();
 
-        ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
-        ByteBuffer c = arithmetic.add(a, b);
+        ByteBuffer c = ByteBuffers.add(a, b);
 
         assertEquals(0, c.position());
         assertEquals(2, c.capacity());
@@ -108,8 +105,7 @@ public class ByteBufferArithmeticTest {
         b.put((byte) 255);
         b.clear();
 
-        ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
-        ByteBuffer c = arithmetic.add(a, b);
+        ByteBuffer c = ByteBuffers.add(a, b);
 
         assertEquals(0, c.position());
         assertEquals(2, c.capacity());
@@ -130,8 +126,7 @@ public class ByteBufferArithmeticTest {
         b.put((byte) 255);
         b.clear();
 
-        ByteBufferArithmetic arithmetic = new ByteBufferArithmetic();
-        ByteBuffer c = arithmetic.add(a, b);
+        ByteBuffer c = ByteBuffers.add(a, b);
 
         assertEquals(0, c.position());
         assertEquals(3, c.capacity());

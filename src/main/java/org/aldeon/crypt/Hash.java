@@ -1,4 +1,4 @@
-package org.aldeon.crypt.signer;
+package org.aldeon.crypt;
 
 import org.aldeon.model.ByteSource;
 

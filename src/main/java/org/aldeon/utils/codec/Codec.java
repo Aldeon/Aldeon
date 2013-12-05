@@ -1,10 +1,10 @@
-package org.aldeon.utils.base64;
+package org.aldeon.utils.codec;
 
 import org.aldeon.utils.conversion.ConversionException;
 
 import java.nio.ByteBuffer;
 
-public interface Base64 {
+public interface Codec {
     String encode(ByteBuffer buffer);
     ByteBuffer decode(String base64) throws ConversionException;
 }

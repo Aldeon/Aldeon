@@ -1,24 +1,24 @@
 package org.aldeon.crypt.signer;
 
 import com.google.inject.Inject;
+import org.aldeon.crypt.Hash;
 import org.aldeon.crypt.Key;
+import org.aldeon.crypt.Signer;
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
 import org.aldeon.model.ByteSource;
 import org.aldeon.model.Signature;
+import org.aldeon.utils.helpers.ByteBuffers;
 
 import java.nio.ByteBuffer;
-import java.util.Comparator;
 
 class HashBasedSigner implements Signer {
 
     private final Hash hash;
-    private final Comparator<ByteBuffer> comparator;
 
     @Inject
-    public HashBasedSigner(Hash hash, Comparator<ByteBuffer> comparator) {
+    public HashBasedSigner(Hash hash) {
         this.hash = hash;
-        this.comparator = comparator;
     }
 
     @Override
@@ -54,7 +54,7 @@ class HashBasedSigner implements Signer {
     @Override
     public boolean verify(Key key, Signature signature) {
         try {
-            return 0 == comparator.compare(hash.calculate(), key.decrypt(signature.getByteBuffer()));
+            return 0 == ByteBuffers.compare(hash.calculate(), key.decrypt(signature.getByteBuffer()));
         } catch (DecryptionFailedException e) {
             return false;
         }

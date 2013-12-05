@@ -2,7 +2,7 @@ package org.aldeon.dbstub;
 
 import com.google.inject.Provider;
 import org.aldeon.crypt.KeyGen;
-import org.aldeon.crypt.RsaKeyGen;
+import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.db.Db;
 import org.aldeon.db.wrappers.DbEventCallerDecorator;
 import org.aldeon.model.Message;

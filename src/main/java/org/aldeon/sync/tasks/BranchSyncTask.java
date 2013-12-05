@@ -15,7 +15,7 @@ import org.aldeon.protocol.response.BranchInSyncResponse;
 import org.aldeon.protocol.response.ChildrenResponse;
 import org.aldeon.protocol.response.LuckyGuessResponse;
 import org.aldeon.protocol.response.MessageNotFoundResponse;
-import org.aldeon.utils.collections.BooleanAndReducer;
+import org.aldeon.utils.various.BooleanAndReducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

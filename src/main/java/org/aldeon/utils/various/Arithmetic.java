@@ -1,4 +1,4 @@
-package org.aldeon.utils.math;
+package org.aldeon.utils.various;
 
 import java.util.Comparator;
 

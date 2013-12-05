@@ -1,7 +1,10 @@
-package org.aldeon.crypt;
+package org.aldeon.crypt.rsa;
 
 
+import org.aldeon.crypt.Key;
+import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.exception.KeyParseException;
+import org.aldeon.utils.helpers.ByteBuffers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.math.BigInteger;
@@ -111,19 +114,10 @@ public class RsaKeyGen implements KeyGen {
     @Override
     public Key parsePrivateKey(ByteBuffer data) throws KeyParseException {
         try {
-            ByteBuffer copy = cloneBuf(data);
+            ByteBuffer copy = ByteBuffers.clone(data);
             return new RsaKey(keyFactory.generatePrivate(new PKCS8EncodedKeySpec(copy.array())), copy, seed, Key.Type.PRIVATE);
         } catch (InvalidKeySpecException e) {
             throw new KeyParseException("Invalid key structure", e);
         }
-    }
-
-    public static ByteBuffer cloneBuf(ByteBuffer original) {
-        ByteBuffer clone = ByteBuffer.allocate(original.capacity());
-        original.rewind(); // copy from the beginning
-        clone.put(original);
-        original.rewind();
-        clone.flip();
-        return clone;
     }
 }

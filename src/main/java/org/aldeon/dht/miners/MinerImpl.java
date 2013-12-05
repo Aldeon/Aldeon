@@ -6,7 +6,7 @@ import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.response.RelevantPeersResponse;
 import org.aldeon.utils.collections.Pair;
-import org.aldeon.utils.collections.Provider;
+import org.aldeon.utils.various.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

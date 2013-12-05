@@ -10,7 +10,7 @@ import org.aldeon.sync.Slot;
 import org.aldeon.sync.SlotState;
 import org.aldeon.sync.SlotStateUpgradeProcedure;
 import org.aldeon.sync.tasks.GetDiffTask;
-import org.aldeon.utils.collections.Provider;
+import org.aldeon.utils.various.Provider;
 
 /**
  * Downloads the delta and updates the clock accordingly.

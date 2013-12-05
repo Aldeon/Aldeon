@@ -6,7 +6,8 @@ import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.utils.collections.ConcreteNeighbourhoodSet;
 import org.aldeon.utils.collections.NeighbourhoodSet;
-import org.aldeon.utils.math.Arithmetic;
+import org.aldeon.utils.helpers.ByteBuffers;
+import org.aldeon.utils.various.Arithmetic;
 
 import java.nio.ByteBuffer;
 import java.util.HashSet;
@@ -25,11 +26,9 @@ import java.util.Set;
 public class RingImpl<T extends PeerAddress> implements Ring<T> {
 
     private NeighbourhoodSet<Identifiable> circle;
-    private Arithmetic<ByteBuffer> arithmetic;
 
     @Inject
-    public RingImpl(Arithmetic<ByteBuffer> arithmetic) {
-        this.arithmetic = arithmetic;
+    public RingImpl() {
         circle = new ConcreteNeighbourhoodSet<>(new IdentifiableArithmetic());
     }
 
@@ -73,19 +72,19 @@ public class RingImpl<T extends PeerAddress> implements Ring<T> {
 
         @Override
         public Identifiable add(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            ByteBuffer result = ByteBuffers.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
             return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override
         public Identifiable sub(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            ByteBuffer result = ByteBuffers.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
             return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override
         public int compare(Identifiable o1, Identifiable o2) {
-            return arithmetic.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
+            return ByteBuffers.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
         }
     }
 }

@@ -2,13 +2,15 @@ package org.aldeon.db;
 
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.KeyGen;
-import org.aldeon.crypt.RsaKeyGen;
+import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.db.queries.Queries;
 import org.aldeon.events.Callback;
 import org.aldeon.model.ByteSource;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.model.Signature;
+import org.aldeon.utils.codec.Codec;
+import org.aldeon.utils.codec.hex.HexCodec;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
 
@@ -36,6 +38,7 @@ public class DbImpl implements Db {
     public static final int DEFAULT_QUERY_TIMEOUT = 30;
     public static final String DB_USER = "sa";
     public static final String DB_PASSWORD = "";
+    private static final Codec hex = new HexCodec();
 
     private Connection connection;
     private String driverClassName;
@@ -393,7 +396,7 @@ public class DbImpl implements Db {
 
     private void setIdentifiableInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
         try {
-            preparedStatement.setString(parameterIndex, ByteBuffers.toHex(byteSource.getByteBuffer()));
+            preparedStatement.setString(parameterIndex, hex.encode(byteSource.getByteBuffer()));
         } catch (SQLException e) {
             throw e;
         }

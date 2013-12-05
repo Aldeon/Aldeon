@@ -11,7 +11,7 @@ import org.aldeon.sync.Slot;
 import org.aldeon.sync.SlotState;
 import org.aldeon.sync.SlotStateUpgradeProcedure;
 import org.aldeon.sync.tasks.BranchSyncTask;
-import org.aldeon.utils.collections.Provider;
+import org.aldeon.utils.various.Provider;
 
 public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
 

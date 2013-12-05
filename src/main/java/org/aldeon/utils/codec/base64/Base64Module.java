@@ -1,10 +1,11 @@
-package org.aldeon.utils.base64;
+package org.aldeon.utils.codec.base64;
 
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
+import org.aldeon.utils.codec.Codec;
 
-public class Base64Module extends AbstractModule implements Provider<Base64> {
+public class Base64Module extends AbstractModule implements Provider<Codec> {
 
     @Override
     protected void configure() {
@@ -12,7 +13,7 @@ public class Base64Module extends AbstractModule implements Provider<Base64> {
     }
 
     @Override
-    public Base64 get() {
+    public Codec get() {
         return new Base64CharReplacer(new MiGBase64());
     }
 }

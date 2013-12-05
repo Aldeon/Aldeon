@@ -1,5 +1,6 @@
-package org.aldeon.utils.base64;
+package org.aldeon.utils.codec.base64;
 
+import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.conversion.ConversionException;
 
 import java.nio.ByteBuffer;
@@ -73,7 +74,7 @@ import java.util.Arrays;
  *         Time: 11:31:11
  */
 
-class MiGBase64 implements Base64
+class MiGBase64 implements Codec
 {
     private static final char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
     private static final int[] IA = new int[256];

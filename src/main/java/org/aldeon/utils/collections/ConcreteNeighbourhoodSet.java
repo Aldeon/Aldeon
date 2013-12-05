@@ -1,6 +1,6 @@
 package org.aldeon.utils.collections;
 
-import org.aldeon.utils.math.Arithmetic;
+import org.aldeon.utils.various.Arithmetic;
 
 import java.util.HashSet;
 import java.util.Iterator;

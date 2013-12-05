@@ -2,12 +2,9 @@ package org.aldeon.crypt.signer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.TypeLiteral;
-import org.aldeon.utils.collections.Provider;
-import org.aldeon.utils.math.ByteBufferArithmetic;
-
-import java.nio.ByteBuffer;
-import java.util.Comparator;
+import org.aldeon.crypt.Hash;
+import org.aldeon.crypt.Signer;
+import org.aldeon.utils.various.Provider;
 
 
 public class SignerModule extends AbstractModule implements Provider<Signer> {
@@ -16,7 +13,6 @@ public class SignerModule extends AbstractModule implements Provider<Signer> {
     protected void configure() {
         bind(Signer.class).to(HashBasedSigner.class);
         bind(Hash.class).to(Sha256.class);
-        bind(new TypeLiteral<Comparator<ByteBuffer>>(){}).to(ByteBufferArithmetic.class);
     }
 
     @Override

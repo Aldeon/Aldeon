@@ -6,7 +6,7 @@ import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
 import org.aldeon.protocol.request.IndicateInterestRequest;
-import org.aldeon.utils.base64.Base64;
+import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.conversion.ConversionException;
 import org.junit.Test;
 
@@ -26,11 +26,11 @@ public class GsonBasedJsonParserTest {
         GetMessageRequest req = new GetMessageRequest();
         req.id = Identifier.empty();
 
-        Base64 base64 = mock(Base64.class);
-        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
-        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+        Codec codec = mock(Codec.class);
+        when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(base64);
+        JsonParser parser = new GsonBasedJsonParser(codec);
 
         String json = parser.toJson(req);
 
@@ -53,11 +53,11 @@ public class GsonBasedJsonParserTest {
         req.parent_id = Identifier.empty();
         req.parent_xor = Identifier.empty();
 
-        Base64 base64 = mock(Base64.class);
-        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
-        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+        Codec codec = mock(Codec.class);
+        when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(base64);
+        JsonParser parser = new GsonBasedJsonParser(codec);
 
         String json = parser.toJson(req);
 
@@ -80,11 +80,11 @@ public class GsonBasedJsonParserTest {
         GetRelevantPeersRequest req = new GetRelevantPeersRequest();
         req.target = Identifier.empty();
 
-        Base64 base64 = mock(Base64.class);
-        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
-        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+        Codec codec = mock(Codec.class);
+        when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(base64);
+        JsonParser parser = new GsonBasedJsonParser(codec);
 
         String json = parser.toJson(req);
 
@@ -107,11 +107,11 @@ public class GsonBasedJsonParserTest {
         req.topic = Identifier.empty();
         req.address = Ipv4PeerAddress.parse("192.168.0.50", 8080);
 
-        Base64 base64 = mock(Base64.class);
-        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
-        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+        Codec codec = mock(Codec.class);
+        when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(base64);
+        JsonParser parser = new GsonBasedJsonParser(codec);
 
         String json = parser.toJson(req);
 

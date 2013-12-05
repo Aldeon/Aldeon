@@ -1,9 +1,9 @@
 package org.aldeon.utils.helpers;
 
 import org.aldeon.crypt.Key;
-import org.aldeon.crypt.signer.Hash;
+import org.aldeon.crypt.Hash;
 import org.aldeon.crypt.signer.Sha256;
-import org.aldeon.crypt.signer.Signer;
+import org.aldeon.crypt.Signer;
 import org.aldeon.crypt.signer.SignerModule;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;

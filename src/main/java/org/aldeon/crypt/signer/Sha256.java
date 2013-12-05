@@ -1,5 +1,6 @@
 package org.aldeon.crypt.signer;
 
+import org.aldeon.crypt.Hash;
 import org.aldeon.model.ByteSource;
 
 import java.nio.ByteBuffer;
