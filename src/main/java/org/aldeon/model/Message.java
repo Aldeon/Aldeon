@@ -1,7 +1,6 @@
 package org.aldeon.model;
 
 import org.aldeon.crypt.Key;
-import org.aldeon.crypt.Signature;
 
 /**
  * User message. Contains every information needed to determine

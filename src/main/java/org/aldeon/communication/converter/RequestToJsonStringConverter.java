@@ -1,10 +1,11 @@
 package org.aldeon.communication.converter;
 
+import com.google.inject.Inject;
 import org.aldeon.protocol.Request;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
+import org.aldeon.utils.json.GsonBasedJsonParser;
 import org.aldeon.utils.json.JsonParser;
-import org.aldeon.utils.json.JsonParserImpl;
 
 /**
  * This class is part of a conversion chain used when encoding an outbound
@@ -14,8 +15,9 @@ public class RequestToJsonStringConverter implements Converter<Request, String> 
 
     private final JsonParser parser;
 
-    public RequestToJsonStringConverter() {
-        this.parser = new JsonParserImpl();
+    @Inject
+    public RequestToJsonStringConverter(JsonParser parser) {
+        this.parser = parser;
     }
 
     @Override

@@ -3,14 +3,14 @@ package org.aldeon.utils.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.inject.Inject;
 import org.aldeon.crypt.Key;
-import org.aldeon.crypt.Signature;
+import org.aldeon.model.Signature;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.net.Ipv4PeerAddress;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.utils.base64.Base64Codec;
-import org.aldeon.utils.base64.Base64CodecImpl;
+import org.aldeon.utils.base64.Base64;
 import org.aldeon.utils.json.adapters.IdentifierDeserializer;
 import org.aldeon.utils.json.adapters.IdentifierSerializer;
 import org.aldeon.utils.json.adapters.Ipv4PeerAddressDeserializer;
@@ -20,25 +20,19 @@ import org.aldeon.utils.json.adapters.MessageSerializer;
 import org.aldeon.utils.json.adapters.PeerAddressDeserializer;
 import org.aldeon.utils.json.adapters.SignatureSerializer;
 
-public class JsonParserImpl implements JsonParser {
+public class GsonBasedJsonParser implements JsonParser {
 
     private Gson gson;
     private com.google.gson.JsonParser parser;
 
-    public JsonParserImpl() {
+    @Inject
+    public GsonBasedJsonParser(Base64 base64) {
 
         GsonBuilder builder = new GsonBuilder();
 
-        Base64Codec base64 = new Base64CodecImpl();
-
         /*
             Here we register serializers and deserializers for all important components
-            of Requests and responses, for example:
-                - Identifiers
-                - Signatures
-                - Public keys
-                - Addresses
-                - Messages
+            of Requests and responses
          */
 
         builder.registerTypeAdapter(Identifier.class, new IdentifierSerializer(base64));

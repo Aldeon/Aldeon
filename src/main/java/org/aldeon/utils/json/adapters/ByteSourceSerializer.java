@@ -5,15 +5,15 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.aldeon.model.ByteSource;
-import org.aldeon.utils.base64.Base64Codec;
+import org.aldeon.utils.base64.Base64;
 
 import java.lang.reflect.Type;
 
 public class ByteSourceSerializer<T extends ByteSource> implements JsonSerializer<T> {
 
-    private final Base64Codec base64;
+    private final Base64 base64;
 
-    public ByteSourceSerializer(Base64Codec base64) {
+    public ByteSourceSerializer(Base64 base64) {
         this.base64 = base64;
     }
 

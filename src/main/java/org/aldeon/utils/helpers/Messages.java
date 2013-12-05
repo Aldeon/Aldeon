@@ -1,13 +1,22 @@
 package org.aldeon.utils.helpers;
 
+import org.aldeon.communication.Sender;
 import org.aldeon.crypt.*;
+import org.aldeon.crypt.signer.*;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
+import org.aldeon.model.Signature;
 import org.aldeon.model.exception.CorruptedMessageException;
 
 import java.nio.ByteBuffer;
 
 public class Messages {
+
+    private static final Signer signer;
+
+    static {
+        signer = new SignerModule().get();
+    }
 
     /**
      * Creates a new message and signs it with a given pair of keys
@@ -31,8 +40,6 @@ public class Messages {
 
         if(parent == null)
             parent = Identifier.empty();
-
-        Signer signer = new SignerImpl();
 
         signer.add(parent);
         signer.add(pubKey);
@@ -99,7 +106,6 @@ public class Messages {
      */
     public static boolean verify(Message m) {
         if(m.getAuthorPublicKey().getType() != Key.Type.PUBLIC) return false;
-        Signer signer = new SignerImpl();
 
         signer.add(m.getParentMessageIdentifier());
         signer.add(m.getAuthorPublicKey());

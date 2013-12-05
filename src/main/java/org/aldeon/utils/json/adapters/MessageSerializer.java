@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.aldeon.crypt.Key;
-import org.aldeon.crypt.Signature;
+import org.aldeon.model.Signature;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 

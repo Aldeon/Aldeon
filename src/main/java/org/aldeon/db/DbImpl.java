@@ -6,6 +6,7 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.ByteSource;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
+import org.aldeon.model.Signature;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
 
@@ -13,7 +14,6 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.Executor;
 
 public class DbImpl implements Db {
 
@@ -63,7 +63,7 @@ public class DbImpl implements Db {
                 Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
 
                 ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
-                Signature signature = new SignatureImpl(signatureBuffer, false);
+                Signature signature = new Signature(signatureBuffer, false);
 
                 String content = result.getString("content");
 
@@ -181,7 +181,7 @@ public class DbImpl implements Db {
                 Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
 
                 ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
-                Signature signature = new SignatureImpl(signatureBuffer, false);
+                Signature signature = new Signature(signatureBuffer, false);
 
                 String content = result.getString("content");
 

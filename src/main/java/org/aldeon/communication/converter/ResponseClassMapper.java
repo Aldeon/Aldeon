@@ -8,8 +8,9 @@ import org.aldeon.utils.json.ClassMapper;
  * Class mapper used to decode a JSON string into a Response object.
  */
 public class ResponseClassMapper implements ClassMapper<Response> {
+
     @Override
-    public Class<? extends Response> getClass(JsonObject jsonObject) {
+    public Class<? extends Response> getClass(Object object) {
 
         /*
 
@@ -17,6 +18,14 @@ public class ResponseClassMapper implements ClassMapper<Response> {
             the client part of the application.
 
          */
+
+        if(object instanceof JsonObject) {
+
+            JsonObject jsonObject = (JsonObject) object;
+
+            // work here
+
+        }
 
         return null;
     }

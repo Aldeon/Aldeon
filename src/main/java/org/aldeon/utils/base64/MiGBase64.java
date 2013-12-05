@@ -73,7 +73,7 @@ import java.util.Arrays;
  *         Time: 11:31:11
  */
 
-public class MiGBase64Impl implements Base64Codec
+class MiGBase64 implements Base64
 {
     private static final char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
     private static final int[] IA = new int[256];
@@ -576,19 +576,17 @@ public class MiGBase64Impl implements Base64Codec
         return dArr;
     }
 
-    //TODO: is it possible to make these methods static?
-
     @Override
     public String encode(ByteBuffer buffer) {
         byte[] b = new byte[buffer.remaining()];   // TODO remove unnecessary allocation
         buffer.get(b);
-        return encodeToString(b, false).replace('=', '-');
+        return encodeToString(b, false);
     }
 
     @Override
     public ByteBuffer decode(String base64) throws ConversionException {
         try {
-            return ByteBuffer.wrap(decodeToByteArray(base64.replace('-', '=')));
+            return ByteBuffer.wrap(decodeToByteArray(base64));
         } catch(Exception e) {
             throw new ConversionException("Failed to decode a base64 string into ByteBuffer", e);
         }

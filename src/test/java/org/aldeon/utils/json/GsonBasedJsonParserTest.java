@@ -2,32 +2,40 @@ package org.aldeon.utils.json;
 
 import org.aldeon.model.Identifier;
 import org.aldeon.net.Ipv4PeerAddress;
-import org.aldeon.net.Ipv6PeerAddress;
 import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
 import org.aldeon.protocol.request.IndicateInterestRequest;
+import org.aldeon.utils.base64.Base64;
+import org.aldeon.utils.conversion.ConversionException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class JsonParserImplTest {
+public class GsonBasedJsonParserTest {
 
-    public static final String emptyId = "\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-\"";
+    public static final String emptyId = "test";
 
     @Test
-    public void shouldParseGetMessageRequest() throws ParseException {
+    public void shouldParseGetMessageRequest() throws ParseException, ConversionException {
 
         GetMessageRequest req = new GetMessageRequest();
         req.id = Identifier.empty();
 
-        JsonParser parser = new JsonParserImpl();
+        Base64 base64 = mock(Base64.class);
+        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+
+        JsonParser parser = new GsonBasedJsonParser(base64);
 
         String json = parser.toJson(req);
 
         assertEquals(
-                "{\"type\":\"get_message\",\"id\":" + emptyId + "}",
+                "{\"type\":\"get_message\",\"id\":\"" + emptyId + "\"}",
                 json
         );
 
@@ -38,19 +46,23 @@ public class JsonParserImplTest {
     }
 
     @Test
-    public void shouldParseCompareTreesRequest() throws ParseException {
+    public void shouldParseCompareTreesRequest() throws ParseException, ConversionException {
 
         CompareTreesRequest req = new CompareTreesRequest();
         req.force = true;
         req.parent_id = Identifier.empty();
         req.parent_xor = Identifier.empty();
 
-        JsonParser parser = new JsonParserImpl();
+        Base64 base64 = mock(Base64.class);
+        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+
+        JsonParser parser = new GsonBasedJsonParser(base64);
 
         String json = parser.toJson(req);
 
         assertEquals(
-                "{\"type\":\"compare_trees\",\"parent_id\":" + emptyId + ",\"parent_xor\":" + emptyId + ",\"force\":true}",
+                "{\"type\":\"compare_trees\",\"parent_id\":\"" + emptyId + "\",\"parent_xor\":\"" + emptyId + "\",\"force\":true}",
                 json
         );
 
@@ -63,17 +75,21 @@ public class JsonParserImplTest {
     }
 
     @Test
-    public void shouldParseGetPeersInterestedRequest() throws ParseException {
+    public void shouldParseGetPeersInterestedRequest() throws ParseException, ConversionException {
 
         GetRelevantPeersRequest req = new GetRelevantPeersRequest();
         req.target = Identifier.empty();
 
-        JsonParser parser = new JsonParserImpl();
+        Base64 base64 = mock(Base64.class);
+        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+
+        JsonParser parser = new GsonBasedJsonParser(base64);
 
         String json = parser.toJson(req);
 
         assertEquals(
-                "{\"type\":\"get_relevant_peers\",\"target\":" + emptyId + "}",
+                "{\"type\":\"get_relevant_peers\",\"target\":\"" + emptyId + "\"}",
                 json
 
         );
@@ -85,18 +101,22 @@ public class JsonParserImplTest {
     }
 
     @Test
-    public void shouldParseIndicateInterestRequest() throws ParseException {
+    public void shouldParseIndicateInterestRequest() throws ParseException, ConversionException {
 
         IndicateInterestRequest req = new IndicateInterestRequest();
         req.topic = Identifier.empty();
         req.address = Ipv4PeerAddress.parse("192.168.0.50", 8080);
 
-        JsonParser parser = new JsonParserImpl();
+        Base64 base64 = mock(Base64.class);
+        when(base64.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
+        when(base64.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
+
+        JsonParser parser = new GsonBasedJsonParser(base64);
 
         String json = parser.toJson(req);
 
         assertEquals(
-                "{\"type\":\"indicate_interest\",\"topic\":" + emptyId + ",\"address\":{\"type\":\"ipv4\",\"host\":\"192.168.0.50\",\"port\":8080}}",
+                "{\"type\":\"indicate_interest\",\"topic\":\"" + emptyId + "\",\"address\":{\"type\":\"ipv4\",\"host\":\"192.168.0.50\",\"port\":8080}}",
                 json
         );
 

@@ -1,5 +1,6 @@
 package org.aldeon.crypt;
 
+import org.aldeon.crypt.signer.Sha256;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.junit.Test;
 

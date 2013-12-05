@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import org.aldeon.model.Identifier;
-import org.aldeon.utils.base64.Base64Codec;
+import org.aldeon.utils.base64.Base64;
 import org.aldeon.utils.conversion.ConversionException;
 
 import java.lang.reflect.Type;
@@ -13,9 +13,9 @@ import java.nio.ByteBuffer;
 
 public class IdentifierDeserializer implements JsonDeserializer<Identifier> {
 
-    private final Base64Codec base64;
+    private final Base64 base64;
 
-    public IdentifierDeserializer(Base64Codec base64) {
+    public IdentifierDeserializer(Base64 base64) {
         this.base64 = base64;
     }
 

@@ -1,21 +1,24 @@
-package org.aldeon.crypt;
+package org.aldeon.crypt.signer;
 
+import com.google.inject.Inject;
+import org.aldeon.crypt.Key;
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
 import org.aldeon.model.ByteSource;
-import org.aldeon.utils.math.ByteBufferArithmetic;
+import org.aldeon.model.Signature;
 
 import java.nio.ByteBuffer;
 import java.util.Comparator;
 
-public class SignerImpl implements Signer {
+class HashBasedSigner implements Signer {
 
-    private Hash hash;
-    private Comparator<ByteBuffer> equalityVerifier;
+    private final Hash hash;
+    private final Comparator<ByteBuffer> comparator;
 
-    public SignerImpl() {
-        hash = new Sha256();
-        equalityVerifier = new ByteBufferArithmetic();
+    @Inject
+    public HashBasedSigner(Hash hash, Comparator<ByteBuffer> comparator) {
+        this.hash = hash;
+        this.comparator = comparator;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class SignerImpl implements Signer {
     @Override
     public Signature sign(Key key) {
         try {
-            return new SignatureImpl(key.encrypt(hash.calculate()), false);
+            return new Signature(key.encrypt(hash.calculate()), false);
         } catch (EncryptionFailedException e) {
             throw new IllegalArgumentException("Failed to encrypt the data using given key", e);
         }
@@ -51,7 +54,7 @@ public class SignerImpl implements Signer {
     @Override
     public boolean verify(Key key, Signature signature) {
         try {
-            return 0 == equalityVerifier.compare(hash.calculate(), key.decrypt(signature.getByteBuffer()));
+            return 0 == comparator.compare(hash.calculate(), key.decrypt(signature.getByteBuffer()));
         } catch (DecryptionFailedException e) {
             return false;
         }
