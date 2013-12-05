@@ -5,6 +5,7 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.db.DbImpl;
 import org.aldeon.gui.GuiModule;
 import org.aldeon.protocol.ProtocolModule;
+import org.seamless.util.Threads;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,19 +24,16 @@ public class Main {
 
         DbImpl db = (DbImpl) core.getStorage();
 
-        db.insertTestData();
+        //db.insertTestData();
 
-        System.in.read();
         db.closeDbConnection();
-
-        new File("aldeon.db.lck").delete();
-        new File("aldeon.db.properties").delete();
-        new File("aldeon.db.log").delete();
-        new File("aldeon.db.script").delete();
+        //new File("aldeon.db.lck").delete();
+        //new File("aldeon.db.properties").delete();
+        //new File("aldeon.db.log").delete();
+        //new File("aldeon.db.script").delete();
 
         // Launch GUI
-        //GuiModule.launch();
-
+        GuiModule.launch();
         /*
             Now everything should work.
             To see the results, go to:
