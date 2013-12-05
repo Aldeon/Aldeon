@@ -1,5 +1,7 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
+import org.aldeon.core.Core;
 import org.aldeon.db.Db;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
@@ -28,8 +30,9 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
             - ChildrenResponse              // children
      */
 
-    public CompareTreesAction(Db db) {
-        this.db = db;
+    @Inject
+    public CompareTreesAction(Core core) {
+        this.db = core.getStorage();
     }
 
     @Override

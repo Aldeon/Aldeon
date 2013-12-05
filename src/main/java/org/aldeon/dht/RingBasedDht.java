@@ -1,30 +1,29 @@
 package org.aldeon.dht;
 
+import com.google.inject.Inject;
 import org.aldeon.dht.miners.DemandWatcher;
 import org.aldeon.dht.ring.Ring;
-import org.aldeon.dht.ring.RingImpl;
 import org.aldeon.dht.slots.AddressAllocator;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.AddressType;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.utils.collections.Provider;
-import org.aldeon.utils.math.ByteBufferArithmetic;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class DhtImpl implements Dht, DemandWatcher {
+public class RingBasedDht implements Dht, DemandWatcher {
 
     private final AddressAllocator addressAllocator;
     private final Ring<PeerAddress> ring;
-    private final Set<Callback<Identifier>> callbacks;
+    private final Set<Callback<Identifier>> callbacks = new HashSet<>();
     private final AddressType acceptedType;
 
-    public DhtImpl(AddressType acceptedType) {
-        addressAllocator = new AddressAllocator();
-        ring = new RingImpl<>(new ByteBufferArithmetic());
-        callbacks = new HashSet<>();
+    @Inject
+    public RingBasedDht(AddressType acceptedType, AddressAllocator addressAllocator, Ring<PeerAddress> ring) {
+        this.addressAllocator = addressAllocator;
+        this.ring = ring;
         this.acceptedType = acceptedType;
     }
 

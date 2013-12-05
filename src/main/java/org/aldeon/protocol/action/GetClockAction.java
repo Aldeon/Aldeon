@@ -1,5 +1,7 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
+import org.aldeon.core.Core;
 import org.aldeon.db.Db;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
@@ -13,8 +15,9 @@ public class GetClockAction implements Action<GetClockRequest> {
 
     private final Db storage;
 
-    public GetClockAction(Db storage) {
-        this.storage = storage;
+    @Inject
+    public GetClockAction(Core core) {
+        this.storage = core.getStorage();
     }
 
     @Override

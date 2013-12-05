@@ -1,5 +1,7 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
+import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.AsyncCallback;
@@ -12,12 +14,19 @@ import org.aldeon.protocol.response.AddressSavedResponse;
 
 public class IndicateInterestAction implements Action<IndicateInterestRequest> {
 
+    private final Core core;
+
+    @Inject
+    public IndicateInterestAction(Core core) {
+        this.core = core;
+    }
+
     @Override
     public void respond(PeerAddress peer, IndicateInterestRequest request, AsyncCallback<Response> onResponse) {
 
         // Someone wants to be inserted into our dht
 
-        Dht dht = CoreModule.getInstance().getDht(request.address.getType());
+        Dht dht = core.getDht(request.address.getType());
 
         if(dht == null) {
             throw new IllegalStateException("Could not find the appropriate dht for the specified address type");

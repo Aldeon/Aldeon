@@ -1,5 +1,6 @@
 package org.aldeon.dht.ring;
 
+import com.google.inject.Inject;
 import org.aldeon.model.Identifiable;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
@@ -26,6 +27,7 @@ public class RingImpl<T extends PeerAddress> implements Ring<T> {
     private NeighbourhoodSet<Identifiable> circle;
     private Arithmetic<ByteBuffer> arithmetic;
 
+    @Inject
     public RingImpl(Arithmetic<ByteBuffer> arithmetic) {
         this.arithmetic = arithmetic;
         circle = new ConcreteNeighbourhoodSet<>(new IdentifiableArithmetic());

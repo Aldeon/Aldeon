@@ -9,13 +9,13 @@ import org.aldeon.utils.collections.Pair;
 
 import java.util.*;
 
-public class XorManagerImpl implements XorManager{
+public class MapBasedXorManager implements XorManager{
 
     // P - parent, Q - xor
     private Map<Identifier, Pair<Identifier, Identifier>> data;
 
 
-    public XorManagerImpl() {
+    public MapBasedXorManager() {
         data = new HashMap<>();
     }
 

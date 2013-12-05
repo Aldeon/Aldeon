@@ -1,5 +1,6 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
@@ -20,11 +21,15 @@ public class GetRelevantPeersAction implements Action<GetRelevantPeersRequest> {
     private static final Logger log = LoggerFactory.getLogger(GetRelevantPeersAction.class);
 
     private static final int LIMIT = 8;
+    private final Core core;
+
+    @Inject
+    public GetRelevantPeersAction(Core core) {
+        this.core = core;
+    }
 
     @Override
     public void respond(PeerAddress peer, GetRelevantPeersRequest request, AsyncCallback<Response> onResponse) {
-
-        Core core = CoreModule.getInstance();
 
         Set<PeerAddress> interested = new HashSet<>();
         Set<PeerAddress> nearValues = new HashSet<>();

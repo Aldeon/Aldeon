@@ -7,6 +7,9 @@ import org.aldeon.dht.miners.DemandWatcher;
 import org.aldeon.dht.miners.MinerManager;
 import org.aldeon.dht.miners.MinerProvider;
 import org.aldeon.dht.miners.MinerProviderImpl;
+import org.aldeon.dht.ring.RingImpl;
+import org.aldeon.dht.slots.AddressAllocator;
+import org.aldeon.utils.math.ByteBufferArithmetic;
 
 public class DhtModule implements Module{
     @Override
@@ -16,7 +19,7 @@ public class DhtModule implements Module{
 
     public static Dht createDht(Sender sender) {
 
-        DhtImpl dht = new DhtImpl(sender.getAcceptedType());
+        RingBasedDht dht = new RingBasedDht(sender.getAcceptedType(), new AddressAllocator(), new RingImpl<>(new ByteBufferArithmetic()));
         DemandWatcher watcher = dht;
         Dht wrapped = new DhtTypeCheckDecorator(dht);
 

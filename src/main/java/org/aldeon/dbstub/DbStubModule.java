@@ -8,8 +8,6 @@ import org.aldeon.db.wrappers.DbEventCallerDecorator;
 import org.aldeon.model.Message;
 import org.aldeon.utils.helpers.Messages;
 
-import java.util.concurrent.Executor;
-
 public class DbStubModule implements Provider<Db> {
 
     private static void addExampleData(Db db) {
@@ -43,7 +41,7 @@ public class DbStubModule implements Provider<Db> {
         XorManager mgr;
 
         // Base XorManager implementation
-        mgr = new XorManagerImpl();
+        mgr = new MapBasedXorManager();
         // Concurrency decorator
         mgr = new XorManagerConcurrencyDecorator(mgr);
 

@@ -1,5 +1,7 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
+import org.aldeon.core.Core;
 import org.aldeon.db.Db;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
@@ -17,8 +19,9 @@ public class GetMessageAction implements Action<GetMessageRequest> {
 
     private final Db storage;
 
-    public GetMessageAction(Db storage) {
-        this.storage = storage;
+    @Inject
+    public GetMessageAction(Core core) {
+        this.storage = core.getStorage();
     }
 
     @Override

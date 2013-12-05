@@ -2,6 +2,7 @@ package org.aldeon.core;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Provider;
 import com.google.inject.multibindings.Multibinder;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
@@ -12,7 +13,7 @@ import org.aldeon.dbstub.DbStubModule;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.MultiMapBasedEventLoop;
 
-public class CoreModule extends AbstractModule {
+public class CoreModule extends AbstractModule implements Provider<Core> {
 
     private static Core coreInstance;
     private static boolean initializing = false;
@@ -30,11 +31,8 @@ public class CoreModule extends AbstractModule {
         receiverBinder.addBinding().toProvider(NettyReceiverModule.class);
     }
 
-    /**
-     * Singleton core getter
-     * @return
-     */
-    public static Core getInstance() {
+    @Override
+    public Core get() {
         if(coreInstance == null) {
             if(initializing) {
                 throw new IllegalStateException("Core is already being initialized");
@@ -45,6 +43,15 @@ public class CoreModule extends AbstractModule {
             }
         }
         return coreInstance;
+    }
+
+
+    /**
+     * Singleton core getter
+     * @return
+     */
+    public static Core getInstance() {
+        return new CoreModule().get();
     }
 
 }

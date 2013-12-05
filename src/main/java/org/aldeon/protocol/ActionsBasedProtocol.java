@@ -1,6 +1,7 @@
 package org.aldeon.protocol;
 
 
+import com.google.inject.Inject;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.db.Db;
@@ -30,7 +31,15 @@ public class ActionsBasedProtocol implements Protocol {
     private final Action<GetClockRequest> getClockAction;
     private final Action<GetDiffRequest> getDiffAction;
 
-    public ActionsBasedProtocol() {
+    @Inject
+    public ActionsBasedProtocol(
+            GetMessageAction getMessageAction,
+            GetRelevantPeersAction getPeersInterestedAction,
+            CompareTreesAction compareTreesAction,
+            IndicateInterestAction indicateInterestAction,
+            GetClockAction getClockAction,
+            GetDiffAction getDiffAction
+    ) {
 
 
         Core core = CoreModule.getInstance();
@@ -41,12 +50,12 @@ public class ActionsBasedProtocol implements Protocol {
         // Execute callbacks in a separate thread
         storage = new DbCallbackThreadDecorator(storage, core.serverSideExecutor());
 
-        this.getMessageAction           = new GetMessageAction(storage);
-        this.getPeersInterestedAction   = new GetRelevantPeersAction();
-        this.compareTreesAction         = new CompareTreesAction(storage);
-        this.indicateInterestAction     = new IndicateInterestAction();
-        this.getClockAction             = new GetClockAction(storage);
-        this.getDiffAction              = new GetDiffAction(storage);
+        this.getMessageAction           = getMessageAction;
+        this.getPeersInterestedAction   = getPeersInterestedAction;
+        this.compareTreesAction         = compareTreesAction;
+        this.indicateInterestAction     = indicateInterestAction;
+        this.getClockAction             = getClockAction;
+        this.getDiffAction              = getDiffAction;
     }
 
     @Override
