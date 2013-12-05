@@ -16,7 +16,7 @@ public class SenderHandler extends SimpleChannelInboundHandler<FullHttpResponse>
     private static final Logger log = LoggerFactory.getLogger(SenderHandler.class);
 
     private final Converter<FullHttpResponse, Response> decoder;
-    private OutboundRequestTask<? extends IpPeerAddress> task = null;
+    private OutboundRequestTask task = null;
 
     public SenderHandler(Converter<FullHttpResponse, Response> decoder) {
         this.decoder = decoder;
@@ -29,25 +29,15 @@ public class SenderHandler extends SimpleChannelInboundHandler<FullHttpResponse>
         } else {
             try {
                 final Response response = decoder.convert(msg);
-                task.getExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        task.onSuccess(response);
-                    }
-                });
+                task.onSuccess(response);
             } catch (final ConversionException e) {
-                task.getExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        task.onFailure(e);
-                    }
-                });
+                task.onFailure(e);
             }
         }
         ctx.close();
     }
 
-    public void setTask(OutboundRequestTask<? extends IpPeerAddress> task) {
+    public void setTask(OutboundRequestTask task) {
         this.task = task;
     }
 }

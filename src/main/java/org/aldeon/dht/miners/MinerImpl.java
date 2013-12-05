@@ -10,18 +10,15 @@ import org.aldeon.utils.collections.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executor;
-
 /**
  * Iteratively looks for peers interested in a particular topic
  * in order to satisfy a given demand.
  */
-public class MinerImpl<T extends PeerAddress> implements Miner {
+public class MinerImpl implements Miner {
 
     private static final Logger log = LoggerFactory.getLogger(MinerImpl.class);
 
-    private final Sender<T> sender;
-    private final Executor executor;
+    private final Sender sender;
     private final Runnable loopRunnable;
     private final Identifier topic;
     private final Callback<RelevantPeersResponse> onResponse;
@@ -29,16 +26,13 @@ public class MinerImpl<T extends PeerAddress> implements Miner {
     private boolean working = false;
 
     public MinerImpl(
-            Sender<T> sender,
-            Executor executor,
+            Sender sender,
             final Identifier topic,
-            final Class<T> expectedType,
             final Provider<Integer> demand,
-            final Provider<T> targetProvider,
-            final Callback<Pair<T, Identifier>> onFound)
+            final Provider<PeerAddress> targetProvider,
+            final Callback<Pair<PeerAddress, Identifier>> onFound)
     {
         this.sender = sender;
-        this.executor = executor;
         this.topic = topic;
 
         this.loopRunnable = new Runnable() {
@@ -55,20 +49,14 @@ public class MinerImpl<T extends PeerAddress> implements Miner {
         this.onResponse = new Callback<RelevantPeersResponse>() {
             @Override
             public void call(RelevantPeersResponse response) {
-                for(PeerAddress addr: response.closestIds) {
-                    if(expectedType.isInstance(addr)) {
-                        onFound.call(new Pair<>((T) addr, (Identifier) null));
-                    } else {
-                        log.warn("Invalid address type received.");
-                    }
+
+                for(PeerAddress address: response.closestIds) {
+                    onFound.call(new Pair<>(address, (Identifier) null));
                 }
-                for(PeerAddress addr: response.interested) {
-                    if(expectedType.isInstance(addr)) {
-                        onFound.call(new Pair<>((T) addr, topic));
-                    } else {
-                        log.warn("Invalid address type received.");
-                    }
+                for(PeerAddress address: response.interested) {
+                    onFound.call(new Pair<>(address, topic));
                 }
+
                 loop();
             }
         };
@@ -90,7 +78,7 @@ public class MinerImpl<T extends PeerAddress> implements Miner {
     }
 
     private void loop() {
-        executor.execute(loopRunnable);
+        loopRunnable.run();
     }
 
     @Override
@@ -98,7 +86,7 @@ public class MinerImpl<T extends PeerAddress> implements Miner {
         return working;
     }
 
-    private void sendRequest(T peer) {
-        sender.addTask(new ObtainRelevantPeersTask<>(peer, topic, executor, onResponse, onThrowable));
+    private void sendRequest(PeerAddress peer) {
+        sender.addTask(new ObtainRelevantPeersTask(peer, topic, onResponse, onThrowable));
     }
 }

@@ -1,15 +1,11 @@
 package org.aldeon.communication.task;
 
-import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Response;
-
-import java.util.concurrent.Executor;
 
 /**
  * Task related to an outgoing request.
- * @param <T>
  */
-public interface OutboundRequestTask<T extends PeerAddress> extends RequestTask<T> {
+public interface OutboundRequestTask extends RequestTask {
     /**
      * Method to be called if the request completes successfully.
      * @param response
@@ -27,10 +23,4 @@ public interface OutboundRequestTask<T extends PeerAddress> extends RequestTask<
      * @return
      */
     int getTimeoutMillis();
-
-    /**
-     * Executor on which this task (any any related subtasks) should be executed
-     * @return
-     */
-    Executor getExecutor();
 }

@@ -12,12 +12,7 @@ import java.util.Set;
  */
 public class TopicManager {
 
-    private Map<Identifier, TopicState> topics;
-
-    public TopicManager() {
-        topics = new HashMap<>();
-    }
-
+    private Map<Identifier, TopicState> topics = new HashMap<>();
 
     /**
      * Registers user's interest in a particular topic

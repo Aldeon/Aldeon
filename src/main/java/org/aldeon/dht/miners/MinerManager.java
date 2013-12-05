@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Makes sure that every non-zero demand is associated with active miners
  */
-public class MinerManager{
+public class MinerManager {
 
     private final DemandWatcher watcher;
     private final Map<Identifier, Miner> miners;

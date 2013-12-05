@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
@@ -21,12 +22,12 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
     private final Converter<FullHttpRequest, Request> decoder;
     private final Converter<Response, FullHttpResponse> encoder;
-    private final AsyncCallback<InboundRequestTask<IpPeerAddress>> callback;
+    private final Callback<InboundRequestTask> callback;
 
     public ReceiverHandler(
             Converter<FullHttpRequest, Request> decoder,
             Converter<Response, FullHttpResponse> encoder,
-            AsyncCallback<InboundRequestTask<IpPeerAddress>> callback
+            Callback<InboundRequestTask> callback
     ) {
         this.decoder = decoder;
         this.encoder = encoder;
@@ -81,7 +82,7 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
         writeEmptyResponse(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private static class Task implements InboundRequestTask<IpPeerAddress> {
+    private static class Task implements InboundRequestTask {
 
         private final ChannelHandlerContext ctx;
         private final Converter<Response, FullHttpResponse> encoder;

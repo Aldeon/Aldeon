@@ -13,11 +13,10 @@ import java.util.Set;
 public class TopicState {
 
     private final Identifier topic;
-    private final Set<Slot> slots;
+    private final Set<Slot> slots = new HashSet<>();
 
     public TopicState(Identifier topic) {
         this.topic = topic;
-        this.slots = new HashSet<>();
     }
 
     /**

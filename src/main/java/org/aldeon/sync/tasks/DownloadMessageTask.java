@@ -2,12 +2,10 @@ package org.aldeon.sync.tasks;
 
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.db.Db;
-import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.response.MessageFoundResponse;
@@ -15,31 +13,27 @@ import org.aldeon.protocol.response.MessageNotFoundResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executor;
 
-public class DownloadMessageTask<T extends PeerAddress> implements OutboundRequestTask<T> {
+public class DownloadMessageTask extends BaseOutboundTask<GetMessageRequest> implements OutboundRequestTask {
 
     private static final Logger log = LoggerFactory.getLogger(DownloadMessageTask.class);
 
-    private static final int TIMEOUT = 5000;
-    private final T peer;
-    private final GetMessageRequest request;
-    private final Executor executor;
     private final Identifier expectedParent;
     private final Db storage;
     private final Callback<Boolean> onFinished;
     private final boolean checkAncestry;
 
-    public DownloadMessageTask(T peer, Identifier id, Identifier parent, boolean checkAncestry, Executor executor, Db storage, Callback<Boolean> onFinished) {
-        this.peer = peer;
-        this.executor = executor;
+    public DownloadMessageTask(PeerAddress peer, Identifier id, Identifier parent, boolean checkAncestry, Db storage, Callback<Boolean> onFinished) {
+        super(5000, peer);
+
+        setRequest(new GetMessageRequest());
+        req().id = id;
+
         this.expectedParent = parent;
         this.storage = storage;
         this.onFinished = onFinished;
         this.checkAncestry = checkAncestry;
 
-        this.request = new GetMessageRequest();
-        request.id = id;
     }
 
     @Override
@@ -47,7 +41,7 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
         if(response instanceof MessageFoundResponse) {
             onMessageFound((MessageFoundResponse) response);
         } else if(response instanceof MessageNotFoundResponse) {
-            onMessageNotFound((MessageNotFoundResponse) response);
+            onMessageNotFound();
         } else {
             onFailure(new InvalidResponseException("Invalid response type"));
         }
@@ -55,28 +49,8 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
 
     @Override
     public void onFailure(Throwable cause) {
-        log.info("Failed to download message " + request.id, cause);
+        log.info("Failed to download message " + req().id, cause);
         onFinished.call(false);
-    }
-
-    @Override
-    public int getTimeoutMillis() {
-        return TIMEOUT;
-    }
-
-    @Override
-    public Request getRequest() {
-        return request;
-    }
-
-    @Override
-    public T getAddress() {
-        return peer;
-    }
-
-    @Override
-    public Executor getExecutor() {
-        return executor;
     }
 
     /////////////////////////////////////
@@ -86,12 +60,7 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
         if(expectedParent == null || expectedParent.equals(msg.getParentMessageIdentifier())) {
             callback.call(true);
         } else if(checkAncestry) {
-            storage.checkAncestry(msg.getParentMessageIdentifier(), expectedParent, new ACB<Boolean>(executor) {
-                @Override
-                protected void react(Boolean val) {
-                    callback.call(val);
-                }
-            });
+            storage.checkAncestry(msg.getParentMessageIdentifier(), expectedParent, callback);
         } else {
             callback.call(false);
         }
@@ -101,12 +70,12 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
 
         final Message msg = response.message;
 
-        if(request.id.equals(msg.getIdentifier())) {
+        if(req().id.equals(msg.getIdentifier())) {
             checkRelation(msg, new Callback<Boolean>() {
                 @Override
                 public void call(Boolean matchesCriteria) {
                     if(matchesCriteria) {
-                        storage.insertMessage(msg, getExecutor());
+                        storage.insertMessage(msg);
                         onFinished.call(true);
                     } else {
                         onFailure(new InvalidResponseException("Message does not match the expected parameters"));
@@ -118,8 +87,8 @@ public class DownloadMessageTask<T extends PeerAddress> implements OutboundReque
         }
     }
 
-    private void onMessageNotFound(MessageNotFoundResponse response) {
-        log.info("Message " + request.id + " not found on the server");
+    private void onMessageNotFound() {
+        log.info("Message " + req().id + " not found on the server");
         onFinished.call(false);
     }
 }

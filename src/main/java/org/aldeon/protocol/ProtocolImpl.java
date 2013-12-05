@@ -17,12 +17,8 @@ import org.aldeon.protocol.request.GetDiffRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
 import org.aldeon.protocol.request.IndicateInterestRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ProtocolImpl implements Protocol {
-
-    private static final Logger log = LoggerFactory.getLogger(ProtocolImpl.class);
 
     private final Action<GetMessageRequest> getMessageAction;
     private final Action<GetRelevantPeersRequest> getPeersInterestedAction;

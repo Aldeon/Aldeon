@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-public class Supervisor  implements Runnable{
+public class Supervisor implements Runnable{
 
     private final TopicManager manager;
     private final Executor executor;
 
-    private final Map<SlotState, SlotStateUpgradeProcedure> procedures;
+    private final Map<SlotState, SlotStateUpgradeProcedure> procedures = new HashMap<>();
 
     public Supervisor(TopicManager manager, Executor executor) {
         this.manager = manager;
@@ -27,8 +27,6 @@ public class Supervisor  implements Runnable{
                 return System.currentTimeMillis();
             }
         };
-
-        procedures = new HashMap<>();
 
         procedures.put(SlotState.EMPTY,             new PeerFindingProcedure());
         procedures.put(SlotState.SYNC_IN_PROGRESS,  new SynchronizationProcedure(timeProvider));
@@ -44,15 +42,14 @@ public class Supervisor  implements Runnable{
 
                 if(!slot.getInProgress()) {
 
-                    // Here we pick an appropriate procedure
-                    final SlotStateUpgradeProcedure proc = null;
+                    final SlotStateUpgradeProcedure proc = procedures.get(slot.getSlotState());
 
                     slot.setInProgress(true);
 
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            proc.call(slot, topic.getIdentifier());
+                            proc.handle(slot, topic.getIdentifier());
                         }
                     });
                 }

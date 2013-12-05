@@ -14,7 +14,7 @@ import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.net.AddressType;
 import org.aldeon.sync.TopicManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,32 +45,28 @@ public class CoreImpl implements Core {
     private final Executor wrappedClientExecutor;
     private final Executor wrappedServerExecutor;
 
-    private final Map<Class, Sender> senders;
-    private final Map<Class, Receiver> receivers;
-    private final Set<Identity> identies;
-    private final Map<Class, Dht> dhts;
+    private final Map<AddressType, Sender> senders = new HashMap<>();
+    private final Map<AddressType, Dht> dhts = new HashMap<>();
+    private final Set<Receiver> receivers = new HashSet<>();
+
+    private final Set<Identity> identities = new HashSet<>();
+
     private final TopicManager topicManager;
 
 
     @Inject
-    public CoreImpl(Db storage, EventLoop eventLoop) {
+    public CoreImpl(Db storage, EventLoop eventLoop, Set<Sender> sendersList, Set<Receiver> receiversList) {
+
         this.storage = storage;
         this.eventLoop = eventLoop;
-        this.topicManager = new TopicManager();
 
-        this.identies = new HashSet<>();
+        this.topicManager = new TopicManager();
         this.clientSideExecutor = Executors.newFixedThreadPool(2);
         this.serverSideExecutor = Executors.newFixedThreadPool(2);
         this.wrappedClientExecutor = new ThrowableInterceptor(clientSideExecutor);
         this.wrappedServerExecutor = new ThrowableInterceptor(serverSideExecutor);
 
-
-        senders = new HashMap<>();
-        receivers = new HashMap<>();
-        dhts = new HashMap<>();
-
-
-        log.debug("Initialized the core.");
+        // Initialize all senders and receivers
 
         getEventLoop().assign(AppClosingEvent.class, new ACB<AppClosingEvent>(clientSideExecutor()) {
             @Override
@@ -78,10 +74,30 @@ public class CoreImpl implements Core {
                 close();
             }
         });
+
+        AsyncCallback<InboundRequestTask> callback = new ACB<InboundRequestTask>(serverSideExecutor()) {
+            @Override
+            protected void react(InboundRequestTask val) {
+                getEventLoop().notify(new InboundRequestEvent(val));
+            }
+        };
+
+        for(Sender sender: sendersList) {
+            registerSender(sender);
+            sender.start();
+        }
+
+        for(Receiver receiver: receiversList) {
+            registerReceiver(receiver);
+            receiver.setCallback(callback);
+            receiver.start();
+        }
+
+        log.debug("Initialized the core.");
     }
 
     @Override
-    public <T extends PeerAddress> Dht<T> getDht(Class<T> addressType) {
+    public Dht getDht(AddressType addressType) {
         return dhts.get(addressType);
     }
 
@@ -97,17 +113,17 @@ public class CoreImpl implements Core {
 
     @Override
     public Set<Identity> getAllIdentities() {
-        return Collections.unmodifiableSet(identies);
+        return Collections.unmodifiableSet(identities);
     }
 
     @Override
     public void addIdentity(Identity identity) {
-        identies.add(identity);
+        identities.add(identity);
     }
 
     @Override
     public void delIdentity(Identity identity) {
-        identies.remove(identity);
+        identities.remove(identity);
     }
 
     @Override
@@ -121,53 +137,26 @@ public class CoreImpl implements Core {
     }
 
     @Override
-    public <T extends PeerAddress> void registerSender(Class<T> addressType, Sender<T> sender) {
-        senders.put(addressType, sender);
-
-        // Dht is registered as soon as a sender is available
-        dhts.put(addressType, DhtModule.createDht(sender, clientSideExecutor(), addressType));
-    }
-
-    @Override
-    public <T extends PeerAddress> void registerReceiver(Class<T> addressType, Receiver<T> receiver) {
-        receivers.put(addressType, receiver);
-    }
-
-    @Override
-    public <T extends PeerAddress> Sender<T> getSender(Class<T> addressType) {
+    public Sender getSender(AddressType addressType) {
         return senders.get(addressType);
-    }
-
-    @Override
-    public void initSenders() {
-        for(Sender sender: senders.values()) {
-            sender.start();
-        }
-    }
-
-    @Override
-    public void initReceivers() {
-        AsyncCallback<InboundRequestTask> callback = new ACB<InboundRequestTask>(serverSideExecutor()) {
-
-            /*
-                Notify all listeners that the new request arrived
-             */
-
-            @Override
-            protected void react(InboundRequestTask val) {
-                getEventLoop().notify(new InboundRequestEvent(val));
-            }
-        };
-
-        for(Receiver receiver: receivers.values()) {
-            receiver.setCallback(callback);
-            receiver.start();
-        }
     }
 
     @Override
     public TopicManager getTopicManager() {
         return topicManager;
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
+
+    private void registerSender(Sender sender) {
+        senders.put(sender.getAcceptedType(), sender);
+        dhts.put(sender.getAcceptedType(), DhtModule.createDht(sender));
+    }
+
+    private void registerReceiver(Receiver receiver) {
+        receivers.add(receiver);
     }
 
     private void close() {
@@ -176,7 +165,7 @@ public class CoreImpl implements Core {
             sender.close();
         }
 
-        for(Receiver receiver: receivers.values()) {
+        for(Receiver receiver: receivers) {
             receiver.close();
         }
 

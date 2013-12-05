@@ -64,4 +64,9 @@ public class Ipv4PeerAddress implements IpPeerAddress {
 
         return id;
     }
+
+    @Override
+    public AddressType getType() {
+        return AddressType.IPV4;
+    }
 }

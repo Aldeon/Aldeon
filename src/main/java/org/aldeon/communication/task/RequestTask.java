@@ -6,7 +6,7 @@ import org.aldeon.protocol.Request;
 /**
  * Asynchronous task related to a Request.
  */
-public interface RequestTask<T extends PeerAddress> {
+public interface RequestTask {
 
     /**
      * Request object related to this task
@@ -18,5 +18,5 @@ public interface RequestTask<T extends PeerAddress> {
      * Address associated with this request
      * @return
      */
-    T getAddress();
+    PeerAddress getAddress();
 }

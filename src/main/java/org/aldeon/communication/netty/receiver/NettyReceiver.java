@@ -12,9 +12,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.task.InboundRequestTask;
-import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.net.AddressTranslation;
-import org.aldeon.net.IpPeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * Netty server implementation. Handles incoming transmissions, parses
  * into http requests and maintains a todolist of requests to respond to.
  */
-public class NettyReceiver implements Receiver<IpPeerAddress>{
+public class NettyReceiver implements Receiver {
 
     private static final Logger log = LoggerFactory.getLogger(NettyReceiver.class);
 
@@ -35,7 +34,7 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
     private ServerBootstrap server;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
-    private AsyncCallback<InboundRequestTask<IpPeerAddress>> callback = null;
+    private Callback<InboundRequestTask> callback = null;
 
     public NettyReceiver(
             AddressTranslation addressTranslation,
@@ -91,7 +90,9 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
         try {
             bossGroup.awaitTermination(5, TimeUnit.SECONDS);
             workGroup.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) { }
+        } catch (InterruptedException e) {
+            log.warn("Interrupted while waiting for group termination", e);
+        }
 
         if(bossGroup.isShutdown() && workGroup.isShutdown()) {
             log.info("Stopped");
@@ -101,7 +102,7 @@ public class NettyReceiver implements Receiver<IpPeerAddress>{
     }
 
     @Override
-    public void setCallback(AsyncCallback<InboundRequestTask<IpPeerAddress>> callback) {
+    public void setCallback(Callback<InboundRequestTask> callback) {
         this.callback = callback;
     }
 }

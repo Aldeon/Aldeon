@@ -10,14 +10,15 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.OutboundRequestTask;
+import org.aldeon.net.AddressType;
 import org.aldeon.net.IpPeerAddress;
+import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
-
 import java.util.concurrent.CancellationException;
 
-public class NettySender<T extends IpPeerAddress> implements Sender<T> {
+public class NettySender implements Sender {
 
     private Bootstrap bootstrap;
     private EventLoopGroup group;
@@ -57,36 +58,46 @@ public class NettySender<T extends IpPeerAddress> implements Sender<T> {
     }
 
     @Override
-    public void addTask(final OutboundRequestTask<T> task) {
-        task.getExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    FullHttpRequest request = encoder.convert(task.getRequest());
+    public void addTask(final OutboundRequestTask task) {
 
-                    request.headers().set(HttpHeaders.Names.HOST, task.getAddress().getHost().getHostAddress());
+        PeerAddress addr = task.getAddress();
 
-                    final ChannelFuture cf = bootstrap.connect(
-                            task.getAddress().getHost(),
-                            task.getAddress().getPort().getIntValue()
-                    );
+        if(getAcceptedType().equals(addr.getType())) {
 
-                    cf.channel().config().setConnectTimeoutMillis(task.getTimeoutMillis());
+            IpPeerAddress address = (IpPeerAddress) addr;
 
-                    cf.addListener(new ConnectionListener(task, request));
-                } catch (Exception e) {
-                    task.onFailure(e);
-                }
+            try {
+                FullHttpRequest request = encoder.convert(task.getRequest());
+
+                request.headers().set(HttpHeaders.Names.HOST, address.getHost().getHostAddress());
+
+                final ChannelFuture cf = bootstrap.connect(
+                        address.getHost(),
+                        address.getPort().getIntValue()
+                );
+
+                cf.channel().config().setConnectTimeoutMillis(task.getTimeoutMillis());
+                cf.addListener(new ConnectionListener(task, request));
+
+            } catch (Exception e) {
+                task.onFailure(e);
             }
-        });
+        } else {
+            throw new IllegalArgumentException("NettySender accepts only IpPeerAddress-based address types");
+        }
+    }
+
+    @Override
+    public AddressType getAcceptedType() {
+        return AddressType.IPV4;
     }
 
     private static class ConnectionListener implements ChannelFutureListener {
-        private final OutboundRequestTask<? extends IpPeerAddress> task;
+        private final OutboundRequestTask task;
         private final FullHttpRequest request;
 
         public ConnectionListener(
-                OutboundRequestTask<? extends IpPeerAddress> task,
+                OutboundRequestTask task,
                 FullHttpRequest request
         ) {
             this.task = task;
@@ -101,16 +112,12 @@ public class NettySender<T extends IpPeerAddress> implements Sender<T> {
                 sh.setTask(task);
                 ch.writeAndFlush(request);
             } else {
+
                 final Throwable cause = future.isCancelled()
                         ? new CancellationException("Connection cancelled")
                         : future.cause();
 
-                task.getExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        task.onFailure(cause);
-                    }
-                });
+                task.onFailure(cause);
             }
         }
     }

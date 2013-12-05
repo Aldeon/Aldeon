@@ -16,8 +16,8 @@ public class CheckTimeoutProcedure implements SlotStateUpgradeProcedure {
         this.timeProvider = timeProvider;
     }
 
-
-    private void work(Slot slot) {
+    @Override
+    public void handle(Slot slot, Identifier topic) {
         long time = timeProvider.get();
 
         if(slot.getLastUpdated() + TIMEOUT < time) {
@@ -25,10 +25,5 @@ public class CheckTimeoutProcedure implements SlotStateUpgradeProcedure {
         }
 
         slot.setInProgress(false);
-    }
-
-    @Override
-    public void handle(Slot slot, Identifier topic) {
-        work(slot);
     }
 }

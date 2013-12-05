@@ -1,3 +1,5 @@
+import com.sun.org.apache.regexp.internal.recompile
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply from: 'https://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot/javafx.plugin'
@@ -14,6 +16,7 @@ dependencies {
     compile     group: 'io.netty',                      name: 'netty-all',      version: '4.0.10.Final'
     compile     group: 'com.google.code.gson',          name: 'gson',           version: '2.2.4'
     compile     group: 'com.google.inject',             name: 'guice',          version: '3.0'
+    compile     group: 'com.google.inject.extensions',  name: 'guice-multibindings', version: '3.0'
     compile     group: 'com.google.guava',              name: 'guava',          version: '15.0'
     compile     group: 'log4j',                         name: 'log4j',          version: '1.2.16'
     compile     group: 'org.slf4j',                     name: 'slf4j-api',      version: '1.7.5'

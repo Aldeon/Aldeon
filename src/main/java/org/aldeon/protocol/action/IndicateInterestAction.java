@@ -17,7 +17,7 @@ public class IndicateInterestAction implements Action<IndicateInterestRequest> {
 
         // Someone wants to be inserted into our dht
 
-        Dht dht = CoreModule.getInstance().getDht(request.address.getClass());
+        Dht dht = CoreModule.getInstance().getDht(request.address.getType());
 
         if(dht == null) {
             throw new IllegalStateException("Could not find the appropriate dht for the specified address type");

@@ -29,7 +29,7 @@ public class GetRelevantPeersAction implements Action<GetRelevantPeersRequest> {
         Set<PeerAddress> interested = new HashSet<>();
         Set<PeerAddress> nearValues = new HashSet<>();
 
-        Dht dht = core.getDht(peer.getClass());
+        Dht dht = core.getDht(peer.getType());
 
         if(dht != null) {
             nearValues.addAll(dht.getNearest(request.target, LIMIT));

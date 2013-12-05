@@ -9,21 +9,20 @@ import java.util.Set;
 
 /**
  * Determines how the next miner target should be picked
- * @param <T>
  */
-public class TargetFinderByClosestId<T extends PeerAddress> implements Provider<T> {
+public class TargetFinderByClosestId implements Provider<PeerAddress> {
 
-    private final Dht<T> dht;
+    private final Dht dht;
     private final Identifier topic;
 
-    public TargetFinderByClosestId(Dht<T> dht, Identifier topic) {
+    public TargetFinderByClosestId(Dht dht, Identifier topic) {
         this.dht = dht;
         this.topic = topic;
     }
 
     @Override
-    public T get() {
-        Set<T> addresses = dht.getNearest(topic, 1);
+    public PeerAddress get() {
+        Set<PeerAddress> addresses = dht.getNearest(topic, 1);
         return addresses.isEmpty() ? null : addresses.iterator().next();
     }
 }

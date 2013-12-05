@@ -12,19 +12,17 @@ import org.aldeon.protocol.response.RelevantPeersResponse;
 
 import java.util.concurrent.Executor;
 
-public class ObtainRelevantPeersTask<T extends PeerAddress> implements OutboundRequestTask<T> {
+public class ObtainRelevantPeersTask implements OutboundRequestTask {
 
     private final GetRelevantPeersRequest request;
-    private final T address;
-    private final Executor executor;
+    private final PeerAddress address;
     private final Callback<RelevantPeersResponse> onResponse;
     private final Callback<Throwable> onThrowable;
 
-    public ObtainRelevantPeersTask(T address, Identifier topic, Executor executor, Callback<RelevantPeersResponse> onResponse, Callback<Throwable> onThrowable) {
+    public ObtainRelevantPeersTask(PeerAddress address, Identifier topic, Callback<RelevantPeersResponse> onResponse, Callback<Throwable> onThrowable) {
         this.request = new GetRelevantPeersRequest();
         this.request.target = topic;
         this.address = address;
-        this.executor = executor;
         this.onResponse = onResponse;
         this.onThrowable = onThrowable;
     }
@@ -49,17 +47,12 @@ public class ObtainRelevantPeersTask<T extends PeerAddress> implements OutboundR
     }
 
     @Override
-    public Executor getExecutor() {
-        return executor;
-    }
-
-    @Override
     public Request getRequest() {
         return request;
     }
 
     @Override
-    public T getAddress() {
+    public PeerAddress getAddress() {
         return address;
     }
 }

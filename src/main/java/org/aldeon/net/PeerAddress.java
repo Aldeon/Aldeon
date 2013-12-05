@@ -6,4 +6,5 @@ import org.aldeon.model.Identifiable;
  * Common interface for all objects representing an address.
  */
 public interface PeerAddress extends Identifiable{
+    AddressType getType();
 }

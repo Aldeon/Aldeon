@@ -1,6 +1,8 @@
 package org.aldeon.protocol;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Provider;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.InboundRequestEvent;
@@ -8,23 +10,24 @@ import org.aldeon.events.ACB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProtocolModule extends AbstractModule {
+public class ProtocolModule extends AbstractModule implements Provider<Protocol> {
 
     private static final Logger log = LoggerFactory.getLogger(ProtocolModule.class);
 
     @Override
     protected void configure() {
-
+        bind(Protocol.class).to(ProtocolImpl.class);
     }
 
-    private static Protocol createProtocol() {
-        return new ProtocolImpl();
+    @Override
+    public Protocol get() {
+        return Guice.createInjector(this).getInstance(Protocol.class);
     }
 
     public static void initialize() {
 
         // Instantiate the protocol
-        final Protocol protocol = createProtocol();
+        final Protocol protocol = new ProtocolModule().get();
 
         Core core = CoreModule.getInstance();
 
@@ -49,4 +52,6 @@ public class ProtocolModule extends AbstractModule {
             }
         });
     }
+
+
 }

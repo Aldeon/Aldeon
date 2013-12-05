@@ -3,7 +3,6 @@ package org.aldeon.sync.procedures;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
-import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
@@ -18,16 +17,17 @@ import org.aldeon.sync.SlotStateUpgradeProcedure;
  */
 public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
 
-    private <T extends PeerAddress> void work(Class<T> addressType, final Slot slot, final Identifier topicId) {
+    @Override
+    public void handle(final Slot slot, final Identifier topicId) {
 
         Core core = CoreModule.getInstance();
-        final Dht<T> dht = core.getDht(addressType);
+        final Dht dht = core.getDht(slot.getPeerAddress().getType());
 
-        Callback<T> callback = new ACB<T>(core.clientSideExecutor()) {
+        Callback<PeerAddress> callback = new Callback<PeerAddress>() {
             @Override
-            protected void react(T val) {
+            public void call(PeerAddress val) {
 
-                final Callback<T> cb = this;
+                final Callback<PeerAddress> cb = this;
 
                 slot.setPeerAddress(val);
                 slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
@@ -42,10 +42,5 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
         };
 
         dht.addBounty(topicId, callback);
-    }
-
-    @Override
-    public void handle(Slot slot, Identifier topicId) {
-        work(slot.getPeerAddress().getClass(), slot, topicId);
     }
 }

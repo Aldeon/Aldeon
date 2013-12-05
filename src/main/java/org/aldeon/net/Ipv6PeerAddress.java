@@ -30,4 +30,9 @@ public class Ipv6PeerAddress implements IpPeerAddress {
     public Identifier getIdentifier() {
         throw new IllegalStateException("Not yet implemented");
     }
+
+    @Override
+    public AddressType getType() {
+        return AddressType.IPV6;
+    }
 }

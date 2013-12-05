@@ -24,16 +24,15 @@ public class DeltaDownloadingProcedure implements SlotStateUpgradeProcedure {
         this.timeProvider = timeProvider;
     }
 
-    private <T extends PeerAddress> void work(Class<T> addressType, T peer, final Slot slot, Identifier topicId) {
+    @Override
+    public void handle(final Slot slot, Identifier topicId) {
 
         Callback<Long> onCompleted = new Callback<Long>() {
             @Override
             public void call(Long newClock) {
 
                 if(newClock == null) {
-                    // Failed to download the complete delta
-
-                    // Revert to synchronization
+                    // Failed to download the complete delta, revert to synchronization
                     slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
                 } else {
                     // Successfully downloaded all new messages in delta
@@ -48,26 +47,10 @@ public class DeltaDownloadingProcedure implements SlotStateUpgradeProcedure {
         };
 
         Core core = CoreModule.getInstance();
-        Sender<T> sender = core.getSender(addressType);
+        Sender sender = core.getSender(slot.getPeerAddress().getType());
 
-        OutboundRequestTask<T> task = new GetDiffTask<>(
-                peer,
-                topicId,
-                slot.getClock(),
-                core.getStorage(),
-                sender,
-                core.clientSideExecutor(),
-                onCompleted
-        );
+        OutboundRequestTask task = new GetDiffTask(slot.getPeerAddress(), topicId, slot.getClock(), core.getStorage(), sender, onCompleted);
 
         sender.addTask(task);
-    }
-
-    @Override
-    public void handle(Slot slot, Identifier topicId) {
-
-        PeerAddress peer = slot.getPeerAddress();
-
-        work(peer.getClass(), peer, slot, topicId);
     }
 }

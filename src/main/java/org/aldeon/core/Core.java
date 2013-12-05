@@ -6,6 +6,7 @@ import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
+import org.aldeon.net.AddressType;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.sync.TopicManager;
 
@@ -16,11 +17,10 @@ public interface Core {
 
     /**
      * Find the appropriate Ring for a given address type.
-     * @param addressType
-     * @param <T>
+     * @param type
      * @return
      */
-    <T extends PeerAddress> Dht<T> getDht(Class<T> addressType);
+    Dht getDht(AddressType type);
 
     /**
      * Returns the global message storace class.
@@ -62,20 +62,8 @@ public interface Core {
      */
     Executor clientSideExecutor();
 
-    <T extends PeerAddress> void registerSender(Class<T> addressType, Sender<T> sender);
-    <T extends PeerAddress> void registerReceiver(Class<T> addressType, Receiver<T> receiver);
 
-    <T extends PeerAddress> Sender<T> getSender(Class<T> addressType);
-
-    /**
-     * Initializes all the senders.
-     */
-    void initSenders();
-
-    /**
-     * Initializes all the receivers. Incoming messages will be registered as IncomingMessageEvent.
-     */
-    void initReceivers();
+    Sender getSender(AddressType addressType);
 
     /**
      *
