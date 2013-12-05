@@ -1,4 +1,4 @@
-package org.aldeon.core;
+package org.aldeon.events.executors;
 
 
 import org.slf4j.Logger;

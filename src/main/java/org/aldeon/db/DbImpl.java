@@ -48,7 +48,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageById(Identifier msgId, final AsyncCallback<Message> callback) {
+    public void getMessageById(Identifier msgId, final Callback<Message> callback) {
         if(msgId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -76,7 +76,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertMessage(Message message, Executor executor) {
+    public void insertMessage(Message message) {
         if (message == null || connection == null || base64Codec == null)  {
             return;
         }
@@ -99,7 +99,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void deleteMessage(Identifier msgId, Executor executor) {
+    public void deleteMessage(Identifier msgId) {
         if (msgId == null || connection == null || base64Codec == null)  {
             return;
         }
@@ -116,7 +116,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessageIdsByXor(Identifier msgXor, Callback<Set<Identifier>> callback) {
         if(msgXor == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -142,12 +142,12 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback) {
+    public void getMessagesByParentId(Identifier parentId, Callback<Set<Message>> callback) {
         callback.call(Collections.EMPTY_SET);
     }
 
     @Override
-    public void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback) {
+    public void getMessageXorById(Identifier msgId, Callback<Identifier> callback) {
         if(msgId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -170,7 +170,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessageIdsByParentId(Identifier parentId, Callback<Set<Identifier>> callback) {
         if(parentId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -198,7 +198,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback) {
+    public void getIdsAndXorsByParentId(Identifier parentId, Callback<Map<Identifier, Identifier>> callback) {
         if(parentId == null || connection == null || base64Codec == null) {
             callback.call(null);
             return;
@@ -227,13 +227,13 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback) {
+    public void checkAncestry(Identifier descendant, Identifier ancestor, Callback<Boolean> callback) {
         // TODO: implement
         callback.call(false);
     }
 
     @Override
-    public void getClock(AsyncCallback<Long> callback) {
+    public void getClock(Callback<Long> callback) {
         // TODO: implement
         callback.call(0l);
     }

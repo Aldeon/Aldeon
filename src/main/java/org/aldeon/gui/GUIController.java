@@ -11,12 +11,14 @@ import javafx.stage.Stage;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.gui.controllers.MainController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GUIController extends Application {
+
+    private static final Logger log = LoggerFactory.getLogger(GUIController.class);
 
     private Stage stage;
     private final double MINIMUM_WINDOW_WIDTH = 796.0;
@@ -34,13 +36,14 @@ public class GUIController extends Application {
             //gotoId();
             primaryStage.show();
         } catch (Exception ex) {
-            Logger.getLogger(GUIController.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Failed to start GUI", ex);
         }
     }
 
     @Override
     public void stop() throws Exception {
         super.stop();
+        log.info("AppClosingEvent dispatched");
         CoreModule.getInstance().getEventLoop().notify(new AppClosingEvent());
     }
 
@@ -48,7 +51,9 @@ public class GUIController extends Application {
         try {
             MainController profile = (MainController) changeFxml("Main.fxml");
             profile.setRoot(this);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            log.error("Failed to launch main", e);
+        }
     }
 
     public Initializable changeFxml(String fxml) throws Exception {

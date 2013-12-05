@@ -3,6 +3,9 @@ package org.aldeon.protocol;
 
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
+import org.aldeon.db.Db;
+import org.aldeon.db.wrappers.DbCallbackThreadDecorator;
+import org.aldeon.db.wrappers.DbWorkThreadDecorator;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.action.CompareTreesAction;
@@ -18,7 +21,7 @@ import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
 import org.aldeon.protocol.request.IndicateInterestRequest;
 
-public class ProtocolImpl implements Protocol {
+public class ActionsBasedProtocol implements Protocol {
 
     private final Action<GetMessageRequest> getMessageAction;
     private final Action<GetRelevantPeersRequest> getPeersInterestedAction;
@@ -27,16 +30,23 @@ public class ProtocolImpl implements Protocol {
     private final Action<GetClockRequest> getClockAction;
     private final Action<GetDiffRequest> getDiffAction;
 
-    public ProtocolImpl() {
+    public ActionsBasedProtocol() {
+
 
         Core core = CoreModule.getInstance();
 
-        this.getMessageAction           = new GetMessageAction(core.getStorage());
+        Db storage = core.getStorage();
+        // Execute requests in a separate thread
+        storage = new DbWorkThreadDecorator(storage, core.serverSideExecutor());
+        // Execute callbacks in a separate thread
+        storage = new DbCallbackThreadDecorator(storage, core.serverSideExecutor());
+
+        this.getMessageAction           = new GetMessageAction(storage);
         this.getPeersInterestedAction   = new GetRelevantPeersAction();
-        this.compareTreesAction         = new CompareTreesAction(core.getStorage());
+        this.compareTreesAction         = new CompareTreesAction(storage);
         this.indicateInterestAction     = new IndicateInterestAction();
-        this.getClockAction             = new GetClockAction(core.getStorage());
-        this.getDiffAction              = new GetDiffAction(core.getStorage());
+        this.getClockAction             = new GetClockAction(storage);
+        this.getDiffAction              = new GetDiffAction(storage);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ProtocolModule extends AbstractModule implements Provider<Protocol>
 
     @Override
     protected void configure() {
-        bind(Protocol.class).to(ProtocolImpl.class);
+        bind(Protocol.class).to(ActionsBasedProtocol.class);
     }
 
     @Override
@@ -42,6 +42,9 @@ public class ProtocolModule extends AbstractModule implements Provider<Protocol>
 
                         @Override
                         protected void react(Response response) {
+
+                            log.info("Generated response: " + response);
+
                             event.getTask().sendResponse(response);
                         }
                     });

@@ -23,7 +23,7 @@ public class Ipv4PeerAddress implements IpPeerAddress {
         this.port = port;
     }
 
-    @Deprecated
+    // TODO: remove
     public static Ipv4PeerAddress parse(String host, int port) {
 
         try {

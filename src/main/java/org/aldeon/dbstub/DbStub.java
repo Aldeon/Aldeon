@@ -71,22 +71,22 @@ public class DbStub implements Db {
     }
 
     @Override
-    public void getMessageById(Identifier msgId, AsyncCallback<Message> callback) {
+    public void getMessageById(Identifier msgId, Callback<Message> callback) {
         callback.call(messages.get(msgId));
     }
 
     @Override
-    public void insertMessage(Message message, Executor executor) {
+    public void insertMessage(Message message) {
         PutStatus s = put(message);
     }
 
     @Override
-    public void deleteMessage(Identifier msgId, Executor executor) {
+    public void deleteMessage(Identifier msgId) {
         DelStatus s = del(msgId);
     }
 
     @Override
-    public void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback) {
+    public void getMessageXorById(Identifier msgId, Callback<Identifier> callback) {
         try {
             callback.call(mgr.getXor(msgId));
         } catch (UnknownIdentifierException e) {
@@ -95,12 +95,12 @@ public class DbStub implements Db {
     }
 
     @Override
-    public void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessageIdsByXor(Identifier msgXor, Callback<Set<Identifier>> callback) {
         callback.call(mgr.getIds(msgXor));
     }
 
     @Override
-    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback) {
+    public void getMessagesByParentId(Identifier parentId, Callback<Set<Message>> callback) {
         Set<Message> result = new HashSet<>();
 
         for(Identifier child: mgr.getChildren(parentId)) {
@@ -114,12 +114,12 @@ public class DbStub implements Db {
     }
 
     @Override
-    public void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessageIdsByParentId(Identifier parentId, Callback<Set<Identifier>> callback) {
         callback.call(mgr.getChildren(parentId));
     }
 
     @Override
-    public void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback) {
+    public void getIdsAndXorsByParentId(Identifier parentId, Callback<Map<Identifier, Identifier>> callback) {
 
         Map<Identifier, Identifier> result = new HashMap<>();
 
@@ -135,7 +135,7 @@ public class DbStub implements Db {
     }
 
     @Override
-    public void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback) {
+    public void checkAncestry(Identifier descendant, Identifier ancestor, Callback<Boolean> callback) {
         Identifier current = descendant;
         while(current != null && !current.isEmpty()) {
             Message m = messages.get(current);
@@ -153,7 +153,7 @@ public class DbStub implements Db {
     }
 
     @Override
-    public void getClock(AsyncCallback<Long> callback) {
+    public void getClock(Callback<Long> callback) {
         // TODO: implement
         callback.call(0l);
     }

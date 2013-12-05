@@ -2,7 +2,6 @@ package org.aldeon.core;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.Provider;
 import com.google.inject.multibindings.Multibinder;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
@@ -11,7 +10,7 @@ import org.aldeon.communication.netty.NettySenderModule;
 import org.aldeon.db.Db;
 import org.aldeon.dbstub.DbStubModule;
 import org.aldeon.events.EventLoop;
-import org.aldeon.events.EventLoopImpl;
+import org.aldeon.events.MultiMapBasedEventLoop;
 
 public class CoreModule extends AbstractModule {
 
@@ -20,9 +19,9 @@ public class CoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Core.class).to(CoreImpl.class);
+        bind(Core.class).to(CoreWithPredefinedEndpoints.class);
         bind(Db.class).toProvider(DbStubModule.class);
-        bind(EventLoop.class).to(EventLoopImpl.class);
+        bind(EventLoop.class).to(MultiMapBasedEventLoop.class);
 
         Multibinder<Sender> senderBinder = Multibinder.newSetBinder(binder(), Sender.class);
         senderBinder.addBinding().toProvider(NettySenderModule.class);

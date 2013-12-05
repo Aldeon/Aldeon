@@ -1,13 +1,11 @@
 package org.aldeon.db;
 
-import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
 
 public interface Db {
     void getMessageById(Identifier msgId, Callback<Message> callback);
