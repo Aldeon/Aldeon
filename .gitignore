@@ -30,4 +30,8 @@ gen
 
 #Aldeon
 aldeon.db
+aldeon.db.lck
+aldeon.db.log
+aldeon.db.properties
+aldeon.db.script
 

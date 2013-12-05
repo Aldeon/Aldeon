@@ -38,7 +38,7 @@ public /* final */ class Identifier extends FixedSizeImmutableByteBufferSource{
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    private Identifier(ByteBuffer buffer, boolean shouldCopy) throws IllegalArgumentException{
+    private Identifier(ByteBuffer buffer, boolean shouldCopy) throws IllegalArgumentException {
         super(buffer, shouldCopy, Identifier.LENGTH_BYTES);
     }
 

@@ -1,11 +1,20 @@
 package org.aldeon.utils.helpers;
 
+import org.aldeon.model.ByteSource;
+
 import java.nio.ByteBuffer;
 
 public class BufPrint {
 
-    public static String hex(ByteBuffer buf) {
+    public static String hex(ByteSource bs) {
+        return hex(bs.getByteBuffer());
+    }
 
+    public static String hex(byte[] bytes) {
+        return hex(ByteBuffer.wrap(bytes));
+    }
+
+    public static String hex(ByteBuffer buf) {
         int cap = buf.capacity();
         int pos = buf.position();
         int lim = buf.limit();
@@ -51,7 +60,6 @@ public class BufPrint {
         b.append("         | Limit     : " + padRight("" + lim, ' ', 10) + "Is direct : " + padRight("" + isDirect, ' ', 14) + "|\n");
         b.append("         | Remaining : " + padRight("" + rem, ' ', 36) + "|\n");
         b.append("         +-------------------------------------------------+\n");
-
 
         return b.toString();
     }
