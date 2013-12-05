@@ -160,8 +160,7 @@ public class DbStub implements Db {
 
     @Override
     public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
-
         // TODO: implement
-        callback.call(Collections.EMPTY_SET);
+        callback.call(Collections.<Message>emptySet());
     }
 }

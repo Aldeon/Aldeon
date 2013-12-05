@@ -40,16 +40,6 @@ public class ActionsBasedProtocol implements Protocol {
             GetClockAction getClockAction,
             GetDiffAction getDiffAction
     ) {
-
-
-        Core core = CoreModule.getInstance();
-
-        Db storage = core.getStorage();
-        // Execute requests in a separate thread
-        storage = new DbWorkThreadDecorator(storage, core.serverSideExecutor());
-        // Execute callbacks in a separate thread
-        storage = new DbCallbackThreadDecorator(storage, core.serverSideExecutor());
-
         this.getMessageAction           = getMessageAction;
         this.getPeersInterestedAction   = getPeersInterestedAction;
         this.compareTreesAction         = compareTreesAction;

@@ -98,9 +98,7 @@ public class Messages {
      * @return
      */
     public static boolean verify(Message m) {
-
         if(m.getAuthorPublicKey().getType() != Key.Type.PUBLIC) return false;
-
         Signer signer = new SignerImpl();
 
         signer.add(m.getParentMessageIdentifier());
@@ -109,7 +107,6 @@ public class Messages {
 
         // Check the signature
         if(signer.verify(m.getAuthorPublicKey(), m.getSignature())) {
-
             // Check if the identifier comes from the signature
             Signature sig = m.getSignature();
             Hash hash = new Sha256();
@@ -118,7 +115,6 @@ public class Messages {
 
             return ByteBuffers.equal(idBuf, m.getIdentifier().getByteBuffer());
         }
-
         return false;
     }
 

@@ -61,8 +61,21 @@ public class RsaKeyGen implements KeyGen {
             throw new IllegalArgumentException();
         }
 
+        BigInteger modulus = rsaPubKey.getModulus();
+        byte[] modulusBytes = modulus.toByteArray();
+
+        ByteBuffer modulusBuffer;
+
+        if (modulusBytes[0] == 0x00) { // zero sign byte == positive integer
+            modulusBuffer = ByteBuffer.allocate(modulusBytes.length - 1);
+            modulusBuffer.put(modulusBytes, 1, modulusBuffer.capacity());
+        } else {
+            throw new IllegalStateException("Modulus must be a positive integer.");
+        }
+
         KeyPair pair = new KeyPair();
-        pair.publicKey  = new RsaKey(pub, ByteBuffer.wrap(rsaPubKey.getModulus().toByteArray()), seed, Key.Type.PUBLIC);
+
+        pair.publicKey  = new RsaKey(pub, modulusBuffer, seed, Key.Type.PUBLIC);
         pair.privateKey = new RsaKey(prv, ByteBuffer.wrap(prv.getEncoded()), seed, Key.Type.PRIVATE);
 
         return pair;
@@ -72,13 +85,10 @@ public class RsaKeyGen implements KeyGen {
     public Key parsePublicKey(ByteBuffer data) throws KeyParseException {
 
         try {
-            byte[] raw;
-            if(data.hasArray()) {
-                raw = data.array();
-            } else {
-                raw = new byte[data.remaining()];
-                data.get(raw);
-            }
+            byte[] raw = new byte[data.capacity() + 1];
+
+            raw[0] = 0x00;
+            data.get(raw, 1, data.capacity());
 
             BigInteger modulus = new BigInteger(raw);
 
