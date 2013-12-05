@@ -1,6 +1,8 @@
 package org.aldeon.db;
 
-import org.aldeon.crypt.*;
+import org.aldeon.crypt.Key;
+import org.aldeon.crypt.KeyGen;
+import org.aldeon.crypt.RsaKeyGen;
 import org.aldeon.db.queries.Queries;
 import org.aldeon.events.Callback;
 import org.aldeon.model.ByteSource;
@@ -12,8 +14,17 @@ import org.aldeon.utils.helpers.Messages;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DbImpl implements Db {
 

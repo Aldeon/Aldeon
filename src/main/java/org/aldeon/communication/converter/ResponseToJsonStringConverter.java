@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
-import org.aldeon.utils.json.GsonBasedJsonParser;
 import org.aldeon.utils.json.JsonParser;
 
 /**

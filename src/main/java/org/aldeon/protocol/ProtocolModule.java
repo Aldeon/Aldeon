@@ -7,7 +7,6 @@ import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.events.ACB;
-import org.aldeon.protocol.action.GetMessageAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +56,4 @@ public class ProtocolModule extends AbstractModule implements Provider<Protocol>
             }
         });
     }
-
-
 }

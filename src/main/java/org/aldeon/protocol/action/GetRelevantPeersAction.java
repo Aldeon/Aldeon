@@ -2,7 +2,6 @@ package org.aldeon.protocol.action;
 
 import com.google.inject.Inject;
 import org.aldeon.core.Core;
-import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.net.PeerAddress;

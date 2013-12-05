@@ -20,7 +20,12 @@
 package org.aldeon.nat.natpmp.jnatpmplib;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.Inet4Address;
+import java.net.PortUnreachableException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 /**
  * The message class manages a message that is being sent to a NAT-PMP gateway.

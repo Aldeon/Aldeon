@@ -2,7 +2,6 @@ package org.aldeon.sync;
 
 import org.aldeon.model.Identifier;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

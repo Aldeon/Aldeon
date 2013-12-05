@@ -2,11 +2,6 @@ package org.aldeon.protocol;
 
 
 import com.google.inject.Inject;
-import org.aldeon.core.Core;
-import org.aldeon.core.CoreModule;
-import org.aldeon.db.Db;
-import org.aldeon.db.wrappers.DbCallbackThreadDecorator;
-import org.aldeon.db.wrappers.DbWorkThreadDecorator;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.action.CompareTreesAction;

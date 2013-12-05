@@ -4,12 +4,9 @@ import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Identifier;
 import org.aldeon.net.PeerAddress;
-import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetClockRequest;
 import org.aldeon.protocol.response.ClockResponse;
-
-import java.util.concurrent.Executor;
 
 public class GetClockTask extends BaseOutboundTask<GetClockRequest> implements OutboundRequestTask {
 

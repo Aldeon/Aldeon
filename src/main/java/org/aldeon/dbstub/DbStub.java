@@ -4,7 +4,6 @@ import org.aldeon.db.Db;
 import org.aldeon.db.exception.IdentifierAlreadyPresentException;
 import org.aldeon.db.exception.UnknownIdentifierException;
 import org.aldeon.db.exception.UnknownParentException;
-import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
@@ -17,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 
 /**
  * Imitates the real database. Thread safe, not thread efficient.

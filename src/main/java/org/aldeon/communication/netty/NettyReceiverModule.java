@@ -14,7 +14,6 @@ import org.aldeon.communication.netty.receiver.NettyReceiver;
 import org.aldeon.nat.AddressTranslationModule;
 import org.aldeon.net.AddressTranslation;
 import org.aldeon.protocol.Request;
-import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ChainConverter;
 import org.aldeon.utils.json.ClassMapper;
 import org.aldeon.utils.json.JsonParser;

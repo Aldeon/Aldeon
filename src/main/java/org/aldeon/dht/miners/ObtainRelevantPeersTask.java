@@ -10,8 +10,6 @@ import org.aldeon.protocol.exception.UnexpectedResponseTypeException;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
 import org.aldeon.protocol.response.RelevantPeersResponse;
 
-import java.util.concurrent.Executor;
-
 public class ObtainRelevantPeersTask implements OutboundRequestTask {
 
     private final GetRelevantPeersRequest request;

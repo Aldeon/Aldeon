@@ -8,8 +8,6 @@ import org.aldeon.net.PeerAddress;
 import org.aldeon.utils.collections.Pair;
 import org.aldeon.utils.collections.Provider;
 
-import java.util.concurrent.Executor;
-
 public class MinerProviderImpl implements MinerProvider {
 
     private final Sender sender;
