@@ -13,12 +13,23 @@ import io.netty.handler.codec.http.HttpVersion;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.Callback;
 import org.aldeon.net.IpPeerAddress;
+import org.aldeon.net.Ipv4PeerAddress;
+import org.aldeon.net.Ipv6PeerAddress;
+import org.aldeon.net.PeerAddress;
+import org.aldeon.net.Port;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
+import org.aldeon.utils.net.PortImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
@@ -43,12 +54,34 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
         if(callback != null) {
             if(msg.getDecoderResult().isSuccess()) {
                 try {
-                    Request req = decoder.convert(msg);
-                    //TODO: implement proper address
-                    final Task t = new Task(ctx, req, null, encoder);
-                    log.info("Dispatched a task to handle request " + req);
-                    callback.call(t);
 
+                    // Try to obtain the remote address
+                    SocketAddress socketAddress = ctx.channel().remoteAddress();
+
+                    if(socketAddress instanceof InetSocketAddress) {
+                        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+                        InetAddress inetAddress = inetSocketAddress.getAddress();
+
+                        Port port = new PortImpl(inetSocketAddress.getPort());
+                        IpPeerAddress peerAddress;
+
+                        if(inetAddress instanceof Inet4Address) {
+                            peerAddress = new Ipv4PeerAddress((Inet4Address) inetAddress, port);
+                        } else {
+                            peerAddress = new Ipv6PeerAddress((Inet6Address) inetAddress, port);
+                        }
+
+                        Request req = decoder.convert(msg);
+
+                        final Task t = new Task(ctx, req, peerAddress, encoder);
+                        log.info("Dispatched a task to handle request " + req);
+                        callback.call(t);
+
+                    } else {
+                        // This should never happen
+                        log.info("Bad remote address socket type");
+                        writeServerError(ctx);
+                    }
                 } catch (ConversionException e) {
                     log.info("Invalid request received, writing (400) BAD REQUEST", e);
                     writeBadRequest(ctx);
@@ -113,10 +146,15 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
         @Override
         public void sendResponse(Response response) {
-            try {
-                writeResponse(ctx, encoder.convert(response));
-            } catch (ConversionException e) {
-                log.warn("Could not parse the response", e);
+            if(response != null) {
+                try {
+                    writeResponse(ctx, encoder.convert(response));
+                } catch (ConversionException e) {
+                    log.warn("Could not parse the response", e);
+                    writeServerError(ctx);
+                }
+            } else {
+                log.warn("Failed to generate a valid response (null)");
                 writeServerError(ctx);
             }
             responseSent = true;

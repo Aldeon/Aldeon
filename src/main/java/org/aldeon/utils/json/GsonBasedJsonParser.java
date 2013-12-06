@@ -81,7 +81,11 @@ public class GsonBasedJsonParser implements JsonParser {
         return gson.toJson(object);
     }
 
-    private JsonObject parse(String string) {
+    private JsonObject parse(String string) throws ParseException {
+        try {
         return (JsonObject) parser.parse(string);
+        } catch (Exception e) {
+            throw new ParseException("Could not parse the input", e);
+        }
     }
 }
