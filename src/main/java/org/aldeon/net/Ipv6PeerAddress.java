@@ -4,7 +4,7 @@ import org.aldeon.model.Identifier;
 
 import java.net.Inet6Address;
 
-public class Ipv6PeerAddress implements IpPeerAddress {
+public class Ipv6PeerAddress extends IpPeerAddress {
 
     public static final String TYPE = "ipv6";
 

@@ -10,7 +10,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-public class Ipv4PeerAddress implements IpPeerAddress {
+public class Ipv4PeerAddress extends IpPeerAddress {
 
     public static final String TYPE = "ipv4";
 
