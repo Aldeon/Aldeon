@@ -5,6 +5,7 @@ import org.aldeon.core.Core;
 import org.aldeon.db.Db;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Message;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Action;
@@ -26,20 +27,18 @@ public class GetDiffAction implements Action<GetDiffRequest> {
     }
 
     @Override
-    public void respond(PeerAddress peer, final GetDiffRequest request, final AsyncCallback<Response> onResponse) {
+    public void respond(PeerAddress peer, final GetDiffRequest request, final Callback<Response> onResponse) {
 
         // 1. Get the current clock value
         // 2. Fetch all the messages inserted after the old clock value (given in request)
 
-        final Executor executor = onResponse.getExecutor();
-
-        storage.getClock(new ACB<Long>(executor) {
+        storage.getClock(new Callback<Long>() {
             @Override
-            protected void react(final Long clock) {
+            public void call(final Long clock) {
 
-                storage.getMessagesAfterClock(request.topic, request.clock, new ACB<Set<Message>>(executor) {
+                storage.getMessagesAfterClock(request.topic, request.clock, new Callback<Set<Message>>() {
                     @Override
-                    protected void react(Set<Message> messages) {
+                    public void call(Set<Message> messages) {
 
                         DiffResponse response = new DiffResponse();
 

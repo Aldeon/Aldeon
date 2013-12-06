@@ -3,7 +3,7 @@ package org.aldeon.protocol.action;
 import com.google.inject.Inject;
 import org.aldeon.core.Core;
 import org.aldeon.dht.Dht;
-import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
@@ -28,7 +28,7 @@ public class GetRelevantPeersAction implements Action<GetRelevantPeersRequest> {
     }
 
     @Override
-    public void respond(PeerAddress peer, GetRelevantPeersRequest request, AsyncCallback<Response> onResponse) {
+    public void respond(PeerAddress peer, GetRelevantPeersRequest request, Callback<Response> onResponse) {
 
         Set<PeerAddress> interested = new HashSet<>();
         Set<PeerAddress> nearValues = new HashSet<>();

@@ -3,7 +3,7 @@ package org.aldeon.protocol.action;
 import com.google.inject.Inject;
 import org.aldeon.core.Core;
 import org.aldeon.dht.Dht;
-import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
@@ -21,7 +21,7 @@ public class IndicateInterestAction implements Action<IndicateInterestRequest> {
     }
 
     @Override
-    public void respond(PeerAddress peer, IndicateInterestRequest request, AsyncCallback<Response> onResponse) {
+    public void respond(PeerAddress peer, IndicateInterestRequest request, Callback<Response> onResponse) {
 
         // Someone wants to be inserted into our dht
 

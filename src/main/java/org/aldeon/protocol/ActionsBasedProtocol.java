@@ -3,6 +3,7 @@ package org.aldeon.protocol;
 
 import com.google.inject.Inject;
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.net.PeerAddress;
 import org.aldeon.protocol.action.CompareTreesAction;
 import org.aldeon.protocol.action.GetClockAction;
@@ -44,7 +45,7 @@ public class ActionsBasedProtocol implements Protocol {
     }
 
     @Override
-    public void createResponse(PeerAddress peer, Request request, final AsyncCallback<Response> onResponse) {
+    public void createResponse(PeerAddress peer, Request request, final Callback<Response> onResponse) {
 
 
         if(request instanceof GetMessageRequest) {

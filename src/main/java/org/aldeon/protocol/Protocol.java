@@ -1,6 +1,6 @@
 package org.aldeon.protocol;
 
-import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.net.PeerAddress;
 
 /**
@@ -12,5 +12,5 @@ public interface Protocol {
      * @param request request to respond to
      * @param onResponse short and non-blocking callback to be called when the response is ready.
      */
-    void createResponse(PeerAddress peer, Request request, AsyncCallback<Response> onResponse);
+    void createResponse(PeerAddress peer, Request request, Callback<Response> onResponse);
 }
