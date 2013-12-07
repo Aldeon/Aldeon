@@ -10,7 +10,10 @@ import org.aldeon.app.Main;
 import org.aldeon.core.CoreModule;
 import org.aldeon.events.ACB;
 import org.aldeon.model.Identifier;
+import org.aldeon.model.Identities;
+import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
+import org.aldeon.utils.helpers.Messages;
 
 import java.io.IOException;
 import java.net.URL;
@@ -83,7 +86,7 @@ public class TopicMsgsController extends ScrollPane
                         if (val != null && !val.isEmpty()) {
                             for (Message v : val ) {
                             }
-                            rcF.setHasChildren();
+                            rcF.setHasChildren(false);
                         }
                     }
                 });
@@ -207,6 +210,7 @@ public class TopicMsgsController extends ScrollPane
         wrc.setNestingLevel(nestingLevel);
         wrc.setNode(parent);
         wrc.setParentIdentifier(rc.getMsg().getIdentifier());
+        wrc.setParentController(rc);
         wrc.registerListener(this);
 
         //TODO @down - move to synchronized block
@@ -214,7 +218,10 @@ public class TopicMsgsController extends ScrollPane
     }
 
     @Override
-    public void responseDeleteClicked(Parent responseNode) {
+    public void responseDeleteClicked(Parent responseNode, ResponseController rc) {
+
+        CoreModule.getInstance().getStorage().deleteMessage(rc.getMsg().getIdentifier(),
+                CoreModule.getInstance().clientSideExecutor());
 
         Iterator<MsgWithInt> it = msgs.iterator();
         boolean delete = false;
@@ -237,27 +244,23 @@ public class TopicMsgsController extends ScrollPane
                 break;
             }
         }
-
-
-        //TODO notify DB through event loop
-        //DB should delete children by itself?
     }
 
     @Override
-    public void createdResponse(Parent wrcNode, String responseText, Identifier parentIdentifier,
+    public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identifier parentIdentifier,
                                 int nestingLevel) {
 
         //TODO @down - move to synchronized block
 
-        //need an identity to get crypt keys and sign the message
-        //generate random keys for every message for now
-
-        System.out.println("adding responses temporarily disabled");
-//        int creationIndex = fpane.getChildren().indexOf(wrcNode);
-//        Message m =
-//        Parent msg = constructResponse(responseText, nestingLevel+1);
-//        msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1));
-//        fpane.getChildren().add(creationIndex,msg);
-//        fpane.getChildren().remove(wrcNode);
+        Identity currId = Identities.create("Anon");
+        Message newMsg = Messages.createAndSign(parentIdentifier, currId.getPublicKey(), currId.getPrivateKey(), responseText);
+        CoreModule.getInstance().getStorage().insertMessage(newMsg,
+                CoreModule.getInstance().clientSideExecutor());
+        int creationIndex = fpane.getChildren().indexOf(wrcNode);
+        Parent msg = constructResponse(newMsg, nestingLevel+1);
+        wrc.getParentController().setHasChildren(true);
+        msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1, newMsg));
+        fpane.getChildren().add(creationIndex,msg);
+        fpane.getChildren().remove(wrcNode);
     }
 }

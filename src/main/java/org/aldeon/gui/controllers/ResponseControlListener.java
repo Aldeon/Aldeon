@@ -10,7 +10,7 @@ public interface ResponseControlListener {
     void responseShowClicked(Parent rcNode, ResponseController rc);
     void responseClicked(ResponseController rc, String text);
     void responseRespondClicked(Parent rcNode, ResponseController rc, int nestingLevel);
-    void responseDeleteClicked(Parent responseNode);
+    void responseDeleteClicked(Parent responseNode, ResponseController rc);
 }
 
 //or use event loop

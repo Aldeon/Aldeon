@@ -66,7 +66,7 @@ public class ResponseController extends Pane implements Initializable {
     ResponseControlListener listener;
 
     public void deleteClicked(MouseEvent event) {
-        if (listener != null) listener.responseDeleteClicked(toPass);
+        if (listener != null) listener.responseDeleteClicked(toPass, this);
     }
 
     public void respondClicked(MouseEvent event) {
@@ -96,8 +96,15 @@ public class ResponseController extends Pane implements Initializable {
         this.listener = listener;
     }
 
-    public void setHasChildren() {
+    public void setHasChildren(boolean hidden) {
         this.showHide.setVisible(true);
+        showChildren = hidden;
+
+        if (hidden == true) {
+            showHide.setText("Hide");
+        } else {
+            showHide.setText("Show");
+        }
         System.out.println("set has children called on " + this.msg.getContent());
     }
 

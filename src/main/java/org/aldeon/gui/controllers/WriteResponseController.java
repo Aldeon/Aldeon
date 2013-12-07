@@ -20,11 +20,18 @@ public class WriteResponseController extends HBox {
     private Parent wrcNode;
     private WriteResponseControlListener listener;
     private Identifier parentIdentifier;
+    private ResponseController parentController;
 
     public void setNode(Parent parent) {
         wrcNode = parent;
     }
 
+    public void setParentController(ResponseController rc) {
+        parentController = rc;
+    }
+    public ResponseController getParentController() {
+        return parentController;
+    }
     public void setParentIdentifier(Identifier parentIdentifier) {
         this.parentIdentifier = parentIdentifier;
     }
@@ -36,6 +43,6 @@ public class WriteResponseController extends HBox {
         windowContainer.setPadding(new Insets(0,10,0,30 + 35 * nestingLevel)); //top right bottom left
     }
     public void sendResponseClicked(MouseEvent event) {
-        listener.createdResponse(wrcNode, responseContent.getText(), parentIdentifier, nestingLevel);
+        listener.createdResponse(wrcNode, this,  responseContent.getText(), parentIdentifier, nestingLevel);
     }
 }
