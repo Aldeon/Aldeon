@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
@@ -17,6 +18,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.aldeon.gui.GUIController;
+import org.aldeon.model.Message;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -31,10 +33,33 @@ public class ResponseController extends Pane implements Initializable {
     public Pane respPane;
     public HBox windowContainer;
     public Separator separator;
+    public Button showHide;
 
     public Parent toPass;
 
     private int nestingLevel;
+    private Message msg;
+    private boolean showChildren = false;
+
+    private String weirdText = "1. Przecz skrżytało pogaństwo a ludzie myślili są proz? \n" +
+            "2. Przystajali są krolowie ziemszczy a książęta seszli są sie na gromadę przeciwo Gospodnu i przeciwo \n" +
+            "jego pomazańcu. \n" +
+            "3. Roztargajmy jich przekowy i srzucimy s nas jarzmo jich. \n" +
+            "4. Jen przebywa na niebiesiech, pośmieje sie jim, i Gospodzin zwala śmiech w nich. \n" +
+            "5. Tegdy mołwić będzie k nim w gniewie swojem i w rosierdziu swojem zamąci je.  2\n" +
+            "6. Ale ja postawion jeśm krol od niego na Syjon, gorze świętej jego, \n" +
+            "przepowiadaję kaźń jego. \n" +
+            "7. Gospodzin rzekł ku mnie: Syn moj jeś ty, ja dzisia porodził jeśm cie. \n" +
+            "8. Pożędaj ote mnie, i dam ci pogany w dziedzicstwo twoje i w trzymanie twoje kraje ziemskie. \n" +
+            "9. Włodać będziesz nad nimi w mietle żelaznej a jako ssąd zdunowy \n" +
+            "rozbijesz je. \n" +
+            "10. A już, krolowie, rozumiejcie, nauczcie sie, cso sądzicie ziemię. \n" +
+            "11. Służycie Bogu w strasze i wiesielcie sie jemu se drżenim. \n" +
+            "12. Przyjmicie pokaźnienie, bo snadź rozgniewa sie Gospodzin, i \n" +
+            "zginiecie z drogi prawej. \n" +
+            "13. Gdy rozżgą na krotce gniew jego, błogosławieni wszystcy, jiż imają w niem pwę";
+
+    public Message getMsg() { return msg; }
 
     private static final double initialHeight = 132;
 
@@ -49,7 +74,19 @@ public class ResponseController extends Pane implements Initializable {
     }
 
     public void writeResponseClicked(MouseEvent event) {
-        if (listener != null) listener.responseRespondClicked(toPass, nestingLevel);
+        if (listener != null) listener.responseRespondClicked(toPass, this, nestingLevel);
+    }
+
+    public void showHideClicked(MouseEvent event) {
+        showChildren = !showChildren;
+
+        if (showChildren) {
+            showHide.setText("Hide");
+            if (listener != null) listener.responseShowClicked(toPass, this);
+        } else {
+            showHide.setText("Show");
+            if (listener != null) listener.responseHideClicked(toPass, this);
+        }
     }
 
     public void mouseOnIcon(MouseEvent event) {
@@ -59,8 +96,15 @@ public class ResponseController extends Pane implements Initializable {
         this.listener = listener;
     }
 
-    public void setMessage(String msg, int nestingLevel) {
-        this.message.setText(msg);
+    public void setHasChildren() {
+        this.showHide.setVisible(true);
+        System.out.println("set has children called on " + this.msg.getContent());
+    }
+
+    public void setMessage(Message msg, int nestingLevel) {
+        this.showHide.setVisible(false);
+        this.msg = msg;
+        this.message.setText(msg.getContent());
         this.nestingLevel = nestingLevel;
 
         //borderPane.prefWidthProperty().bind(root.widthProperty());
@@ -69,7 +113,7 @@ public class ResponseController extends Pane implements Initializable {
         //respPane.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
         backgroundRectangle.setHeight(
                 Math.max(message.layoutBoundsProperty().get().getHeight()
-                        + message.getLayoutY(),
+                        + message.getLayoutY() + 70,
                         initialHeight));
 
         colorRectangle.setHeight(

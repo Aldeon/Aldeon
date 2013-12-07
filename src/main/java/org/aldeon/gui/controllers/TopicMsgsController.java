@@ -31,10 +31,12 @@ public class TopicMsgsController extends ScrollPane
 
     private class MsgWithInt {
         public Parent node;
+        public Message msg;
         public int indent;
 
-        public MsgWithInt(Parent node, int indent) {
+        public MsgWithInt(Parent node, int indent, Message message) {
             this.indent = indent;
+            this.msg = message;
             this.node = node;
         }
     }
@@ -57,7 +59,7 @@ public class TopicMsgsController extends ScrollPane
             "zginiecie z drogi prawej. \n" +
             "13. Gdy rozżgą na krotce gniew jego, błogosławieni wszystcy, jiż imają w niem pwę";
 
-    private Parent constructResponse(String text, int nestingLevel) {
+    private Parent constructResponse(Message message, int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../Resp.fxml"));
         Parent parent=null;
@@ -68,14 +70,56 @@ public class TopicMsgsController extends ScrollPane
         ResponseController rc = (ResponseController) loader.<ResponseController>getController();
         rc.registerListener(this);
         rc.toPass = parent;
-        rc.setMessage(text, nestingLevel);
+        rc.setMessage(message, nestingLevel);
+
+        final ResponseController rcF = rc;
+        final Message m = message;
+
+        if (nestingLevel != 0)
+        CoreModule.getInstance().getStorage().getMessagesByParentId(message.getIdentifier(),
+                new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
+                    @Override
+                    protected void react(Set<Message> val) {
+                        if (val != null && !val.isEmpty()) {
+                            for (Message v : val ) {
+                            }
+                            rcF.setHasChildren();
+                        }
+                    }
+                });
 
         return parent;
     }
 
+    public void setRootMsg(Message root) {
+        msgs.clear();
+        fpane.getChildren().clear();
+        Parent rootNode = constructResponse(root, 0);
+        fpane.getChildren().add(rootNode);
+        msgs.add(new MsgWithInt(rootNode, 0, root));
+    }
+
+    public void addChildMsg(Message child) {
+        int nesting = 0;
+        int index = 0;
+
+        for (int i = 0; i < msgs.size(); i++) {
+            if (msgs.get(i).msg.getIdentifier() == child.getParentMessageIdentifier()) {
+                nesting = msgs.get(i).indent;
+                index = i;
+                break;
+            }
+        }
+
+        Parent childNode = constructResponse(child, nesting+1);
+        fpane.getChildren().add(index+1, childNode);
+        msgs.add(index+1, new MsgWithInt(childNode, nesting+1, child));
+
+    }
+
     public void setTopicMessage(Message topicMessage) {
         this.topicMessage = topicMessage;
-        appendMsg(topicMessage.getContent(), 0, null);
+        setRootMsg(topicMessage);
 
         CoreModule.getInstance().getStorage().getMessagesByParentId(topicMessage.getIdentifier(),
                 new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
@@ -87,7 +131,7 @@ public class TopicMsgsController extends ScrollPane
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    appendMsg(m.getContent(), 1, null);
+                                    addChildMsg(m);
                                 }
                             });
                         }
@@ -95,22 +139,62 @@ public class TopicMsgsController extends ScrollPane
                 });
     }
 
-    public void appendMsg(String content, int nestingLevel, ResponseControlListener listener) {
-        Parent msg = constructResponse(content, nestingLevel);
-        fpane.getChildren().add(msg);
-        msgs.add(new MsgWithInt(msg, nestingLevel));
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
 
     @Override
-    public void responseClicked(ResponseController rc, String text) {
+    public void responseHideClicked(Parent rcNode, ResponseController rc) {
+        Iterator<MsgWithInt> it = msgs.iterator();
+        boolean delete = false;
+        int nesting = 0;
+
+        while (it.hasNext()) {
+            MsgWithInt curr = it.next();
+            if (curr.node == rcNode) {
+                delete = true;
+                nesting = curr.indent;
+                //fpane.getChildren().remove(curr.node);
+                //it.remove();
+                continue;
+            }
+
+            if (delete == true && curr.indent > nesting) {
+                fpane.getChildren().remove(curr.node);
+                it.remove();
+            } else if (delete == true && curr.indent <= nesting) {
+                break;
+            }
+        }
     }
 
     @Override
-    public void responseRespondClicked(Parent rc, int nestingLevel) {
+    public void responseShowClicked(Parent rcNode, ResponseController rc) {
+        CoreModule.getInstance().getStorage().getMessagesByParentId(rc.getMsg().getIdentifier(),
+                new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
+                    @Override
+                    protected void react(Set<Message> val) {
+                        for (Message message : val) {
+
+                            final Message m = message;
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addChildMsg(m);
+                                }
+                            });
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void responseClicked(ResponseController rc, String text) {
+
+    }
+
+    @Override
+    public void responseRespondClicked(Parent rcNode, ResponseController rc,  int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../WriteResponse.fxml"));
         Parent parent=null;
@@ -122,9 +206,11 @@ public class TopicMsgsController extends ScrollPane
         WriteResponseController wrc = (WriteResponseController) loader.<WriteResponseController>getController();
         wrc.setNestingLevel(nestingLevel);
         wrc.setNode(parent);
+        wrc.setParentIdentifier(rc.getMsg().getIdentifier());
         wrc.registerListener(this);
 
-        fpane.getChildren().add(fpane.getChildren().indexOf(rc)+1, parent);
+        //TODO @down - move to synchronized block
+        fpane.getChildren().add(fpane.getChildren().indexOf(rcNode)+1, parent);
     }
 
     @Override
@@ -158,11 +244,20 @@ public class TopicMsgsController extends ScrollPane
     }
 
     @Override
-    public void createdResponse(Parent wrcNode, String responseText, int nestingLevel) {
-        int creationIndex = fpane.getChildren().indexOf(wrcNode);
-        Parent msg = constructResponse(responseText, nestingLevel+1);
-        msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1));
-        fpane.getChildren().add(creationIndex,msg);
-        fpane.getChildren().remove(wrcNode);
+    public void createdResponse(Parent wrcNode, String responseText, Identifier parentIdentifier,
+                                int nestingLevel) {
+
+        //TODO @down - move to synchronized block
+
+        //need an identity to get crypt keys and sign the message
+        //generate random keys for every message for now
+
+        System.out.println("adding responses temporarily disabled");
+//        int creationIndex = fpane.getChildren().indexOf(wrcNode);
+//        Message m =
+//        Parent msg = constructResponse(responseText, nestingLevel+1);
+//        msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1));
+//        fpane.getChildren().add(creationIndex,msg);
+//        fpane.getChildren().remove(wrcNode);
     }
 }
