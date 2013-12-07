@@ -23,19 +23,6 @@ public class Ipv4PeerAddress extends IpPeerAddress {
         this.port = port;
     }
 
-    // TODO: remove
-    public static Ipv4PeerAddress parse(String host, int port) {
-
-        try {
-            Port p = new PortImpl(port);
-            InetAddress addr = InetAddress.getByName(host);
-            if(addr instanceof Inet4Address) {
-                return new Ipv4PeerAddress((Inet4Address) addr, p);
-            }
-        } catch (UnknownHostException e) { }
-        throw new IllegalArgumentException("Invalid address input");
-    }
-
     @Override
     public Port getPort() {
         return port;
@@ -68,5 +55,18 @@ public class Ipv4PeerAddress extends IpPeerAddress {
     @Override
     public AddressType getType() {
         return AddressType.IPV4;
+    }
+
+    // TODO: remove
+    public static Ipv4PeerAddress parse(String host, int port) {
+
+        try {
+            Port p = new PortImpl(port);
+            InetAddress addr = InetAddress.getByName(host);
+            if(addr instanceof Inet4Address) {
+                return new Ipv4PeerAddress((Inet4Address) addr, p);
+            }
+        } catch (UnknownHostException e) { }
+        throw new IllegalArgumentException("Invalid address input");
     }
 }

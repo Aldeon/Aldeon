@@ -12,11 +12,11 @@ public class StaticAddressTranslation implements AddressTranslation {
     private final Port internal;
     private final Port external;
 
-    public StaticAddressTranslation(Port internal, Port external, InetAddress internalAddress, InetAddress getExternalAddress) {
+    public StaticAddressTranslation(InetAddress internalAddress, Port internal, InetAddress externalAddress, Port external) {
         this.internal = internal;
         this.external = external;
         this.internalAddress = internalAddress;
-        this.externalAddress = getExternalAddress;
+        this.externalAddress = externalAddress;
     }
 
     @Override

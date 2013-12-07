@@ -1,5 +1,6 @@
 package org.aldeon.communication.netty.sender;
 
+import com.google.common.collect.Sets;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -26,6 +27,7 @@ import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
 
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 
 public class NettySender implements Sender {
@@ -72,7 +74,7 @@ public class NettySender implements Sender {
 
         PeerAddress addr = task.getAddress();
 
-        if(getAcceptedType().equals(addr.getType())) {
+        if(acceptedTypes().contains(addr.getType())) {
 
             IpPeerAddress address = (IpPeerAddress) addr;
 
@@ -98,8 +100,8 @@ public class NettySender implements Sender {
     }
 
     @Override
-    public AddressType getAcceptedType() {
-        return AddressType.IPV4;
+    public Set<AddressType> acceptedTypes() {
+        return Sets.newHashSet(AddressType.IPV4, AddressType.IPV6);
     }
 
     private static class ConnectionListener implements ChannelFutureListener {

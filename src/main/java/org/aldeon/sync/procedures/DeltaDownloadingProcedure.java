@@ -46,7 +46,7 @@ public class DeltaDownloadingProcedure implements SlotStateUpgradeProcedure {
         };
 
         Core core = CoreModule.getInstance();
-        Sender sender = core.getSender(slot.getPeerAddress().getType());
+        Sender sender = core.getSender();
 
         OutboundRequestTask task = new GetDiffTask(slot.getPeerAddress(), topicId, slot.getClock(), core.getStorage(), sender, onCompleted);
 

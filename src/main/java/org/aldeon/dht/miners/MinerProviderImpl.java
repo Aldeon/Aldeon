@@ -21,8 +21,7 @@ public class MinerProviderImpl implements MinerProvider {
         this.onFound = new Callback<Pair<PeerAddress, Identifier>>() {
             @Override
             public void call(Pair<PeerAddress, Identifier> val) {
-
-                if(dht.getAcceptedType().equals(val.getP().getType())) {
+                if(dht.acceptedType() == val.getP().getType()) {
                     dht.registerUncertainAddress(val.getP(), val.getQ());
                 }
             }

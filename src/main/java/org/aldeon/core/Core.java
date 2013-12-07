@@ -60,8 +60,11 @@ public interface Core {
      */
     Executor clientSideExecutor();
 
-
-    Sender getSender(AddressType addressType);
+    /**
+     * Sender wrapper - analyses the address and forwards the request to appropriate subsender.
+     * @return
+     */
+    Sender getSender();
 
     /**
      *

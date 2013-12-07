@@ -1,5 +1,6 @@
 package org.aldeon.sync;
 
+import org.aldeon.net.AddressType;
 import org.aldeon.net.PeerAddress;
 
 /**
@@ -10,13 +11,15 @@ public class Slot {
     private SlotState state = SlotState.EMPTY;
     private boolean inProgress = false;
     private PeerAddress peer;
+    private AddressType addressType;
     private long clock = Long.MIN_VALUE;
     private long lastUpdated = Long.MIN_VALUE;
     private SlotType slotType;
     private Runnable revoke;
 
-    public Slot(SlotType type) {
-        this.slotType = type;
+    public Slot(SlotType slotType, AddressType addressType) {
+        this.slotType = slotType;
+        this.addressType = addressType;
     }
 
     /**
@@ -49,6 +52,13 @@ public class Slot {
      */
     public void setInProgress(boolean inProgress) {
         this.inProgress = inProgress;
+    }
+
+    /**
+     * Requested peer type
+     */
+    public AddressType getAddressType() {
+        return addressType;
     }
 
     /**

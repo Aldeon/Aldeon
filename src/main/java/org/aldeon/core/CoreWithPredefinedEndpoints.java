@@ -7,6 +7,7 @@ import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
+import org.aldeon.core.senderforwarding.SenderDispatcher;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.DhtModule;
@@ -32,9 +33,10 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
 
     private static final Logger log = LoggerFactory.getLogger(CoreWithPredefinedEndpoints.class);
 
-    private final Map<AddressType, Sender> senders = new HashMap<>();
+    private final Set<Sender> senders;
     private final Map<AddressType, Dht> dhts = new HashMap<>();
     private final Set<Receiver> receivers = new HashSet<>();
+    private final Sender senderDispatcher;
 
     @Inject
     public CoreWithPredefinedEndpoints(Db storage, EventLoop eventLoop, TopicManager topicManager, Set<Sender> sendersList, Set<Receiver> receiversList) {
@@ -58,10 +60,14 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
             }
         };
 
+        this.senders = sendersList;
+        this.senderDispatcher = new SenderDispatcher(senders);
+
         for(Sender sender: sendersList) {
-            senders.put(sender.getAcceptedType(), sender);
-            dhts.put(sender.getAcceptedType(), DhtModule.createDht(sender));
             sender.start();
+            for(AddressType addressType: sender.acceptedTypes()) {
+                initDht(addressType);
+            }
         }
 
         for(Receiver receiver: receiversList) {
@@ -78,9 +84,15 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
         return dhts.get(addressType);
     }
 
+    private void initDht(AddressType addressType) {
+        if(! dhts.containsKey(addressType)) {
+            dhts.put(addressType, DhtModule.createDht(getSender(), addressType));
+        }
+    }
+
     @Override
-    public Sender getSender(AddressType addressType) {
-        return senders.get(addressType);
+    public Sender getSender() {
+        return senderDispatcher;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -88,8 +100,10 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
     // /////////////////////////////////////////////////////////////////////////////
 
     private void closeServices() {
+
         log.debug("Closing the core...");
-        for(Sender sender: senders.values()) {
+
+        for(Sender sender: senders) {
             sender.close();
         }
 
@@ -97,5 +111,4 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
             receiver.close();
         }
     }
-
 }

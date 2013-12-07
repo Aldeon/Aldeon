@@ -73,6 +73,11 @@ public class RingBasedDht implements Dht, DemandWatcher {
         demandPossiblyChanged(topic);
     }
 
+    @Override
+    public AddressType acceptedType() {
+        return acceptedType;
+    }
+
     private void demandPossiblyChanged(Identifier topic) {
         for(Callback<Identifier> cb: callbacks) {
             cb.call(topic);
@@ -85,10 +90,5 @@ public class RingBasedDht implements Dht, DemandWatcher {
 
     public void onUpdate(Callback<Identifier> callback) {
         callbacks.add(callback);
-    }
-
-    @Override
-    public AddressType getAcceptedType() {
-        return acceptedType;
     }
 }

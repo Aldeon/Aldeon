@@ -56,16 +56,16 @@ public class DhtTypeCheckDecorator implements Dht {
         dht.delBounty(topic, callback);
     }
 
+    @Override
+    public AddressType acceptedType() {
+        return dht.acceptedType();
+    }
+
     private RuntimeException ex() {
         return new IllegalArgumentException("Address type does not match the dht requirements");
     }
 
     private boolean accepts(PeerAddress address) {
-        return dht.getAcceptedType().equals(address.getType());
-    }
-
-    @Override
-    public AddressType getAcceptedType() {
-        return dht.getAcceptedType();
+        return address.getType().equals(acceptedType());
     }
 }

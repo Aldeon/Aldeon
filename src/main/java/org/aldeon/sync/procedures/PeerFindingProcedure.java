@@ -21,22 +21,28 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
     public void handle(final Slot slot, final Identifier topicId) {
 
         Core core = CoreModule.getInstance();
-        final Dht dht = core.getDht(slot.getPeerAddress().getType());
+        final Dht dht = core.getDht(slot.getAddressType());
 
         Callback<PeerAddress> callback = new Callback<PeerAddress>() {
             @Override
-            public void call(PeerAddress val) {
+            public void call(PeerAddress peerAddress) {
 
                 final Callback<PeerAddress> cb = this;
-
-                slot.setPeerAddress(val);
-                slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
-                slot.onRevoke(new Runnable() {
+                Runnable revoke = new Runnable() {
                     @Override
                     public void run() {
                         dht.delBounty(topicId, cb);
                     }
-                });
+                };
+
+                if(slot.getAddressType() == peerAddress.getType()) {
+                    slot.setPeerAddress(peerAddress);
+                    slot.onRevoke(revoke);
+                    slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
+                } else {
+                    revoke.run();
+                }
+
                 slot.setInProgress(false);
             }
         };

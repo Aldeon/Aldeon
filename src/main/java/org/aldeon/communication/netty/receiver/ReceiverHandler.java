@@ -60,16 +60,7 @@ public class ReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
                     if(socketAddress instanceof InetSocketAddress) {
                         InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
-                        InetAddress inetAddress = inetSocketAddress.getAddress();
-
-                        Port port = new PortImpl(inetSocketAddress.getPort());
-                        IpPeerAddress peerAddress;
-
-                        if(inetAddress instanceof Inet4Address) {
-                            peerAddress = new Ipv4PeerAddress((Inet4Address) inetAddress, port);
-                        } else {
-                            peerAddress = new Ipv6PeerAddress((Inet6Address) inetAddress, port);
-                        }
+                        IpPeerAddress peerAddress = IpPeerAddress.create(inetSocketAddress.getAddress(), inetSocketAddress.getPort());
 
                         Request req = decoder.convert(msg);
 

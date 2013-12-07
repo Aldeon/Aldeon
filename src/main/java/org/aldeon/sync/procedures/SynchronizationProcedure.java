@@ -59,7 +59,7 @@ public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
 
         Core core = CoreModule.getInstance();
 
-        final Sender sender = core.getSender(slot.getPeerAddress().getType());
+        final Sender sender = core.getSender();
         final Db storage = core.getStorage();
 
         storage.getClock(new Callback<Long>() {
