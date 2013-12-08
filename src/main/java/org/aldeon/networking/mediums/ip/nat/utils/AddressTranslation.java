@@ -1,4 +1,4 @@
-package org.aldeon.nat;
+package org.aldeon.networking.mediums.ip.nat.utils;
 
 import org.aldeon.networking.common.Port;
 

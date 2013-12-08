@@ -1,4 +1,4 @@
-package org.aldeon.nat.natpmp;
+package org.aldeon.networking.mediums.ip.nat.natpmp;
 
 /*
  * This file is part of jNAT-PMPlib.
@@ -17,10 +17,10 @@ package org.aldeon.nat.natpmp;
  * along with jNAT-PMPlib.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.aldeon.nat.natpmp.jnatpmplib.ExternalAddressRequestMessage;
-import org.aldeon.nat.natpmp.jnatpmplib.MapRequestMessage;
-import org.aldeon.nat.natpmp.jnatpmplib.NatPmpDevice;
-import org.aldeon.nat.natpmp.jnatpmplib.NatPmpException;
+import org.aldeon.networking.mediums.ip.nat.natpmp.jnatpmplib.ExternalAddressRequestMessage;
+import org.aldeon.networking.mediums.ip.nat.natpmp.jnatpmplib.MapRequestMessage;
+import org.aldeon.networking.mediums.ip.nat.natpmp.jnatpmplib.NatPmpDevice;
+import org.aldeon.networking.mediums.ip.nat.natpmp.jnatpmplib.NatPmpException;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.IOException;

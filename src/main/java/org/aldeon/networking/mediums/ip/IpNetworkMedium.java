@@ -4,26 +4,46 @@ import com.google.common.collect.Sets;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.NetworkMedium;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.common.Port;
 import org.aldeon.networking.common.RecvPoint;
 import org.aldeon.networking.common.SendPoint;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.receiver.NettyRecvPoint;
 import org.aldeon.networking.mediums.ip.sender.NettySendPoint;
+import org.aldeon.utils.net.PortImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class IpNetworkMedium implements NetworkMedium {
 
+    private static final Logger log = LoggerFactory.getLogger(IpNetworkMedium.class);
     private static final int PORT = 41530;
+
     private final RecvPoint recvPoint;
     private final SendPoint sendPoint;
+    private final Map<AddressType, IpPeerAddress> machineAddresses = new HashMap<>();
 
     public IpNetworkMedium() {
 
-        IpPeerAddress loopback = IpPeerAddress.create("0.0.0.0", 8080);
+        IpPeerAddress loopback = IpPeerAddress.create("0.0.0.0", PORT);
 
         recvPoint = new NettyRecvPoint(loopback);
         sendPoint = new NettySendPoint();
+
+        try {
+            enumerateAddresses();
+        } catch (SocketException e) {
+            log.error("Failed to iterate through network interfaces", e);
+        }
 
     }
 
@@ -44,7 +64,7 @@ public class IpNetworkMedium implements NetworkMedium {
 
     @Override
     public IpPeerAddress getMachineAddress(AddressType addressType) {
-        return null;
+        return machineAddresses.get(addressType);
     }
 
     @Override
@@ -55,5 +75,21 @@ public class IpNetworkMedium implements NetworkMedium {
     @Override
     public PeerAddress deserialize(String address) {
         return null;
+    }
+
+    private void registerMachineAddress(IpPeerAddress address) {
+        machineAddresses.put(address.getType(), address);
+    }
+
+    private void enumerateAddresses() throws SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while(networkInterfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            if(! networkInterface.isLoopback()) {
+                for(InterfaceAddress interfaceAddress: networkInterface.getInterfaceAddresses()){
+                    registerMachineAddress(IpPeerAddress.create(interfaceAddress.getAddress(), PORT));
+                }
+            }
+        }
     }
 }

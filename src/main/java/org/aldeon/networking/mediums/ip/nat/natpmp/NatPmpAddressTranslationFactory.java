@@ -1,6 +1,6 @@
-package org.aldeon.nat.natpmp;
+package org.aldeon.networking.mediums.ip.nat.natpmp;
 
-import org.aldeon.nat.AddressTranslation;
+import org.aldeon.networking.mediums.ip.nat.utils.AddressTranslation;
 
 import java.util.concurrent.Future;
 

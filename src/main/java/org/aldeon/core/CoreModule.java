@@ -17,7 +17,7 @@ public class CoreModule extends AbstractModule implements Provider<Core> {
 
     @Override
     protected void configure() {
-        bind(Core.class).to(CoreWithPredefinedEndpoints.class);
+        bind(Core.class).to(AldeonCore.class);
         bind(Db.class).toProvider(DbStubModule.class);
         bind(EventLoop.class).to(MultiMapBasedEventLoop.class);
         bind(NetworkState.class).toProvider(NetworkingModule.class);

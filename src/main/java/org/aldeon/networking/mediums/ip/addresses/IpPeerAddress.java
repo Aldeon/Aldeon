@@ -47,4 +47,9 @@ public abstract class IpPeerAddress implements PeerAddress {
 
         return null;
     }
+
+    @Override
+    public String toString() {
+        return getHost() + ":" + getPort();
+    }
 }

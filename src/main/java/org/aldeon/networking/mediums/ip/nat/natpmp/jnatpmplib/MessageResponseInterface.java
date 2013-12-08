@@ -17,7 +17,7 @@
  * along with jNAT-PMPlib.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.aldeon.nat.natpmp.jnatpmplib;
+package org.aldeon.networking.mediums.ip.nat.natpmp.jnatpmplib;
 
 /**
  * This interface defines methods that are used for message responses. This

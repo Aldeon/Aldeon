@@ -1,6 +1,6 @@
-package org.aldeon.nat.upnp;
+package org.aldeon.networking.mediums.ip.nat.upnp;
 
-import org.aldeon.nat.AddressTranslation;
+import org.aldeon.networking.mediums.ip.nat.utils.AddressTranslation;
 import org.aldeon.networking.common.Port;
 import org.aldeon.utils.net.PortImpl;
 import org.slf4j.bridge.SLF4JBridgeHandler;

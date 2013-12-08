@@ -17,48 +17,30 @@
  * along with jNAT-PMPlib.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.aldeon.nat.natpmp.jnatpmplib;
+package org.aldeon.networking.mediums.ip.nat.natpmp.jnatpmplib;
 
 /**
- * Enumerates the result codes from NAT-PMP messages.
- * @see Message
+ * This enumeration enumerates the types of messages that can be sent. This is
+ * used mostly my the {@link Message} class.
  * @author flszen
  */
-public enum ResultCode {
+enum MessageType {
     /**
-     * Success:
-     * Successful message.
+     * Requests the external address of the NAT-PMP device.
      */
-    Success,
+    ExternalAddress,
 
     /**
-     * Unsupported Version:
-     * The version of this client library (which is 0) is not supported by the
-     * NAT-PMP gateway.
+     * Requests a TCP port map on the NAT-PMP device. To remove a mapping, set
+     * the lifetime and external port set to 0. If the internal port is also set
+     * to zero, than all mappings are removed.
      */
-    UnsupportedVersion,
+    MapTCP,
 
     /**
-     * Not Authorized/Refused:
-     * e.g.: Gateway supports mapping, but user has turned feature off.
+     * Requests a UDP port map on the NAT-PMP device. To remove a mapping, set
+     * the lifetime and external port set to 0. If the internal port is also set
+     * to zero, than all mappings are removed.
      */
-    NotAuthorizedRefused,
-
-    /**
-     * Network Failure:
-     * e.g.: The gateway itself has not obtained a DHCP lease.
-     */
-    NetworkFailure,
-
-    /**
-     * Out of resources:
-     * Gateway cannot create any more mappings at this time.
-     */
-    OutOfResources,
-
-    /**
-     * Unsupported Opcode:
-     * The gateway doesn't support the opcode.
-     */
-    UnsupportedOpcode
+    MapUDP
 }

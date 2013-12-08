@@ -13,6 +13,7 @@ import org.aldeon.events.EventLoop;
 import org.aldeon.networking.NetworkState;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.InboundRequestTask;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.Receiver;
 import org.aldeon.networking.common.Sender;
 import org.aldeon.sync.TopicManager;
@@ -27,15 +28,15 @@ import java.util.Map;
  * proper functioning of server-side and client-side elements.
  *
  */
-public class CoreWithPredefinedEndpoints extends BaseCore {
+public class AldeonCore extends BaseCore {
 
-    private static final Logger log = LoggerFactory.getLogger(CoreWithPredefinedEndpoints.class);
+    private static final Logger log = LoggerFactory.getLogger(AldeonCore.class);
 
     private final Map<AddressType, Dht> dhts = new HashMap<>();
     private final NetworkState networkState;
 
     @Inject
-    public CoreWithPredefinedEndpoints(Db storage, EventLoop eventLoop, TopicManager topicManager, NetworkState networkState) {
+    public AldeonCore(Db storage, EventLoop eventLoop, TopicManager topicManager, NetworkState networkState) {
         super(storage, eventLoop, topicManager);
 
         // Initialize all senders and receivers
@@ -60,6 +61,11 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
 
         for(AddressType type: getSender().acceptedTypes()) {
             dhts.put(type, DhtModule.createDht(getSender(), type));
+
+            PeerAddress machineAddress = networkState.getMachineAddress(type);
+            if(machineAddress != null) {
+                log.info("Detected address (" + machineAddress.getType() + "): " + machineAddress);
+            }
         }
 
         getReceiver().setCallback(callback);

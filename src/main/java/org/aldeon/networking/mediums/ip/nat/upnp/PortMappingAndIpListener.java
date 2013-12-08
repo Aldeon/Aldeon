@@ -1,4 +1,4 @@
-package org.aldeon.nat.upnp;
+package org.aldeon.networking.mediums.ip.nat.upnp;
 
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
