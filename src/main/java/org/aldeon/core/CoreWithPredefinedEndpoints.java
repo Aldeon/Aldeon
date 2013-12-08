@@ -2,27 +2,25 @@ package org.aldeon.core;
 
 
 import com.google.inject.Inject;
-import org.aldeon.networking.common.Receiver;
-import org.aldeon.networking.common.Sender;
-import org.aldeon.networking.common.InboundRequestTask;
 import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
-import org.aldeon.networking.wrappers.SenderDispatcher;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.DhtModule;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
+import org.aldeon.networking.NetworkState;
 import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.InboundRequestTask;
+import org.aldeon.networking.common.Receiver;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.sync.TopicManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Application core. Aggregates all the services necessary for
@@ -33,13 +31,11 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
 
     private static final Logger log = LoggerFactory.getLogger(CoreWithPredefinedEndpoints.class);
 
-    private final Set<Sender> senders;
     private final Map<AddressType, Dht> dhts = new HashMap<>();
-    private final Set<Receiver> receivers = new HashSet<>();
-    private final Sender senderDispatcher;
+    private final NetworkState networkState;
 
     @Inject
-    public CoreWithPredefinedEndpoints(Db storage, EventLoop eventLoop, TopicManager topicManager, Set<Sender> sendersList, Set<Receiver> receiversList) {
+    public CoreWithPredefinedEndpoints(Db storage, EventLoop eventLoop, TopicManager topicManager, NetworkState networkState) {
         super(storage, eventLoop, topicManager);
 
         // Initialize all senders and receivers
@@ -60,21 +56,16 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
             }
         };
 
-        this.senders = sendersList;
-        this.senderDispatcher = new SenderDispatcher(senders);
+        this.networkState = networkState;
 
-        for(Sender sender: sendersList) {
-            sender.start();
-            for(AddressType addressType: sender.acceptedTypes()) {
-                initDht(addressType);
-            }
+        for(AddressType type: getSender().acceptedTypes()) {
+            dhts.put(type, DhtModule.createDht(getSender(), type));
         }
 
-        for(Receiver receiver: receiversList) {
-            receivers.add(receiver);
-            receiver.setCallback(callback);
-            receiver.start();
-        }
+        getReceiver().setCallback(callback);
+
+        getSender().start();
+        getReceiver().start();
 
         log.debug("Initialized the core.");
     }
@@ -84,31 +75,19 @@ public class CoreWithPredefinedEndpoints extends BaseCore {
         return dhts.get(addressType);
     }
 
-    private void initDht(AddressType addressType) {
-        if(! dhts.containsKey(addressType)) {
-            dhts.put(addressType, DhtModule.createDht(getSender(), addressType));
-        }
+    @Override
+    public Sender getSender() {
+        return networkState.getUnifiedSender();
     }
 
     @Override
-    public Sender getSender() {
-        return senderDispatcher;
+    public Receiver getReceiver() {
+        return networkState.getUnifiedReceiver();
     }
 
-    // /////////////////////////////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////////////////////////////
-
     private void closeServices() {
-
         log.debug("Closing the core...");
-
-        for(Sender sender: senders) {
-            sender.close();
-        }
-
-        for(Receiver receiver: receivers) {
-            receiver.close();
-        }
+        getSender().close();
+        getReceiver().close();
     }
 }

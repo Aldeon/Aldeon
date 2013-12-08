@@ -1,11 +1,12 @@
 package org.aldeon.core;
 
-import org.aldeon.networking.common.Sender;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
 import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.Receiver;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.sync.TopicManager;
 
 import java.util.Set;
@@ -65,6 +66,12 @@ public interface Core {
      * @return
      */
     Sender getSender();
+
+    /**
+     * Receiver wrapper
+     * @return
+     */
+    Receiver getReceiver();
 
     /**
      *

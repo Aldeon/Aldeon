@@ -2,9 +2,9 @@ package org.aldeon.networking.wrappers;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import org.aldeon.networking.common.Sender;
-import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.OutboundRequestTask;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.networking.exceptions.AmbiguousSenderException;
 import org.aldeon.networking.exceptions.SuitableSenderNotFoundException;
 
