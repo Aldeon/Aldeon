@@ -1,6 +1,6 @@
 package org.aldeon.core;
 
-import org.aldeon.communication.Sender;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;

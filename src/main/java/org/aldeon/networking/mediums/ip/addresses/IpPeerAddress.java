@@ -1,7 +1,8 @@
 package org.aldeon.networking.mediums.ip.addresses;
 
-import org.aldeon.networking.common.Port;
+import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.common.Port;
 import org.aldeon.utils.net.PortImpl;
 
 import java.net.Inet4Address;
@@ -11,6 +12,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 public abstract class IpPeerAddress implements PeerAddress {
+
+    public static final AddressType IPV4 = new AddressType("IPV4");
+    public static final AddressType IPV6 = new AddressType("IPV6");
 
     public abstract InetAddress getHost();
     public abstract Port getPort();

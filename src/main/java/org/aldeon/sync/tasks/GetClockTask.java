@@ -1,6 +1,6 @@
 package org.aldeon.sync.tasks;
 
-import org.aldeon.communication.task.OutboundRequestTask;
+import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.PeerAddress;

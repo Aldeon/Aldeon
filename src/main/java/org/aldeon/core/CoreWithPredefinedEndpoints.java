@@ -2,9 +2,9 @@ package org.aldeon.core;
 
 
 import com.google.inject.Inject;
-import org.aldeon.communication.Receiver;
-import org.aldeon.communication.Sender;
-import org.aldeon.communication.task.InboundRequestTask;
+import org.aldeon.networking.common.Receiver;
+import org.aldeon.networking.common.Sender;
+import org.aldeon.networking.common.InboundRequestTask;
 import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.core.senderforwarding.SenderDispatcher;

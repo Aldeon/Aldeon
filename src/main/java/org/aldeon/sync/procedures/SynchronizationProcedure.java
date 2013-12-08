@@ -1,6 +1,6 @@
 package org.aldeon.sync.procedures;
 
-import org.aldeon.communication.Sender;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.db.Db;

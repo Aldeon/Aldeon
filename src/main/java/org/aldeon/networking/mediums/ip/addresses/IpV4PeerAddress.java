@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 
 public class IpV4PeerAddress extends IpPeerAddress {
 
-    private static final AddressType type = new AddressType("IPV4");
     private final Inet4Address host;
     private final Port port;
     private Identifier id;
@@ -33,7 +32,7 @@ public class IpV4PeerAddress extends IpPeerAddress {
 
     @Override
     public AddressType getType() {
-        return type;
+        return IPV4;
     }
 
     @Override

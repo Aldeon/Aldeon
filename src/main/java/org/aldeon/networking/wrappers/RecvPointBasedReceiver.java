@@ -1,9 +1,9 @@
 package org.aldeon.networking.wrappers;
 
-import org.aldeon.communication.Receiver;
-import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.Callback;
+import org.aldeon.networking.common.InboundRequestTask;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.common.Receiver;
 import org.aldeon.networking.common.RecvPoint;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;

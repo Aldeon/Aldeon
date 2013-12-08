@@ -1,0 +1,88 @@
+package org.aldeon.networking.wrappers;
+
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.OutboundRequestTask;
+import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.common.SendPoint;
+import org.aldeon.networking.common.Sender;
+import org.aldeon.networking.exceptions.UnexpectedAddressClassException;
+import org.aldeon.protocol.Request;
+import org.aldeon.protocol.Response;
+import org.aldeon.utils.conversion.ConversionException;
+import org.aldeon.utils.conversion.Converter;
+
+import java.nio.ByteBuffer;
+import java.util.Set;
+
+public class SendPointBasedSender implements Sender {
+
+    private final SendPoint point;
+    private final Converter<Request, ByteBuffer> encoder;
+    private final Converter<ByteBuffer, Response> decoder;
+    private final Set<AddressType> acceptedTypes;
+
+
+    public SendPointBasedSender(SendPoint point, Set<AddressType> acceptedTypes, Converter<Request, ByteBuffer> encoder, Converter<ByteBuffer, Response> decoder) {
+        this.point = point;
+        this.acceptedTypes = acceptedTypes;
+        this.encoder = encoder;
+        this.decoder = decoder;
+    }
+
+    @Override
+    public void addTask(final OutboundRequestTask task) {
+        try {
+            final ByteBuffer buf = encoder.convert(task.getRequest());
+            point.send(new SendPoint.OutgoingTransmission() {
+                @Override
+                public void onSuccess(ByteBuffer data) {
+                    try {
+                        Response response = decoder.convert(data);
+                        task.onSuccess(response);
+                    } catch (ConversionException e) {
+                        task.onFailure(e);
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable cause) {
+                    task.onFailure(cause);
+                }
+
+                @Override
+                public int timeout() {
+                    return task.getTimeoutMillis();
+                }
+
+                @Override
+                public PeerAddress address() {
+                    return task.getAddress();
+                }
+
+                @Override
+                public ByteBuffer data() {
+                    return buf;
+                }
+            });
+        } catch (UnexpectedAddressClassException e) {
+            task.onFailure(e);
+        } catch (ConversionException e) {
+            task.onFailure(e);
+        }
+    }
+
+    @Override
+    public Set<AddressType> acceptedTypes() {
+        return acceptedTypes;
+    }
+
+    @Override
+    public void start() {
+        point.start();
+    }
+
+    @Override
+    public void close() {
+        point.close();
+    }
+}

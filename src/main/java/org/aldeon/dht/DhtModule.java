@@ -2,7 +2,7 @@ package org.aldeon.dht;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.aldeon.communication.Sender;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.dht.miners.DemandWatcher;
 import org.aldeon.dht.miners.MinerManager;
 import org.aldeon.dht.miners.MinerProvider;

@@ -1,4 +1,4 @@
-package org.aldeon.communication.task;
+package org.aldeon.networking.common;
 
 import org.aldeon.protocol.Response;
 

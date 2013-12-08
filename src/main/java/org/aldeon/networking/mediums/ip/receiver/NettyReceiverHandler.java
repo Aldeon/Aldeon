@@ -23,14 +23,14 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 
-public class NewReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class NettyReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private static final Logger log = LoggerFactory.getLogger(NewReceiverHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(NettyReceiverHandler.class);
     private static final Converter<FullHttpRequest, ByteBuffer> decoder = new FullHttpRequestToByteBufferConverter();
 
     private final Callback<RecvPoint.IncomingTransmission> callback;
 
-    public NewReceiverHandler(Callback<RecvPoint.IncomingTransmission> callback) {
+    public NettyReceiverHandler(Callback<RecvPoint.IncomingTransmission> callback) {
         this.callback = callback;
     }
 

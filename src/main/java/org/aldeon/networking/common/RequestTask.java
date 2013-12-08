@@ -1,6 +1,5 @@
-package org.aldeon.communication.task;
+package org.aldeon.networking.common;
 
-import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Request;
 
 /**

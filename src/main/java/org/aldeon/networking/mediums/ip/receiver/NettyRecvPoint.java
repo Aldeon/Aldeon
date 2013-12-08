@@ -58,7 +58,7 @@ public class NettyRecvPoint implements RecvPoint {
                 p.addLast("encoder",    new HttpResponseEncoder());
 
                 // request handling
-                p.addLast("handler",    new NewReceiverHandler(callback));
+                p.addLast("handler",    new NettyReceiverHandler(callback));
 
                 log.info("Created a pipeline for incoming request");
             }

@@ -1,4 +1,4 @@
-package org.aldeon.communication.converter;
+package org.aldeon.networking.conversion;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

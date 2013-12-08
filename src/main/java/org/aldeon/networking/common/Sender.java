@@ -1,7 +1,4 @@
-package org.aldeon.communication;
-
-import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.networking.common.AddressType;
+package org.aldeon.networking.common;
 
 import java.util.Set;
 

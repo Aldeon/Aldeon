@@ -4,14 +4,14 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provider;
 import com.google.inject.multibindings.Multibinder;
-import org.aldeon.communication.Receiver;
-import org.aldeon.communication.Sender;
-import org.aldeon.communication.netty.NettySenderModule;
+import org.aldeon.networking.common.Receiver;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.db.Db;
 import org.aldeon.dbstub.DbStubModule;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.MultiMapBasedEventLoop;
-import org.aldeon.networking.mediums.ip.NewNettyReceiverModule;
+import org.aldeon.networking.mediums.ip.NettyReceiverModule;
+import org.aldeon.networking.mediums.ip.NewNettySenderModule;
 
 public class CoreModule extends AbstractModule implements Provider<Core> {
 
@@ -25,10 +25,10 @@ public class CoreModule extends AbstractModule implements Provider<Core> {
         bind(EventLoop.class).to(MultiMapBasedEventLoop.class);
 
         Multibinder<Sender> senderBinder = Multibinder.newSetBinder(binder(), Sender.class);
-        senderBinder.addBinding().toProvider(NettySenderModule.class);
+        senderBinder.addBinding().toProvider(NewNettySenderModule.class);
 
         Multibinder<Receiver> receiverBinder = Multibinder.newSetBinder(binder(), Receiver.class);
-        receiverBinder.addBinding().toProvider(NewNettyReceiverModule.class);
+        receiverBinder.addBinding().toProvider(NettyReceiverModule.class);
     }
 
     @Override
@@ -44,7 +44,6 @@ public class CoreModule extends AbstractModule implements Provider<Core> {
         }
         return coreInstance;
     }
-
 
     /**
      * Singleton core getter

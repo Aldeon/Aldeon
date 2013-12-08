@@ -8,7 +8,6 @@ import java.net.Inet6Address;
 
 public class IpV6PeerAddress extends IpPeerAddress {
 
-    private static AddressType type = new AddressType("IPV6");
     private final Inet6Address host;
     private final Port port;
 
@@ -29,7 +28,7 @@ public class IpV6PeerAddress extends IpPeerAddress {
 
     @Override
     public AddressType getType() {
-        return type;
+        return IPV6;
     }
 
     @Override

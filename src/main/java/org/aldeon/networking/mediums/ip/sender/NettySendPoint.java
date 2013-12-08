@@ -1,6 +1,5 @@
-package org.aldeon.communication.netty.sender;
+package org.aldeon.networking.mediums.ip.sender;
 
-import com.google.common.collect.Sets;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -12,35 +11,34 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import org.aldeon.communication.Sender;
-import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.common.SendPoint;
+import org.aldeon.networking.exceptions.UnexpectedAddressClassException;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
-import org.aldeon.protocol.Request;
-import org.aldeon.protocol.Response;
+import org.aldeon.networking.mediums.ip.conversion.ByteBufferToFullHttpRequestConverter;
 import org.aldeon.utils.conversion.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Set;
+import java.nio.ByteBuffer;
 import java.util.concurrent.CancellationException;
 
-public class NettySender implements Sender {
+
+public class NettySendPoint implements SendPoint {
+
+    private static final Logger log = LoggerFactory.getLogger(NettySendPoint.class);
+
+    private static Converter<ByteBuffer, FullHttpRequest> encoder = new ByteBufferToFullHttpRequestConverter();
 
     private Bootstrap bootstrap;
     private EventLoopGroup group;
-    private Converter<Request, FullHttpRequest> encoder;
 
-    public NettySender(
-            Converter<Request, FullHttpRequest> encoder,
-            final Converter<FullHttpResponse, Response> decoder
-    ) {
-        this.encoder = encoder;
+    public NettySendPoint() {
 
         bootstrap = new Bootstrap();
         group = new NioEventLoopGroup();
@@ -54,7 +52,7 @@ public class NettySender implements Sender {
                 p.addLast("log",        new LoggingHandler(LogLevel.INFO));
                 p.addLast("codec",      new HttpClientCodec());
                 p.addLast("aggregator", new HttpObjectAggregator(1024 * 1024));
-                p.addLast("handler",    new SenderHandler(decoder));
+                p.addLast("handler",    new NettySenderHandler());
             }
         });
     }
@@ -70,16 +68,16 @@ public class NettySender implements Sender {
     }
 
     @Override
-    public void addTask(final OutboundRequestTask task) {
+    public void send(OutgoingTransmission task) throws UnexpectedAddressClassException {
 
-        PeerAddress addr = task.getAddress();
+        PeerAddress addr = task.address();
 
-        if(acceptedTypes().contains(addr.getType())) {
+        if(addr instanceof IpPeerAddress) {
 
             IpPeerAddress address = (IpPeerAddress) addr;
 
             try {
-                FullHttpRequest request = encoder.convert(task.getRequest());
+                FullHttpRequest request = encoder.convert(task.data());
 
                 request.headers().set(HttpHeaders.Names.HOST, address.getHost().getHostAddress());
 
@@ -88,28 +86,23 @@ public class NettySender implements Sender {
                         address.getPort().getIntValue()
                 );
 
-                cf.channel().config().setConnectTimeoutMillis(task.getTimeoutMillis());
+                cf.channel().config().setConnectTimeoutMillis(task.timeout());
                 cf.addListener(new ConnectionListener(task, request));
 
             } catch (Exception e) {
                 task.onFailure(e);
             }
         } else {
-            throw new IllegalArgumentException("NettySender accepts only IpPeerAddress-based address types");
+            throw new UnexpectedAddressClassException();
         }
     }
 
-    @Override
-    public Set<AddressType> acceptedTypes() {
-        return Sets.newHashSet(new AddressType("IPV4"), new AddressType("IPV6"));
-    }
-
     private static class ConnectionListener implements ChannelFutureListener {
-        private final OutboundRequestTask task;
+        private final OutgoingTransmission task;
         private final FullHttpRequest request;
 
         public ConnectionListener(
-                OutboundRequestTask task,
+                OutgoingTransmission task,
                 FullHttpRequest request
         ) {
             this.task = task;
@@ -120,7 +113,7 @@ public class NettySender implements Sender {
         public void operationComplete(ChannelFuture future) throws Exception {
             if(future.isSuccess()) {
                 Channel ch = future.channel();
-                SenderHandler sh = (SenderHandler) ch.pipeline().get("handler");
+                NettySenderHandler sh = (NettySenderHandler) ch.pipeline().get("handler");
                 sh.setTask(task);
                 ch.writeAndFlush(request);
             } else {
@@ -133,4 +126,5 @@ public class NettySender implements Sender {
             }
         }
     }
+
 }

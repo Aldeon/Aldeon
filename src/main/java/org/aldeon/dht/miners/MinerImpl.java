@@ -1,6 +1,6 @@
 package org.aldeon.dht.miners;
 
-import org.aldeon.communication.Sender;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.PeerAddress;

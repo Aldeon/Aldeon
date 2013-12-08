@@ -1,13 +1,8 @@
-package org.aldeon.communication.converter;
+package org.aldeon.networking.conversion;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.aldeon.protocol.Response;
-import org.aldeon.protocol.request.CompareTreesRequest;
-import org.aldeon.protocol.request.GetClockRequest;
-import org.aldeon.protocol.request.GetMessageRequest;
-import org.aldeon.protocol.request.GetRelevantPeersRequest;
-import org.aldeon.protocol.request.IndicateInterestRequest;
 import org.aldeon.protocol.response.AddressDiscardedResponse;
 import org.aldeon.protocol.response.AddressSavedResponse;
 import org.aldeon.protocol.response.BranchInSyncResponse;

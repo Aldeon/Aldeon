@@ -1,8 +1,8 @@
 package org.aldeon.sync.tasks;
 
 import com.google.common.collect.Sets;
-import org.aldeon.communication.Sender;
-import org.aldeon.communication.task.OutboundRequestTask;
+import org.aldeon.networking.common.Sender;
+import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.db.Db;
 import org.aldeon.events.BranchingCallbackAggregator;
 import org.aldeon.events.Callback;

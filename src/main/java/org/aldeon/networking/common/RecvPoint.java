@@ -1,11 +1,10 @@
 package org.aldeon.networking.common;
 
-import org.aldeon.communication.Service;
 import org.aldeon.events.Callback;
 
 import java.nio.ByteBuffer;
 
-public interface RecvPoint extends Service{
+public interface RecvPoint extends Service {
 
     void onIncomingTransmission(Callback<IncomingTransmission> callback);
 

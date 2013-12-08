@@ -1,15 +1,15 @@
 package org.aldeon.networking.common;
 
-import org.aldeon.communication.Service;
-import org.aldeon.events.Callback;
+import org.aldeon.networking.exceptions.UnexpectedAddressClassException;
 
 import java.nio.ByteBuffer;
 
 public interface SendPoint extends Service {
-    void send(PeerAddress address, ByteBuffer data, Callback<ByteBuffer> onSuccess, Callback<Throwable> onFailure);
+    void send(OutgoingTransmission transmission) throws UnexpectedAddressClassException;
 
     public static interface OutgoingTransmission extends Transmission {
-        Callback<ByteBuffer> onSuccess();
-        Callback<Throwable> onFailure();
+        void onSuccess(ByteBuffer data);
+        void onFailure(Throwable cause);
+        int timeout();
     }
 }

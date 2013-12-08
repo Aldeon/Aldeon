@@ -2,8 +2,8 @@ package org.aldeon.core.senderforwarding;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import org.aldeon.communication.Sender;
-import org.aldeon.communication.task.OutboundRequestTask;
+import org.aldeon.networking.common.Sender;
+import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.networking.common.AddressType;
 
 import java.util.Collections;
