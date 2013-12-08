@@ -4,7 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.net.AddressType;
+import org.aldeon.networking.common.AddressType;
 
 import java.util.Collections;
 import java.util.HashSet;

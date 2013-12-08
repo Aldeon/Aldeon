@@ -14,7 +14,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.events.Callback;
 import org.aldeon.networking.common.RecvPoint;
-import org.aldeon.networking.mediums.ip.addresses.NewIpPeerAddress;
+import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +28,9 @@ public class NettyRecvPoint implements RecvPoint {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
     private Callback<IncomingTransmission> callback = null;
-    private NewIpPeerAddress connectionAddress;
+    private IpPeerAddress connectionAddress;
 
-    public NettyRecvPoint(NewIpPeerAddress connectionAddress) {
+    public NettyRecvPoint(IpPeerAddress connectionAddress) {
 
         this.connectionAddress = connectionAddress;
 
@@ -67,9 +67,9 @@ public class NettyRecvPoint implements RecvPoint {
 
     @Override
     public void start() {
-        log.info("Starting netty server on " + connectionAddress.getInetAddress() + ":" + connectionAddress.getPort());
+        log.info("Starting netty server on " + connectionAddress.getHost() + ":" + connectionAddress.getPort());
         server.bind(
-                connectionAddress.getInetAddress(),
+                connectionAddress.getHost(),
                 connectionAddress.getPort().getIntValue()
         );
     }

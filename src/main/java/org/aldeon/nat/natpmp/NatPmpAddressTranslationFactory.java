@@ -1,6 +1,6 @@
 package org.aldeon.nat.natpmp;
 
-import org.aldeon.net.AddressTranslation;
+import org.aldeon.nat.AddressTranslation;
 
 import java.util.concurrent.Future;
 

@@ -1,7 +1,7 @@
 package org.aldeon.sync;
 
-import org.aldeon.net.AddressType;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.PeerAddress;
 
 /**
  * Connection context related to a specified peer.

@@ -1,6 +1,6 @@
 package org.aldeon.protocol.response;
 
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Response;
 
 import java.util.HashSet;

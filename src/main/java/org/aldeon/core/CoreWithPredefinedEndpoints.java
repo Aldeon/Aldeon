@@ -14,7 +14,7 @@ import org.aldeon.dht.DhtModule;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
-import org.aldeon.net.AddressType;
+import org.aldeon.networking.common.AddressType;
 import org.aldeon.sync.TopicManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

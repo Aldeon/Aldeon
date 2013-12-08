@@ -3,7 +3,7 @@ package org.aldeon.sync.tasks;
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetClockRequest;
 import org.aldeon.protocol.response.ClockResponse;

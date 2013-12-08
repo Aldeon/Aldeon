@@ -9,7 +9,7 @@ import org.aldeon.dht.miners.MinerProvider;
 import org.aldeon.dht.miners.MinerProviderImpl;
 import org.aldeon.dht.ring.RingImpl;
 import org.aldeon.dht.slots.AddressAllocator;
-import org.aldeon.net.AddressType;
+import org.aldeon.networking.common.AddressType;
 
 public class DhtModule implements Module {
     @Override

@@ -6,12 +6,12 @@ import com.google.inject.Provider;
 import com.google.inject.multibindings.Multibinder;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.Sender;
-import org.aldeon.communication.netty.NettyReceiverModule;
 import org.aldeon.communication.netty.NettySenderModule;
 import org.aldeon.db.Db;
 import org.aldeon.dbstub.DbStubModule;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.MultiMapBasedEventLoop;
+import org.aldeon.networking.mediums.ip.NewNettyReceiverModule;
 
 public class CoreModule extends AbstractModule implements Provider<Core> {
 
@@ -28,7 +28,7 @@ public class CoreModule extends AbstractModule implements Provider<Core> {
         senderBinder.addBinding().toProvider(NettySenderModule.class);
 
         Multibinder<Receiver> receiverBinder = Multibinder.newSetBinder(binder(), Receiver.class);
-        receiverBinder.addBinding().toProvider(NettyReceiverModule.class);
+        receiverBinder.addBinding().toProvider(NewNettyReceiverModule.class);
     }
 
     @Override

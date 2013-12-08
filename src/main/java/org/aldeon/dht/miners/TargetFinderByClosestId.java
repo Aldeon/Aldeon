@@ -2,7 +2,7 @@ package org.aldeon.dht.miners;
 
 import org.aldeon.dht.Dht;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.utils.various.Provider;
 
 import java.util.Set;

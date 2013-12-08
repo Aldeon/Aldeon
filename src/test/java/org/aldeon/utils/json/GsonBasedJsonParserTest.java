@@ -1,7 +1,7 @@
 package org.aldeon.utils.json;
 
 import org.aldeon.model.Identifier;
-import org.aldeon.net.Ipv4PeerAddress;
+import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;
@@ -11,8 +11,6 @@ import org.aldeon.utils.conversion.ConversionException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -105,7 +103,7 @@ public class GsonBasedJsonParserTest {
 
         IndicateInterestRequest req = new IndicateInterestRequest();
         req.topic = Identifier.empty();
-        req.address = Ipv4PeerAddress.parse("192.168.0.50", 8080);
+        req.address = IpPeerAddress.create("192.168.0.50", 8080);
 
         Codec codec = mock(Codec.class);
         when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
@@ -126,8 +124,8 @@ public class GsonBasedJsonParserTest {
         assertEquals(req.topic, res.topic);
 
 
-        Ipv4PeerAddress a0 = (Ipv4PeerAddress) req.address;
-        Ipv4PeerAddress a1 = (Ipv4PeerAddress) res.address;
+        IpPeerAddress a0 = (IpPeerAddress) req.address;
+        IpPeerAddress a1 = (IpPeerAddress) res.address;
 
         assertEquals(a0.getHost(), a1.getHost());
         assertEquals(a1.getPort(), a1.getPort());

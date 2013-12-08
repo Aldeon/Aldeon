@@ -2,9 +2,8 @@ package org.aldeon.protocol;
 
 
 import com.google.inject.Inject;
-import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.action.CompareTreesAction;
 import org.aldeon.protocol.action.GetClockAction;
 import org.aldeon.protocol.action.GetDiffAction;

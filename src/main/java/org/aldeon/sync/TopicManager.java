@@ -1,7 +1,7 @@
 package org.aldeon.sync;
 
 import org.aldeon.model.Identifier;
-import org.aldeon.net.AddressType;
+import org.aldeon.networking.common.AddressType;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class TopicManager {
 
         TopicState state = new TopicState(topic);
 
-        state.addSlot(new Slot(SlotType.NORMAL, AddressType.IPV4));
+        state.addSlot(new Slot(SlotType.NORMAL, new AddressType("IPV4")));
 
         return state;
     }

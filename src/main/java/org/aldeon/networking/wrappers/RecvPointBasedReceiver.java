@@ -3,7 +3,7 @@ package org.aldeon.networking.wrappers;
 import org.aldeon.communication.Receiver;
 import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.Callback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.RecvPoint;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
@@ -74,8 +74,7 @@ public class RecvPointBasedReceiver implements Receiver {
 
                         @Override
                         public PeerAddress getAddress() {
-                            // TODO:remove cast
-                            return (PeerAddress) transmission.address();
+                            return transmission.address();
                         }
                     });
 

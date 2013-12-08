@@ -5,7 +5,7 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.sync.Slot;
 import org.aldeon.sync.SlotState;
 import org.aldeon.sync.SlotStateUpgradeProcedure;

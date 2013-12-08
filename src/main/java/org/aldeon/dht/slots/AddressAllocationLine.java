@@ -1,7 +1,7 @@
 package org.aldeon.dht.slots;
 
 import org.aldeon.events.Callback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 
 import java.util.HashSet;
 import java.util.Iterator;

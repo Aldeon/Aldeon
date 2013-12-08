@@ -1,4 +1,4 @@
-package org.aldeon.net;
+package org.aldeon.networking.common;
 
 public interface Port {
     public int getIntValue();

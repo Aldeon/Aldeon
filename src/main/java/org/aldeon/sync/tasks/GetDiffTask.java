@@ -6,7 +6,7 @@ import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.exception.UnexpectedResponseTypeException;
 import org.aldeon.protocol.request.GetDiffRequest;

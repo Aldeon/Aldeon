@@ -1,7 +1,7 @@
 package org.aldeon.sync.tasks;
 
 import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Request;
 
 public abstract class BaseOutboundTask<R extends Request> implements OutboundRequestTask {

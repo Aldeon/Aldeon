@@ -3,7 +3,7 @@ package org.aldeon.dht.miners;
 import org.aldeon.communication.task.OutboundRequestTask;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.exception.UnexpectedResponseTypeException;

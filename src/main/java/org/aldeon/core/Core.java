@@ -5,7 +5,7 @@ import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
-import org.aldeon.net.AddressType;
+import org.aldeon.networking.common.AddressType;
 import org.aldeon.sync.TopicManager;
 
 import java.util.Set;

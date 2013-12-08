@@ -1,4 +1,6 @@
-package org.aldeon.net;
+package org.aldeon.nat;
+
+import org.aldeon.networking.common.Port;
 
 import java.net.InetAddress;
 

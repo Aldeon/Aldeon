@@ -2,7 +2,7 @@ package org.aldeon.protocol;
 
 
 import org.aldeon.events.Callback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 
 /**
  * Aggregates logic related to reacting to an incoming message.

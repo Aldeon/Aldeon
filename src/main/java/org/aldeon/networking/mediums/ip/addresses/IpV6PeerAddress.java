@@ -1,24 +1,24 @@
 package org.aldeon.networking.mediums.ip.addresses;
 
 import org.aldeon.model.Identifier;
-import org.aldeon.net.Port;
-import org.aldeon.networking.common.NewPeerAddressType;
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.Port;
 
 import java.net.Inet6Address;
 
-public class NewIpV6PeerAddress extends NewIpPeerAddress {
+public class IpV6PeerAddress extends IpPeerAddress {
 
-    private static NewPeerAddressType type = new NewPeerAddressType("IPV6");
+    private static AddressType type = new AddressType("IPV6");
     private final Inet6Address host;
     private final Port port;
 
-    public NewIpV6PeerAddress(Inet6Address host, Port port) {
+    public IpV6PeerAddress(Inet6Address host, Port port) {
         this.host = host;
         this.port = port;
     }
 
     @Override
-    public Inet6Address getInetAddress() {
+    public Inet6Address getHost() {
         return host;
     }
 
@@ -28,7 +28,7 @@ public class NewIpV6PeerAddress extends NewIpPeerAddress {
     }
 
     @Override
-    public NewPeerAddressType getType() {
+    public AddressType getType() {
         return type;
     }
 

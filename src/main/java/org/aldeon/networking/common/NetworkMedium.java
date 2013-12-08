@@ -5,11 +5,11 @@ import java.util.Set;
 
 public interface NetworkMedium {
 
-    Set<NewPeerAddressType> addressTypes();
-    NewPeerAddress createAddress(ByteBuffer source);
+    Set<AddressType> addressTypes();
+    PeerAddress createAddress(ByteBuffer source);
 
     SendPoint sendPoint();
     RecvPoint recvPoint();
 
-    NewPeerAddress getMachineAddress(NewPeerAddressType addressType);
+    PeerAddress getMachineAddress(AddressType addressType);
 }

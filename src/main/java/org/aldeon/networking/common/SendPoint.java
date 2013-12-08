@@ -6,7 +6,7 @@ import org.aldeon.events.Callback;
 import java.nio.ByteBuffer;
 
 public interface SendPoint extends Service {
-    void send(NewPeerAddress address, ByteBuffer data, Callback<ByteBuffer> onSuccess, Callback<Throwable> onFailure);
+    void send(PeerAddress address, ByteBuffer data, Callback<ByteBuffer> onSuccess, Callback<Throwable> onFailure);
 
     public static interface OutgoingTransmission extends Transmission {
         Callback<ByteBuffer> onSuccess();

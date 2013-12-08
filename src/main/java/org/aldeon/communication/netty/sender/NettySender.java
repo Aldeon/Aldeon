@@ -20,9 +20,9 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.communication.Sender;
 import org.aldeon.communication.task.OutboundRequestTask;
-import org.aldeon.net.AddressType;
-import org.aldeon.net.IpPeerAddress;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
@@ -101,7 +101,7 @@ public class NettySender implements Sender {
 
     @Override
     public Set<AddressType> acceptedTypes() {
-        return Sets.newHashSet(AddressType.IPV4, AddressType.IPV6);
+        return Sets.newHashSet(new AddressType("IPV4"), new AddressType("IPV6"));
     }
 
     private static class ConnectionListener implements ChannelFutureListener {

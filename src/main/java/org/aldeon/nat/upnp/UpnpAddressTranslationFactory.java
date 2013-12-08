@@ -1,7 +1,7 @@
 package org.aldeon.nat.upnp;
 
-import org.aldeon.net.AddressTranslation;
-import org.aldeon.net.Port;
+import org.aldeon.nat.AddressTranslation;
+import org.aldeon.networking.common.Port;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;

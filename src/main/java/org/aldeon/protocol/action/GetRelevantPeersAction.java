@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import org.aldeon.core.Core;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.Callback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetRelevantPeersRequest;

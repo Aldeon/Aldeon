@@ -1,10 +1,10 @@
 package org.aldeon.networking.common;
 
-public class NewPeerAddressType {
+public class AddressType {
 
     private final String singletonName;
 
-    public NewPeerAddressType(String name) {
+    public AddressType(String name) {
         if(name == null) {
             throw  new IllegalArgumentException();
         }
@@ -17,8 +17,8 @@ public class NewPeerAddressType {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof NewPeerAddressType) {
-            return ((NewPeerAddressType) obj).getName() == getName();
+        if(obj instanceof AddressType) {
+            return ((AddressType) obj).getName() == getName();
         } else {
             return false;
         }

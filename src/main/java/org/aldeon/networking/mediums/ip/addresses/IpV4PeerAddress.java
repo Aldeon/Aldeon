@@ -3,26 +3,26 @@ package org.aldeon.networking.mediums.ip.addresses;
 import org.aldeon.crypt.Hash;
 import org.aldeon.crypt.signer.Sha256;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.Port;
-import org.aldeon.networking.common.NewPeerAddressType;
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.Port;
 
 import java.net.Inet4Address;
 import java.nio.ByteBuffer;
 
-public class NewIpV4PeerAddress extends NewIpPeerAddress {
+public class IpV4PeerAddress extends IpPeerAddress {
 
-    private static final NewPeerAddressType type = new NewPeerAddressType("IPV4");
+    private static final AddressType type = new AddressType("IPV4");
     private final Inet4Address host;
     private final Port port;
     private Identifier id;
 
-    public NewIpV4PeerAddress(Inet4Address host, Port port) {
+    public IpV4PeerAddress(Inet4Address host, Port port) {
         this.host = host;
         this.port = port;
     }
 
     @Override
-    public Inet4Address getInetAddress() {
+    public Inet4Address getHost() {
         return host;
     }
 
@@ -32,7 +32,7 @@ public class NewIpV4PeerAddress extends NewIpPeerAddress {
     }
 
     @Override
-    public NewPeerAddressType getType() {
+    public AddressType getType() {
         return type;
     }
 

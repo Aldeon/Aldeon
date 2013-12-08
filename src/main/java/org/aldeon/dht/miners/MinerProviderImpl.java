@@ -4,7 +4,7 @@ import org.aldeon.communication.Sender;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.utils.collections.Pair;
 import org.aldeon.utils.various.Provider;
 

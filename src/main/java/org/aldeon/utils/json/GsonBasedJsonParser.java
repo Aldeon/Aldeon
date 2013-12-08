@@ -8,16 +8,14 @@ import org.aldeon.crypt.Key;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.model.Signature;
-import org.aldeon.net.Ipv4PeerAddress;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.json.adapters.IdentifierDeserializer;
 import org.aldeon.utils.json.adapters.IdentifierSerializer;
-import org.aldeon.utils.json.adapters.Ipv4PeerAddressDeserializer;
-import org.aldeon.utils.json.adapters.Ipv4PeerAddressSerializer;
 import org.aldeon.utils.json.adapters.KeySerializer;
 import org.aldeon.utils.json.adapters.MessageSerializer;
 import org.aldeon.utils.json.adapters.PeerAddressDeserializer;
+import org.aldeon.utils.json.adapters.PeerAddressSerializer;
 import org.aldeon.utils.json.adapters.SignatureSerializer;
 
 public class GsonBasedJsonParser implements JsonParser {
@@ -43,9 +41,7 @@ public class GsonBasedJsonParser implements JsonParser {
         builder.registerTypeAdapter(Signature.class, new SignatureSerializer(codec));
         builder.registerTypeAdapter(Message.class, new MessageSerializer());
 
-        builder.registerTypeAdapter(Ipv4PeerAddress.class, new Ipv4PeerAddressSerializer());
-        builder.registerTypeAdapter(Ipv4PeerAddress.class, new Ipv4PeerAddressDeserializer());
-
+        builder.registerTypeAdapter(PeerAddress.class, new PeerAddressSerializer());
         builder.registerTypeAdapter(PeerAddress.class, new PeerAddressDeserializer());
 
         gson = builder.create();

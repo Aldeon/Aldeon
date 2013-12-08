@@ -3,7 +3,7 @@ package org.aldeon.dht.ring;
 import com.google.inject.Inject;
 import org.aldeon.model.Identifiable;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.utils.collections.ConcreteNeighbourhoodSet;
 import org.aldeon.utils.collections.NeighbourhoodSet;
 import org.aldeon.utils.helpers.ByteBuffers;

@@ -1,7 +1,7 @@
 package org.aldeon.dht.ring;
 
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 
 import java.util.Set;
 

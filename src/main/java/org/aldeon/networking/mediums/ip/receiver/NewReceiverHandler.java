@@ -11,9 +11,9 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.aldeon.events.Callback;
-import org.aldeon.networking.common.NewPeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.RecvPoint;
-import org.aldeon.networking.mediums.ip.addresses.NewIpPeerAddress;
+import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.conversion.FullHttpRequestToByteBufferConverter;
 import org.aldeon.utils.conversion.Converter;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class NewReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
                 if(socketAddress instanceof InetSocketAddress) {
                     InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
-                    NewIpPeerAddress peerAddress = NewIpPeerAddress.create(inetSocketAddress.getAddress(), inetSocketAddress.getPort());
+                    IpPeerAddress peerAddress = IpPeerAddress.create(inetSocketAddress.getAddress(), inetSocketAddress.getPort());
 
                     ByteBuffer data = decoder.convert(msg);
 
@@ -91,10 +91,10 @@ public class NewReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
         private final ChannelHandlerContext ctx;
         private final ByteBuffer data;
-        private final NewIpPeerAddress address;
+        private final IpPeerAddress address;
         private boolean responseSent = false;
 
-        public Task(ChannelHandlerContext ctx, ByteBuffer data, NewIpPeerAddress address) {
+        public Task(ChannelHandlerContext ctx, ByteBuffer data, IpPeerAddress address) {
             this.ctx = ctx;
             this.data = data;
             this.address = address;
@@ -138,7 +138,7 @@ public class NewReceiverHandler extends SimpleChannelInboundHandler<FullHttpRequ
         }
 
         @Override
-        public NewPeerAddress address() {
+        public PeerAddress address() {
             return address;
         }
 
