@@ -1,10 +1,12 @@
-package org.aldeon.core.senderforwarding;
+package org.aldeon.networking.wrappers;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import org.aldeon.networking.common.Sender;
 import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.exceptions.AmbiguousSenderException;
+import org.aldeon.networking.exceptions.SuitableSenderNotFoundException;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -47,12 +49,16 @@ public class SenderDispatcher implements Sender {
 
     @Override
     public void start() {
-        // do nothing - senders already started
+        for(Sender sender: senders.values()) {
+            sender.start();
+        }
     }
 
     @Override
     public void close() {
-        // do nothing - senders must be closed by the core
+        for(Sender sender: senders.values()) {
+            sender.close();
+        }
     }
 
     @Override

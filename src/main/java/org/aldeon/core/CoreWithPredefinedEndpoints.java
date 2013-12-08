@@ -7,7 +7,7 @@ import org.aldeon.networking.common.Sender;
 import org.aldeon.networking.common.InboundRequestTask;
 import org.aldeon.core.events.AppClosingEvent;
 import org.aldeon.core.events.InboundRequestEvent;
-import org.aldeon.core.senderforwarding.SenderDispatcher;
+import org.aldeon.networking.wrappers.SenderDispatcher;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.DhtModule;

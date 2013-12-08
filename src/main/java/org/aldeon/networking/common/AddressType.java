@@ -16,11 +16,16 @@ public class AddressType {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if(obj instanceof AddressType) {
             return ((AddressType) obj).getName() == getName();
         } else {
             return false;
         }
+    }
+
+    @Override
+    public final int hashCode() {
+        return getName().hashCode();
     }
 }

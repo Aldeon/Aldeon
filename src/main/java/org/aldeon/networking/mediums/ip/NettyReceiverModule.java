@@ -11,9 +11,13 @@ import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.receiver.NettyRecvPoint;
 import org.aldeon.networking.wrappers.RecvPointBasedReceiver;
 import org.aldeon.protocol.Request;
+import org.aldeon.protocol.Response;
+import org.aldeon.utils.conversion.Converter;
 import org.aldeon.utils.json.ClassMapper;
 import org.aldeon.utils.json.JsonParser;
 import org.aldeon.utils.json.adapters.JsonModule;
+
+import java.nio.ByteBuffer;
 
 public class NettyReceiverModule extends AbstractModule implements Provider<Receiver> {
     @Override
@@ -30,7 +34,9 @@ public class NettyReceiverModule extends AbstractModule implements Provider<Rece
         JsonParser parser = new JsonModule().get();
         ClassMapper<Request> mapper = new RequestClassMapper();
 
-        Receiver receiver = new RecvPointBasedReceiver(point, new ByteBufferToRequestConverter(parser, mapper), new ResponseToByteBufferConverter(parser));
+        Converter<ByteBuffer, Request> decoder = new ByteBufferToRequestConverter(parser, mapper);
+        Converter<Response, ByteBuffer> encoder = new ResponseToByteBufferConverter(parser);
+        Receiver receiver = new RecvPointBasedReceiver(point, decoder, encoder);
 
         return receiver;
     }
