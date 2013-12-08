@@ -69,15 +69,18 @@ public class IpNetworkMedium implements NetworkMedium {
 
     @Override
     public String serialize(PeerAddress address) {
-        return null;
+        throw new IllegalStateException("Not yet implemented");
     }
 
     @Override
     public PeerAddress deserialize(String address) {
-        return null;
+        throw new IllegalStateException("Not yet implemented");
     }
 
     private void registerMachineAddress(IpPeerAddress address) {
+        if(machineAddresses.containsKey(address.getType())) {
+            log.info("Multiple addresses for " + address.getType() + " detected - ignoring!");
+        }
         machineAddresses.put(address.getType(), address);
     }
 
