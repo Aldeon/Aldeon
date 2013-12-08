@@ -21,7 +21,7 @@ public interface Core {
     Dht getDht(AddressType type);
 
     /**
-     * Returns the global message storace class.
+     * Returns the global message storage class.
      * @return
      */
     Db getStorage();
@@ -33,7 +33,7 @@ public interface Core {
     EventLoop getEventLoop();
 
     /**
-     * Returns all locally stored identites
+     * Returns all locally stored identities
      * @return
      */
     Set<Identity> getAllIdentities();
@@ -61,7 +61,7 @@ public interface Core {
     Executor clientSideExecutor();
 
     /**
-     * Sender wrapper - analyses the address and forwards the request to appropriate subsender.
+     * Sender wrapper - analyses the address and forwards the request to appropriate sender on the fly.
      * @return
      */
     Sender getSender();

@@ -16,12 +16,12 @@ import java.util.Set;
 public class RingBasedDht implements Dht, DemandWatcher {
 
     private final AddressAllocator addressAllocator;
-    private final Ring<PeerAddress> ring;
+    private final Ring ring;
     private final Set<Callback<Identifier>> callbacks = new HashSet<>();
     private final AddressType acceptedType;
 
     @Inject
-    public RingBasedDht(AddressType acceptedType, AddressAllocator addressAllocator, Ring<PeerAddress> ring) {
+    public RingBasedDht(AddressType acceptedType, AddressAllocator addressAllocator, Ring ring) {
         this.addressAllocator = addressAllocator;
         this.ring = ring;
         this.acceptedType = acceptedType;

@@ -21,7 +21,7 @@ public class DhtModule implements Module {
 
         // TODO: make this more elegant
 
-        RingBasedDht dht = new RingBasedDht(acceptedType, new AddressAllocator(), new RingImpl<>());
+        RingBasedDht dht = new RingBasedDht(acceptedType, new AddressAllocator(), new RingImpl());
         DemandWatcher watcher = dht;
         Dht wrapped = new DhtTypeCheckDecorator(dht);
 

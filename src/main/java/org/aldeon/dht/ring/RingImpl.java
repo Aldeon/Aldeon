@@ -21,9 +21,8 @@ import java.util.Set;
  * This class should be rewritten to accept NeighbourhoodSet as its
  * dependency.
  *
- * @param <T>
  */
-public class RingImpl<T extends PeerAddress> implements Ring<T> {
+public class RingImpl implements Ring {
 
     private NeighbourhoodSet<Identifiable> circle;
 
@@ -33,22 +32,22 @@ public class RingImpl<T extends PeerAddress> implements Ring<T> {
     }
 
     @Override
-    public void insert(T address) {
+    public void insert(PeerAddress address) {
         circle.add(address);
     }
 
     @Override
-    public void remove(T address) {
+    public void remove(PeerAddress address) {
         circle.remove(address);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<T> getNearest(Identifier identifier, int maxResults) {
-        Set<T> results = new HashSet<>();
+    public Set<PeerAddress> getNearest(Identifier identifier, int maxResults) {
+        Set<PeerAddress> results = new HashSet<>();
 
         for(Identifiable peer: circle.closestValues(new IdentifiableStub(identifier), maxResults)) {
-            results.add((T) peer);
+            results.add((PeerAddress) peer);
         }
 
         return results;

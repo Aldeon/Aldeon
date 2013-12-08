@@ -2,7 +2,6 @@ package org.aldeon.dht;
 
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.AddressAccepter;
 import org.aldeon.net.AddressType;
 import org.aldeon.net.PeerAddress;
 
