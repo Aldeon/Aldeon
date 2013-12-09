@@ -13,6 +13,8 @@ import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.hex.HexCodec;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -29,6 +31,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class DbImpl implements Db {
+
+    private static final Logger log = LoggerFactory.getLogger(DbImpl.class);
 
     //TODO: Extract to settings / program constants?
     public static final String DEFAULT_DRIVER_CLASS_NAME = "org.hsqldb.jdbcDriver";
@@ -100,24 +104,33 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
-            setIdentifiableInPreparedStatement(1, message.getIdentifier(), preparedStatement);
-            setIdentifiableInPreparedStatement(2, message.getSignature(), preparedStatement);
-            setIdentifiableInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
-            preparedStatement.setString(4, message.getContent());
-            setIdentifiableInPreparedStatement(5, message.getIdentifier(), preparedStatement);
-            setIdentifiableInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
-            try {
-                preparedStatement.executeUpdate();
-            } catch (SQLException e) {
-                System.err.println("ERROR: Error in insertMessage.");
-                e.printStackTrace();
-                return;
+            PreparedStatement preparedStatement;
+
+            if (message.getParentMessageIdentifier().isEmpty()) {
+                preparedStatement = connection.prepareStatement(Queries.INSERT_TOPIC_MSG);
+                setIdentifiableInPreparedStatement(1, message.getIdentifier(), preparedStatement);
+                setIdentifiableInPreparedStatement(2, message.getSignature(), preparedStatement);
+                setIdentifiableInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
+                preparedStatement.setString(4, message.getContent());
+                setIdentifiableInPreparedStatement(5, message.getIdentifier(), preparedStatement);
+                setIdentifiableInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
+                setIdentifiableInPreparedStatement(7, message.getIdentifier(), preparedStatement);
+            } else {
+                preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
+                setIdentifiableInPreparedStatement(1, message.getIdentifier(), preparedStatement);
+                setIdentifiableInPreparedStatement(2, message.getSignature(), preparedStatement);
+                setIdentifiableInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
+                preparedStatement.setString(4, message.getContent());
+                setIdentifiableInPreparedStatement(5, message.getIdentifier(), preparedStatement);
+                setIdentifiableInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
+                setIdentifiableInPreparedStatement(7, message.getParentMessageIdentifier(), preparedStatement);
             }
+
+            preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             System.err.println("ERROR: Error in insertMessage.");
             e.printStackTrace();
-            return;
         }
     }
 
@@ -130,17 +143,12 @@ public class DbImpl implements Db {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(Queries.DELETE_MSG_BY_ID);
             setIdentifiableInPreparedStatement(1, msgId, preparedStatement);
-            try {
-                preparedStatement.executeUpdate();
-            } catch (SQLException e) {
-                System.err.println("ERROR: Error in deleteMessage.");
-                e.printStackTrace();
-                return;
-            }
+
+            preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             System.err.println("ERROR: Error in deleteMessage.");
             e.printStackTrace();
-            return;
         }
     }
 
@@ -306,14 +314,66 @@ public class DbImpl implements Db {
 
     @Override
     public void getClock(Callback<Long> callback) {
-        // TODO: implement
-        callback.call(0l);
+        if (connection == null) {
+            callback.call(null);
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_CLOCK);
+            ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                Long clock = result.getLong("clock");
+                callback.call(clock);
+            } else {
+                log.error("Could not retrieve the result for CLOCK query");
+                callback.call(null);
+            }
+        } catch (Exception e) {
+            log.error("ERROR: Error in getMessageIdByXor.", e);
+            callback.call(null);
+            return;
+        }
     }
 
     @Override
     public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
-        // TODO: implement
-        callback.call(Collections.<Message>emptySet());
+        if (connection == null) {
+            callback.call(Collections.<Message>emptySet());
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSGS_AFTER_CLOCK);
+            setIdentifiableInPreparedStatement(1, topic, preparedStatement);
+            preparedStatement.setLong(2, clock);
+            ResultSet result = preparedStatement.executeQuery();
+
+            Set<Message> messages = new HashSet<>();
+
+            while (result.next()) {
+                Identifier msgIdentifier = Identifier.fromBytes(result.getBytes("msg_id"), false);
+                Identifier parentIdentifier = Identifier.fromBytes(result.getBytes("parent_msg_id"), false);
+
+                ByteBuffer pubKeyBuffer = ByteBuffer.wrap(result.getBytes("author_id"));
+                RsaKeyGen rsa = new RsaKeyGen();
+                Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
+
+                ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
+                Signature signature = new Signature(signatureBuffer, false);
+
+                String content = result.getString("content");
+
+                Message message = Messages.create(msgIdentifier, parentIdentifier, pubKey, content, signature);
+
+                messages.add(message);
+            }
+            callback.call(messages);
+        } catch (Exception e) {
+            log.error("ERROR: Error in getMessageIdByXor.", e);
+            callback.call(Collections.<Message>emptySet());
+            return;
+        }
     }
 
     private void prepareDbConnection() {
