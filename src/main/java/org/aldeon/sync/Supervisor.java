@@ -5,12 +5,16 @@ import org.aldeon.sync.procedures.DeltaDownloadingProcedure;
 import org.aldeon.sync.procedures.PeerFindingProcedure;
 import org.aldeon.sync.procedures.SynchronizationProcedure;
 import org.aldeon.utils.various.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 public class Supervisor implements Runnable{
+
+    private static final Logger log = LoggerFactory.getLogger(Supervisor.class);
 
     private final TopicManager manager;
     private final Executor executor;
@@ -37,6 +41,8 @@ public class Supervisor implements Runnable{
     @Override
     public void run() {
 
+        log.info("Supervisor loop");
+
         for(final TopicState topic: manager.getTopicStates()) {
             for(final Slot slot: topic.getSlots()) {
 
@@ -56,6 +62,5 @@ public class Supervisor implements Runnable{
 
             }
         }
-
     }
 }

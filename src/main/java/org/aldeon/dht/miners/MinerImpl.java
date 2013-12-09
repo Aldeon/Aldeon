@@ -38,6 +38,9 @@ public class MinerImpl implements Miner {
         this.loopRunnable = new Runnable() {
             @Override
             public void run() {
+
+                log.info("Looping through worker for topic " + topic);
+
                 if(demand.get() > 0) {
                     sendRequest(targetProvider.get());
                 } else {

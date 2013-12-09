@@ -1,23 +1,15 @@
 package org.aldeon.gui.controllers;
 
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import org.aldeon.gui.GUIController;
 import org.aldeon.model.Message;
 
 import java.net.URL;
@@ -26,7 +18,7 @@ import java.util.ResourceBundle;
 /**
  *
  */
-public class ResponseController extends Pane implements Initializable {
+public class ResponseController implements Initializable {
     public Text message;
     public Rectangle backgroundRectangle;
     public Rectangle colorRectangle;

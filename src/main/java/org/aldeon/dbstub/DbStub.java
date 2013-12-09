@@ -27,6 +27,16 @@ public class DbStub implements Db {
 
     private static final Logger log = LoggerFactory.getLogger(DbStub.class);
 
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
     protected static enum PutStatus {
         SUCCESS,
         NO_PARENT,

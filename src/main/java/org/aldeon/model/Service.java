@@ -1,4 +1,4 @@
-package org.aldeon.networking.common;
+package org.aldeon.model;
 
 public interface Service {
     /**

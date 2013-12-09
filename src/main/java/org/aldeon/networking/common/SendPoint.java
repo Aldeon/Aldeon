@@ -1,5 +1,6 @@
 package org.aldeon.networking.common;
 
+import org.aldeon.model.Service;
 import org.aldeon.networking.exceptions.UnexpectedAddressClassException;
 
 import java.nio.ByteBuffer;

@@ -74,4 +74,14 @@ public class DbCallbackThreadDecorator implements Db {
     public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
         db.getMessagesAfterClock(topic, clock, new CallbackAndExecutor<>(callback, executor));
     }
+
+    @Override
+    public void start() {
+        db.start();
+    }
+
+    @Override
+    public void close() {
+        db.close();
+    }
 }

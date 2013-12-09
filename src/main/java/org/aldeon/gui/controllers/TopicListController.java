@@ -9,11 +9,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
-import org.aldeon.core.events.MessageAddedEvent;
-import org.aldeon.events.ACB;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
-import org.aldeon.utils.helpers.Messages;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +21,7 @@ import java.util.Set;
 /**
  *
  */
-public class TopicListController extends VBox implements Initializable, TopicControlListener {
+public class TopicListController implements Initializable, TopicControlListener {
     public VBox mainWindow;
     public TextField topicName;
     private MainController mainController;
@@ -32,9 +30,9 @@ public class TopicListController extends VBox implements Initializable, TopicCon
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         CoreModule.getInstance().getStorage().getMessagesByParentId(Identifier.empty(),
-                new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
+                new Callback<Set<Message>>() {
                     @Override
-                    protected void react(Set<Message> val) {
+                    public void call(Set<Message> val) {
                         for (Message message : val) {
                             final Message m = message;
 
@@ -53,22 +51,22 @@ public class TopicListController extends VBox implements Initializable, TopicCon
 
     public Parent createTopic(Message message) {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("../Topic.fxml"));
+                getClass().getResource("/gui/fxml/Topic.fxml"));
         Parent parent=null;
         try {
-            parent = (Parent) loader.load(getClass().getResource("../Topic.fxml").openStream());
+            parent = (Parent) loader.load(getClass().getResource("/gui/fxml/Topic.fxml").openStream());
         } catch (IOException e) {
         }
-        TopicController tc = (TopicController) loader.<TopicController>getController();
+        TopicController tc = loader.getController();
         tc.setMessage(message);
         tc.registerListener(this);
         tc.setTopicNode(parent);
 
         //dodawanie wiadomosci
         //dodawanie topicow to to samo tylko ze dodatkowo dajemy parent empty
-//        CoreModule.getInstance().getEventLoop().notify(new MessageAddedEvent(
-//                Messages.createAndSign(, ,,)
-//        ));
+// CoreModule.getInstance().getEventLoop().notify(new MessageAddedEvent(
+// Messages.createAndSign(, ,,)
+// ));
 
         //dodawanie identity
         // notify identityAdded

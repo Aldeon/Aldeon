@@ -128,4 +128,14 @@ public class DbWorkThreadDecorator implements Db {
             }
         });
     }
+
+    @Override
+    public void start() {
+        db.start();
+    }
+
+    @Override
+    public void close() {
+        db.close();
+    }
 }

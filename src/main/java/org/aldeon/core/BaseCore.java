@@ -5,6 +5,7 @@ import org.aldeon.events.EventLoop;
 import org.aldeon.events.executors.ExecutorLogger;
 import org.aldeon.events.executors.ThrowableInterceptor;
 import org.aldeon.model.Identity;
+import org.aldeon.sync.Supervisor;
 import org.aldeon.sync.TopicManager;
 
 import java.util.Collections;
@@ -24,16 +25,36 @@ public abstract class BaseCore implements Core {
     private final ExecutorService serverSideExecutor;
     private final Executor wrappedClientExecutor;
     private final Executor wrappedServerExecutor;
+    private final Thread supervisorThread;
 
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
         this.storage = storage;
         this.eventLoop = eventLoop;
         this.topicManager = topicManager;
 
+        storage.start();
+
         this.clientSideExecutor = Executors.newFixedThreadPool(2);
         this.serverSideExecutor = Executors.newFixedThreadPool(2);
         this.wrappedClientExecutor = new ExecutorLogger("clientSide", new ThrowableInterceptor(clientSideExecutor));
         this.wrappedServerExecutor = new ExecutorLogger("serverSide", new ThrowableInterceptor(serverSideExecutor));
+
+        supervisorThread = new Thread() {
+            @Override
+            public void run() {
+                Runnable supervisor = new Supervisor(getTopicManager(), clientSideExecutor());
+
+                while(true) {
+                    supervisor.run();
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
     }
 
     @Override
@@ -79,5 +100,9 @@ public abstract class BaseCore implements Core {
     protected void closeExecutors() {
         clientSideExecutor.shutdown();
         serverSideExecutor.shutdown();
+    }
+
+    protected void closeDb() {
+        storage.close();
     }
 }

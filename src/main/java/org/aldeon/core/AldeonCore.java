@@ -46,6 +46,7 @@ public class AldeonCore extends BaseCore {
             public void react(AppClosingEvent val) {
                 closeServices();
                 closeExecutors();
+                closeDb();
                 log.debug("Core closed successfully.");
             }
         });

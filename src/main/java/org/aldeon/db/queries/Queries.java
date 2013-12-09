@@ -54,9 +54,9 @@ public class Queries {
             "  UPDATE messages SET node_xor = calculated_xor WHERE msg_id = parent_msg_id_p;" +
             " END";
 
-    public static final String SELECT_MSG_BY_ID = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE msg_id = ?";
+    public static final String SELECT_MSG_BY_ID = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE msg_id = HEXTORAW(?)";
 
-    public static final String SELECT_MSGS_BY_PARENT_ID = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE parent_msg_id = ?";
+    public static final String SELECT_MSGS_BY_PARENT_ID = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE parent_msg_id = HEXTORAW(?)";
 
     public static final String INSERT_MSG = "INSERT INTO messages(" +
             "msg_id, " +
@@ -80,16 +80,16 @@ public class Queries {
             "clock" +
             ") VALUES (HEXTORAW(?), HEXTORAW(?), HEXTORAW(?), ?, HEXTORAW(?), HEXTORAW(?), HEXTORAW(?), (SELECT ISNULL(MAX(clock) + 1, 0) FROM messages) )";
 
-    public static final String DELETE_MSG_BY_ID = "DELETE FROM messages WHERE msg_id = ?";
+    public static final String DELETE_MSG_BY_ID = "DELETE FROM messages WHERE msg_id = HEXTORAW(?)";
 
-    public static final String SELECT_MSG_XOR_BY_ID = "SELECT node_xor FROM messages WHERE msg_id = ?";
+    public static final String SELECT_MSG_XOR_BY_ID = "SELECT node_xor FROM messages WHERE msg_id = HEXTORAW(?)";
 
-    public static final String SELECT_MSG_IDS_BY_XOR = "SELECT msg_id FROM messages WHERE node_xor = ?";
+    public static final String SELECT_MSG_IDS_BY_XOR = "SELECT msg_id FROM messages WHERE node_xor = HEXTORAW(?)";
 
-    public static final String SELECT_MSG_IDS_BY_PARENT_ID = "SELECT msg_id FROM messages WHERE parent_msg_id = ?";
+    public static final String SELECT_MSG_IDS_BY_PARENT_ID = "SELECT msg_id FROM messages WHERE parent_msg_id = HEXTORAW(?)";
 
     public static final String SELECT_MSG_IDS_AND_XORS_BY_PARENT_ID = "SELECT msg_id, node_xor FROM messages " +
-            "WHERE parent_msg_id = ?";
+            "WHERE parent_msg_id = HEXTORAW(?)";
 
     public static final String SELECT_CLOCK = "SELECT ISNULL(MAX(clock), 0) AS clock FROM messages";
     public static final String SELECT_MSGS_AFTER_CLOCK = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE topic_id = HEXTORAW(?) AND clock > ?";

@@ -13,7 +13,7 @@ import org.aldeon.gui.GUIController;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class SettingsController  extends BorderPane implements Initializable {
+public class SettingsController implements Initializable {
     public VBox sidebar;
     public StackPane logo;
     public GridPane content;
@@ -21,6 +21,7 @@ public class SettingsController  extends BorderPane implements Initializable {
     public StackPane Threads;
     public StackPane Friends;
     public StackPane Settings;
+    public BorderPane main;
     private GUIController root;
     private int optCount;
 
