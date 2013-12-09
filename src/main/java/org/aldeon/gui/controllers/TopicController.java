@@ -1,5 +1,6 @@
 package org.aldeon.gui.controllers;
 
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -15,6 +16,7 @@ public class TopicController {
     public Rectangle colorRectangle;
     public Rectangle backgroundRectangle;
     public Text topicText;
+    public Insets x1;
 
     private String fullTopicText;
     private TopicControlListener listener;

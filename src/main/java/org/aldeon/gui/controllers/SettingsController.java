@@ -21,6 +21,7 @@ public class SettingsController implements Initializable {
     public StackPane Threads;
     public StackPane Friends;
     public StackPane Settings;
+    public BorderPane main;
     private GUIController root;
     private int optCount;
 
