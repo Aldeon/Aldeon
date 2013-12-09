@@ -6,11 +6,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
-import org.aldeon.app.Main;
 import org.aldeon.core.CoreModule;
+import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.events.ACB;
 import org.aldeon.model.Identifier;
-import org.aldeon.model.Identities;
 import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
 import org.aldeon.utils.helpers.Messages;
@@ -220,8 +219,7 @@ public class TopicMsgsController extends ScrollPane
     @Override
     public void responseDeleteClicked(Parent responseNode, ResponseController rc) {
 
-        CoreModule.getInstance().getStorage().deleteMessage(rc.getMsg().getIdentifier(),
-                CoreModule.getInstance().clientSideExecutor());
+        CoreModule.getInstance().getStorage().deleteMessage(rc.getMsg().getIdentifier());
 
         Iterator<MsgWithInt> it = msgs.iterator();
         boolean delete = false;
@@ -252,10 +250,9 @@ public class TopicMsgsController extends ScrollPane
 
         //TODO @down - move to synchronized block
 
-        Identity currId = Identities.create("Anon");
+        Identity currId = Identity.create("Anon", new RsaKeyGen());
         Message newMsg = Messages.createAndSign(parentIdentifier, currId.getPublicKey(), currId.getPrivateKey(), responseText);
-        CoreModule.getInstance().getStorage().insertMessage(newMsg,
-                CoreModule.getInstance().clientSideExecutor());
+        CoreModule.getInstance().getStorage().insertMessage(newMsg);
         int creationIndex = fpane.getChildren().indexOf(wrcNode);
         Parent msg = constructResponse(newMsg, nestingLevel+1);
         wrc.getParentController().setHasChildren(true);
