@@ -20,8 +20,14 @@ public /* final */ class Identifier extends FixedSizeImmutableByteBufferSource {
     //////////////////////////////////////////////////////////////////////////////
 
     static {
-        emptyId = new Identifier(ByteBuffer.allocate(Identifier.LENGTH_BYTES), false);
+        //emptyId = new Identifier(ByteBuffer.allocate(Identifier.LENGTH_BYTES), false);
         CODEC = new Base64Module().get();
+
+        ByteBuffer bufferWithOnes = ByteBuffer.allocate(Identifier.LENGTH_BYTES);
+        for(int i=0;i<LENGTH_BYTES;++i) {
+            bufferWithOnes.put(i, (byte) 0xFF);
+        }
+        emptyId = new Identifier(bufferWithOnes, false);
     }
 
     public static Identifier fromByteBuffer(ByteBuffer buf, boolean copy) {

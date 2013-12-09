@@ -1,51 +1,48 @@
 package org.aldeon.app;
 
-import org.aldeon.networking.common.PeerAddress;
-import org.aldeon.networking.common.SendPoint;
-import org.aldeon.networking.exceptions.UnexpectedAddressClassException;
-import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
-import org.aldeon.networking.mediums.ip.sender.NettySendPoint;
-import org.aldeon.utils.helpers.BufPrint;
+import org.aldeon.db.DbImpl;
+import org.aldeon.events.Callback;
+import org.aldeon.model.Identifier;
+import org.aldeon.model.Message;
+import org.aldeon.utils.codec.Codec;
+import org.aldeon.utils.codec.hex.HexCodec;
+import org.aldeon.utils.conversion.ConversionException;
 
-import java.nio.ByteBuffer;
+import java.util.Set;
 
 public class Debug {
 
-    public static void main(String[] args) throws UnexpectedAddressClassException {
+    public static void main(String[] args) throws ConversionException {
 
-        final SendPoint point = new NettySendPoint();
+        Codec hex = new HexCodec();
 
-        point.send(new SendPoint.OutgoingTransmission() {
+
+        DbImpl db = new DbImpl();
+        db.insertTestData();
+
+        db.getClock(new Callback<Long>() {
             @Override
-            public void onSuccess(ByteBuffer data) {
-                System.out.println("Success!");
-                System.out.println(BufPrint.hex(data));
-
-                point.close();
-            }
-
-            @Override
-            public void onFailure(Throwable cause) {
-                System.out.println("Failure!");
-                System.out.println("Cause: " + cause);
-
-                point.close();
-            }
-
-            @Override
-            public int timeout() {
-                return 5000;
-            }
-
-            @Override
-            public PeerAddress address() {
-                return IpPeerAddress.create("127.0.0.1", 80);
-            }
-
-            @Override
-            public ByteBuffer data() {
-                return ByteBuffer.wrap("hello, world!".getBytes());
+            public void call(Long val) {
+                System.out.println("Clock: " + val);
             }
         });
+
+        Identifier topic = Identifier.fromByteBuffer(hex.decode("1d4c66ce4f24d705f197e76dfc5f35d90fc312ce65ea0ed9f3712813d8256312"), false);
+        Long clock = 2l;
+        db.getMessagesAfterClock(topic, clock, new Callback<Set<Message>>() {
+
+            @Override
+            public void call(Set<Message> val) {
+
+                System.out.println("Returned " + val.size() + " messages");
+
+                for(Message msg: val) {
+                    System.out.println("Message: " + msg);
+                }
+            }
+
+        });
+
+        db.closeDbConnection();
     }
 }
