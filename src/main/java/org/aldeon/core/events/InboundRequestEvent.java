@@ -1,7 +1,7 @@
 package org.aldeon.core.events;
 
-import org.aldeon.communication.task.InboundRequestTask;
 import org.aldeon.events.Event;
+import org.aldeon.networking.common.InboundRequestTask;
 
 public class InboundRequestEvent implements Event {
 

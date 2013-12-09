@@ -1,11 +1,13 @@
 package org.aldeon.dht.ring;
 
+import com.google.inject.Inject;
 import org.aldeon.model.Identifiable;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.utils.collections.ConcreteNeighbourhoodSet;
 import org.aldeon.utils.collections.NeighbourhoodSet;
-import org.aldeon.utils.math.Arithmetic;
+import org.aldeon.utils.helpers.ByteBuffers;
+import org.aldeon.utils.various.Arithmetic;
 
 import java.nio.ByteBuffer;
 import java.util.HashSet;
@@ -19,35 +21,33 @@ import java.util.Set;
  * This class should be rewritten to accept NeighbourhoodSet as its
  * dependency.
  *
- * @param <T>
  */
-public class RingImpl<T extends PeerAddress> implements Ring<T> {
+public class RingImpl implements Ring {
 
     private NeighbourhoodSet<Identifiable> circle;
-    private Arithmetic<ByteBuffer> arithmetic;
 
-    public RingImpl(Arithmetic<ByteBuffer> arithmetic) {
-        this.arithmetic = arithmetic;
+    @Inject
+    public RingImpl() {
         circle = new ConcreteNeighbourhoodSet<>(new IdentifiableArithmetic());
     }
 
     @Override
-    public void insert(T address) {
+    public void insert(PeerAddress address) {
         circle.add(address);
     }
 
     @Override
-    public void remove(T address) {
+    public void remove(PeerAddress address) {
         circle.remove(address);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<T> getNearest(Identifier identifier, int maxResults) {
-        Set<T> results = new HashSet<>();
+    public Set<PeerAddress> getNearest(Identifier identifier, int maxResults) {
+        Set<PeerAddress> results = new HashSet<>();
 
         for(Identifiable peer: circle.closestValues(new IdentifiableStub(identifier), maxResults)) {
-            results.add((T) peer);
+            results.add((PeerAddress) peer);
         }
 
         return results;
@@ -71,19 +71,19 @@ public class RingImpl<T extends PeerAddress> implements Ring<T> {
 
         @Override
         public Identifiable add(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            ByteBuffer result = ByteBuffers.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
             return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override
         public Identifiable sub(Identifiable a, Identifiable b) {
-            ByteBuffer result = arithmetic.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
+            ByteBuffer result = ByteBuffers.add(a.getIdentifier().getByteBuffer(), b.getIdentifier().getByteBuffer());
             return new IdentifiableStub(Identifier.fromByteBuffer(result, false));
         }
 
         @Override
         public int compare(Identifiable o1, Identifiable o2) {
-            return arithmetic.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
+            return ByteBuffers.compare(o1.getIdentifier().getByteBuffer(), o2.getIdentifier().getByteBuffer());
         }
     }
 }

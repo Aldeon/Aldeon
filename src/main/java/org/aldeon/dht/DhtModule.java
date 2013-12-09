@@ -2,27 +2,32 @@ package org.aldeon.dht;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.aldeon.communication.Sender;
+import org.aldeon.networking.common.Sender;
+import org.aldeon.dht.miners.DemandWatcher;
 import org.aldeon.dht.miners.MinerManager;
 import org.aldeon.dht.miners.MinerProvider;
 import org.aldeon.dht.miners.MinerProviderImpl;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.dht.ring.RingImpl;
+import org.aldeon.dht.slots.AddressAllocator;
+import org.aldeon.networking.common.AddressType;
 
-import java.util.concurrent.Executor;
-
-public class DhtModule implements Module{
+public class DhtModule implements Module {
     @Override
     public void configure(Binder binder) {
 
     }
 
-    public static <T extends PeerAddress> Dht<T> createDht(Sender<T> sender, Executor executor, Class<T> addressType) {
+    public static Dht createDht(Sender sender, AddressType acceptedType) {
 
-        DhtImpl<T> dht = new DhtImpl<>();
+        // TODO: make this more elegant
 
-        MinerProvider minerProvider = new MinerProviderImpl<>(sender, executor, addressType, dht);
-        new MinerManager(dht, minerProvider);
+        RingBasedDht dht = new RingBasedDht(acceptedType, new AddressAllocator(), new RingImpl());
+        DemandWatcher watcher = dht;
+        Dht wrapped = new DhtTypeCheckDecorator(dht);
 
-        return dht;
+        MinerProvider minerProvider = new MinerProviderImpl(sender, wrapped);
+        new MinerManager(watcher, minerProvider);
+
+        return wrapped;
     }
 }

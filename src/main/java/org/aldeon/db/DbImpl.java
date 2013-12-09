@@ -1,24 +1,36 @@
 package org.aldeon.db;
 
-import org.aldeon.crypt.*;
+import org.aldeon.crypt.Key;
+import org.aldeon.crypt.KeyGen;
+import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.db.queries.Queries;
-import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
 import org.aldeon.model.ByteSource;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
+import org.aldeon.model.Signature;
+import org.aldeon.utils.codec.Codec;
+import org.aldeon.utils.codec.hex.HexCodec;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.sql.*;
-import java.util.*;
-import java.util.concurrent.Executor;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DbImpl implements Db {
 
-    //TODO: Extract to Settings/Program Constans?
+    //TODO: Extract to settings / program constants?
     public static final String DEFAULT_DRIVER_CLASS_NAME = "org.hsqldb.jdbcDriver";
     public static final String DEFAULT_DRIVER_NAME = "jdbc:hsqldb:file:";
     public static final String DEFAULT_DB_PATH = System.getProperty("user.home") + "/.aldeon/aldeon.db";
@@ -26,6 +38,7 @@ public class DbImpl implements Db {
     public static final int DEFAULT_QUERY_TIMEOUT = 30;
     public static final String DB_USER = "sa";
     public static final String DB_PASSWORD = "";
+    private static final Codec hex = new HexCodec();
 
     private Connection connection;
     private String driverClassName;
@@ -44,7 +57,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageById(Identifier msgId, final AsyncCallback<Message> callback) {
+    public void getMessageById(Identifier msgId, final Callback<Message> callback) {
         if (msgId == null || connection == null) {
             callback.call(null);
             return;
@@ -64,7 +77,7 @@ public class DbImpl implements Db {
                 Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
 
                 ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
-                Signature signature = new SignatureImpl(signatureBuffer, false);
+                Signature signature = new Signature(signatureBuffer, false);
 
                 String content = result.getString("content");
 
@@ -81,31 +94,26 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertMessage(Message message, Executor executor) {
+    public void insertMessage(Message message) {
         if (message == null || connection == null) {
             return;
         }
 
         try {
-            final PreparedStatement preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
+            PreparedStatement preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
             setIdentifiableInPreparedStatement(1, message.getIdentifier(), preparedStatement);
             setIdentifiableInPreparedStatement(2, message.getSignature(), preparedStatement);
             setIdentifiableInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
             preparedStatement.setString(4, message.getContent());
             setIdentifiableInPreparedStatement(5, message.getIdentifier(), preparedStatement);
             setIdentifiableInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        preparedStatement.executeUpdate();
-                    } catch (SQLException e) {
-                        System.err.println("ERROR: Error in insertMessage.");
-                        e.printStackTrace();
-                        return;
-                    }
-                }
-            });
+            try {
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                System.err.println("ERROR: Error in insertMessage.");
+                e.printStackTrace();
+                return;
+            }
         } catch (SQLException e) {
             System.err.println("ERROR: Error in insertMessage.");
             e.printStackTrace();
@@ -114,26 +122,21 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void deleteMessage(Identifier msgId, Executor executor) {
+    public void deleteMessage(Identifier msgId) {
         if (msgId == null || connection == null) {
             return;
         }
 
         try {
-            final PreparedStatement preparedStatement = connection.prepareStatement(Queries.DELETE_MSG_BY_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(Queries.DELETE_MSG_BY_ID);
             setIdentifiableInPreparedStatement(1, msgId, preparedStatement);
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        preparedStatement.executeUpdate();
-                    } catch (SQLException e) {
-                        System.err.println("ERROR: Error in deleteMessage.");
-                        e.printStackTrace();
-                        return;
-                    }
-                }
-            });
+            try {
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                System.err.println("ERROR: Error in deleteMessage.");
+                e.printStackTrace();
+                return;
+            }
         } catch (SQLException e) {
             System.err.println("ERROR: Error in deleteMessage.");
             e.printStackTrace();
@@ -142,7 +145,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageIdsByXor(Identifier msgXor, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessageIdsByXor(Identifier msgXor, Callback<Set<Identifier>> callback) {
         if (msgXor == null || connection == null) {
             callback.call(null);
             return;
@@ -170,9 +173,9 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessagesByParentId(Identifier parentId, AsyncCallback<Set<Message>> callback) {
+    public void getMessagesByParentId(Identifier parentId, Callback<Set<Message>> callback) {
         if (parentId == null || connection == null) {
-            callback.call(Collections.EMPTY_SET);
+            callback.call(Collections.<Message>emptySet());
             return;
         }
 
@@ -192,7 +195,7 @@ public class DbImpl implements Db {
                 Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
 
                 ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
-                Signature signature = new SignatureImpl(signatureBuffer, false);
+                Signature signature = new Signature(signatureBuffer, false);
 
                 String content = result.getString("content");
 
@@ -205,7 +208,7 @@ public class DbImpl implements Db {
         } catch (Exception e) {
             System.err.println("ERROR: Error in getMessagesByParentId.");
             e.printStackTrace();
-            callback.call(Collections.EMPTY_SET);
+            callback.call(Collections.<Message>emptySet());
             return;
         }
 
@@ -213,7 +216,7 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageXorById(Identifier msgId, AsyncCallback<Identifier> callback) {
+    public void getMessageXorById(Identifier msgId, Callback<Identifier> callback) {
         if (msgId == null || connection == null) {
             callback.call(null);
             return;
@@ -239,9 +242,9 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getMessageIdsByParentId(Identifier parentId, AsyncCallback<Set<Identifier>> callback) {
+    public void getMessageIdsByParentId(Identifier parentId, Callback<Set<Identifier>> callback) {
         if(parentId == null || connection == null) {
-            callback.call(Collections.EMPTY_SET);
+            callback.call(Collections.<Identifier>emptySet());
             return;
         }
 
@@ -261,15 +264,15 @@ public class DbImpl implements Db {
         } catch (Exception e) {
             System.err.println("ERROR: Error in getMessageIdsByParentId.");
             e.printStackTrace();
-            callback.call(Collections.EMPTY_SET);
+            callback.call(Collections.<Identifier>emptySet());
             return;
         }
     }
 
     @Override
-    public void getIdsAndXorsByParentId(Identifier parentId, AsyncCallback<Map<Identifier, Identifier>> callback) {
+    public void getIdsAndXorsByParentId(Identifier parentId, Callback<Map<Identifier, Identifier>> callback) {
         if (parentId == null || connection == null) {
-            callback.call(Collections.EMPTY_MAP);
+            callback.call(Collections.<Identifier, Identifier>emptyMap());
             return;
         }
 
@@ -296,13 +299,13 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void checkAncestry(Identifier descendant, Identifier ancestor, AsyncCallback<Boolean> callback) {
+    public void checkAncestry(Identifier descendant, Identifier ancestor, Callback<Boolean> callback) {
         // TODO: implement
         callback.call(false);
     }
 
     @Override
-    public void getClock(AsyncCallback<Long> callback) {
+    public void getClock(Callback<Long> callback) {
         // TODO: implement
         callback.call(0l);
     }
@@ -310,7 +313,7 @@ public class DbImpl implements Db {
     @Override
     public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
         // TODO: implement
-        callback.call(Collections.EMPTY_SET);
+        callback.call(Collections.<Message>emptySet());
     }
 
     private void prepareDbConnection() {
@@ -374,16 +377,9 @@ public class DbImpl implements Db {
     }
 
     public void insertTestData() {
-        // Synchronous executor
-        Executor e = new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-        };
 
         // Create two users
-         KeyGen rsa = new RsaKeyGen();
+        KeyGen rsa = new RsaKeyGen();
         KeyGen.KeyPair alice = rsa.generate();
         KeyGen.KeyPair bob = rsa.generate();
 
@@ -392,15 +388,15 @@ public class DbImpl implements Db {
         Message response11 = Messages.createAndSign(response1.getIdentifier(), alice.publicKey, alice.privateKey, "Response 1.1");
         Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), alice.publicKey, alice.privateKey, "Response 2");
 
-        insertMessage(topic, e);
-        insertMessage(response1, e);
-        insertMessage(response11, e);
-        insertMessage(otherBranch2, e);
+        insertMessage(topic);
+        insertMessage(response1);
+        insertMessage(response11);
+        insertMessage(otherBranch2);
     }
 
     private void setIdentifiableInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
         try {
-            preparedStatement.setString(parameterIndex, ByteBuffers.toHex(byteSource.getByteBuffer()));
+            preparedStatement.setString(parameterIndex, hex.encode(byteSource.getByteBuffer()));
         } catch (SQLException e) {
             throw e;
         }

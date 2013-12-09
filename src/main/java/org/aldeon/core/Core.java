@@ -1,12 +1,13 @@
 package org.aldeon.core;
 
-import org.aldeon.communication.Receiver;
-import org.aldeon.communication.Sender;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identity;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.Receiver;
+import org.aldeon.networking.common.Sender;
+import org.aldeon.sync.TopicManager;
 
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -15,14 +16,13 @@ public interface Core {
 
     /**
      * Find the appropriate Ring for a given address type.
-     * @param addressType
-     * @param <T>
+     * @param type
      * @return
      */
-    <T extends PeerAddress> Dht<T> getDht(Class<T> addressType);
+    Dht getDht(AddressType type);
 
     /**
-     * Returns the global message storace class.
+     * Returns the global message storage class.
      * @return
      */
     Db getStorage();
@@ -34,7 +34,7 @@ public interface Core {
     EventLoop getEventLoop();
 
     /**
-     * Returns all locally stored identites
+     * Returns all locally stored identities
      * @return
      */
     Set<Identity> getAllIdentities();
@@ -61,19 +61,20 @@ public interface Core {
      */
     Executor clientSideExecutor();
 
-    <T extends PeerAddress> void registerSender(Class<T> addressType, Sender<T> sender);
-    <T extends PeerAddress> void registerReceiver(Class<T> addressType, Receiver<T> receiver);
-
-    <T extends PeerAddress> Sender<T> getSender(Class<T> addressType);
-    <T extends PeerAddress> Receiver<T> getReceiver(Class<T> addressType);
+    /**
+     * Sender wrapper - analyses the address and forwards the request to appropriate sender on the fly.
+     * @return
+     */
+    Sender getSender();
 
     /**
-     * Initializes all the senders.
+     * Receiver wrapper
+     * @return
      */
-    void initSenders();
+    Receiver getReceiver();
 
     /**
-     * Initializes all the receivers. Incoming messages will be registered as IncomingMessageEvent.
+     *
      */
-    void initReceivers();
+    TopicManager getTopicManager();
 }

@@ -2,25 +2,15 @@ package org.aldeon.dbstub;
 
 import com.google.inject.Provider;
 import org.aldeon.crypt.KeyGen;
-import org.aldeon.crypt.RsaKeyGen;
+import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.db.Db;
+import org.aldeon.db.wrappers.DbEventCallerDecorator;
 import org.aldeon.model.Message;
 import org.aldeon.utils.helpers.Messages;
-
-import java.util.concurrent.Executor;
 
 public class DbStubModule implements Provider<Db> {
 
     private static void addExampleData(Db db) {
-
-        // Synchronous executor
-        Executor e = new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-        };
-
 
         // Create two users
 
@@ -37,10 +27,10 @@ public class DbStubModule implements Provider<Db> {
 
         Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), alice.publicKey, alice.privateKey, "Response 2");
 
-        db.insertMessage(topic, e);
-        db.insertMessage(response1, e);
-        db.insertMessage(response11, e);
-        db.insertMessage(otherBranch2, e);
+        db.insertMessage(topic);
+        db.insertMessage(response1);
+        db.insertMessage(response11);
+        db.insertMessage(otherBranch2);
 
         System.out.println(topic);
     }
@@ -51,7 +41,7 @@ public class DbStubModule implements Provider<Db> {
         XorManager mgr;
 
         // Base XorManager implementation
-        mgr = new XorManagerImpl();
+        mgr = new MapBasedXorManager();
         // Concurrency decorator
         mgr = new XorManagerConcurrencyDecorator(mgr);
 

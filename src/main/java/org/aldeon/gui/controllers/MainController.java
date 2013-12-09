@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.aldeon.gui.GUIController;
+import org.aldeon.model.Message;
 
 import java.io.IOException;
 import java.net.URL;
@@ -105,7 +106,7 @@ public class MainController extends BorderPane implements Initializable {
     }
 
 
-    public void showTopicMsgs(String rootMsg) {
+    public void showTopicMsgs(Message rootMsg) {
         //TODO pass root msg identifier in argument
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("../TopicMsgs.fxml"));
@@ -115,18 +116,7 @@ public class MainController extends BorderPane implements Initializable {
         } catch (IOException e) {
         }
         TopicMsgsController topicMsgsController = (TopicMsgsController) loader.<TopicMsgsController>getController();
-        topicMsgsController.appendMsg(rootMsg, 0, null);
-        topicMsgsController.appendMsg("dumb", 1, null);
-        topicMsgsController.appendMsg("stream", 2, null);
-        topicMsgsController.appendMsg("of", 1, null);
-        topicMsgsController.appendMsg("responses", 2, null);
-        topicMsgsController.appendMsg("responses", 2, null);
-        topicMsgsController.appendMsg("responses", 2, null);
-        topicMsgsController.appendMsg("responses", 2, null);
-        topicMsgsController.appendMsg("responses", 2, null);
-        topicMsgsController.appendMsg("responses", 2, null);
-        topicMsgsController.appendMsg("responses", 2, null);
-        topicMsgsController.appendMsg("responses", 2, null);
+        topicMsgsController.setTopicMessage(rootMsg);
 
         contents.setContent(parent);
     }

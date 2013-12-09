@@ -50,6 +50,14 @@
                         <Font name="SansSerif Bold" size="12.0" />
                       </font>
                     </Text>
+                    <HBox alignment="BOTTOM_RIGHT" prefHeight="60.0" prefWidth="200.0">
+                      <children>
+                        <Button fx:id="showHide" mnemonicParsing="false" onMouseClicked="#showHideClicked" text="Show" />
+                      </children>
+                      <padding>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                      </padding>
+                    </HBox>
                   </children>
                   <padding>
                     <Insets left="10.0" />
@@ -57,7 +65,7 @@
                 </VBox>
                 <Separator fx:id="separator" opacity="0.2" orientation="VERTICAL" prefHeight="100.0" prefWidth="4.0">
                   <effect>
-                    <DropShadow blurType="ONE_PASS_BOX" height="1.0" offsetX="-2.0" radius="0.5" width="3.0" />
+                    <DropShadow blurType="ONE_PASS_BOX" height="2.0" offsetX="-2.0" radius="0.75" width="3.0" />
                   </effect>
                 </Separator>
                 <VBox prefHeight="100.0" prefWidth="170.0" spacing="15.0">
@@ -66,7 +74,7 @@
                       <children>
                         <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" styleClass="clickable">
                           <image>
-                            <Image url="@/gui/icons/icons/cancel_icon24.png" backgroundLoading="true" />
+                            <Image url="@/gui/icons/icons/cancel_icon24.png" backgroundLoading="false" />
                           </image>
                         </ImageView>
                       </children>

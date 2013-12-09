@@ -1,16 +1,14 @@
 package org.aldeon.utils.json;
 
-import com.google.gson.JsonObject;
-
 /**
- * Maps the jsonObject structure to a class.
+ * Maps an object to a class.
  * @param <T>
  */
 public interface ClassMapper<T> {
     /**
-     * Determines tha class based on a JsonObject structure
-     * @param jsonObject json object
+     * Determines the class based on a given object
+     * @param object object
      * @return
      */
-    public Class<? extends T> getClass(JsonObject jsonObject);
+    public Class<? extends T> getClass(Object object);
 }

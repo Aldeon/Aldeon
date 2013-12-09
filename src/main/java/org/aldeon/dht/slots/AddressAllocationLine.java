@@ -1,23 +1,22 @@
 package org.aldeon.dht.slots;
 
 import org.aldeon.events.Callback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class AddressAllocationLine<T extends PeerAddress> {
+public class AddressAllocationLine {
 
     private class Entry {
-        public Callback<T> callback;
-        public T address;
+        public Callback<PeerAddress> callback;
+        public PeerAddress address;
         public boolean renewable = true;
     }
 
-
-    private final Set<T> unassigned;
-    private final Set<Callback<T>> emptySlots;
+    private final Set<PeerAddress> unassigned;
+    private final Set<Callback<PeerAddress>> emptySlots;
     private final Set<Entry> assignedSlots;
 
     public AddressAllocationLine() {
@@ -26,13 +25,13 @@ public class AddressAllocationLine<T extends PeerAddress> {
         assignedSlots = new HashSet<>();
     }
 
-    public void addAddress(T address) {
+    public void addAddress(PeerAddress address) {
 
         if(!addressKnown(address))  {
             if(emptySlots.isEmpty()) {
                 unassigned.add(address);
             } else {
-                Callback<T> slot = emptySlots.iterator().next();
+                Callback<PeerAddress> slot = emptySlots.iterator().next();
                 emptySlots.remove(slot);
 
                 addSlotAndTrigger(slot, address);
@@ -40,7 +39,7 @@ public class AddressAllocationLine<T extends PeerAddress> {
         }
     }
 
-    public void delAddress(T address) {
+    public void delAddress(PeerAddress address) {
 
         if(unassigned.contains(address)) {
             unassigned.remove(address);
@@ -50,18 +49,18 @@ public class AddressAllocationLine<T extends PeerAddress> {
         }
     }
 
-    public void addSlot(Callback<T> slot) {
+    public void addSlot(Callback<PeerAddress> slot) {
         if(unassigned.isEmpty()) {
             emptySlots.add(slot);
         } else {
-            T address = unassigned.iterator().next();
+            PeerAddress address = unassigned.iterator().next();
             unassigned.remove(address);
 
             addSlotAndTrigger(slot, address);
         }
     }
 
-    public void delSlot(Callback<T> slot) {
+    public void delSlot(Callback<PeerAddress> slot) {
         Entry e = findEntryBySlot(slot);
         if(e != null) {
             assignedSlots.remove(e);
@@ -75,11 +74,11 @@ public class AddressAllocationLine<T extends PeerAddress> {
         return emptySlots.size();
     }
 
-    public Set<T> getAddresses(int maxResults) {
+    public Set<PeerAddress> getAddresses(int maxResults) {
 
-        Set<T> result = new HashSet<>();
+        Set<PeerAddress> result = new HashSet<>();
 
-        Iterator<T> it = unassigned.iterator();
+        Iterator<PeerAddress> it = unassigned.iterator();
 
         for(int i = 0; i < maxResults; ++i) {
             if(it.hasNext()) {
@@ -102,11 +101,11 @@ public class AddressAllocationLine<T extends PeerAddress> {
         return unassigned.isEmpty() && emptySlots.isEmpty() && assignedSlots.isEmpty();
     }
 
-    private boolean addressKnown(T address) {
+    private boolean addressKnown(PeerAddress address) {
         return unassigned.contains(address) || findEntryByAddress(address) != null;
     }
 
-    private void addSlotAndTrigger(Callback<T> slot, T address) {
+    private void addSlotAndTrigger(Callback<PeerAddress> slot, PeerAddress address) {
         Entry e = new Entry();
         e.callback = slot;
         e.address = address;
@@ -116,7 +115,7 @@ public class AddressAllocationLine<T extends PeerAddress> {
         slot.call(address);
     }
 
-    private Entry findEntryBySlot(Callback<T> slot) {
+    private Entry findEntryBySlot(Callback<PeerAddress> slot) {
         for(Entry e: assignedSlots) {
             if(e.callback.equals(slot)) {
                 return e;
@@ -125,7 +124,7 @@ public class AddressAllocationLine<T extends PeerAddress> {
         return null;
     }
 
-    private Entry findEntryByAddress(T address) {
+    private Entry findEntryByAddress(PeerAddress address) {
         for(Entry e: assignedSlots) {
             if(e.address.equals(address)) {
                 return e;

@@ -1,10 +1,11 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
+import org.aldeon.core.Core;
 import org.aldeon.db.Db;
-import org.aldeon.events.ACB;
-import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.CompareTreesRequest;
@@ -28,17 +29,18 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
             - ChildrenResponse              // children
      */
 
-    public CompareTreesAction(Db db) {
-        this.db = db;
+    @Inject
+    public CompareTreesAction(Core core) {
+        this.db = core.getStorage();
     }
 
     @Override
-    public void respond(PeerAddress peer, final CompareTreesRequest request, final AsyncCallback<Response> onResponse) {
+    public void respond(PeerAddress peer, final CompareTreesRequest request, final Callback<Response> onResponse) {
 
         // Fetch message xor
-        db.getMessageXorById(request.parent_id, new ACB<Identifier>(onResponse.getExecutor()){
+        db.getMessageXorById(request.parent_id, new Callback<Identifier>(){
             @Override
-            protected void react(Identifier xor) {
+            public void call(Identifier xor) {
 
                 if(xor == null) {
                     // Message not known
@@ -60,9 +62,9 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
                             // Let's see if we know the difference
                             Identifier diffXor = xor.xor(request.parent_xor);
 
-                            db.getMessageIdsByXor(diffXor, new ACB<Set<Identifier>>(onResponse.getExecutor()) {
+                            db.getMessageIdsByXor(diffXor, new Callback<Set<Identifier>>() {
                                 @Override
-                                protected void react(Set<Identifier> branches) {
+                                public void call(Set<Identifier> branches) {
 
                                     Identifier guess = pickBranch(branches, request.parent_id);
 
@@ -97,11 +99,11 @@ public class CompareTreesAction implements Action<CompareTreesRequest> {
         }
     }
 
-    private void sendChildren(Identifier parent, final AsyncCallback<Response> callback) {
+    private void sendChildren(Identifier parent, final Callback<Response> callback) {
 
-        db.getIdsAndXorsByParentId(parent, new ACB<Map<Identifier, Identifier>>(callback.getExecutor()) {
+        db.getIdsAndXorsByParentId(parent, new Callback<Map<Identifier, Identifier>>() {
             @Override
-            protected void react(Map<Identifier, Identifier> idsAndXors) {
+            public void call(Map<Identifier, Identifier> idsAndXors) {
                 callback.call(new ChildrenResponse(idsAndXors));
             }
         });

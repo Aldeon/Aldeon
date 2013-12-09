@@ -1,6 +1,6 @@
 package org.aldeon.events;
 
-import org.aldeon.utils.collections.Reducer;
+import org.aldeon.utils.various.Reducer;
 
 public class BranchingCallbackAggregator<T> {
 

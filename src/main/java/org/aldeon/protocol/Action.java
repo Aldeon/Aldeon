@@ -1,8 +1,8 @@
 package org.aldeon.protocol;
 
 
-import org.aldeon.events.AsyncCallback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.events.Callback;
+import org.aldeon.networking.common.PeerAddress;
 
 /**
  * Aggregates logic related to reacting to an incoming message.
@@ -15,5 +15,5 @@ public interface Action<R extends Request> {
      * @param request request we respond to
      * @param onResponse callback to be called when the response is ready
      */
-    public void respond(PeerAddress peer, R request, AsyncCallback<Response> onResponse);
+    public void respond(PeerAddress peer, R request, Callback<Response> onResponse);
 }

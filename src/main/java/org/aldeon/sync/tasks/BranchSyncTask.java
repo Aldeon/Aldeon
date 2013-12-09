@@ -1,69 +1,60 @@
 package org.aldeon.sync.tasks;
 
 import com.google.common.collect.Sets;
-import org.aldeon.communication.Sender;
-import org.aldeon.communication.task.OutboundRequestTask;
+import org.aldeon.networking.common.Sender;
+import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.db.Db;
-import org.aldeon.events.ACB;
 import org.aldeon.events.BranchingCallbackAggregator;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
-import org.aldeon.net.PeerAddress;
-import org.aldeon.protocol.Request;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.response.BranchInSyncResponse;
 import org.aldeon.protocol.response.ChildrenResponse;
 import org.aldeon.protocol.response.LuckyGuessResponse;
 import org.aldeon.protocol.response.MessageNotFoundResponse;
-import org.aldeon.utils.collections.BooleanAndReducer;
+import org.aldeon.utils.various.BooleanAndReducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
 
-public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTask<T> {
+public class BranchSyncTask extends BaseOutboundTask<CompareTreesRequest> implements OutboundRequestTask {
 
     private static final Logger log = LoggerFactory.getLogger(BranchSyncTask.class);
 
-    public static final int TIMEOUT = 5000;
-    private final T peer;
-    private final Executor executor;
     private final Db storage;
-    private final Sender<T> sender;
+    private final Sender sender;
     private final Callback<Boolean> onFinished;
 
-    private CompareTreesRequest request;
+    public BranchSyncTask(PeerAddress peer, Identifier branch, boolean force, Identifier xor, Sender sender, Db storage, Callback<Boolean> onFinished) {
+        super(5000, peer);
 
-    public BranchSyncTask(T peer, Identifier branch, boolean force, Identifier xor, Sender<T> sender, Executor executor, Db storage, Callback<Boolean> onFinished) {
-
-        this.peer = peer;
-        this.executor = executor;
         this.storage = storage;
         this.sender = sender;
         this.onFinished = onFinished;
 
-        request = new CompareTreesRequest();
-        request.force = force;
+        setRequest(new CompareTreesRequest());
 
-        request.parent_id = branch;
-        request.parent_xor = xor;
+        req().force = force;
+        req().parent_id = branch;
+        req().parent_xor = xor;
     }
 
     @Override
     public void onSuccess(Response response) {
 
         if(response instanceof MessageNotFoundResponse) {
-            onMessageNotFound((MessageNotFoundResponse) response);
+            onMessageNotFound();
         } else if(response instanceof LuckyGuessResponse) {
             onLuckyGuess((LuckyGuessResponse) response);
         } else if(response instanceof ChildrenResponse) {
             onChildren((ChildrenResponse) response);
         } else if(response instanceof BranchInSyncResponse) {
-            onBranchInSync((BranchInSyncResponse) response);
+            onBranchInSync();
         } else {
             onFailure(new InvalidResponseException("Invalid response type"));
         }
@@ -75,59 +66,24 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
         onFinished.call(false);
     }
 
-    @Override
-    public int getTimeoutMillis() {
-        return TIMEOUT;
-    }
-
-    @Override
-    public Request getRequest() {
-        return request;
-    }
-
-    @Override
-    public T getAddress() {
-        return peer;
-    }
-
-    @Override
-    public Executor getExecutor() {
-        return executor;
-    }
-
     //////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Called if the server has no knowledge about this branch
-     * @param response
      */
-    private void onMessageNotFound(MessageNotFoundResponse response) {
-        offerMessage(request.parent_id, onFinished);
+    private void onMessageNotFound() {
+        offerMessage(req().parent_id, onFinished);
     }
 
     /**
      * Called if the server attempts a lucky guess
-     * @param response
+     * @param response response
      */
     private void onLuckyGuess(final LuckyGuessResponse response) {
-        /*
-            1. Do we have the suggested message?
-            IF WE DO:
-                1.1. Resend the request with force flag
-            ELSE
-                1.2. Attempt downloading the message
-                1.3. Check if the received message is actually a child of the branch we are syncing
-                IF TRUE:
-                    1.3.1. Put the message in storage
-                    1.3.2. Resync the branch to make sure we have everything
-                ELSE:
-                    1.3.3. Resend the request with force flag
 
-         */
-
-        storage.getMessageById(response.id, new ACB<Message>(executor) {
+        storage.getMessageById(response.id, new Callback<Message>() {
             @Override
-            protected void react(Message val) {
+            public void call(Message val) {
 
                 // Check if we already have the suggested message
                 if(val == null) {
@@ -135,19 +91,19 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
                     // Attempt downloading the message, then repeat the sync.
                     // Repeating guarantees we do not lose any message.
-                    sender.addTask(new DownloadMessageTask<>(peer, response.id, request.parent_id, true, executor, storage, new Callback<Boolean>() {
+                    sender.addTask(new DownloadMessageTask(getAddress(), response.id, req().parent_id, true, storage, new Callback<Boolean>() {
                         @Override
                         public void call(Boolean messageSaved) {
 
                             // (messageSaved == true) => message was saved, no need to set force flag
                             // (messageSaved != true) => lucky guess failed, set force flag
 
-                            sender.addTask(new BranchSyncTask<>(peer, request.parent_id, !messageSaved, request.parent_xor, sender, executor, storage, onFinished));
+                            sender.addTask(new BranchSyncTask(getAddress(), req().parent_id, !messageSaved, req().parent_xor, sender, storage, onFinished));
                         }
                     }));
                 } else {
                     // Message known, resync with force flag
-                    sender.addTask(new BranchSyncTask<>(peer, request.parent_id, true, request.parent_xor, sender, executor, storage, onFinished));
+                    sender.addTask(new BranchSyncTask(getAddress(), req().parent_id, true, req().parent_xor, sender, storage, onFinished));
                 }
             }
         });
@@ -155,16 +111,15 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
     /**
      * Called if the server returns the list of child identifiers
-     * @param response
+     * @param response response
      */
     private void onChildren(final ChildrenResponse response) {
-        storage.getIdsAndXorsByParentId(request.parent_id, new ACB<Map<Identifier, Identifier>>(executor) {
+        storage.getIdsAndXorsByParentId(req().parent_id, new Callback<Map<Identifier, Identifier>>() {
             @Override
-            public void react(Map<Identifier, Identifier> map) {
+            public void call(Map<Identifier, Identifier> storedMap) {
 
                 // 0. These are our collections we need to analyse
 
-                Map<Identifier, Identifier> storedMap = map;
                 Map<Identifier, Identifier> remoteMap = response.children;
                 final BranchingCallbackAggregator<Boolean> aggregator = new BranchingCallbackAggregator<>(new BooleanAndReducer(), onFinished);
 
@@ -174,18 +129,16 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
                     final Identifier xor = storedMap.get(id).xor(remoteMap.get(id));
 
-                    if(xor.isEmpty()) {
-                        // Same state, do nothing
-                    } else {
+                    if(!xor.isEmpty()) {
                         // There is a difference.
 
                         // Create callback to be triggered when query returns
                         final Callback<Boolean> queryFetched = aggregator.childCallback();
 
                         // Let's see if we have a differing branch
-                        storage.getMessageIdsByXor(xor, new ACB<Set<Identifier>>(executor){
+                        storage.getMessageIdsByXor(xor, new Callback<Set<Identifier>>(){
                             @Override
-                            protected void react(Set<Identifier> matchingBranches) {
+                            public void call(Set<Identifier> matchingBranches) {
 
                                 /*
                                     Choose which one is the branch we are looking for
@@ -196,8 +149,7 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
                                 if(differingBranch == null) {
                                     // we must go deeper
-                                    OutboundRequestTask<T> nestedTask = new BranchSyncTask<>(peer, id, false, xor, sender, executor, storage, aggregator.childCallback());
-                                    sender.addTask(nestedTask);
+                                    sender.addTask(new BranchSyncTask(getAddress(), id, false, xor, sender, storage, aggregator.childCallback()));
 
                                 } else {
                                     // Hey, we have a differing branch. Let's inform the server.
@@ -213,7 +165,7 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
                 // 2. Process the messages we do not know
 
                 for(Identifier id: Sets.difference(remoteMap.keySet(), storedMap.keySet())) {
-                    sender.addTask(new DownloadMessageTask<>(peer, id, request.parent_id, false, executor, storage, aggregator.childCallback()));
+                    sender.addTask(new DownloadMessageTask(getAddress(), id, req().parent_id, false, storage, aggregator.childCallback()));
                 }
 
                 // 3. Process the messages the peer does not know
@@ -230,15 +182,15 @@ public class BranchSyncTask<T extends PeerAddress> implements OutboundRequestTas
 
     /**
      * Called if the server has the same branch xor
-     * @param response
      */
-    private void onBranchInSync(BranchInSyncResponse response) {
+    private void onBranchInSync() {
         // both we and the server know exactly the same messages
         onFinished.call(true);
     }
 
     private void offerMessage(Identifier id, Callback<Boolean> onOfferCompleted) {
         // here goes the logic of offering the message to the server
+        System.out.println("Offer message " + id);
         onOfferCompleted.call(true);
     }
 }

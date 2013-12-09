@@ -4,8 +4,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import org.aldeon.net.Ipv4PeerAddress;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.NetworkingModule;
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.PeerAddress;
 
 import java.lang.reflect.Type;
 
@@ -15,11 +16,14 @@ public class PeerAddressDeserializer implements JsonDeserializer<PeerAddress> {
     public PeerAddress deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
         String type = json.getAsJsonObject().get("type").getAsString();
+        String address = json.getAsJsonObject().get("address").getAsString();
 
-        if(type.equals(Ipv4PeerAddress.TYPE)) {
-            return context.deserialize(json, Ipv4PeerAddress.class);
+        PeerAddress result = NetworkingModule.deserialize(new AddressType(type), address);
+
+        if(result == null) {
+            throw new JsonParseException("Failed to deserialize an address");
+        } else {
+            return result;
         }
-
-        throw new JsonParseException("Unknown address type");
     }
 }

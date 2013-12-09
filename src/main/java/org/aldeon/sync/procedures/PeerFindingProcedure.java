@@ -3,10 +3,9 @@ package org.aldeon.sync.procedures;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
-import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.sync.Slot;
 import org.aldeon.sync.SlotState;
 import org.aldeon.sync.SlotStateUpgradeProcedure;
@@ -19,25 +18,31 @@ import org.aldeon.sync.SlotStateUpgradeProcedure;
 public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
 
     @Override
-    public <T extends PeerAddress> void call(final Slot<T> slot, final Identifier topicId) {
+    public void handle(final Slot slot, final Identifier topicId) {
 
         Core core = CoreModule.getInstance();
-        final Dht<T> dht = core.getDht(slot.getAddressType());
+        final Dht dht = core.getDht(slot.getAddressType());
 
-        Callback<T> callback = new ACB<T>(core.clientSideExecutor()) {
+        Callback<PeerAddress> callback = new Callback<PeerAddress>() {
             @Override
-            protected void react(T val) {
+            public void call(PeerAddress peerAddress) {
 
-                final Callback<T> cb = this;
-
-                slot.setPeerAddress(val);
-                slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
-                slot.onRevoke(new Runnable() {
+                final Callback<PeerAddress> cb = this;
+                Runnable revoke = new Runnable() {
                     @Override
                     public void run() {
                         dht.delBounty(topicId, cb);
                     }
-                });
+                };
+
+                if(slot.getAddressType() == peerAddress.getType()) {
+                    slot.setPeerAddress(peerAddress);
+                    slot.onRevoke(revoke);
+                    slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
+                } else {
+                    revoke.run();
+                }
+
                 slot.setInProgress(false);
             }
         };

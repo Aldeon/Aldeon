@@ -1,9 +1,10 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
+import org.aldeon.core.Core;
 import org.aldeon.db.Db;
-import org.aldeon.events.ACB;
-import org.aldeon.events.AsyncCallback;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.events.Callback;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetClockRequest;
@@ -13,16 +14,17 @@ public class GetClockAction implements Action<GetClockRequest> {
 
     private final Db storage;
 
-    public GetClockAction(Db storage) {
-        this.storage = storage;
+    @Inject
+    public GetClockAction(Core core) {
+        this.storage = core.getStorage();
     }
 
     @Override
-    public void respond(PeerAddress peer, GetClockRequest request, final AsyncCallback<Response> onResponse) {
+    public void respond(PeerAddress peer, GetClockRequest request, final Callback<Response> onResponse) {
 
-        storage.getClock(new ACB<Long>(onResponse.getExecutor()) {
+        storage.getClock(new Callback<Long>() {
             @Override
-            protected void react(Long val) {
+            public void call(Long val) {
 
                 ClockResponse response = new ClockResponse();
                 response.clock = val;

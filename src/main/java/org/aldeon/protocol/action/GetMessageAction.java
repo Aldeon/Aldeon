@@ -1,10 +1,11 @@
 package org.aldeon.protocol.action;
 
+import com.google.inject.Inject;
+import org.aldeon.core.Core;
 import org.aldeon.db.Db;
-import org.aldeon.events.ACB;
-import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Message;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetMessageRequest;
@@ -17,14 +18,13 @@ public class GetMessageAction implements Action<GetMessageRequest> {
 
     private final Db storage;
 
-    public GetMessageAction(Db storage) {
-        this.storage = storage;
+    @Inject
+    public GetMessageAction(Core core) {
+        this.storage = core.getStorage();
     }
 
     @Override
-    public void respond(PeerAddress peer, GetMessageRequest request, final AsyncCallback<Response> onResponse) {
-
-        final Executor e = onResponse.getExecutor();
+    public void respond(PeerAddress peer, GetMessageRequest request, final Callback<Response> onResponse) {
 
         /*
             A peer has asked if we have a message with a certain ID.
@@ -32,7 +32,7 @@ public class GetMessageAction implements Action<GetMessageRequest> {
             the database has the result.
          */
 
-        storage.getMessageById(request.id, new ACB<Message>(e) {
+        storage.getMessageById(request.id, new Callback<Message>() {
 
             /*
                 This callback is called when the database completes the search
@@ -40,7 +40,7 @@ public class GetMessageAction implements Action<GetMessageRequest> {
              */
 
             @Override
-            public void react(Message val) {
+            public void call(Message val) {
 
                 /*
                     So, did we find the message?

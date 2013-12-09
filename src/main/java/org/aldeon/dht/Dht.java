@@ -2,19 +2,22 @@ package org.aldeon.dht;
 
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.net.PeerAddress;
+import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.PeerAddress;
 
 import java.util.Set;
 
-public interface Dht<T extends PeerAddress> {
+public interface Dht {
 
-    void registerUncertainAddress(T address, Identifier topic);
-    void registerAddress(T address, Identifier topic);
-    void removeAddress(T address);
+    void registerUncertainAddress(PeerAddress address, Identifier topic);
+    void registerAddress(PeerAddress address, Identifier topic);
+    void removeAddress(PeerAddress address);
 
-    Set<T> getInterested(Identifier topic, int maxResults);
-    Set<T> getNearest(Identifier topic, int maxResults);
+    Set<PeerAddress> getInterested(Identifier topic, int maxResults);
+    Set<PeerAddress> getNearest(Identifier topic, int maxResults);
 
-    void addBounty(Identifier topic, Callback<T> callback);
-    void delBounty(Identifier topic, Callback<T> callback);
+    void addBounty(Identifier topic, Callback<PeerAddress> callback);
+    void delBounty(Identifier topic, Callback<PeerAddress> callback);
+
+    AddressType acceptedType();
 }
