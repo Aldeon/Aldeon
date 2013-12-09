@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import org.aldeon.core.CoreModule;
 import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.events.ACB;
@@ -28,6 +29,7 @@ import java.util.Set;
 public class TopicMsgsController implements Initializable, ResponseControlListener, WriteResponseControlListener {
 
     public FlowPane fpane;
+    public HBox hbox;
     private ArrayList<MsgWithInt> msgs = new ArrayList<>();
     private Message topicMessage;
 

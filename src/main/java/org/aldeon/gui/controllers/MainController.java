@@ -1,19 +1,16 @@
 package org.aldeon.gui.controllers;
 
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.aldeon.gui.GuiUtils;
-import org.aldeon.gui.GUIController;
 import org.aldeon.model.Message;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -30,10 +27,10 @@ public class MainController implements Initializable {
     public ImageView ThreadsImage;
     public ImageView FriendsImage;
     public ImageView SettingsImage;
-    private GUIController root;
+    public BorderPane main;
 
     private void changeFxml(String pathToFxml) {
-        Node node = GuiUtils.loadFxml(pathToFxml);
+        Node node = GuiUtils.loadFromFxml(pathToFxml);
         contents.setContent(node);
     }
 
@@ -72,17 +69,11 @@ public class MainController implements Initializable {
     public void threadsClicked(MouseEvent event) {
         resetAllHighlights();
         setHighlights(Threads, ThreadsImage);
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/gui/fxml/TopicList.fxml"));
-        Parent parent = null;
-        try {
-            parent = (Parent) loader.load(getClass().getResource("/gui/fxml/TopicList.fxml").openStream());
-        } catch (IOException e) {
-        }
-        TopicListController topicListController = loader.getController();
+
+        TopicListController topicListController = GuiUtils.getController("TopicList.fxml");
         topicListController.setMainController(this);
 
-        contents.setContent(parent);
+        contents.setContent(topicListController.mainWindow);
     }
 
     public void friendsClicked(MouseEvent event) {
@@ -100,21 +91,11 @@ public class MainController implements Initializable {
 
     public void showTopicMsgs(Message rootMsg) {
         //TODO pass root msg identifier in argument
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/gui/fxml/TopicMsgs.fxml"));
-        Parent parent=null;
-        try {
-            parent = (Parent) loader.load(getClass().getResource("/gui/fxml/TopicMsgs.fxml").openStream());
-        } catch (IOException e) {
-        }
-        TopicMsgsController topicMsgsController = loader.getController();
+
+        TopicMsgsController topicMsgsController = GuiUtils.getController("TopicMsgs.fxml");
         topicMsgsController.setTopicMessage(rootMsg);
 
-        contents.setContent(parent);
-    }
-
-    public void setRoot(GUIController root){
-        this.root = root;
+        contents.setContent(topicMsgsController.hbox);
     }
 
     @Override

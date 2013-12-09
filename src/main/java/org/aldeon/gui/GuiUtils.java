@@ -13,7 +13,7 @@ public class GuiUtils {
 
     private static final String FXML_PATH = "/gui/fxml/";
 
-    public static <T> T loadFxml(String fileName) {
+    public static <T> T loadFromFxml(String fileName) {
         URL fxmlUrl = GuiUtils.class.getResource(FXML_PATH + fileName);
         if(fxmlUrl == null) {
             log.error("The selected FXML file (" + FXML_PATH + fileName +") does not exist");
@@ -35,10 +35,10 @@ public class GuiUtils {
             return null;
         } else {
             try {
-                FXMLLoader loader = new FXMLLoader();
-                loader.load(fxmlUrl);
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                loader.load(fxmlUrl.openStream());
                 return loader.getController();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("Failed to load FXML (" + fxml + ")", e);
                 return null;
             }

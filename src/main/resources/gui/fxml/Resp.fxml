@@ -107,6 +107,6 @@
     <Insets fx:id="x1" />
   </padding>
   <stylesheets>
-    <URL value="@style.css" />
+    <URL value="@../css/style.css" />
   </stylesheets>
 </Pane>

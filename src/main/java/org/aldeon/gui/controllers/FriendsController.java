@@ -6,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -45,7 +44,7 @@ public class FriendsController implements Initializable {
                 children(name, hash, additionalInfo).
                 alignment(Pos.CENTER).padding(new Insets(5,5,5,5)).spacing(10).build(),250,250);
         scene.setFill(Color.web("#222222"));
-        scene.getStylesheets().add("gui/fxml/style.css");
+        scene.getStylesheets().add("gui/css/style.css");
         dialogStage.setScene(scene);
         dialogStage.setTitle("Friend information");
         dialogStage.show();

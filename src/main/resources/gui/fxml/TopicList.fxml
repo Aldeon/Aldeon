@@ -27,6 +27,6 @@
     </HBox>
   </children>
   <stylesheets>
-    <URL value="@style.css" />
+    <URL value="@../css/style.css" />
   </stylesheets>
 </VBox>
