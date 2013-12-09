@@ -1,20 +1,14 @@
 package org.aldeon.gui;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.AppClosingEvent;
-import org.aldeon.gui.controllers.MainController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
 
 public class GUIController extends Application {
 
@@ -49,27 +43,12 @@ public class GUIController extends Application {
 
     private void launchMain() {
         try {
-            MainController profile = (MainController) changeFxml("Main.fxml");
-            profile.setRoot(this);
+            BorderPane borderPane = GuiUtils.loadFxml("Main.fxml");
+            Scene scene = new Scene(borderPane);
+            stage.setScene(scene);
+            stage.sizeToScene();
         } catch (Exception e) {
             log.error("Failed to launch main", e);
         }
-    }
-
-    public Initializable changeFxml(String fxml) throws Exception {
-        FXMLLoader loader = new FXMLLoader();
-        InputStream in = GUIController.class.getResourceAsStream(fxml);
-        loader.setBuilderFactory(new JavaFXBuilderFactory());
-        loader.setLocation(GUIController.class.getResource(fxml));
-        BorderPane page;
-        try {
-            page = (BorderPane) loader.load(in);
-        } finally {
-            in.close();
-        }
-        Scene scene = new Scene(page);
-        stage.setScene(scene);
-        stage.sizeToScene();
-        return loader.getController();
     }
 }

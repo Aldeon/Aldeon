@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 
-public class IdentityController extends BorderPane implements Initializable {
+public class IdentityController implements Initializable {
     public VBox sidebar;
     public StackPane logo;
     public GridPane content;
@@ -72,7 +72,7 @@ public class IdentityController extends BorderPane implements Initializable {
                 children(name, hash, additionalInfo).
                 alignment(Pos.CENTER).padding(new Insets(5,5,5,5)).spacing(10).build(),250,250);
         scene.setFill(Color.web("#222222"));
-        scene.getStylesheets().add("org/aldeon/gui/style.css");
+        scene.getStylesheets().add("gui/fxml/style.css");
         dialogStage.setScene(scene);
         dialogStage.setTitle("Friend information");
         dialogStage.show();

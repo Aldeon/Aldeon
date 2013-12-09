@@ -7,11 +7,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.GUIController;
 import org.aldeon.model.Message;
 
@@ -20,7 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 
-public class MainController extends BorderPane implements Initializable {
+public class MainController implements Initializable {
     public VBox sidebar;
     public StackPane logo;
     public ScrollPane contents;
@@ -35,19 +33,13 @@ public class MainController extends BorderPane implements Initializable {
     private GUIController root;
 
     private void changeFxml(String pathToFxml) {
-       // contents.getChildren().clear();
-        try {
-            //contents.getChildren().add((Node)FXMLLoader.load(getClass().getResource(pathToFxml)));
-            contents.setContent((Node)FXMLLoader.load(getClass().getResource(pathToFxml)));
-        } catch (IOException e) {
-            //invalid path
-            e.printStackTrace();
-        }
+        Node node = GuiUtils.loadFxml(pathToFxml);
+        contents.setContent(node);
     }
 
     private void resetHighlights(StackPane stackPane, ImageView imageView) {
-        int index;
-        if ((index = stackPane.getStyleClass().indexOf("menuhighlight")) != -1) {
+        int index = stackPane.getStyleClass().indexOf("menuhighlight");
+        if (index != -1) {
             stackPane.getStyleClass().remove(index);
             stackPane.getStyleClass().add("menuNoHighlight");
             imageView.opacityProperty().set(0.3);
@@ -58,8 +50,8 @@ public class MainController extends BorderPane implements Initializable {
         imageView.opacityProperty().set(0.8);
         stackPane.getStyleClass().add("menuhighlight");
 
-        int index;
-        if ((index = stackPane.getStyleClass().indexOf("menuNoHighlight")) != -1) {
+        int index = stackPane.getStyleClass().indexOf("menuNoHighlight");
+        if (index != -1) {
             stackPane.getStyleClass().remove(index);
         }
     }
@@ -74,20 +66,20 @@ public class MainController extends BorderPane implements Initializable {
     public void identitiesClicked(MouseEvent event) {
         resetAllHighlights();
         setHighlights(Identities, IdentitiesImage);
-        changeFxml("../Identities.fxml");
+        changeFxml("Identities.fxml");
     }
 
     public void threadsClicked(MouseEvent event) {
         resetAllHighlights();
         setHighlights(Threads, ThreadsImage);
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("../TopicList.fxml"));
-        Parent parent=null;
+                getClass().getResource("/gui/fxml/TopicList.fxml"));
+        Parent parent = null;
         try {
-            parent = (Parent) loader.load(getClass().getResource("../TopicList.fxml").openStream());
+            parent = (Parent) loader.load(getClass().getResource("/gui/fxml/TopicList.fxml").openStream());
         } catch (IOException e) {
         }
-        TopicListController topicListController = (TopicListController) loader.<TopicListController>getController();
+        TopicListController topicListController = loader.getController();
         topicListController.setMainController(this);
 
         contents.setContent(parent);
@@ -96,38 +88,38 @@ public class MainController extends BorderPane implements Initializable {
     public void friendsClicked(MouseEvent event) {
         resetAllHighlights();
         setHighlights(Friends, FriendsImage);
-        changeFxml("../Friends.fxml");
+        changeFxml("Friends.fxml");
     }
 
     public void settingsClicked(MouseEvent event) {
         resetAllHighlights();
         setHighlights(Settings, SettingsImage);
-        changeFxml("../Settings.fxml");
+        changeFxml("Settings.fxml");
     }
 
 
     public void showTopicMsgs(Message rootMsg) {
         //TODO pass root msg identifier in argument
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("../TopicMsgs.fxml"));
+                getClass().getResource("/gui/fxml/TopicMsgs.fxml"));
         Parent parent=null;
         try {
-            parent = (Parent) loader.load(getClass().getResource("../TopicMsgs.fxml").openStream());
+            parent = (Parent) loader.load(getClass().getResource("/gui/fxml/TopicMsgs.fxml").openStream());
         } catch (IOException e) {
         }
-        TopicMsgsController topicMsgsController = (TopicMsgsController) loader.<TopicMsgsController>getController();
+        TopicMsgsController topicMsgsController = loader.getController();
         topicMsgsController.setTopicMessage(rootMsg);
 
         contents.setContent(parent);
     }
+
     public void setRoot(GUIController root){
-        this.root=root;
+        this.root = root;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        //ImageView im = new ImageView()
-        changeFxml("../dashboard.fxml");
+        changeFxml("dashboard.fxml");
     }
 
 }

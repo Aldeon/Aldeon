@@ -10,7 +10,7 @@ import org.aldeon.model.Message;
 /**
  *
  */
-public class TopicController extends HBox {
+public class TopicController {
     public HBox topicBox;
     public Rectangle colorRectangle;
     public Rectangle backgroundRectangle;

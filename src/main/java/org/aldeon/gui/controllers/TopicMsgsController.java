@@ -9,6 +9,7 @@ import javafx.scene.layout.FlowPane;
 import org.aldeon.core.CoreModule;
 import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.events.ACB;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
@@ -24,11 +25,10 @@ import java.util.Set;
 /**
  *
  */
-public class TopicMsgsController extends ScrollPane
-        implements Initializable, ResponseControlListener, WriteResponseControlListener {
+public class TopicMsgsController implements Initializable, ResponseControlListener, WriteResponseControlListener {
 
     public FlowPane fpane;
-    private ArrayList<MsgWithInt> msgs = new ArrayList<MsgWithInt>();
+    private ArrayList<MsgWithInt> msgs = new ArrayList<>();
     private Message topicMessage;
 
     private class MsgWithInt {
@@ -63,28 +63,25 @@ public class TopicMsgsController extends ScrollPane
 
     private Parent constructResponse(Message message, int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("../Resp.fxml"));
+                getClass().getResource("/gui/fxml/Resp.fxml"));
         Parent parent=null;
         try {
-            parent = (Parent) loader.load(getClass().getResource("../Resp.fxml").openStream());
+            parent = (Parent) loader.load(getClass().getResource("/gui/fxml/Resp.fxml").openStream());
         } catch (IOException e) {
         }
-        ResponseController rc = (ResponseController) loader.<ResponseController>getController();
+        ResponseController rc = loader.getController();
         rc.registerListener(this);
         rc.toPass = parent;
         rc.setMessage(message, nestingLevel);
 
         final ResponseController rcF = rc;
-        final Message m = message;
 
         if (nestingLevel != 0)
         CoreModule.getInstance().getStorage().getMessagesByParentId(message.getIdentifier(),
-                new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
+                new Callback<Set<Message>>() {
                     @Override
-                    protected void react(Set<Message> val) {
+                    public void call(Set<Message> val) {
                         if (val != null && !val.isEmpty()) {
-                            for (Message v : val ) {
-                            }
                             rcF.setHasChildren(false);
                         }
                     }
@@ -124,9 +121,9 @@ public class TopicMsgsController extends ScrollPane
         setRootMsg(topicMessage);
 
         CoreModule.getInstance().getStorage().getMessagesByParentId(topicMessage.getIdentifier(),
-                new ACB<Set<Message>>(CoreModule.getInstance().clientSideExecutor()) {
+                new Callback<Set<Message>>() {
                     @Override
-                    protected void react(Set<Message> val) {
+                    public void call(Set<Message> val) {
                         for (Message message : val) {
 
                             final Message m = message;
@@ -198,14 +195,14 @@ public class TopicMsgsController extends ScrollPane
     @Override
     public void responseRespondClicked(Parent rcNode, ResponseController rc,  int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("../WriteResponse.fxml"));
+                getClass().getResource("/gui/fxml/WriteResponse.fxml"));
         Parent parent=null;
         try {
-            parent = (Parent) loader.load(getClass().getResource("../WriteResponse.fxml").openStream());
+            parent = (Parent) loader.load(getClass().getResource("/gui/fxml/WriteResponse.fxml").openStream());
         } catch (IOException e) {
         }
 
-        WriteResponseController wrc = (WriteResponseController) loader.<WriteResponseController>getController();
+        WriteResponseController wrc = loader.getController();
         wrc.setNestingLevel(nestingLevel);
         wrc.setNode(parent);
         wrc.setParentIdentifier(rc.getMsg().getIdentifier());
@@ -213,7 +210,7 @@ public class TopicMsgsController extends ScrollPane
         wrc.registerListener(this);
 
         //TODO @down - move to synchronized block
-        fpane.getChildren().add(fpane.getChildren().indexOf(rcNode)+1, parent);
+        fpane.getChildren().add(fpane.getChildren().indexOf(rcNode) + 1, parent);
     }
 
     @Override
@@ -235,10 +232,10 @@ public class TopicMsgsController extends ScrollPane
                 continue;
             }
 
-            if (delete == true && curr.indent > nesting) {
+            if (delete && curr.indent > nesting) {
                 fpane.getChildren().remove(curr.node);
                 it.remove();
-            } else if (delete == true && curr.indent <= nesting) {
+            } else if (delete && curr.indent <= nesting) {
                 break;
             }
         }

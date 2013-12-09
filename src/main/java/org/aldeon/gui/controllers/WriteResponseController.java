@@ -11,7 +11,7 @@ import org.aldeon.model.Identifier;
 /**
  *
  */
-public class WriteResponseController extends HBox {
+public class WriteResponseController {
     public Button sendResponse;
     public TextArea responseContent;
     public HBox windowContainer;
