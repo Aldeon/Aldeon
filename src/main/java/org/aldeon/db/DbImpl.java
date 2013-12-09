@@ -1,5 +1,6 @@
 package org.aldeon.db;
 
+import com.google.inject.internal.util.$SourceProvider;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.rsa.RsaKeyGen;
@@ -11,6 +12,7 @@ import org.aldeon.model.Message;
 import org.aldeon.model.Signature;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.hex.HexCodec;
+import org.aldeon.utils.helpers.BufPrint;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
 import org.slf4j.Logger;
@@ -51,13 +53,11 @@ public class DbImpl implements Db {
     public DbImpl() {
         this.driverClassName = DEFAULT_DRIVER_CLASS_NAME;
         this.dbPath = DEFAULT_DB_PATH;
-        prepareDbConnection();
     }
 
     public DbImpl(String driverClassName, String dbPath) {
         this.driverClassName = driverClassName;
         this.dbPath = dbPath;
-        prepareDbConnection();
     }
 
     @Override
@@ -91,8 +91,7 @@ public class DbImpl implements Db {
                 callback.call(null);
             }
         } catch (Exception e) {
-            System.err.println("ERROR: Error in getMessageById.");
-            e.printStackTrace();
+            log.error("Error in getMessageById", e);
             callback.call(null);
         }
     }
@@ -128,9 +127,10 @@ public class DbImpl implements Db {
 
             preparedStatement.executeUpdate();
 
+            log.info("Inserted message (id:" + message.getIdentifier() + ")");
+
         } catch (SQLException e) {
-            System.err.println("ERROR: Error in insertMessage.");
-            e.printStackTrace();
+            log.error("Error in insertMessage", e);
         }
     }
 
@@ -147,8 +147,7 @@ public class DbImpl implements Db {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            System.err.println("ERROR: Error in deleteMessage.");
-            e.printStackTrace();
+            log.error("Error in deleteMessage", e);
         }
     }
 
@@ -173,10 +172,8 @@ public class DbImpl implements Db {
 
             callback.call(messageIds);
         } catch (Exception e) {
-            System.err.println("ERROR: Error in getMessageIdByXor.");
-            e.printStackTrace();
+            log.error("Error in getMessageIdByXor", e);
             callback.call(null);
-            return;
         }
     }
 
@@ -214,13 +211,9 @@ public class DbImpl implements Db {
 
             callback.call(messages);
         } catch (Exception e) {
-            System.err.println("ERROR: Error in getMessagesByParentId.");
-            e.printStackTrace();
+            log.error("Error in getMessagesByParentId", e);
             callback.call(Collections.<Message>emptySet());
-            return;
         }
-
-
     }
 
     @Override
@@ -242,10 +235,8 @@ public class DbImpl implements Db {
                 callback.call(null);
             }
         } catch (Exception e) {
-            System.err.println("ERROR: Error in getMessageXorById.");
-            e.printStackTrace();
+            log.error("Error in getMessageXorById", e);
             callback.call(null);
-            return;
         }
     }
 
@@ -270,10 +261,8 @@ public class DbImpl implements Db {
 
             callback.call(children);
         } catch (Exception e) {
-            System.err.println("ERROR: Error in getMessageIdsByParentId.");
-            e.printStackTrace();
+            log.error("Error in getMessageIdsByParentId", e);
             callback.call(Collections.<Identifier>emptySet());
-            return;
         }
     }
 
@@ -299,10 +288,8 @@ public class DbImpl implements Db {
 
             callback.call(idsAndXors);
         } catch (Exception e) {
-            System.err.println("ERROR: Error in getIdsAndXorsByParentId.");
-            e.printStackTrace();
+            log.error("Error in getIdsAndXorsByParentId", e);
             callback.call(null);
-
         }
     }
 
@@ -332,7 +319,6 @@ public class DbImpl implements Db {
         } catch (Exception e) {
             log.error("ERROR: Error in getMessageIdByXor.", e);
             callback.call(null);
-            return;
         }
     }
 
@@ -372,16 +358,18 @@ public class DbImpl implements Db {
         } catch (Exception e) {
             log.error("ERROR: Error in getMessageIdByXor.", e);
             callback.call(Collections.<Message>emptySet());
-            return;
         }
     }
 
     private void prepareDbConnection() {
+
+        log.info("Preparing the db connection");
+
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: JDBC driver was not properly set.");
-            e.printStackTrace();
+            log.error("ERROR: JDBC driver was not properly set.", e);
+            return;
         }
 
         boolean dbFileExists = true;
@@ -391,20 +379,22 @@ public class DbImpl implements Db {
             if (!dbFile.isFile()) {
                 dbFileExists = false;
             }
-
             connection = DriverManager.getConnection(DEFAULT_DRIVER_NAME + dbPath + DEFAULT_DB_PARAMETERS, DB_USER, DB_PASSWORD);
         } catch (SQLException e) {
-            System.err.println("ERROR: Can not connect to database.");
-            e.printStackTrace();
+            log.error("Could not connect to the database.", e);
             return;
         }
 
+        log.info("Connection established");
+
         if (!dbFileExists) {
+            log.info("First-time run: creating the database schema");
             createDbSchema();
         }
     }
 
     public void closeDbConnection() {
+        log.info("Closing the db connection");
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.commit();
@@ -413,8 +403,7 @@ public class DbImpl implements Db {
                 connection.close();
             }
         } catch (SQLException e) {
-            System.err.println("ERROR: Can not close database connection.");
-            e.printStackTrace();
+            log.error("Could not close the database connection.", e);
         }
     }
 
@@ -430,6 +419,7 @@ public class DbImpl implements Db {
             statement.execute(Queries.CREATE_MSG_INSERT_TRIGGER);
             statement.execute(Queries.CREATE_MSG_UPDATE_TRIGGER);
             statement.execute(Queries.CREATE_MSG_DELETE_TRIGGER);
+            insertTestData();
         } catch (SQLException e) {
             System.err.println("ERROR: Can not create database schema.");
             e.printStackTrace();
@@ -438,6 +428,7 @@ public class DbImpl implements Db {
 
     public void insertTestData() {
 
+        log.info("Inserting test data");
         // Create two users
         KeyGen rsa = new RsaKeyGen();
         KeyGen.KeyPair alice = rsa.generate();
@@ -452,13 +443,21 @@ public class DbImpl implements Db {
         insertMessage(response1);
         insertMessage(response11);
         insertMessage(otherBranch2);
+
+        log.info("Inserted topic: " + topic.getIdentifier());
     }
 
     private void setIdentifiableInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
-        try {
-            preparedStatement.setString(parameterIndex, hex.encode(byteSource.getByteBuffer()));
-        } catch (SQLException e) {
-            throw e;
-        }
+        preparedStatement.setString(parameterIndex, hex.encode(byteSource.getByteBuffer()));
+    }
+
+    @Override
+    public void start() {
+        prepareDbConnection();
+    }
+
+    @Override
+    public void close() {
+        closeDbConnection();
     }
 }

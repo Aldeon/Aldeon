@@ -3,11 +3,12 @@ package org.aldeon.db;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
+import org.aldeon.model.Service;
 
 import java.util.Map;
 import java.util.Set;
 
-public interface Db {
+public interface Db extends Service {
     void getMessageById(Identifier msgId, Callback<Message> callback);
     void insertMessage(Message message);
     void deleteMessage(Identifier msgId);

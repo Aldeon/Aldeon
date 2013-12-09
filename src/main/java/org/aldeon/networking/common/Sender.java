@@ -1,5 +1,7 @@
 package org.aldeon.networking.common;
 
+import org.aldeon.model.Service;
+
 import java.util.Set;
 
 /**

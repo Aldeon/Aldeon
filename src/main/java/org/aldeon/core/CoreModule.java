@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provider;
 import org.aldeon.db.Db;
-import org.aldeon.dbstub.DbStubModule;
+import org.aldeon.db.DbImpl;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.MultiMapBasedEventLoop;
 import org.aldeon.networking.NetworkState;
@@ -18,7 +18,7 @@ public class CoreModule extends AbstractModule implements Provider<Core> {
     @Override
     protected void configure() {
         bind(Core.class).to(AldeonCore.class);
-        bind(Db.class).toProvider(DbStubModule.class);
+        bind(Db.class).to(DbImpl.class);
         bind(EventLoop.class).to(MultiMapBasedEventLoop.class);
         bind(NetworkState.class).toProvider(NetworkingModule.class);
     }
