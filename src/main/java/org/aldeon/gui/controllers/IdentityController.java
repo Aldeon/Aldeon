@@ -21,10 +21,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.aldeon.core.BaseCore;
+import org.aldeon.core.CoreModule;
+import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.gui.GUIController;
+import org.aldeon.model.Identity;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 
 public class IdentityController implements Initializable {
@@ -39,6 +44,7 @@ public class IdentityController implements Initializable {
     public BorderPane main;
     private GUIController root;
     private int idCount;
+    private Set<Identity> identities;
 
     public void setRoot(GUIController root){
         this.root=root;
@@ -53,6 +59,7 @@ public class IdentityController implements Initializable {
             @Override
             public void handle(ActionEvent e) {
                 dialogStage.close();
+                CoreModule.getInstance().addIdentity(Identity.create(name.getText(), new RsaKeyGen()));
                 createTile(name.getText(), "#YOLO", Color.web("#006464"));
             }
         });
@@ -111,10 +118,19 @@ public class IdentityController implements Initializable {
         content.add(newId,idCount%6,(int)idCount/6);
     }
 
+    public void showIdentities(){
+        for(Identity id : identities){
+            createTile(id.getName(),id.getPublicKey())
+        }
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
        // Identities.setStyle("-fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #333333, #333333 90%, #1b1b1b 100%);");
         idCount=0;  //TODO: Load all IDs from database/file/whatever
+        identities=CoreModule.getInstance().getAllIdentities();
+
     }
 
 }
