@@ -32,7 +32,7 @@ public class Identity implements User {
         }
     }
 
-    Key getPrivateKey() {
+    public Key getPrivateKey() {
         return privateKey;
     }
 
