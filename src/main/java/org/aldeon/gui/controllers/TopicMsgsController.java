@@ -105,7 +105,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         int index = 0;
 
         for (int i = 0; i < msgs.size(); i++) {
-            if (msgs.get(i).msg.getIdentifier() == child.getParentMessageIdentifier()) {
+            if (msgs.get(i).msg.getIdentifier().equals(child.getParentMessageIdentifier())) {
                 nesting = msgs.get(i).indent;
                 index = i;
                 break;

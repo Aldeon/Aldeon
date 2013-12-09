@@ -41,7 +41,7 @@ public class Supervisor implements Runnable{
     @Override
     public void run() {
 
-        log.info("Supervisor loop");
+        // log.info("Supervisor loop");
 
         for(final TopicState topic: manager.getTopicStates()) {
             for(final Slot slot: topic.getSlots()) {

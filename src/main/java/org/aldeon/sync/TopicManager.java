@@ -19,12 +19,12 @@ public class TopicManager {
      * Registers user's interest in a particular topic
      * @param topic topic in which the user wishes to participate in.
      */
-    void addTopic(Identifier topic) {
+    public void addTopic(Identifier topic) {
 
         topics.put(topic, createTopicState(topic));
     }
 
-    void delTopic(Identifier topicId) {
+    public void delTopic(Identifier topicId) {
         // TODO: wait until all slots are not in progress, then revoke and remove
     }
 

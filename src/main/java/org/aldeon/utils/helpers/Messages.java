@@ -174,6 +174,16 @@ public class Messages {
                     +   "Sig     : " + getSignature() + "\n"
                     +   "Content : " + getContent();
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof Message) {
+                Message that = (Message) obj;
+                return this.getIdentifier().equals(that.getIdentifier());
+            } else {
+                return false;
+            }
+        }
     }
 
 }

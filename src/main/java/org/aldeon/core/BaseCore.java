@@ -1,6 +1,7 @@
 package org.aldeon.core;
 
 import org.aldeon.db.Db;
+import org.aldeon.db.wrappers.DbLoggerDecorator;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.executors.ExecutorLogger;
 import org.aldeon.events.executors.ThrowableInterceptor;
@@ -28,7 +29,9 @@ public abstract class BaseCore implements Core {
     private final Thread supervisorThread;
 
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
-        this.storage = storage;
+
+        //this.storage = storage;
+        this.storage = new DbLoggerDecorator(storage);
         this.eventLoop = eventLoop;
         this.topicManager = topicManager;
 
@@ -49,12 +52,12 @@ public abstract class BaseCore implements Core {
                     try {
                         sleep(1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        break;
                     }
                 }
             }
         };
-
+        supervisorThread.start();
     }
 
     @Override
@@ -100,6 +103,7 @@ public abstract class BaseCore implements Core {
     protected void closeExecutors() {
         clientSideExecutor.shutdown();
         serverSideExecutor.shutdown();
+        supervisorThread.interrupt();
     }
 
     protected void closeDb() {

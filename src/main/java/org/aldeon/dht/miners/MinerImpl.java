@@ -42,7 +42,12 @@ public class MinerImpl implements Miner {
                 log.info("Looping through worker for topic " + topic);
 
                 if(demand.get() > 0) {
-                    sendRequest(targetProvider.get());
+                    PeerAddress target = targetProvider.get();
+                    if(target == null) {
+                        log.warn("No target for miner (working on topic " + topic + ")");
+                    } else {
+                        sendRequest(targetProvider.get());
+                    }
                 } else {
                     working = false;
                 }
