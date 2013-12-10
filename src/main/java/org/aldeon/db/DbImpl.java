@@ -1,6 +1,5 @@
 package org.aldeon.db;
 
-import com.google.inject.internal.util.$SourceProvider;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.rsa.RsaKeyGen;
@@ -12,8 +11,6 @@ import org.aldeon.model.Message;
 import org.aldeon.model.Signature;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.hex.HexCodec;
-import org.aldeon.utils.helpers.BufPrint;
-import org.aldeon.utils.helpers.ByteBuffers;
 import org.aldeon.utils.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,9 +123,6 @@ public class DbImpl implements Db {
             }
 
             preparedStatement.executeUpdate();
-
-            log.info("Inserted message (id:" + message.getIdentifier() + ")");
-
         } catch (SQLException e) {
             log.error("Error in insertMessage", e);
         }
