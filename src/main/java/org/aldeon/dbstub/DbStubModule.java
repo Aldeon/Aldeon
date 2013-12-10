@@ -5,7 +5,9 @@ import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.db.Db;
 import org.aldeon.db.wrappers.DbEventCallerDecorator;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Message;
+import org.aldeon.utils.helpers.Callbacks;
 import org.aldeon.utils.helpers.Messages;
 
 public class DbStubModule implements Provider<Db> {
@@ -27,10 +29,12 @@ public class DbStubModule implements Provider<Db> {
 
         Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), alice.publicKey, alice.privateKey, "Response 2");
 
-        db.insertMessage(topic);
-        db.insertMessage(response1);
-        db.insertMessage(response11);
-        db.insertMessage(otherBranch2);
+        Callback<Boolean> cb = Callbacks.emptyCallback();
+
+        db.insertMessage(topic, cb);
+        db.insertMessage(response1, cb);
+        db.insertMessage(response11, cb);
+        db.insertMessage(otherBranch2, cb);
 
         System.out.println(topic);
     }

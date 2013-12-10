@@ -1,48 +1,47 @@
 package org.aldeon.db.wrappers;
 
-import org.aldeon.core.CoreModule;
-import org.aldeon.core.events.MessageAddedEvent;
-import org.aldeon.core.events.MessageRemovedEvent;
+import org.aldeon.crypt.Key;
 import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
+import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
+import org.aldeon.model.User;
 
 import java.util.Map;
 import java.util.Set;
 
+public abstract class AbstractDbWrapper implements Db {
 
-public class DbEventCallerDecorator extends AbstractDbWrapper {
+    protected final Db db;
 
-    public DbEventCallerDecorator(Db db){
-        super(db);
-    }
-
-    @Override
-    public void getMessageById(Identifier msgId, Callback<Message> callback) {
-        db.getMessageById(msgId,callback);
+    public AbstractDbWrapper(Db db) {
+        this.db = db;
     }
 
     @Override
     public void insertMessage(Message message, Callback<Boolean> callback) {
-        CoreModule.getInstance().getEventLoop().notify(new MessageAddedEvent(message));
         db.insertMessage(message, callback);
     }
 
     @Override
     public void deleteMessage(Identifier msgId, Callback<Boolean> callback) {
-        CoreModule.getInstance().getEventLoop().notify(new MessageRemovedEvent(msgId));
         db.deleteMessage(msgId, callback);
     }
 
     @Override
+    public void getMessageById(Identifier msgId, Callback<Message> callback) {
+        db.getMessageById(msgId, callback);
+    }
+
+    @Override
     public void getMessageXorById(Identifier msgId, Callback<Identifier> callback) {
-        db.getMessageXorById(msgId,callback);
+        db.getMessageXorById(msgId, callback);
     }
 
     @Override
     public void getMessageIdsByXor(Identifier msgXor, Callback<Set<Identifier>> callback) {
-        db.getMessageIdsByXor(msgXor,callback);
+        db.getMessageIdsByXor(msgXor, callback);
     }
 
     @Override
@@ -73,6 +72,46 @@ public class DbEventCallerDecorator extends AbstractDbWrapper {
     @Override
     public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
         db.getMessagesAfterClock(topic, clock, callback);
+    }
+
+    @Override
+    public void insertUser(User user, Callback<Boolean> callback) {
+        db.insertUser(user, callback);
+    }
+
+    @Override
+    public void deleteUser(Key publicKey, Callback<Boolean> callback) {
+        db.deleteUser(publicKey, callback);
+    }
+
+    @Override
+    public void getUser(Key publicKey) {
+        db.getUser(publicKey);
+    }
+
+    @Override
+    public void getUsers() {
+        db.getUsers();
+    }
+
+    @Override
+    public void insertIdentity(Identity identity, Callback<Boolean> callback) {
+        db.insertIdentity(identity, callback);
+    }
+
+    @Override
+    public void deleteIdentity(Key publicKey, Callback<Boolean> callback) {
+        db.deleteIdentity(publicKey, callback);
+    }
+
+    @Override
+    public void getIdentity(Key publicKey) {
+        db.getIdentity(publicKey);
+    }
+
+    @Override
+    public void getIdentities() {
+        db.getIdentities();
     }
 
     @Override

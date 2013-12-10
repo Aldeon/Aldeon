@@ -9,13 +9,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-public class DbWorkThreadDecorator implements Db {
+public class DbWorkThreadDecorator extends AbstractDbWrapper{
 
-    private final Db db;
     private final Executor executor;
 
     public DbWorkThreadDecorator(Db db, Executor executor) {
-        this.db = db;
+        super(db);
         this.executor = executor;
     }
 
@@ -30,21 +29,21 @@ public class DbWorkThreadDecorator implements Db {
     }
 
     @Override
-    public void insertMessage(final Message message) {
+    public void insertMessage(final Message message, final Callback<Boolean> callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                db.insertMessage(message);
+                db.insertMessage(message, callback);
             }
         });
     }
 
     @Override
-    public void deleteMessage(final Identifier msgId) {
+    public void deleteMessage(final Identifier msgId, final Callback<Boolean> callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                db.deleteMessage(msgId);
+                db.deleteMessage(msgId, callback);
             }
         });
     }

@@ -3,26 +3,21 @@ package org.aldeon.db;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.rsa.RsaKeyGen;
-import org.aldeon.db.queries.Queries;
+import org.aldeon.db.queries.IdentitiesQueries;
+import org.aldeon.db.queries.MessagesQueries;
+import org.aldeon.db.queries.UsersQueries;
 import org.aldeon.events.Callback;
-import org.aldeon.model.ByteSource;
-import org.aldeon.model.Identifier;
-import org.aldeon.model.Message;
-import org.aldeon.model.Signature;
+import org.aldeon.model.*;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.hex.HexCodec;
+import org.aldeon.utils.helpers.Callbacks;
 import org.aldeon.utils.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,7 +60,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSG_BY_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSG_BY_ID);
             setIdentifiableInPreparedStatement(1, msgId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
@@ -94,8 +89,9 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertMessage(Message message) {
+    public void insertMessage(Message message, Callback<Boolean> callback) {
         if (message == null || connection == null) {
+            callback.call(false);
             return;
         }
 
@@ -103,7 +99,7 @@ public class DbImpl implements Db {
             PreparedStatement preparedStatement;
 
             if (message.getParentMessageIdentifier().isEmpty()) {
-                preparedStatement = connection.prepareStatement(Queries.INSERT_TOPIC_MSG);
+                preparedStatement = connection.prepareStatement(MessagesQueries.INSERT_TOPIC_MSG);
                 setIdentifiableInPreparedStatement(1, message.getIdentifier(), preparedStatement);
                 setIdentifiableInPreparedStatement(2, message.getSignature(), preparedStatement);
                 setIdentifiableInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
@@ -112,7 +108,7 @@ public class DbImpl implements Db {
                 setIdentifiableInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
                 setIdentifiableInPreparedStatement(7, message.getIdentifier(), preparedStatement);
             } else {
-                preparedStatement = connection.prepareStatement(Queries.INSERT_MSG);
+                preparedStatement = connection.prepareStatement(MessagesQueries.INSERT_MSG);
                 setIdentifiableInPreparedStatement(1, message.getIdentifier(), preparedStatement);
                 setIdentifiableInPreparedStatement(2, message.getSignature(), preparedStatement);
                 setIdentifiableInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
@@ -123,25 +119,31 @@ public class DbImpl implements Db {
             }
 
             preparedStatement.executeUpdate();
+
+            callback.call(true);
         } catch (SQLException e) {
             log.error("Error in insertMessage", e);
+            callback.call(false);
         }
     }
 
     @Override
-    public void deleteMessage(Identifier msgId) {
+    public void deleteMessage(Identifier msgId, Callback<Boolean> callback) {
         if (msgId == null || connection == null) {
+            callback.call(false);
             return;
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.DELETE_MSG_BY_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.DELETE_MSG_BY_ID);
             setIdentifiableInPreparedStatement(1, msgId, preparedStatement);
 
             preparedStatement.executeUpdate();
 
+            callback.call(true);
         } catch (SQLException e) {
             log.error("Error in deleteMessage", e);
+            callback.call(false);
         }
     }
 
@@ -153,7 +155,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSG_IDS_BY_XOR);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSG_IDS_BY_XOR);
             setIdentifiableInPreparedStatement(1, msgXor, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
@@ -179,7 +181,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSGS_BY_PARENT_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSGS_BY_PARENT_ID);
             setIdentifiableInPreparedStatement(1, parentId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
@@ -218,7 +220,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSG_XOR_BY_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSG_XOR_BY_ID);
             setIdentifiableInPreparedStatement(1, msgId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
@@ -242,7 +244,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSG_IDS_BY_PARENT_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSG_IDS_BY_PARENT_ID);
             setIdentifiableInPreparedStatement(1, parentId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
@@ -268,7 +270,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSG_IDS_AND_XORS_BY_PARENT_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSG_IDS_AND_XORS_BY_PARENT_ID);
             setIdentifiableInPreparedStatement(1, parentId, preparedStatement);
             ResultSet result = preparedStatement.executeQuery();
 
@@ -301,7 +303,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_CLOCK);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_CLOCK);
             ResultSet result = preparedStatement.executeQuery();
             if (result.next()) {
                 Long clock = result.getLong("clock");
@@ -324,7 +326,7 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(Queries.SELECT_MSGS_AFTER_CLOCK);
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSGS_AFTER_CLOCK);
             setIdentifiableInPreparedStatement(1, topic, preparedStatement);
             preparedStatement.setLong(2, clock);
             ResultSet result = preparedStatement.executeQuery();
@@ -353,6 +355,89 @@ public class DbImpl implements Db {
             log.error("ERROR: Error in getMessageIdByXor.", e);
             callback.call(Collections.<Message>emptySet());
         }
+    }
+
+    @Override
+    public void insertUser(User user, Callback<Boolean> callback) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void deleteUser(Key publicKey, Callback<Boolean> callback) {
+        if (publicKey == null || publicKey.getType() != Key.Type.PUBLIC || connection == null) {
+            callback.call(false);
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UsersQueries.DELETE_USER_BY_PUBLIC_KEY);
+            setIdentifiableInPreparedStatement(1, publicKey, preparedStatement);
+
+            preparedStatement.executeUpdate();
+            callback.call(true);
+        } catch (SQLException e) {
+            log.error("Error in deleteUser", e);
+            callback.call(false);
+        }
+    }
+
+    @Override
+    public void getUser(Key publicKey) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void getUsers() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void insertIdentity(Identity identity, Callback<Boolean> callback) {
+        if (identity == null || connection == null) {
+            callback.call(false);
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(IdentitiesQueries.INSERT_IDENTITY);
+            setIdentifiableInPreparedStatement(1, identity.getPublicKey(), preparedStatement);
+            setIdentifiableInPreparedStatement(2, identity.getPrivateKey(), preparedStatement);
+            preparedStatement.setString(3, identity.getName());
+            preparedStatement.executeUpdate();
+            callback.call(true);
+        } catch (SQLException e) {
+            log.error("Error in insertIdentity", e);
+            callback.call(false);
+        }
+    }
+
+    @Override
+    public void deleteIdentity(Key publicKey, Callback<Boolean> callback) {
+        if (publicKey == null || publicKey.getType() != Key.Type.PUBLIC || connection == null) {
+            callback.call(false);
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(IdentitiesQueries.DELETE_IDENTITY_BY_PUBLIC_KEY);
+            setIdentifiableInPreparedStatement(1, publicKey, preparedStatement);
+
+            preparedStatement.executeUpdate();
+            callback.call(true);
+        } catch (SQLException e) {
+            log.error("Error in deleteIdentity", e);
+            callback.call(false);
+        }
+    }
+
+    @Override
+    public void getIdentity(Key publicKey) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void getIdentities() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private void prepareDbConnection() {
@@ -405,14 +490,14 @@ public class DbImpl implements Db {
         try {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(DEFAULT_QUERY_TIMEOUT);
-            statement.execute(Queries.CREATE_MESSAGE_TABLE);
-            statement.execute(Queries.CREATE_MSG_ID_INDEXES);
-            statement.execute(Queries.CREATE_MSG_SIGN_INDEXES);
-            statement.execute(Queries.CREATE_NODE_XOR_INDEXES);
-            statement.execute(Queries.CREATE_CALC_XOR_PROCEDURE);
-            statement.execute(Queries.CREATE_MSG_INSERT_TRIGGER);
-            statement.execute(Queries.CREATE_MSG_UPDATE_TRIGGER);
-            statement.execute(Queries.CREATE_MSG_DELETE_TRIGGER);
+            statement.execute(MessagesQueries.CREATE_MESSAGES_TABLE);
+            statement.execute(MessagesQueries.CREATE_MSG_ID_INDEXES);
+            statement.execute(MessagesQueries.CREATE_MSG_SIGN_INDEXES);
+            statement.execute(MessagesQueries.CREATE_NODE_XOR_INDEXES);
+            statement.execute(MessagesQueries.CREATE_CALC_XOR_PROCEDURE);
+            statement.execute(MessagesQueries.CREATE_MSG_INSERT_TRIGGER);
+            statement.execute(MessagesQueries.CREATE_MSG_UPDATE_TRIGGER);
+            statement.execute(MessagesQueries.CREATE_MSG_DELETE_TRIGGER);
             insertTestData();
         } catch (SQLException e) {
             System.err.println("ERROR: Can not create database schema.");
@@ -433,10 +518,11 @@ public class DbImpl implements Db {
         Message response11 = Messages.createAndSign(response1.getIdentifier(), alice.publicKey, alice.privateKey, "Response 1.1");
         Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), alice.publicKey, alice.privateKey, "Response 2");
 
-        insertMessage(topic);
-        insertMessage(response1);
-        insertMessage(response11);
-        insertMessage(otherBranch2);
+        Callback<Boolean> cb = Callbacks.emptyCallback();
+        insertMessage(topic, cb);
+        insertMessage(response1, cb);
+        insertMessage(response11, cb);
+        insertMessage(otherBranch2, cb);
 
         log.info("Inserted topic: " + topic.getIdentifier());
     }

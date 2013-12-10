@@ -1,7 +1,8 @@
 package org.aldeon.db.queries;
 
-public class Queries {
-    public static final String CREATE_MESSAGE_TABLE = "CREATE TABLE messages (" +
+public class MessagesQueries
+{
+    public static final String CREATE_MESSAGES_TABLE = "CREATE TABLE messages (" +
             "msg_id BIT(256) NOT NULL," +
             "msg_sign BIT(1024) NOT NULL," +
             "author_id BIT(1024) NOT NULL," +

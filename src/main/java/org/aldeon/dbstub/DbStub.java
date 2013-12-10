@@ -1,12 +1,15 @@
 package org.aldeon.dbstub;
 
+import org.aldeon.crypt.Key;
 import org.aldeon.db.Db;
 import org.aldeon.db.exception.IdentifierAlreadyPresentException;
 import org.aldeon.db.exception.UnknownIdentifierException;
 import org.aldeon.db.exception.UnknownParentException;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
+import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
+import org.aldeon.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,13 +87,15 @@ public class DbStub implements Db {
     }
 
     @Override
-    public void insertMessage(Message message) {
+    public void insertMessage(Message message, Callback<Boolean> callback) {
         PutStatus s = put(message);
+        callback.call(s == PutStatus.SUCCESS);
     }
 
     @Override
-    public void deleteMessage(Identifier msgId) {
+    public void deleteMessage(Identifier msgId, Callback<Boolean> callback) {
         DelStatus s = del(msgId);
+        callback.call(s == DelStatus.SUCCESS);
     }
 
     @Override
@@ -170,5 +175,37 @@ public class DbStub implements Db {
     public void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback) {
         // TODO: implement
         callback.call(Collections.<Message>emptySet());
+    }
+
+    @Override
+    public void insertUser(User user, Callback<Boolean> callback) {
+    }
+
+    @Override
+    public void deleteUser(Key publicKey, Callback<Boolean> callback) {
+    }
+
+    @Override
+    public void getUser(Key publicKey) {
+    }
+
+    @Override
+    public void getUsers() {
+    }
+
+    @Override
+    public void insertIdentity(Identity identity, Callback<Boolean> callback) {
+    }
+
+    @Override
+    public void deleteIdentity(Key publicKey, Callback<Boolean> callback) {
+    }
+
+    @Override
+    public void getIdentity(Key publicKey) {
+    }
+
+    @Override
+    public void getIdentities() {
     }
 }

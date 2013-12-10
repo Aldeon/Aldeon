@@ -14,6 +14,7 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
+import org.aldeon.utils.helpers.Callbacks;
 import org.aldeon.utils.helpers.Messages;
 
 import java.io.IOException;
@@ -218,7 +219,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     @Override
     public void responseDeleteClicked(Parent responseNode, ResponseController rc) {
 
-        CoreModule.getInstance().getStorage().deleteMessage(rc.getMsg().getIdentifier());
+        CoreModule.getInstance().getStorage().deleteMessage(rc.getMsg().getIdentifier(), Callbacks.<Boolean>emptyCallback());
 
         Iterator<MsgWithInt> it = msgs.iterator();
         boolean delete = false;
@@ -251,7 +252,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
 
         Identity currId = Identity.create("Anon", new RsaKeyGen());
         Message newMsg = Messages.createAndSign(parentIdentifier, currId.getPublicKey(), currId.getPrivateKey(), responseText);
-        CoreModule.getInstance().getStorage().insertMessage(newMsg);
+        CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
         int creationIndex = fpane.getChildren().indexOf(wrcNode);
         Parent msg = constructResponse(newMsg, nestingLevel+1);
         wrc.getParentController().setHasChildren(true);

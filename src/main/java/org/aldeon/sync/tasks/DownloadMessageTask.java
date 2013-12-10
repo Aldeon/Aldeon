@@ -10,6 +10,7 @@ import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.response.MessageFoundResponse;
 import org.aldeon.protocol.response.MessageNotFoundResponse;
+import org.aldeon.utils.helpers.Callbacks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,8 @@ public class DownloadMessageTask extends BaseOutboundTask<GetMessageRequest> imp
                 @Override
                 public void call(Boolean matchesCriteria) {
                     if(matchesCriteria) {
-                        storage.insertMessage(msg);
+                        Callback<Boolean> cb = Callbacks.emptyCallback();
+                        storage.insertMessage(msg, cb);
                         onFinished.call(true);
                     } else {
                         onFailure(new InvalidResponseException("Message does not match the expected parameters"));
