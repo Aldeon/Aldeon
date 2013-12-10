@@ -76,6 +76,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         rc.registerListener(this);
         rc.toPass = parent;
         rc.setMessage(message, nestingLevel);
+        rc.setAuthor(message.getAuthorPublicKey());
 
         final ResponseController rcF = rc;
 

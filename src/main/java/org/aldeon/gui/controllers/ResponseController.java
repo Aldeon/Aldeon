@@ -10,6 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.aldeon.crypt.Key;
+import org.aldeon.gui.colors.ColorManager;
+import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
 
 import java.net.URL;
@@ -29,6 +32,7 @@ public class ResponseController implements Initializable {
 
     public Parent toPass;
 
+    private Key author;
     private int nestingLevel;
     private Message msg;
     private boolean showChildren = false;
@@ -88,6 +92,10 @@ public class ResponseController implements Initializable {
         this.listener = listener;
     }
 
+    public void setAuthor(Key auth){
+        author=auth;
+    }
+
     public void setHasChildren(boolean hidden) {
         this.showHide.setVisible(true);
         showChildren = hidden;
@@ -121,7 +129,7 @@ public class ResponseController implements Initializable {
         respPane.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
         //separator.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
         separator.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
-
+        colorRectangle.setFill(ColorManager.getColorForKey(author));
         windowContainer.setPadding(new Insets(0,10,0,35 * nestingLevel)); //top right bottom left
     }
 

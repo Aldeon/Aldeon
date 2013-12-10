@@ -95,4 +95,11 @@ class RsaKey implements Key {
         buf.rewind();
         return buf;
     }
+
+    @Override
+    public int hashCode(){
+        return getByteBuffer().hashCode();
+
+    }
+
 }
