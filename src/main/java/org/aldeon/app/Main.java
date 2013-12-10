@@ -3,7 +3,8 @@ package org.aldeon.app;
 import org.aldeon.core.CoreModule;
 import org.aldeon.gui.GuiModule;
 import org.aldeon.model.Identifier;
-import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
+import org.aldeon.crypt.rsa.RsaKeyGen;
+import org.aldeon.model.Identity;
 import org.aldeon.protocol.ProtocolModule;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.base64.Base64Module;
@@ -24,6 +25,9 @@ public class Main {
         //CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.42", 41530), topic);
 
         //CoreModule.getInstance().getTopicManager().addTopic(topic);
+        CoreModule.getInstance().addIdentity(Identity.create("BLARGH1", new RsaKeyGen()));
+        CoreModule.getInstance().addIdentity(Identity.create("BLARGH2", new RsaKeyGen()));
+        CoreModule.getInstance().addIdentity(Identity.create("BLARGH3", new RsaKeyGen()));
 
         GuiModule.launch();
     }

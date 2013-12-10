@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.text.Text?>
+<?import java.lang.*?>
+<?import java.net.*?>
 <?import java.net.URL?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Text?>
 
 <BorderPane fx:id="main" prefHeight="700.0" prefWidth="796.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.MainController">
   <center>
@@ -32,7 +39,11 @@
                 <Image url="@/gui/icons/Identities.png" />
               </image>
             </ImageView>
-            <Text text="Identities" StackPane.alignment="BOTTOM_CENTER" />
+            <Text text="Identities" StackPane.alignment="BOTTOM_CENTER">
+              <StackPane.margin>
+                <Insets bottom="5.0" fx:id="x1" />
+              </StackPane.margin>
+            </Text>
           </children>
         </StackPane>
         <StackPane fx:id="Threads" onMouseClicked="#threadsClicked" prefHeight="100.0" prefWidth="95.0" style="" styleClass="menuNoHighlight">
@@ -42,7 +53,7 @@
                 <Image url="@/gui/icons/Threads.png" />
               </image>
             </ImageView>
-            <Text text="Threads" StackPane.alignment="BOTTOM_CENTER" />
+            <Text text="Threads" StackPane.alignment="BOTTOM_CENTER" StackPane.margin="$x1" />
           </children>
         </StackPane>
         <StackPane fx:id="Friends" onMouseClicked="#friendsClicked" prefHeight="100.0" prefWidth="95.0" styleClass="menuNoHighlight">
@@ -52,7 +63,7 @@
                 <Image url="@/gui/icons/Friends.png" />
               </image>
             </ImageView>
-            <Text text="Friends" StackPane.alignment="BOTTOM_CENTER" />
+            <Text text="Friends" StackPane.alignment="BOTTOM_CENTER" StackPane.margin="$x1" />
           </children>
         </StackPane>
         <StackPane fx:id="Settings" onMouseClicked="#settingsClicked" prefHeight="100.0" prefWidth="95.0" styleClass="menuNoHighlight">
@@ -62,7 +73,7 @@
                 <Image url="@/gui/icons/Settings.png" />
               </image>
             </ImageView>
-            <Text text="Settings" StackPane.alignment="BOTTOM_CENTER" />
+            <Text text="Settings" StackPane.alignment="BOTTOM_CENTER" StackPane.margin="$x1" />
           </children>
         </StackPane>
       </children>

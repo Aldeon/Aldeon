@@ -6,6 +6,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.aldeon.gui.colors.ColorManager;
 import org.aldeon.model.Message;
 
 /**
@@ -29,6 +30,7 @@ public class TopicController {
 
     public void setMessage(Message m) {
         message = m;
+        colorRectangle.setFill(ColorManager.getColorForKey(m.getAuthorPublicKey()));
         setTopicText(m.getContent());
     }
 

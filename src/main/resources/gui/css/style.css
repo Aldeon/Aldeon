@@ -33,6 +33,11 @@
 .author {
     -fx-font:20px Verdana;
 }
+
+#main Text{
+    font-weight: bold;
+}
+
 .highlight {
     -fx-fill: #00E0FF;
 }
