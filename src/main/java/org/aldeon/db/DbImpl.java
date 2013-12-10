@@ -104,7 +104,7 @@ public class DbImpl implements Db {
                 setIdentifiableInPreparedStatement(2, message.getSignature(), preparedStatement);
                 setIdentifiableInPreparedStatement(3, message.getAuthorPublicKey(), preparedStatement);
                 preparedStatement.setString(4, message.getContent());
-                setIdentifiableInPreparedStatement(5, message.getIdentifier(), preparedStatement);
+                setIdentifiableInPreparedStatement(5, message.getIdentifier().xor(Identifier.empty()), preparedStatement);
                 setIdentifiableInPreparedStatement(6, message.getParentMessageIdentifier(), preparedStatement);
                 setIdentifiableInPreparedStatement(7, message.getIdentifier(), preparedStatement);
             } else {
