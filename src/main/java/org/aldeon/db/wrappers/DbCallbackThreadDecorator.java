@@ -10,13 +10,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-public class DbCallbackThreadDecorator implements Db {
+public class DbCallbackThreadDecorator extends AbstractDbWrapper {
 
-    private final Db db;
     private final Executor executor;
 
     public DbCallbackThreadDecorator(Db db, Executor executor) {
-        this.db = db;
+        super(db);
         this.executor = executor;
     }
 
@@ -26,13 +25,13 @@ public class DbCallbackThreadDecorator implements Db {
     }
 
     @Override
-    public void insertMessage(Message message) {
-        db.insertMessage(message);
+    public void insertMessage(Message message, Callback<Boolean> callback) {
+        db.insertMessage(message, new CallbackAndExecutor<>(callback, executor));
     }
 
     @Override
-    public void deleteMessage(Identifier msgId) {
-        db.deleteMessage(msgId);
+    public void deleteMessage(Identifier msgId, Callback<Boolean> callback) {
+        db.deleteMessage(msgId, new CallbackAndExecutor<>(callback, executor));
     }
 
     @Override

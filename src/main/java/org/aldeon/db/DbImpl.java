@@ -10,18 +10,14 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.*;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.hex.HexCodec;
+import org.aldeon.utils.helpers.Callbacks;
 import org.aldeon.utils.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -93,8 +89,9 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertMessage(Message message) {
+    public void insertMessage(Message message, Callback<Boolean> callback) {
         if (message == null || connection == null) {
+            callback.call(false);
             return;
         }
 
@@ -122,14 +119,18 @@ public class DbImpl implements Db {
             }
 
             preparedStatement.executeUpdate();
+
+            callback.call(true);
         } catch (SQLException e) {
             log.error("Error in insertMessage", e);
+            callback.call(false);
         }
     }
 
     @Override
-    public void deleteMessage(Identifier msgId) {
+    public void deleteMessage(Identifier msgId, Callback<Boolean> callback) {
         if (msgId == null || connection == null) {
+            callback.call(false);
             return;
         }
 
@@ -139,8 +140,10 @@ public class DbImpl implements Db {
 
             preparedStatement.executeUpdate();
 
+            callback.call(true);
         } catch (SQLException e) {
             log.error("Error in deleteMessage", e);
+            callback.call(false);
         }
     }
 
@@ -355,13 +358,14 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertUser(User user) {
+    public void insertUser(User user, Callback<Boolean> callback) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void deleteUser(Key publicKey) {
+    public void deleteUser(Key publicKey, Callback<Boolean> callback) {
         if (publicKey == null || publicKey.getType() != Key.Type.PUBLIC || connection == null) {
+            callback.call(false);
             return;
         }
 
@@ -370,8 +374,10 @@ public class DbImpl implements Db {
             setIdentifiableInPreparedStatement(1, publicKey, preparedStatement);
 
             preparedStatement.executeUpdate();
+            callback.call(true);
         } catch (SQLException e) {
             log.error("Error in deleteUser", e);
+            callback.call(false);
         }
     }
 
@@ -386,8 +392,9 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertIdentity(Identity identity) {
+    public void insertIdentity(Identity identity, Callback<Boolean> callback) {
         if (identity == null || connection == null) {
+            callback.call(false);
             return;
         }
 
@@ -397,14 +404,17 @@ public class DbImpl implements Db {
             setIdentifiableInPreparedStatement(2, identity.getPrivateKey(), preparedStatement);
             preparedStatement.setString(3, identity.getName());
             preparedStatement.executeUpdate();
+            callback.call(true);
         } catch (SQLException e) {
             log.error("Error in insertIdentity", e);
+            callback.call(false);
         }
     }
 
     @Override
-    public void deleteIdentity(Key publicKey) {
+    public void deleteIdentity(Key publicKey, Callback<Boolean> callback) {
         if (publicKey == null || publicKey.getType() != Key.Type.PUBLIC || connection == null) {
+            callback.call(false);
             return;
         }
 
@@ -413,8 +423,10 @@ public class DbImpl implements Db {
             setIdentifiableInPreparedStatement(1, publicKey, preparedStatement);
 
             preparedStatement.executeUpdate();
+            callback.call(true);
         } catch (SQLException e) {
             log.error("Error in deleteIdentity", e);
+            callback.call(false);
         }
     }
 
@@ -506,10 +518,11 @@ public class DbImpl implements Db {
         Message response11 = Messages.createAndSign(response1.getIdentifier(), alice.publicKey, alice.privateKey, "Response 1.1");
         Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), alice.publicKey, alice.privateKey, "Response 2");
 
-        insertMessage(topic);
-        insertMessage(response1);
-        insertMessage(response11);
-        insertMessage(otherBranch2);
+        Callback<Boolean> cb = Callbacks.emptyCallback();
+        insertMessage(topic, cb);
+        insertMessage(response1, cb);
+        insertMessage(response11, cb);
+        insertMessage(otherBranch2, cb);
 
         log.info("Inserted topic: " + topic.getIdentifier());
     }

@@ -12,14 +12,13 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class DbLoggerDecorator implements Db {
+public class DbLoggerDecorator extends AbstractDbWrapper {
 
-    private final Db db;
     private final static Codec hex = new HexCodec();
     private final static Random r = new Random();
 
     public DbLoggerDecorator(Db db) {
-        this.db = db;
+        super(db);
     }
 
     private static String randomHex() {
@@ -45,21 +44,21 @@ public class DbLoggerDecorator implements Db {
     }
 
     @Override
-    public void insertMessage(Message message) {
+    public void insertMessage(Message message, Callback<Boolean> callback) {
         System.out.println("------------");
         final String rand = randomHex();
         System.out.println(rand + " QUERY: insert message");
         System.out.println(rand + " " + message);
-        db.insertMessage(message);
+        db.insertMessage(message, callback);
         System.out.println(rand + " RESULT: inserted");
     }
 
     @Override
-    public void deleteMessage(Identifier msgId) {
+    public void deleteMessage(Identifier msgId, Callback<Boolean> callback) {
         System.out.println("------------");
         final String rand = randomHex();
         System.out.println(rand + " QUERY: delete message " + msgId);
-        db.deleteMessage(msgId);
+        db.deleteMessage(msgId, callback);
         System.out.println(rand + " RESULT: inserted");
     }
 
