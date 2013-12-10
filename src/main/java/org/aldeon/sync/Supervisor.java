@@ -48,6 +48,8 @@ public class Supervisor implements Runnable{
 
                 if(!slot.getInProgress()) {
 
+                    log.info("Slot " + slot + " not in progress. Calling procedure...");
+
                     final SlotStateUpgradeProcedure proc = procedures.get(slot.getSlotState());
 
                     slot.setInProgress(true);

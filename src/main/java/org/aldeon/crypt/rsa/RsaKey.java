@@ -3,6 +3,7 @@ package org.aldeon.crypt.rsa;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
+import org.aldeon.model.impl.FixedSizeImmutableByteBufferSource;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -14,17 +15,16 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-class RsaKey implements Key {
+class RsaKey extends FixedSizeImmutableByteBufferSource implements Key {
 
     private static final String METHOD = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
 
-    private final ByteBuffer raw;
     private final SecureRandom seed;
     private final java.security.Key key;
     private final Type type;
 
     public RsaKey(java.security.Key key, ByteBuffer buf, SecureRandom seed, Type type) {
-        this.raw = buf;
+        super(buf, false, RsaKeyGen.SIZE_BYTES);
         this.key = key;
         this.seed = seed;
         this.type = type;
@@ -85,14 +85,4 @@ class RsaKey implements Key {
         return type;
     }
 
-    @Override
-    public ByteBuffer getByteBuffer() {
-
-
-        // TODO: fix the bytebuffer conversion
-
-        ByteBuffer buf = raw.asReadOnlyBuffer();
-        buf.rewind();
-        return buf;
-    }
 }

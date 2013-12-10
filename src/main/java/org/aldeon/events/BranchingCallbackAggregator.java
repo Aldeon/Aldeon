@@ -18,9 +18,9 @@ public class BranchingCallbackAggregator<T> {
         this.callback = callback;
     }
 
-    public synchronized void start() {
+    public synchronized void start(T val) {
         started = true;
-        checkAndCall();
+        checkAndCall(val);
     }
 
     public synchronized Callback<T> childCallback() {
@@ -41,15 +41,15 @@ public class BranchingCallbackAggregator<T> {
 
     private synchronized void onChildCalled(T val) {
         childrenEnded++;
+        checkAndCall(val);
+    }
+
+    private void checkAndCall(T val) {
         if(result == null) {
             result = val;
         } else {
             result = reducer.reduce(result, val);
         }
-        checkAndCall();
-    }
-
-    private void checkAndCall() {
         if(started && !called && childrenGiven == childrenEnded) {
             called = true;
             callback.call(result);

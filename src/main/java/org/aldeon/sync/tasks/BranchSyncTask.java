@@ -175,7 +175,7 @@ public class BranchSyncTask extends BaseOutboundTask<CompareTreesRequest> implem
                 }
 
                 // All callbacks dispatched, enable aggregator fallback
-                aggregator.start();
+                aggregator.start(true);
             }
         });
     }

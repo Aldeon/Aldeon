@@ -15,14 +15,12 @@ public /* final */ class Identifier extends FixedSizeImmutableByteBufferSource {
     public static final int LENGTH_BYTES = LENGTH_BITS / 8;
 
     private final static Identifier emptyId;
-    private static final Codec CODEC;
+
 
     //////////////////////////////////////////////////////////////////////////////
 
     static {
         //emptyId = new Identifier(ByteBuffer.allocate(Identifier.LENGTH_BYTES), false);
-        CODEC = new Base64Module().get();
-
         ByteBuffer bufferWithOnes = ByteBuffer.allocate(Identifier.LENGTH_BYTES);
         for(int i=0;i<LENGTH_BYTES;++i) {
             bufferWithOnes.put(i, (byte) 0xFF);
@@ -69,10 +67,5 @@ public /* final */ class Identifier extends FixedSizeImmutableByteBufferSource {
     @Override
     public int hashCode() {
         return getByteBuffer().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return CODEC.encode(getByteBuffer());
     }
 }
