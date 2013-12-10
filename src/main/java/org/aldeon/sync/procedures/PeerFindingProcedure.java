@@ -35,7 +35,7 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
                     }
                 };
 
-                if(slot.getAddressType() == peerAddress.getType()) {
+                if(slot.getAddressType().equals(peerAddress.getType())) {
                     slot.setPeerAddress(peerAddress);
                     slot.onRevoke(revoke);
                     slot.setSlotState(SlotState.SYNC_IN_PROGRESS);

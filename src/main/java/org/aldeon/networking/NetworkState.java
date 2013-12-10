@@ -21,7 +21,7 @@ import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.Converter;
 import org.aldeon.utils.json.ClassMapper;
 import org.aldeon.utils.json.JsonParser;
-import org.aldeon.utils.json.adapters.JsonModule;
+import org.aldeon.utils.json.JsonModule;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
