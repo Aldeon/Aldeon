@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import org.aldeon.crypt.Key;
+import org.aldeon.crypt.KeyGen;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.model.Signature;
@@ -12,10 +13,13 @@ import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.json.adapters.IdentifierDeserializer;
 import org.aldeon.utils.json.adapters.IdentifierSerializer;
+import org.aldeon.utils.json.adapters.KeyDeserializer;
 import org.aldeon.utils.json.adapters.KeySerializer;
+import org.aldeon.utils.json.adapters.MessageDeserializer;
 import org.aldeon.utils.json.adapters.MessageSerializer;
 import org.aldeon.utils.json.adapters.PeerAddressDeserializer;
 import org.aldeon.utils.json.adapters.PeerAddressSerializer;
+import org.aldeon.utils.json.adapters.SignatureDeserializer;
 import org.aldeon.utils.json.adapters.SignatureSerializer;
 
 public class GsonBasedJsonParser implements JsonParser {
@@ -24,7 +28,7 @@ public class GsonBasedJsonParser implements JsonParser {
     private com.google.gson.JsonParser parser;
 
     @Inject
-    public GsonBasedJsonParser(Codec codec) {
+    public GsonBasedJsonParser(Codec codec, KeyGen keyGen) {
 
         GsonBuilder builder = new GsonBuilder();
 
@@ -37,9 +41,13 @@ public class GsonBasedJsonParser implements JsonParser {
         builder.registerTypeAdapter(Identifier.class, new IdentifierDeserializer(codec));
 
         builder.registerTypeAdapter(Key.class, new KeySerializer(codec));
+        builder.registerTypeAdapter(Key.class, new KeyDeserializer(codec, keyGen));
 
         builder.registerTypeAdapter(Signature.class, new SignatureSerializer(codec));
+        builder.registerTypeAdapter(Signature.class, new SignatureDeserializer(codec));
+
         builder.registerTypeAdapter(Message.class, new MessageSerializer());
+        builder.registerTypeAdapter(Message.class, new MessageDeserializer());
 
         builder.registerTypeAdapter(PeerAddress.class, new PeerAddressSerializer());
         builder.registerTypeAdapter(PeerAddress.class, new PeerAddressDeserializer());

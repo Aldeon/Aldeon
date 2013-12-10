@@ -93,21 +93,25 @@ public class RsaKeyGen implements KeyGen {
     @Override
     public Key parsePublicKey(ByteBuffer data) throws KeyParseException {
 
-        try {
-            byte[] raw = new byte[data.capacity() + 1];
+        if(data.remaining() == SIZE_BYTES)  {
+            try {
+                byte[] raw = new byte[data.capacity() + 1];
 
-            raw[0] = 0x00;
-            data.get(raw, 1, data.capacity());
+                raw[0] = 0x00;
+                data.get(raw, 1, data.capacity());
 
-            BigInteger modulus = new BigInteger(raw);
+                BigInteger modulus = new BigInteger(raw);
 
-            RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, PUBLIC_EXPONENT);
-            KeyFactory factory = KeyFactory.getInstance(ALGORITHM);
-            PublicKey pub = factory.generatePublic(spec);
+                RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, PUBLIC_EXPONENT);
+                KeyFactory factory = KeyFactory.getInstance(ALGORITHM);
+                PublicKey pub = factory.generatePublic(spec);
 
-            return new RsaKey(pub, data.asReadOnlyBuffer(), seed, Key.Type.PUBLIC);
-        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            throw new KeyParseException("Invalid key structure", e);
+                return new RsaKey(pub, data.asReadOnlyBuffer(), seed, Key.Type.PUBLIC);
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+                throw new KeyParseException("Invalid key structure", e);
+            }
+        } else {
+            throw new KeyParseException("Invalid key size (expected: " + SIZE_BYTES + " bytes, was: " + data.remaining() + " bytes)");
         }
     }
 

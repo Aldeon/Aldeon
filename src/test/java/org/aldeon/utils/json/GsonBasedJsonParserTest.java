@@ -1,5 +1,6 @@
 package org.aldeon.utils.json;
 
+import org.aldeon.crypt.rsa.RsaModule;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.protocol.request.CompareTreesRequest;
@@ -28,7 +29,7 @@ public class GsonBasedJsonParserTest {
         when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
         when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(codec);
+        JsonParser parser = new GsonBasedJsonParser(codec, new RsaModule().get());
 
         String json = parser.toJson(req);
 
@@ -55,7 +56,7 @@ public class GsonBasedJsonParserTest {
         when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
         when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(codec);
+        JsonParser parser = new GsonBasedJsonParser(codec, new RsaModule().get());
 
         String json = parser.toJson(req);
 
@@ -82,7 +83,7 @@ public class GsonBasedJsonParserTest {
         when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
         when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(codec);
+        JsonParser parser = new GsonBasedJsonParser(codec, new RsaModule().get());
 
         String json = parser.toJson(req);
 
@@ -109,7 +110,7 @@ public class GsonBasedJsonParserTest {
         when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
         when(codec.decode(emptyId)).thenReturn(Identifier.empty().getByteBuffer());
 
-        JsonParser parser = new GsonBasedJsonParser(codec);
+        JsonParser parser = new GsonBasedJsonParser(codec, new RsaModule().get());
 
         String json = parser.toJson(req);
 
