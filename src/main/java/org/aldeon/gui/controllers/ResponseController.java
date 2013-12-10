@@ -92,10 +92,6 @@ public class ResponseController implements Initializable {
         this.listener = listener;
     }
 
-    public void setAuthor(Key auth){
-        author=auth;
-    }
-
     public void setHasChildren(boolean hidden) {
         this.showHide.setVisible(true);
         showChildren = hidden;
@@ -129,7 +125,7 @@ public class ResponseController implements Initializable {
         respPane.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
         //separator.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
         separator.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
-        colorRectangle.setFill(ColorManager.getColorForKey(author));
+        colorRectangle.setFill(ColorManager.getColorForKey(msg.getAuthorPublicKey()));
         windowContainer.setPadding(new Insets(0,10,0,35 * nestingLevel)); //top right bottom left
     }
 

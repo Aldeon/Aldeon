@@ -13,8 +13,6 @@ public class ColorManager {
         if(colorBase.containsKey(publicKey)){
             return colorBase.get(publicKey);
         }
-        if(publicKey==null) System.out.println("WAAAAT @KEY");
-        System.out.println("HASHCODE: "+publicKey.hashCode());
         Color clr = ColorGenerator.getColorForSeed(publicKey.hashCode());
         colorBase.put(publicKey,clr);
         return clr;
