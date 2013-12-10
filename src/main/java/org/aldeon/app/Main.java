@@ -21,7 +21,7 @@ public class Main {
 
         Identifier topic = Identifier.fromByteBuffer(base64.decode("i5DLsCvFZupO6r4sVqkQ6WPaYYyvKhZlPgrr7V68Ke4-"), false);
 
-        CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.90", 41530), topic);
+        // CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.90", 41530), topic);
 
         // CoreModule.getInstance().getTopicManager().addTopic(topic);
 

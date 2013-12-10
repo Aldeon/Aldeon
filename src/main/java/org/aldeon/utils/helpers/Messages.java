@@ -69,6 +69,9 @@ public class Messages {
 
         Message msg = createUnsafe(identifier, parent, pubKey, content, sig);
 
+        System.out.println("Message: ");
+        System.out.println(msg);
+
         if(verify(msg)) {
             return msg;
         } else {

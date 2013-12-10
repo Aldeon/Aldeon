@@ -12,7 +12,7 @@ public class CheckTimeoutProcedure implements SlotStateUpgradeProcedure {
 
     private static final Logger log = LoggerFactory.getLogger(CheckTimeoutProcedure.class);
 
-    private static final long TIMEOUT = 15;
+    private static final long TIMEOUT = 10000;
 
     private final Provider<Long> timeProvider;
 

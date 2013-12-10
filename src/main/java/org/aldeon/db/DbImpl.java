@@ -525,6 +525,7 @@ public class DbImpl implements Db {
         insertMessage(otherBranch2, cb);
 
         log.info("Inserted topic: " + topic.getIdentifier());
+        System.out.println(topic);
     }
 
     private void setIdentifiableInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
