@@ -4,6 +4,7 @@ package org.aldeon.crypt.rsa;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.exception.KeyParseException;
+import org.aldeon.utils.helpers.BufPrint;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -84,6 +85,8 @@ public class RsaKeyGen implements KeyGen {
 
         KeyPair pair = new KeyPair();
 
+        modulusBuffer.flip();
+
         pair.publicKey  = new RsaKey(pub, modulusBuffer, seed, Key.Type.PUBLIC);
         pair.privateKey = new RsaKey(prv, ByteBuffer.wrap(prv.getEncoded()), seed, Key.Type.PRIVATE);
 
@@ -92,6 +95,8 @@ public class RsaKeyGen implements KeyGen {
 
     @Override
     public Key parsePublicKey(ByteBuffer data) throws KeyParseException {
+
+        data = data.asReadOnlyBuffer();
 
         if(data.remaining() == SIZE_BYTES)  {
             try {
@@ -106,7 +111,9 @@ public class RsaKeyGen implements KeyGen {
                 KeyFactory factory = KeyFactory.getInstance(ALGORITHM);
                 PublicKey pub = factory.generatePublic(spec);
 
-                return new RsaKey(pub, data.asReadOnlyBuffer(), seed, Key.Type.PUBLIC);
+                data.rewind();
+
+                return new RsaKey(pub, data, seed, Key.Type.PUBLIC);
             } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
                 throw new KeyParseException("Invalid key structure", e);
             }

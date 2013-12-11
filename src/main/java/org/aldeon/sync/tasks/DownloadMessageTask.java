@@ -76,9 +76,17 @@ public class DownloadMessageTask extends BaseOutboundTask<GetMessageRequest> imp
                 @Override
                 public void call(Boolean matchesCriteria) {
                     if(matchesCriteria) {
-                        Callback<Boolean> cb = Callbacks.emptyCallback();
-                        storage.insertMessage(msg, cb);
-                        onFinished.call(true);
+                        storage.insertMessage(msg, new Callback<Boolean>() {
+                            @Override
+                            public void call(Boolean val) {
+                                if(val) {
+                                    log.info("Downloaded message " + msg.getIdentifier());
+                                } else {
+                                    log.info("Failed to download message " + msg.getIdentifier());
+                                }
+                                onFinished.call(val);
+                            }
+                        });
                     } else {
                         onFailure(new InvalidResponseException("Message does not match the expected parameters"));
                     }

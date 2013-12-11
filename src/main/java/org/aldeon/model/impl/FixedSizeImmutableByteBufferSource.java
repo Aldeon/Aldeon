@@ -1,6 +1,8 @@
 package org.aldeon.model.impl;
 
 import org.aldeon.model.ByteSource;
+import org.aldeon.utils.codec.Codec;
+import org.aldeon.utils.codec.base64.Base64Module;
 
 import java.nio.ByteBuffer;
 
@@ -8,7 +10,11 @@ import java.nio.ByteBuffer;
  *  Holds an immutable ByteBuffer of a specified size.
  */
 public class FixedSizeImmutableByteBufferSource implements ByteSource {
+
+    private static final Codec CODEC = new Base64Module().get();
+
     private ByteBuffer buffer;
+
 
     /**
      * Registers a ByteBuffer with specified parameters
@@ -34,7 +40,12 @@ public class FixedSizeImmutableByteBufferSource implements ByteSource {
     }
 
     @Override
-    public ByteBuffer getByteBuffer() {
+    public final ByteBuffer getByteBuffer() {
         return buffer.asReadOnlyBuffer();
+    }
+
+    @Override
+    public String toString() {
+        return CODEC.encode(getByteBuffer());
     }
 }

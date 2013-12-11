@@ -49,7 +49,7 @@ public class NettySendPoint implements SendPoint {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline p = ch.pipeline();
-                p.addLast("log",        new LoggingHandler(LogLevel.INFO));
+                // p.addLast("log",        new LoggingHandler(LogLevel.INFO));
                 p.addLast("codec",      new HttpClientCodec());
                 p.addLast("aggregator", new HttpObjectAggregator(1024 * 1024));
                 p.addLast("handler",    new NettySenderHandler());
