@@ -34,22 +34,6 @@ public interface Core {
     EventLoop getEventLoop();
 
     /**
-     * Returns all locally stored identities
-     * @return
-     */
-    Set<Identity> getAllIdentities();
-
-    /**
-     *
-     */
-    void addIdentity(Identity identity);
-
-    /**
-     *
-     */
-    void delIdentity(Identity identity);
-
-    /**
      * Executor. Should be used to handle client-related tasks
      * @return
      */
@@ -60,6 +44,13 @@ public interface Core {
      * @return
      */
     Executor clientSideExecutor();
+
+
+    /**
+     * Manages user identities
+     * @return
+     */
+    UserManager getUserManager();
 
     /**
      * Sender wrapper - analyses the address and forwards the request to appropriate sender on the fly.

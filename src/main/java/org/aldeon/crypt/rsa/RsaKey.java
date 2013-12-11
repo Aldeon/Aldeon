@@ -3,7 +3,6 @@ package org.aldeon.crypt.rsa;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
-import org.aldeon.model.impl.FixedSizeImmutableByteBufferSource;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.base64.Base64Module;
 
@@ -95,7 +94,14 @@ class RsaKey implements Key {
     }
 
     @Override
+    public int hashCode(){
+        return getByteBuffer().hashCode();
+
+    }
+
+    @Override
     public String toString() {
         return CODEC.encode(getByteBuffer());
     }
+
 }

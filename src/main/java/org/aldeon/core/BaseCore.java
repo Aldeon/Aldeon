@@ -21,17 +21,18 @@ public abstract class BaseCore implements Core {
     private final Db storage;
     private final EventLoop eventLoop;
     private final TopicManager topicManager;
-    private final Set<Identity> identities = new HashSet<>();
     private final ExecutorService clientSideExecutor;
     private final ExecutorService serverSideExecutor;
     private final Executor wrappedClientExecutor;
     private final Executor wrappedServerExecutor;
     private final Thread supervisorThread;
+    private final UserManager userManager;
 
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
 
         this.storage = storage;
         // this.storage = new DbLoggerDecorator(storage);
+        this.userManager = new UserManager();
         this.eventLoop = eventLoop;
         this.topicManager = topicManager;
 
@@ -71,21 +72,6 @@ public abstract class BaseCore implements Core {
     }
 
     @Override
-    public Set<Identity> getAllIdentities() {
-        return Collections.unmodifiableSet(identities);
-    }
-
-    @Override
-    public void addIdentity(Identity identity) {
-        identities.add(identity);
-    }
-
-    @Override
-    public void delIdentity(Identity identity) {
-        identities.remove(identity);
-    }
-
-    @Override
     public Executor serverSideExecutor() {
         return wrappedServerExecutor;
     }
@@ -98,6 +84,11 @@ public abstract class BaseCore implements Core {
     @Override
     public TopicManager getTopicManager() {
         return topicManager;
+    }
+
+    @Override
+    public UserManager getUserManager(){
+        return userManager;
     }
 
     protected void closeExecutors() {

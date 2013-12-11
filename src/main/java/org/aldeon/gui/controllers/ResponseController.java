@@ -10,6 +10,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.aldeon.core.CoreModule;
+import org.aldeon.crypt.Key;
+import org.aldeon.gui.colors.ColorManager;
+import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
 
 import java.net.URL;
@@ -28,7 +32,10 @@ public class ResponseController implements Initializable {
     public Button showHide;
 
     public Parent toPass;
+    public Text auth;
+    public Text pubKey;
 
+    private Key author;
     private int nestingLevel;
     private Message msg;
     private boolean showChildren = false;
@@ -104,7 +111,10 @@ public class ResponseController implements Initializable {
         this.msg = msg;
         this.message.setText(msg.getContent());
         this.nestingLevel = nestingLevel;
-
+        Identity als=CoreModule.getInstance().getUserManager().getIdentity(msg.getAuthorPublicKey());
+        if(als!=null) this.auth.setText(als.getName());
+        else this.auth.setText("Anonymous");
+        this.pubKey.setText(msg.getAuthorPublicKey().toString().substring(0,16) + "...");
         //borderPane.prefWidthProperty().bind(root.widthProperty());
         //respPane.prefHeightProperty().bind(colorRectangle.heightProperty());
         //colorRectangle.heightProperty().bind(respPane.prefHeightProperty());
@@ -120,7 +130,7 @@ public class ResponseController implements Initializable {
         respPane.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
         //separator.prefWidthProperty().bindBidirectional(windowContainer.prefWidthProperty());
         separator.prefHeightProperty().bindBidirectional(colorRectangle.heightProperty());
-
+        colorRectangle.setFill(ColorManager.getColorForKey(msg.getAuthorPublicKey()));
         windowContainer.setPadding(new Insets(0,10,0,35 * nestingLevel)); //top right bottom left
     }
 
