@@ -116,6 +116,8 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
             }
         }
 
+        if (index + 1 < msgs.size() && msgs.get(index+1).msg == null) index++;
+
         Parent childNode = constructResponse(child, nesting+1);
         fpane.getChildren().add(index+1, childNode);
         msgs.add(index+1, new MsgWithInt(childNode, nesting+1, child));
@@ -209,6 +211,8 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         wrc.setParentIdentifier(rc.getMsg().getIdentifier());
         wrc.setParentController(rc);
         wrc.registerListener(this);
+
+        rc.showChildren();
 
         synchronized (this) {
             msgs.add(fpane.getChildren().indexOf(rcNode)+1, new MsgWithInt(parent, nestingLevel+1,null));
