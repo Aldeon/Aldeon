@@ -41,7 +41,7 @@
             <Insets left="30.0" right="30.0" top="10.0" />
           </StackPane.margin>
         </VBox>
-        <ScrollPane id="ScrollPane" prefViewportHeight="180.0" prefViewportWidth="190.0">
+        <ScrollPane fx:id="identityScroll" id="ScrollPane" prefViewportHeight="180.0" prefViewportWidth="190.0">
           <content>
             <ListView fx:id="identityList" prefHeight="200.0" prefWidth="200.0" />
           </content>

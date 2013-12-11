@@ -85,12 +85,12 @@
                         <Insets right="10.0" top="10.0" />
                       </padding>
                     </HBox>
-                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="author" text="Anon">
+                    <Text fx:id="auth" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="author" text="">
                       <VBox.margin>
                         <Insets fx:id="x1" />
                       </VBox.margin>
                     </Text>
-                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="4DF987680E37F6042D06AAD3CSAESCD" wrappingWidth="123.0" />
+                    <Text fx:id="pubKey" strokeType="OUTSIDE" strokeWidth="0.0" text="4DF987680E37F6042D06AAD3CSAESCD" wrappingWidth="123.0" />
                   </children>
                   <padding>
                     <Insets left="15.0" />

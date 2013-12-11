@@ -3,6 +3,8 @@ package org.aldeon.crypt.rsa;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.exception.DecryptionFailedException;
 import org.aldeon.crypt.exception.EncryptionFailedException;
+import org.aldeon.utils.codec.Codec;
+import org.aldeon.utils.codec.base64.Base64Module;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -17,6 +19,7 @@ import java.security.SecureRandom;
 class RsaKey implements Key {
 
     private static final String METHOD = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+    private static final Codec CODEC = new Base64Module().get();
 
     private final ByteBuffer raw;
     private final SecureRandom seed;
@@ -100,6 +103,11 @@ class RsaKey implements Key {
     public int hashCode(){
         return getByteBuffer().hashCode();
 
+    }
+
+    @Override
+    public String toString() {
+        return CODEC.encode(getByteBuffer());
     }
 
 }

@@ -22,12 +22,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.aldeon.core.CoreModule;
+import org.aldeon.crypt.Key;
 import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.gui.GUIController;
 import org.aldeon.gui.colors.ColorManager;
 import org.aldeon.model.Identity;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -44,7 +46,7 @@ public class IdentityController implements Initializable {
     public BorderPane main;
     private GUIController root;
     private int idCount;
-    private Set<Identity> identities;
+    private Map<Key,Identity> identities;
 
     public void setRoot(GUIController root){
         this.root=root;
@@ -60,8 +62,8 @@ public class IdentityController implements Initializable {
             public void handle(ActionEvent e) {
                 dialogStage.close();
                 Identity newId = Identity.create(name.getText(), new RsaKeyGen());
-                CoreModule.getInstance().addIdentity(newId);
-                identities=CoreModule.getInstance().getAllIdentities();
+                CoreModule.getInstance().getUserManager().addIdentity(newId);
+                identities=CoreModule.getInstance().getUserManager().getAllIdentities();
                 createTile(name.getText(), newId.getPublicKey().hashCode(), ColorManager.getColorForKey(newId.getPublicKey()));
             }
         });
@@ -121,7 +123,7 @@ public class IdentityController implements Initializable {
     }
 
     public void showIdentities(){
-        for(Identity id : identities){
+        for(Identity id : identities.values()){
             createTile(id.getName(), id.getPublicKey().hashCode(), ColorManager.getColorForKey(id.getPublicKey()));
         }
     }
@@ -131,7 +133,7 @@ public class IdentityController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
        // Identities.setStyle("-fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #333333, #333333 90%, #1b1b1b 100%);");
         idCount=0;  //TODO: Load all IDs from database/file/whatever
-        identities=CoreModule.getInstance().getAllIdentities();
+        identities=CoreModule.getInstance().getUserManager().getAllIdentities();
 
     }
 

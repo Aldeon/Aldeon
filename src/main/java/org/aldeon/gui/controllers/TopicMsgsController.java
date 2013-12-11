@@ -67,6 +67,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     private Parent constructResponse(Message message, int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/gui/fxml/Resp.fxml"));
+        if(message==null) System.out.println("DOSTAŁEM NULLA");
         Parent parent=null;
         try {
             parent = (Parent) loader.load(getClass().getResource("/gui/fxml/Resp.fxml").openStream());
@@ -89,7 +90,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
                         }
                     }
                 });
-
+        if(parent==null) System.out.println("ZWRACAM NULLA");
         return parent;
     }
 
@@ -177,7 +178,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
                     @Override
                     protected void react(Set<Message> val) {
                         for (Message message : val) {
-
                             final Message m = message;
                             Platform.runLater(new Runnable() {
                                 @Override
@@ -245,13 +245,13 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     }
 
     @Override
-    public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identifier parentIdentifier,
+    public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identity author, Identifier parentIdentifier,
                                 int nestingLevel) {
 
         //TODO @down - move to synchronized block
 
-        Identity currId = Identity.create("Anon", new RsaKeyGen());
-        Message newMsg = Messages.createAndSign(parentIdentifier, currId.getPublicKey(), currId.getPrivateKey(), responseText);
+        //Identity currId = Identity.create("Anon", new RsaKeyGen());
+        Message newMsg = Messages.createAndSign(parentIdentifier, author.getPublicKey(), author.getPrivateKey(), responseText);
         CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
         int creationIndex = fpane.getChildren().indexOf(wrcNode);
         Parent msg = constructResponse(newMsg, nestingLevel+1);

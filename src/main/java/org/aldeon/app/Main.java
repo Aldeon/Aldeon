@@ -25,9 +25,9 @@ public class Main {
         //CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.42", 41530), topic);
 
         //CoreModule.getInstance().getTopicManager().addTopic(topic);
-        CoreModule.getInstance().addIdentity(Identity.create("BLARGH1", new RsaKeyGen()));
-        CoreModule.getInstance().addIdentity(Identity.create("BLARGH2", new RsaKeyGen()));
-        CoreModule.getInstance().addIdentity(Identity.create("BLARGH3", new RsaKeyGen()));
+        CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH1", new RsaKeyGen()));
+        CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH2", new RsaKeyGen()));
+        CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH3", new RsaKeyGen()));
 
         GuiModule.launch();
     }

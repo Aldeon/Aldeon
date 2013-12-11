@@ -33,9 +33,35 @@
 .author {
     -fx-font:20px Verdana;
 }
+.list-cell{
+    -fx-text-fill: #ffffff;
+}
 
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #222222;
+    -fx-text-fill: #00E0FF;
+}
+.list-cell:odd {
+    -fx-background-color: #222222;
+}
+.list-cell:even {
+    -fx-background-color: #222222;
+}
+.list-cell:filled:hover {
+    -fx-background-color: #222222;
+    -fx-text-fill: #00E0FF;
+}
 #main Text{
-    font-weight: bold;
+}
+
+#identityScroll{
+    -fx-background-color: #222222;
+    -fx-border: 5px;
+    -fx-outline: 0px;
+    -fx-background-insets: 0px 0px;
+}
+#identityList{
+    -fx-background-color: #222222;
 }
 
 .highlight {
