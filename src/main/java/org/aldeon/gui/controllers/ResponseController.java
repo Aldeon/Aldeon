@@ -97,7 +97,6 @@ public class ResponseController implements Initializable {
         } else {
             showHide.setText("Show");
         }
-        System.out.println("set has children called on " + this.msg.getContent());
     }
 
     public void setMessage(Message msg, int nestingLevel) {

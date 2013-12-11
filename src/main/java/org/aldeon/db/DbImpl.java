@@ -500,8 +500,7 @@ public class DbImpl implements Db {
             statement.execute(MessagesQueries.CREATE_MSG_DELETE_TRIGGER);
             insertTestData();
         } catch (SQLException e) {
-            System.err.println("ERROR: Can not create database schema.");
-            e.printStackTrace();
+            log.error("Could not create the database schema", e);
         }
     }
 
@@ -525,7 +524,6 @@ public class DbImpl implements Db {
         insertMessage(otherBranch2, cb);
 
         log.info("Inserted topic: " + topic.getIdentifier());
-        System.out.println(topic);
     }
 
     private void setIdentifiableInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
