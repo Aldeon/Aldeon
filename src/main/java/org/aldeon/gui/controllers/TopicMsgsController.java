@@ -8,6 +8,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.core.events.MessageRemovedEvent;
 import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
@@ -67,8 +69,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     private Parent constructResponse(Message message, int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/gui/fxml/Resp.fxml"));
-        if(message==null) System.out.println("DOSTAŁEM NULLA");
-        Parent parent=null;
+        Parent parent = null;
         try {
             parent = (Parent) loader.load(getClass().getResource("/gui/fxml/Resp.fxml").openStream());
         } catch (IOException e) {
@@ -80,7 +81,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
 
         final ResponseController rcF = rc;
 
-        if (nestingLevel != 0)
         CoreModule.getInstance().getStorage().getMessagesByParentId(message.getIdentifier(),
                 new Callback<Set<Message>>() {
                     @Override
@@ -90,7 +90,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
                         }
                     }
                 });
-        if(parent==null) System.out.println("ZWRACAM NULLA");
+
         return parent;
     }
 
@@ -106,13 +106,23 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
 
     public synchronized void addChildMsg(Message child) {
         int nesting = 0;
-        int index = 0;
+        int index = -1;
         for (int i = 0; i < msgs.size(); i++) {
             if (msgs.get(i).msg == null) continue;
             if (msgs.get(i).msg.getIdentifier().equals(child.getParentMessageIdentifier())) {
                 nesting = msgs.get(i).indent;
                 index = i;
                 break;
+            }
+        }
+
+        if (index == -1) return; //message from another topic
+
+        for (int i = index; i < msgs.size(); i++) {
+            if (msgs.get(i).indent != nesting + 1) break;
+            if (msgs.get(i).msg == null) continue;
+            if (msgs.get(i).msg.getIdentifier().equals(child.getIdentifier())) {
+                return; //message is already being displayed
             }
         }
 
@@ -127,27 +137,49 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     public void setTopicMessage(Message topicMessage) {
         this.topicMessage = topicMessage;
         setRootMsg(topicMessage);
-
-        CoreModule.getInstance().getStorage().getMessagesByParentId(topicMessage.getIdentifier(),
-                new Callback<Set<Message>>() {
-                    @Override
-                    public void call(Set<Message> val) {
-                        for (Message message : val) {
-
-                            final Message m = message;
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addChildMsg(m);
-                                }
-                            });
-                        }
-                    }
-                });
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        CoreModule.getInstance().getEventLoop().assign(MessageAddedEvent.class, new ACB<MessageAddedEvent>(CoreModule.getInstance().clientSideExecutor()) {
+            @Override
+            public void react(MessageAddedEvent val) {
+                addChildMsg(val.getMessage());
+            }
+        });
+
+        CoreModule.getInstance().getEventLoop().assign(MessageRemovedEvent.class, new ACB<MessageRemovedEvent>(CoreModule.getInstance().clientSideExecutor()) {
+            @Override
+            protected void react(MessageRemovedEvent val) {
+                deleteMessage(val.getIdentifier());
+            }
+        });
+    }
+
+    public synchronized void deleteMessage(Identifier msgIdentifier) {
+        Iterator<MsgWithInt> it = msgs.iterator();
+        boolean delete = false;
+        int nesting = 0;
+
+        synchronized (this) {
+            while (it.hasNext()) {
+                MsgWithInt curr = it.next();
+                if (curr.msg.getIdentifier().equals(msgIdentifier)) {
+                    delete = true;
+                    nesting = curr.indent;
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                    continue;
+                }
+
+                if (delete && curr.indent > nesting) {
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                } else if (delete && curr.indent <= nesting) {
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -255,8 +287,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identity author, Identifier parentIdentifier,
                                 int nestingLevel) {
 
-
-        //Identity currId = Identity.create("Anon", new RsaKeyGen());
         Message newMsg = Messages.createAndSign(parentIdentifier, author.getPublicKey(), author.getPrivateKey(), responseText);
         CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
         Parent msg = constructResponse(newMsg, nestingLevel+1);
