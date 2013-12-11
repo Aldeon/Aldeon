@@ -12,6 +12,7 @@ import org.aldeon.networking.conversion.RequestClassMapper;
 import org.aldeon.networking.conversion.RequestToByteBufferConverter;
 import org.aldeon.networking.conversion.ResponseClassMapper;
 import org.aldeon.networking.conversion.ResponseToByteBufferConverter;
+import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.networking.wrappers.ReceiverDisptcher;
 import org.aldeon.networking.wrappers.RecvPointBasedReceiver;
 import org.aldeon.networking.wrappers.SendPointBasedSender;
@@ -79,21 +80,21 @@ public class NetworkState {
         }
     }
 
-    public String serialize(PeerAddress address) {
+    public String serialize(PeerAddress address) throws AddressParseException {
         NetworkMedium medium = mediums.get(address.getType());
         if(medium != null) {
             return medium.serialize(address);
         } else {
-            return null;
+            throw new AddressParseException("Unknown address type");
         }
     }
 
-    public PeerAddress deserialize(AddressType type, String string) {
+    public PeerAddress deserialize(AddressType type, String string) throws AddressParseException {
         NetworkMedium medium = mediums.get(type);
         if(medium != null) {
             return medium.deserialize(string);
         } else {
-            return null;
+            throw new AddressParseException("Unknown address type");
         }
     }
 

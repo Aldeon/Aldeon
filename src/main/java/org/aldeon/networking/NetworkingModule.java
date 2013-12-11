@@ -7,6 +7,7 @@ import com.google.inject.multibindings.Multibinder;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.NetworkMedium;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.networking.mediums.ip.IpNetworkMedium;
 
 public class NetworkingModule extends AbstractModule implements Provider<NetworkState> {
@@ -25,11 +26,11 @@ public class NetworkingModule extends AbstractModule implements Provider<Network
         networkMediumBinder.addBinding().to(IpNetworkMedium.class);
     }
 
-    public static String serialize(PeerAddress address) {
+    public static String serialize(PeerAddress address) throws AddressParseException {
         return new NetworkingModule().get().serialize(address);
     }
 
-    public static PeerAddress deserialize(AddressType type, String string) {
+    public static PeerAddress deserialize(AddressType type, String string) throws AddressParseException {
         return new NetworkingModule().get().deserialize(type, string);
     }
 

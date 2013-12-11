@@ -7,6 +7,7 @@ import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.Port;
 import org.aldeon.networking.common.RecvPoint;
 import org.aldeon.networking.common.SendPoint;
+import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.receiver.NettyRecvPoint;
 import org.aldeon.networking.mediums.ip.sender.NettySendPoint;
@@ -68,8 +69,12 @@ public class IpNetworkMedium implements NetworkMedium {
     }
 
     @Override
-    public String serialize(PeerAddress address) {
-        throw new IllegalStateException("Not yet implemented");
+    public String serialize(PeerAddress address) throws AddressParseException {
+        if(address instanceof IpPeerAddress) {
+            return "{\"host\":\"" + ((IpPeerAddress) address).getHost() + "\",\"port\":" + ((IpPeerAddress) address).getPort().getIntValue() + "}";
+        } else {
+            throw new AddressParseException("Address is not an instance of IpPeerAddress");
+        }
     }
 
     @Override

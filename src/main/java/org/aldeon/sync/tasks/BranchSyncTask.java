@@ -19,7 +19,9 @@ import org.aldeon.utils.various.BooleanAndReducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public class BranchSyncTask extends BaseOutboundTask<CompareTreesRequest> implements OutboundRequestTask {
@@ -132,8 +134,8 @@ public class BranchSyncTask extends BaseOutboundTask<CompareTreesRequest> implem
                     if(!xor.isEmpty()) {
                         // There is a difference.
 
-                        // Create callback to be triggered when query returns
-                        final Callback<Boolean> queryFetched = aggregator.childCallback();
+                        // Create callback to be triggered when getMessageIdsByXor query returns
+                        final Callback<Boolean> getByXorQueryFetched = aggregator.childCallback();
 
                         // Let's see if we have a differing branch
                         storage.getMessageIdsByXor(xor, new Callback<Set<Identifier>>(){
@@ -144,19 +146,24 @@ public class BranchSyncTask extends BaseOutboundTask<CompareTreesRequest> implem
                                     Choose which one is the branch we are looking for
                                  */
 
-                                // TODO: implement the branch picking procedure
-                                Identifier differingBranch = null;
+                                // Callback triggered when selectMatchingBranch finishes
+                                final Callback<Boolean> matchingBranchPicked = aggregator.childCallback();
 
-                                if(differingBranch == null) {
-                                    // we must go deeper
-                                    sender.addTask(new BranchSyncTask(getAddress(), id, false, xor, sender, storage, aggregator.childCallback()));
+                                selectMatchingBranch(new LinkedList<>(matchingBranches), req().parent_id, new Callback<Identifier>() {
+                                    @Override
+                                    public void call(Identifier differingBranch) {
+                                        if(differingBranch == null) {
+                                            // we must go deeper
+                                            sender.addTask(new BranchSyncTask(getAddress(), id, false, xor, sender, storage, aggregator.childCallback()));
 
-                                } else {
-                                    // Hey, we have a differing branch. Let's inform the server.
-                                    offerMessage(differingBranch, aggregator.childCallback());
-                                }
-
-                                queryFetched.call(true);
+                                        } else {
+                                            // Hey, we have a differing branch. Let's inform the server.
+                                            offerMessage(differingBranch, aggregator.childCallback());
+                                        }
+                                        matchingBranchPicked.call(true);
+                                    }
+                                });
+                                getByXorQueryFetched.call(true);
                             }
                         });
                     }
@@ -192,5 +199,10 @@ public class BranchSyncTask extends BaseOutboundTask<CompareTreesRequest> implem
         // here goes the logic of offering the message to the server
         System.out.println("Offer message " + id);
         onOfferCompleted.call(true);
+    }
+
+    private void selectMatchingBranch(Queue<Identifier> branches, Identifier ancestor, Callback<Identifier> onSelected) {
+        // iterate one branch after another
+        onSelected.call(null);
     }
 }

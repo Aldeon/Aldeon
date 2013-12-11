@@ -114,8 +114,10 @@ public class GsonBasedJsonParserTest {
 
         String json = parser.toJson(req);
 
+        System.out.println(json);
+
         assertEquals(
-                "{\"type\":\"indicate_interest\",\"topic\":\"" + emptyId + "\",\"address\":{\"type\":\"ipv4\",\"host\":\"192.168.0.50\",\"port\":8080}}",
+                "{\"type\":\"indicate_interest\",\"topic\":\"" + emptyId + "\",\"address\":{\"type\":\"IPV4\",{\"host\":\"192.168.0.50\",\"port\":8080}}}",
                 json
         );
 

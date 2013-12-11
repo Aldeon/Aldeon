@@ -1,5 +1,8 @@
 package org.aldeon.networking.common;
 
+import org.aldeon.networking.exceptions.AddressParseException;
+import org.aldeon.utils.json.ParseException;
+
 import java.util.Set;
 
 public interface NetworkMedium {
@@ -11,6 +14,6 @@ public interface NetworkMedium {
 
     PeerAddress getMachineAddress(AddressType addressType);
 
-    String serialize(PeerAddress address);
-    PeerAddress deserialize(String address);
+    String serialize(PeerAddress address) throws AddressParseException;
+    PeerAddress deserialize(String address) throws AddressParseException;
 }
