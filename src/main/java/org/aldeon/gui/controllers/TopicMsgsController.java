@@ -95,18 +95,20 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     }
 
     public void setRootMsg(Message root) {
-        msgs.clear();
-        fpane.getChildren().clear();
         Parent rootNode = constructResponse(root, 0);
-        fpane.getChildren().add(rootNode);
-        msgs.add(new MsgWithInt(rootNode, 0, root));
+        synchronized (this) {
+            fpane.getChildren().clear();
+            fpane.getChildren().add(rootNode);
+            msgs.clear();
+            msgs.add(new MsgWithInt(rootNode, 0, root));
+        }
     }
 
-    public void addChildMsg(Message child) {
+    public synchronized void addChildMsg(Message child) {
         int nesting = 0;
         int index = 0;
-
         for (int i = 0; i < msgs.size(); i++) {
+            if (msgs.get(i).msg == null) continue;
             if (msgs.get(i).msg.getIdentifier().equals(child.getParentMessageIdentifier())) {
                 nesting = msgs.get(i).indent;
                 index = i;
@@ -147,7 +149,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     }
 
     @Override
-    public void responseHideClicked(Parent rcNode, ResponseController rc) {
+    public synchronized void responseHideClicked(Parent rcNode, ResponseController rc) {
         Iterator<MsgWithInt> it = msgs.iterator();
         boolean delete = false;
         int nesting = 0;
@@ -157,8 +159,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
             if (curr.node == rcNode) {
                 delete = true;
                 nesting = curr.indent;
-                //fpane.getChildren().remove(curr.node);
-                //it.remove();
                 continue;
             }
 
@@ -191,9 +191,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     }
 
     @Override
-    public void responseClicked(ResponseController rc, String text) {
-
-    }
+    public void responseClicked(ResponseController rc, String text) { }
 
     @Override
     public void responseRespondClicked(Parent rcNode, ResponseController rc,  int nestingLevel) {
@@ -212,9 +210,12 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         wrc.setParentController(rc);
         wrc.registerListener(this);
 
-        //TODO @down - move to synchronized block
-        fpane.getChildren().add(fpane.getChildren().indexOf(rcNode) + 1, parent);
+        synchronized (this) {
+            msgs.add(fpane.getChildren().indexOf(rcNode)+1, new MsgWithInt(parent, nestingLevel+1,null));
+            fpane.getChildren().add(fpane.getChildren().indexOf(rcNode) + 1, parent);
+        }
     }
+
 
     @Override
     public void responseDeleteClicked(Parent responseNode, ResponseController rc) {
@@ -225,21 +226,23 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         boolean delete = false;
         int nesting = 0;
 
-        while (it.hasNext()) {
-            MsgWithInt curr = it.next();
-            if (curr.node == responseNode) {
-                delete = true;
-                nesting = curr.indent;
-                fpane.getChildren().remove(curr.node);
-                it.remove();
-                continue;
-            }
+        synchronized (this) {
+            while (it.hasNext()) {
+                MsgWithInt curr = it.next();
+                if (curr.node == responseNode) {
+                    delete = true;
+                    nesting = curr.indent;
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                    continue;
+                }
 
-            if (delete && curr.indent > nesting) {
-                fpane.getChildren().remove(curr.node);
-                it.remove();
-            } else if (delete && curr.indent <= nesting) {
-                break;
+                if (delete && curr.indent > nesting) {
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                } else if (delete && curr.indent <= nesting) {
+                    break;
+                }
             }
         }
     }
@@ -248,16 +251,29 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identity author, Identifier parentIdentifier,
                                 int nestingLevel) {
 
-        //TODO @down - move to synchronized block
 
         //Identity currId = Identity.create("Anon", new RsaKeyGen());
         Message newMsg = Messages.createAndSign(parentIdentifier, author.getPublicKey(), author.getPrivateKey(), responseText);
         CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
-        int creationIndex = fpane.getChildren().indexOf(wrcNode);
         Parent msg = constructResponse(newMsg, nestingLevel+1);
-        wrc.getParentController().setHasChildren(true);
-        msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1, newMsg));
-        fpane.getChildren().add(creationIndex,msg);
+
+        synchronized (this) {
+            int creationIndex = fpane.getChildren().indexOf(wrcNode);
+            wrc.getParentController().setHasChildren(true);
+            msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1, newMsg));
+            fpane.getChildren().add(creationIndex,msg);
+
+            Iterator<MsgWithInt> it = msgs.iterator();
+            while (it.hasNext()) {
+                MsgWithInt curr = it.next();
+                if (curr.node == wrcNode) {
+                    it.remove();
+                    break;
+                }
+            }
+        }
+
         fpane.getChildren().remove(wrcNode);
     }
+
 }
