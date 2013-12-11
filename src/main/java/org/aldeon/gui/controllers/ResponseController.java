@@ -76,15 +76,27 @@ public class ResponseController implements Initializable {
         if (listener != null) listener.responseRespondClicked(toPass, this, nestingLevel);
     }
 
-    public void showHideClicked(MouseEvent event) {
-        showChildren = !showChildren;
-
-        if (showChildren) {
+    public void showChildren() {
+        if (!showChildren) {
             showHide.setText("Hide");
             if (listener != null) listener.responseShowClicked(toPass, this);
-        } else {
+            showChildren = !showChildren;
+        }
+    }
+
+    public void hideChildren() {
+        if (showChildren) {
             showHide.setText("Show");
             if (listener != null) listener.responseHideClicked(toPass, this);
+            showChildren = !showChildren;
+        }
+    }
+
+    public void showHideClicked(MouseEvent event) {
+        if (!showChildren) {
+            showChildren();
+        } else {
+            hideChildren();
         }
     }
 

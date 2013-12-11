@@ -8,6 +8,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.core.events.MessageRemovedEvent;
 import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
@@ -67,8 +69,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     private Parent constructResponse(Message message, int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/gui/fxml/Resp.fxml"));
-        if(message==null) System.out.println("DOSTAŁEM NULLA");
-        Parent parent=null;
+        Parent parent = null;
         try {
             parent = (Parent) loader.load(getClass().getResource("/gui/fxml/Resp.fxml").openStream());
         } catch (IOException e) {
@@ -80,7 +81,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
 
         final ResponseController rcF = rc;
 
-        if (nestingLevel != 0)
         CoreModule.getInstance().getStorage().getMessagesByParentId(message.getIdentifier(),
                 new Callback<Set<Message>>() {
                     @Override
@@ -90,29 +90,43 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
                         }
                     }
                 });
-        if(parent==null) System.out.println("ZWRACAM NULLA");
+
         return parent;
     }
 
     public void setRootMsg(Message root) {
-        msgs.clear();
-        fpane.getChildren().clear();
         Parent rootNode = constructResponse(root, 0);
-        fpane.getChildren().add(rootNode);
-        msgs.add(new MsgWithInt(rootNode, 0, root));
+        synchronized (this) {
+            fpane.getChildren().clear();
+            fpane.getChildren().add(rootNode);
+            msgs.clear();
+            msgs.add(new MsgWithInt(rootNode, 0, root));
+        }
     }
 
-    public void addChildMsg(Message child) {
+    public synchronized void addChildMsg(Message child) {
         int nesting = 0;
-        int index = 0;
-
+        int index = -1;
         for (int i = 0; i < msgs.size(); i++) {
+            if (msgs.get(i).msg == null) continue;
             if (msgs.get(i).msg.getIdentifier().equals(child.getParentMessageIdentifier())) {
                 nesting = msgs.get(i).indent;
                 index = i;
                 break;
             }
         }
+
+        if (index == -1) return; //message from another topic
+
+        for (int i = index; i < msgs.size(); i++) {
+            if (msgs.get(i).indent != nesting + 1) break;
+            if (msgs.get(i).msg == null) continue;
+            if (msgs.get(i).msg.getIdentifier().equals(child.getIdentifier())) {
+                return; //message is already being displayed
+            }
+        }
+
+        if (index + 1 < msgs.size() && msgs.get(index+1).msg == null) index++;
 
         Parent childNode = constructResponse(child, nesting+1);
         fpane.getChildren().add(index+1, childNode);
@@ -123,31 +137,53 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     public void setTopicMessage(Message topicMessage) {
         this.topicMessage = topicMessage;
         setRootMsg(topicMessage);
-
-        CoreModule.getInstance().getStorage().getMessagesByParentId(topicMessage.getIdentifier(),
-                new Callback<Set<Message>>() {
-                    @Override
-                    public void call(Set<Message> val) {
-                        for (Message message : val) {
-
-                            final Message m = message;
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addChildMsg(m);
-                                }
-                            });
-                        }
-                    }
-                });
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        CoreModule.getInstance().getEventLoop().assign(MessageAddedEvent.class, new ACB<MessageAddedEvent>(CoreModule.getInstance().clientSideExecutor()) {
+            @Override
+            public void react(MessageAddedEvent val) {
+                addChildMsg(val.getMessage());
+            }
+        });
+
+        CoreModule.getInstance().getEventLoop().assign(MessageRemovedEvent.class, new ACB<MessageRemovedEvent>(CoreModule.getInstance().clientSideExecutor()) {
+            @Override
+            protected void react(MessageRemovedEvent val) {
+                deleteMessage(val.getIdentifier());
+            }
+        });
+    }
+
+    public synchronized void deleteMessage(Identifier msgIdentifier) {
+        Iterator<MsgWithInt> it = msgs.iterator();
+        boolean delete = false;
+        int nesting = 0;
+
+        synchronized (this) {
+            while (it.hasNext()) {
+                MsgWithInt curr = it.next();
+                if (curr.msg.getIdentifier().equals(msgIdentifier)) {
+                    delete = true;
+                    nesting = curr.indent;
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                    continue;
+                }
+
+                if (delete && curr.indent > nesting) {
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                } else if (delete && curr.indent <= nesting) {
+                    break;
+                }
+            }
+        }
     }
 
     @Override
-    public void responseHideClicked(Parent rcNode, ResponseController rc) {
+    public synchronized void responseHideClicked(Parent rcNode, ResponseController rc) {
         Iterator<MsgWithInt> it = msgs.iterator();
         boolean delete = false;
         int nesting = 0;
@@ -157,8 +193,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
             if (curr.node == rcNode) {
                 delete = true;
                 nesting = curr.indent;
-                //fpane.getChildren().remove(curr.node);
-                //it.remove();
                 continue;
             }
 
@@ -191,9 +225,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     }
 
     @Override
-    public void responseClicked(ResponseController rc, String text) {
-
-    }
+    public void responseClicked(ResponseController rc, String text) { }
 
     @Override
     public void responseRespondClicked(Parent rcNode, ResponseController rc,  int nestingLevel) {
@@ -212,9 +244,14 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         wrc.setParentController(rc);
         wrc.registerListener(this);
 
-        //TODO @down - move to synchronized block
-        fpane.getChildren().add(fpane.getChildren().indexOf(rcNode) + 1, parent);
+        rc.showChildren();
+
+        synchronized (this) {
+            msgs.add(fpane.getChildren().indexOf(rcNode)+1, new MsgWithInt(parent, nestingLevel+1,null));
+            fpane.getChildren().add(fpane.getChildren().indexOf(rcNode) + 1, parent);
+        }
     }
+
 
     @Override
     public void responseDeleteClicked(Parent responseNode, ResponseController rc) {
@@ -225,21 +262,23 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         boolean delete = false;
         int nesting = 0;
 
-        while (it.hasNext()) {
-            MsgWithInt curr = it.next();
-            if (curr.node == responseNode) {
-                delete = true;
-                nesting = curr.indent;
-                fpane.getChildren().remove(curr.node);
-                it.remove();
-                continue;
-            }
+        synchronized (this) {
+            while (it.hasNext()) {
+                MsgWithInt curr = it.next();
+                if (curr.node == responseNode) {
+                    delete = true;
+                    nesting = curr.indent;
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                    continue;
+                }
 
-            if (delete && curr.indent > nesting) {
-                fpane.getChildren().remove(curr.node);
-                it.remove();
-            } else if (delete && curr.indent <= nesting) {
-                break;
+                if (delete && curr.indent > nesting) {
+                    fpane.getChildren().remove(curr.node);
+                    it.remove();
+                } else if (delete && curr.indent <= nesting) {
+                    break;
+                }
             }
         }
     }
@@ -248,16 +287,27 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identity author, Identifier parentIdentifier,
                                 int nestingLevel) {
 
-        //TODO @down - move to synchronized block
-
-        //Identity currId = Identity.create("Anon", new RsaKeyGen());
         Message newMsg = Messages.createAndSign(parentIdentifier, author.getPublicKey(), author.getPrivateKey(), responseText);
         CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
-        int creationIndex = fpane.getChildren().indexOf(wrcNode);
         Parent msg = constructResponse(newMsg, nestingLevel+1);
-        wrc.getParentController().setHasChildren(true);
-        msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1, newMsg));
-        fpane.getChildren().add(creationIndex,msg);
+
+        synchronized (this) {
+            int creationIndex = fpane.getChildren().indexOf(wrcNode);
+            wrc.getParentController().setHasChildren(true);
+            msgs.add(creationIndex, new MsgWithInt(msg, nestingLevel+1, newMsg));
+            fpane.getChildren().add(creationIndex,msg);
+
+            Iterator<MsgWithInt> it = msgs.iterator();
+            while (it.hasNext()) {
+                MsgWithInt curr = it.next();
+                if (curr.node == wrcNode) {
+                    it.remove();
+                    break;
+                }
+            }
+        }
+
         fpane.getChildren().remove(wrcNode);
     }
+
 }
