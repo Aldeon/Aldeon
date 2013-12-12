@@ -5,6 +5,7 @@ import org.aldeon.gui.GuiModule;
 import org.aldeon.model.Identifier;
 import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.model.Identity;
+import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.protocol.ProtocolModule;
 import org.aldeon.utils.codec.Codec;
 import org.aldeon.utils.codec.base64.Base64Module;
@@ -22,9 +23,10 @@ public class Main {
 
         Identifier topic = Identifier.fromByteBuffer(base64.decode("i5DLsCvFZupO6r4sVqkQ6WPaYYyvKhZlPgrr7V68Ke4-"), false);
 
-        // CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.90", 41530), topic);
+        CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.90", 41530), topic);
 
-        // CoreModule.getInstance().getTopicManager().addTopic(topic);
+        CoreModule.getInstance().getTopicManager().addTopic(topic);
+
         CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH1", new RsaKeyGen()));
         CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH2", new RsaKeyGen()));
         CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH3", new RsaKeyGen()));

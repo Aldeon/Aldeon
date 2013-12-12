@@ -118,15 +118,4 @@ public class Slot {
     public SlotType getSlotType() {
         return slotType;
     }
-
-    /**
-     * Used to revoke the associated address
-     */
-    public void onRevoke(Runnable revoke) {
-        this.revoke = revoke;
-    }
-
-    public Runnable getRevoke() {
-        return revoke;
-    }
 }

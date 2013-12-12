@@ -1,7 +1,6 @@
 package org.aldeon.sync;
 
 import org.aldeon.model.Identifier;
-import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 
 import java.util.HashMap;

@@ -1,9 +1,5 @@
 package org.aldeon.sync;
 
-import org.aldeon.sync.procedures.CheckTimeoutProcedure;
-import org.aldeon.sync.procedures.DeltaDownloadingProcedure;
-import org.aldeon.sync.procedures.PeerFindingProcedure;
-import org.aldeon.sync.procedures.SynchronizationProcedure;
 import org.aldeon.utils.various.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +27,12 @@ public class Supervisor implements Runnable{
                 return System.currentTimeMillis();
             }
         };
-
+        /*
         procedures.put(SlotState.EMPTY,             new PeerFindingProcedure());
         procedures.put(SlotState.SYNC_IN_PROGRESS,  new SynchronizationProcedure(timeProvider));
         procedures.put(SlotState.IN_SYNC_TIMEOUT,   new DeltaDownloadingProcedure(timeProvider));
         procedures.put(SlotState.IN_SYNC_ON_TIME,   new CheckTimeoutProcedure(timeProvider));
+        */
     }
 
     @Override
@@ -52,16 +49,19 @@ public class Supervisor implements Runnable{
 
                     final SlotStateUpgradeProcedure proc = procedures.get(slot.getSlotState());
 
-                    slot.setInProgress(true);
+                    if(proc == null) {
+                        log.warn("Procedure for slot " + slot + " not found");
+                    } else {
+                        slot.setInProgress(true);
 
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            proc.handle(slot, topic.getIdentifier());
-                        }
-                    });
+                        executor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                proc.handle(slot, topic.getIdentifier());
+                            }
+                        });
+                    }
                 }
-
             }
         }
     }
