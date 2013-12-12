@@ -63,7 +63,7 @@ public class MainController implements Initializable {
     public void identitiesClicked(MouseEvent event) {
         resetAllHighlights();
         setHighlights(Identities, IdentitiesImage);
-        changeFxml("Identities.fxml");
+        changeFxml("IdentityManager.fxml");
     }
 
     public void threadsClicked(MouseEvent event) {

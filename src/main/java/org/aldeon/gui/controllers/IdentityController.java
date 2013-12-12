@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -31,57 +32,42 @@ import org.aldeon.model.Identity;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 
 public class IdentityController implements Initializable {
-    public VBox sidebar;
-    public StackPane logo;
-    public GridPane content;
-    public StackPane Identities;
-    public StackPane Threads;
-    public StackPane Friends;
-    public StackPane Settings;
-    public StackPane idCreator;
-    public BorderPane main;
-    private GUIController root;
-    private int idCount;
-    private Map<Key,Identity> identities;
 
-    public void setRoot(GUIController root){
-        this.root=root;
+
+    public Pane idPane;
+    public Rectangle colorRectangle;
+    public Rectangle backgroundRectangle;
+    public Text authorName;
+    public Text authorPubKey;
+
+    private Identity myId;
+    private IdentityManagerController parentController;
+
+    public void setId(Identity id, IdentityManagerController parent){
+        this.myId=id;
+        this.parentController=parent;
+        authorName.setText(id.getName());
+        authorPubKey.setText(id.getPublicKey().toString().substring(0, 8) + "...");
+        colorRectangle.setFill(ColorManager.getColorForKey(id.getPublicKey()));
     }
 
-    public void createId(MouseEvent event) throws Exception{
+    public void showDetails(){             //Get from database all the info about id
         final Stage dialogStage = new Stage();
+        Text name=new Text(myId.getName()), hash=new Text(myId.getPublicKey().toString().substring(0,8)+"..."), additionalInfo=new Text("Additional information");
         dialogStage.initModality(Modality.WINDOW_MODAL);
-        final TextField name = new TextField();
-        Button createId = new Button("Create");
-        createId.setOnAction(new EventHandler<ActionEvent>() {
+        Button delete = new Button("Delete");
+        delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
                 dialogStage.close();
-                Identity newId = Identity.create(name.getText(), new RsaKeyGen());
-                CoreModule.getInstance().getUserManager().addIdentity(newId);
-                identities=CoreModule.getInstance().getUserManager().getAllIdentities();
-                createTile(name.getText(), newId.getPublicKey().hashCode(), ColorManager.getColorForKey(newId.getPublicKey()));
+                parentController.removeIdentity(myId);
             }
         });
-        Scene scene = new Scene(HBoxBuilder.create().
-                children(name, createId).
-                alignment(Pos.CENTER).padding(new Insets(5,5,5,5)).spacing(10).build(),250,50);
-        scene.setFill(Color.web("#222222"));
-        dialogStage.setScene(scene);
-        dialogStage.setTitle("Create new ID");
-        dialogStage.show();
-    }
-
-    public void showDetails(Text id, Text hsh){             //Get from database all the info about id
-        final Stage dialogStage = new Stage();
-        Text name=id, hash=hsh, additionalInfo=new Text("Reptilian");
-        dialogStage.initModality(Modality.WINDOW_MODAL);
         Scene scene = new Scene(VBoxBuilder.create().
-                children(name, hash, additionalInfo).
+                children(name, hash, additionalInfo,delete).
                 alignment(Pos.CENTER).padding(new Insets(5,5,5,5)).spacing(10).build(),250,250);
         scene.setFill(Color.web("#222222"));
         scene.getStylesheets().add("gui/css/style.css");
@@ -90,53 +76,11 @@ public class IdentityController implements Initializable {
         dialogStage.show();
     }
 
-    public void createTile(String id, int hash, Color clr){
-        StackPane newId= new StackPane();
-        Rectangle field = new Rectangle(90,135);
-        field.setArcHeight(10);
-        field.setArcWidth(10);
-        field.setFill(clr);
-        newId.setPrefSize(90,135);
-        Rectangle top = new Rectangle(90,110);
-        top.setFill(Color.web("#222222"));
-        final Text ident = new Text(id);
-        final Text hsh = new Text(Integer.toString(hash));
-        hsh.setFont(new Font("Verdana", 7));
-        newId.setAlignment(Pos.CENTER);
-        newId.getChildren().add(field);
-        newId.getChildren().add(top);
-        newId.setAlignment(ident,Pos.TOP_CENTER);
-        StackPane.setMargin(ident,new Insets(20,0,0,0));
-        newId.getChildren().add(ident);
-        //TODO: ikonka interpolowana z kwadratem spod spodu
-        newId.setAlignment(hsh,Pos.BOTTOM_CENTER);
-        StackPane.setMargin(hsh,new Insets(0,0,20,0));
-        newId.getChildren().add(hsh);
-        newId.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                showDetails(new Text(ident.getText()), new Text(hsh.getText()));
-            }
-        });
-        idCount++;
-        content.add(newId,idCount%6,(int)idCount/6);
-    }
-
-    public void showIdentities(){
-        for(Identity id : identities.values()){
-            createTile(id.getName(), id.getPublicKey().hashCode(), ColorManager.getColorForKey(id.getPublicKey()));
-        }
-    }
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-       // Identities.setStyle("-fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #333333, #333333 90%, #1b1b1b 100%);");
-        idCount=0;  //TODO: Load all IDs from database/file/whatever
-        identities=CoreModule.getInstance().getUserManager().getAllIdentities();
-
     }
-
+      
+    
 }
 
 

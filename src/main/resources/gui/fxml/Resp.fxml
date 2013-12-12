@@ -15,6 +15,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Separator?>
 <?import java.net.URL?>
+
 <Pane fx:id="respPane" maxHeight="1.7976931348623157E308" pickOnBounds="true" prefHeight="169.99990000000253" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.ResponseController">
   <children>
     <HBox id="HBox" fx:id="windowContainer" alignment="CENTER" layoutX="5.0" layoutY="12.0" padding="$x1" spacing="5.0">
