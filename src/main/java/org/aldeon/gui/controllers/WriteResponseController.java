@@ -6,8 +6,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -15,7 +19,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.aldeon.core.CoreModule;
@@ -83,9 +90,7 @@ public class WriteResponseController {
                     @Override
                     public void changed(ObservableValue<? extends Identity> observableValue, Identity old_id, Identity new_id) {
                         currentAuthor=new_id;
-                        if (old_id != null&&old_id!=new_id) {
-                            colorRectangle.setFill(ColorManager.getColorForKey(new_id.getPublicKey()));
-                        }
+                        colorRectangle.setFill(ColorManager.getColorForKey(new_id.getPublicKey()));
                     }
                 });
     }
@@ -93,8 +98,22 @@ public class WriteResponseController {
     public void sendWarning(String message){
         final Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.WINDOW_MODAL);
-        final TextField name = new TextField();
-        Button createId = new Button("Create");
+        final Text msg = new Text(message);
+        Button ok = new Button("Ok");
+        ok.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                dialogStage.close();
+            }
+        });
+        Scene scene = new Scene(VBoxBuilder.create().
+                children(msg, ok).
+                alignment(Pos.CENTER).padding(new Insets(5,5,5,5)).spacing(10).build(),220,80);
+        scene.setFill(Color.web("#222222"));
+        scene.getStylesheets().add("gui/css/style.css");
+        dialogStage.setScene(scene);
+        dialogStage.setTitle("Warning");
+        dialogStage.show();
     }
 
     public Identity getIdentity(String idName){

@@ -135,7 +135,6 @@ public class ResponseController implements Initializable {
                 Math.max(message.layoutBoundsProperty().get().getHeight()
                         + message.getLayoutY() + 70,
                         initialHeight));
-
         colorRectangle.setHeight(
                 backgroundRectangle.getHeight()-2);
         respPane.setPrefHeight(colorRectangle.getHeight() + 30);

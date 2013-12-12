@@ -31,7 +31,7 @@ public abstract class BaseCore implements Core {
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
 
         this.storage = storage;
-        // this.storage = new DbLoggerDecorator(storage);
+        //this.storage = new DbLoggerDecorator(storage);
         this.userManager = new UserManager();
         this.eventLoop = eventLoop;
         this.topicManager = topicManager;

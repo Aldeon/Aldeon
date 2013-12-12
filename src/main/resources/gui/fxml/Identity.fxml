@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="idPane" pickOnBounds="true" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.IdentityController">
+  <children>
+    <StackPane layoutX="0.0" layoutY="0.0" prefHeight="135.0" prefWidth="90.0" onMouseClicked="#showDetails">
+      <children>
+        <Rectangle fx:id="colorRectangle" arcHeight="20.0" arcWidth="20.0" fill="#ee00ff" height="135.0" smooth="true" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="90.0" />
+        <Rectangle fx:id="backgroundRectangle" arcHeight="0.0" arcWidth="0.0" fill="#222222" height="115.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="90.0" />
+        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+          <children>
+            <VBox alignment="TOP_CENTER" depthTest="INHERIT" prefHeight="135.0" prefWidth="90.0">
+              <children>
+                <Text fx:id="authorName" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="90.0">
+                  <VBox.margin>
+                    <Insets top="15.0" />
+                  </VBox.margin>
+                </Text>
+              </children>
+            </VBox>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="135.0" prefWidth="90.0">
+              <children>
+                <Text fx:id="authorPubKey" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="90.0">
+                  <VBox.margin>
+                    <Insets bottom="15.0" />
+                  </VBox.margin>
+                </Text>
+              </children>
+            </VBox>
+          </children>
+        </VBox>
+      </children>
+    </StackPane>
+  </children>
+  <stylesheets>
+    <URL value="@../css/style.css" />
+  </stylesheets>
+</Pane>
