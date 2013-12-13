@@ -98,6 +98,12 @@ public class MainController implements Initializable {
         contents.setContent(topicMsgsController.hbox);
     }
 
+    public void showCreateThreadView() {
+        CreateThreadController createThreadController = GuiUtils.getController("CreateThread.fxml");
+        createThreadController.setMainController(this);
+        contents.setContent(createThreadController.root);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         changeFxml("dashboard.fxml");

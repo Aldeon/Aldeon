@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="root" alignment="TOP_CENTER" prefHeight="407.0" prefWidth="442.0" spacing="80.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.CreateThreadController">
+  <children>
+    <Label text="Create new thread">
+      <font>
+        <Font size="23.0" />
+      </font>
+    </Label>
+    <HBox fx:id="body" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <VBox.margin>
+        <Insets />
+      </VBox.margin>
+    </HBox>
+  </children>
+  <padding>
+    <Insets top="60.0" />
+  </padding>
+</VBox>

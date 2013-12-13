@@ -52,6 +52,6 @@ public class TopicController {
     }
 
     public void deleteTopicClicked(MouseEvent event) {
-        if (listener != null) listener.deleteTopicClicked(topicNode);
+        if (listener != null) listener.deleteTopicClicked(topicNode, message);
     }
 }
