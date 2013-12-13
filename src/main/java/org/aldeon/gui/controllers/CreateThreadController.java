@@ -5,11 +5,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.aldeon.core.CoreModule;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Identity;
+import org.aldeon.model.Message;
+import org.aldeon.utils.helpers.Callbacks;
+import org.aldeon.utils.helpers.Messages;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 /**
@@ -36,6 +41,7 @@ public class CreateThreadController implements Initializable, WriteResponseContr
         }
 
         WriteResponseController wrc = loader.getController();
+        wrc.setParentIdentifier(Identifier.empty());
         wrc.setNode(parent);
         wrc.registerListener(this);
 
@@ -43,10 +49,9 @@ public class CreateThreadController implements Initializable, WriteResponseContr
     }
 
     @Override
-    public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identity author, Identifier parentId, int nestingLevel) {
-        //TODO notify db
-        //TODO goto thread view
+    public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identity author, Identifier parentIdentifier, int nestingLevel) {
+        Message newMsg = Messages.createAndSign(parentIdentifier, author.getPublicKey(), author.getPrivateKey(), responseText);
+        CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
         mainController.threadsClicked(null);
-
     }
 }

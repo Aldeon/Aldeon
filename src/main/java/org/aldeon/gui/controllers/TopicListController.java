@@ -12,6 +12,7 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
+import org.aldeon.utils.helpers.Callbacks;
 
 import java.io.IOException;
 import java.net.URL;
@@ -62,16 +63,6 @@ public class TopicListController implements Initializable, TopicControlListener 
         tc.registerListener(this);
         tc.setTopicNode(parent);
 
-        //dodawanie wiadomosci
-        //dodawanie topicow to to samo tylko ze dodatkowo dajemy parent empty
-// CoreModule.getInstance().getEventLoop().notify(new MessageAddedEvent(
-// Messages.createAndSign(, ,,)
-// ));
-
-        //dodawanie identity
-        // notify identityAdded
-        // new Identity(String name);
-
         return parent;
     }
 
@@ -93,8 +84,8 @@ public class TopicListController implements Initializable, TopicControlListener 
     }
 
     @Override
-    public void deleteTopicClicked(Parent topicNode) {
+    public void deleteTopicClicked(Parent topicNode, Message topicMessage) {
+        CoreModule.getInstance().getStorage().deleteMessage(topicMessage.getIdentifier(), Callbacks.<Boolean>emptyCallback());
         fpane.getChildren().remove(topicNode);
-        //TODO notify DB
     }
 }

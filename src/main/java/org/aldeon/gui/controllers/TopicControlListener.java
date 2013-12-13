@@ -8,5 +8,5 @@ import org.aldeon.model.Message;
  */
 public interface TopicControlListener {
     void topicClicked(Message topicMessage);
-    void deleteTopicClicked(Parent topicNode);
+    void deleteTopicClicked(Parent topicNode, Message topicMessage);
 }
