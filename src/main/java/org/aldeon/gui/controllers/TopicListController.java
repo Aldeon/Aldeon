@@ -88,6 +88,10 @@ public class TopicListController implements Initializable, TopicControlListener 
         mainController.showTopicMsgs(topicMessage);
     }
 
+    public void createNewTopic(MouseEvent event) {
+        mainController.showCreateThreadView();
+    }
+
     @Override
     public void deleteTopicClicked(Parent topicNode) {
         fpane.getChildren().remove(topicNode);

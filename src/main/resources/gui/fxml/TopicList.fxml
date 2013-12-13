@@ -23,7 +23,7 @@
             <Button mnemonicParsing="false" onMouseClicked="#createTopic" text="Add existing thread" />
           </children>
         </HBox>
-        <Button mnemonicParsing="false" text="+ create new thread" />
+        <Button mnemonicParsing="false" onMouseClicked="#createNewTopic" text="+ create new thread" />
       </children>
       <VBox.margin>
         <Insets bottom="10.0" top="30.0" />
