@@ -49,8 +49,8 @@ public class GsonBasedJsonParserTest {
 
         CompareTreesRequest req = new CompareTreesRequest();
         req.force = true;
-        req.parent_id = Identifier.empty();
-        req.parent_xor = Identifier.empty();
+        req.branchId = Identifier.empty();
+        req.branchXor = Identifier.empty();
 
         Codec codec = mock(Codec.class);
         when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
@@ -61,7 +61,7 @@ public class GsonBasedJsonParserTest {
         String json = parser.toJson(req);
 
         assertEquals(
-                "{\"type\":\"compare_trees\",\"parent_id\":\"" + emptyId + "\",\"parent_xor\":\"" + emptyId + "\",\"force\":true}",
+                "{\"type\":\"compare_trees\",\"branchId\":\"" + emptyId + "\",\"branchXor\":\"" + emptyId + "\",\"force\":true}",
                 json
         );
 
@@ -69,8 +69,8 @@ public class GsonBasedJsonParserTest {
 
         assertEquals(req.type, res.type);
         assertEquals(req.force, res.force);
-        assertEquals(req.parent_id, res.parent_id);
-        assertEquals(req.parent_xor, res.parent_xor);
+        assertEquals(req.branchId, res.branchId);
+        assertEquals(req.branchXor, res.branchXor);
     }
 
     @Test

@@ -11,7 +11,7 @@ public class CompareTreesRequest implements Request {
     public static String TYPE = "compare_trees";
 
     public String type = TYPE;
-    public Identifier parent_id;
-    public Identifier parent_xor;
+    public Identifier branchId;
+    public Identifier branchXor;
     public boolean force = false;
 }
