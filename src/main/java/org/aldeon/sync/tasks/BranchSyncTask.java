@@ -18,6 +18,13 @@ import org.aldeon.utils.various.Reducer;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Synchronizes a selected branch with a selected server.
+ * Keep in mind that, by using this class, you assume that
+ * the branch root is already in storage. To put it in
+ * another words, xor should generally not be empty (unless
+ * the branch really xors to empty(), which is not impossible).
+ */
 public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
 
     private final Sender sender;
@@ -36,7 +43,7 @@ public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
         this.sender = sender;
         this.db = db;
         this.onFinished = onFinished;
-        this.reducer = new SyncResultReducer();
+        this.reducer = new SyncResult.SyncResultReducer();
     }
 
     @Override
@@ -99,8 +106,8 @@ public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
         sender.addTask(new BranchSyncTask(getAddress(), branch, xor, avoidLuckyGuess, sender, db, onOperationCompleted));
     }
 
-    private void downloadAndThenSync(final Identifier id, final Callback<SyncResult> onOperationCompleted) {
-        sender.addTask(new DownloadMessageTask(getAddress(), id, getRequest().branchId, false, db, new Callback<DownloadMessageTask.Result>() {
+    private void downloadAndThenSync(final Identifier id, Identifier parent, final Callback<SyncResult> onOperationCompleted) {
+        sender.addTask(new DownloadMessageTask(getAddress(), id, parent, false, db, new Callback<DownloadMessageTask.Result>() {
             @Override
             public void call(DownloadMessageTask.Result downloadResult) {
                 switch (downloadResult) {
@@ -185,7 +192,7 @@ public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
 
                 // For each message the server has and we do not
                 for(Identifier id: Sets.difference(peersChildren.keySet(), localChildren.keySet())) {
-                    downloadAndThenSync(id, aggregator.childCallback());
+                    downloadAndThenSync(id, getRequest().branchId, aggregator.childCallback());
                 }
 
                 // For each message we both have

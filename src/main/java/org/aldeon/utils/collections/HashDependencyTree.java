@@ -13,11 +13,15 @@ public class HashDependencyTree<T> implements DependencyTree<T> {
 
     /**
      * Shows which elements are actually present in the collection
+     * key      - element
+     * value    -
      */
     private Map<T, T> elements;
 
     /**
      * Parent-child relations (including unknown parents)
+     * key      - parent
+     * values   - children
      */
     private SetMultimap<T, T> children;
 
@@ -80,6 +84,16 @@ public class HashDependencyTree<T> implements DependencyTree<T> {
 
         // 4. Remove from elements
         elements.remove(element);
+    }
+
+    @Override
+    public void removeRecursively(T element) {
+        // TODO: optimize
+        Set<T> childrenToRemove = new HashSet<>(children.get(element));
+        remove(element);
+        for(T child: childrenToRemove) {
+            removeRecursively(child);
+        }
     }
 
     @Override

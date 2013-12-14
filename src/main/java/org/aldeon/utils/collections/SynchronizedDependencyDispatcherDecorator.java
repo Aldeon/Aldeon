@@ -19,6 +19,11 @@ public class SynchronizedDependencyDispatcherDecorator<T> implements DependencyD
     }
 
     @Override
+    public synchronized void removeRecursively(T element) {
+        dependencyDispatcher.removeRecursively(element);
+    }
+
+    @Override
     public synchronized boolean isFinished() {
         return dependencyDispatcher.isFinished();
     }
