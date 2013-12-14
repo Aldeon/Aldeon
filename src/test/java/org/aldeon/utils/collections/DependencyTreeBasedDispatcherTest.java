@@ -176,6 +176,7 @@ public class DependencyTreeBasedDispatcherTest {
         Integer next = d.next();
         assertNotEquals(null, next);
 
+        // Order of returned elements is not defined, so the test must check both possibilities
         if(next == 2) {
 
             d.removeRecursively(5);

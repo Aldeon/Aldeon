@@ -22,6 +22,7 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
     private final Callback<DiffResult> onFinished;
     private final AtomicInteger messagesDownloaded;
     private final AtomicInteger failedRequests;
+    private Long receivedClock;
 
     public GetDiffTask(PeerAddress peerAddress, Identifier topic, long clock, Db db, Sender sender, Callback<DiffResult> onFinished) {
         super(peerAddress);
@@ -36,6 +37,7 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
 
         this.messagesDownloaded = new AtomicInteger(0);
         this.failedRequests = new AtomicInteger(0);
+        this.receivedClock = null;
     }
 
     @Override
@@ -48,6 +50,7 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
     }
 
     private void onDiff(DiffResponse response) {
+        receivedClock = response.clock;
         DependencyDispatcher<Identifier> dispatcher = DependencyDispatcherModule.create(response.ids);
         dispatchDownloads(dispatcher, response.ids);
     }
@@ -104,6 +107,7 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
             DiffResult result = new DiffResult();
             result.messagesDownloaded = messagesDownloaded.get();
             result.failedRequests = failedRequests.get();
+            result.clock = receivedClock;
             onFinished.call(result);
         }
     }

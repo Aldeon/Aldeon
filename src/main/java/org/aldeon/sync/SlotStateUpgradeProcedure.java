@@ -4,5 +4,5 @@ import org.aldeon.model.Identifier;
 
 public interface SlotStateUpgradeProcedure {
 
-    void handle(Slot slot, Identifier topicId);
+    void handle(Slot slot, Identifier topic);
 }
