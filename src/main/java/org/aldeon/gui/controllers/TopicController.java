@@ -18,6 +18,7 @@ public class TopicController {
     public Rectangle backgroundRectangle;
     public Text topicText;
     public Insets x1;
+    public Text topicHash;
 
     private String fullTopicText;
     private TopicControlListener listener;
@@ -31,6 +32,8 @@ public class TopicController {
     public void setMessage(Message m) {
         message = m;
         colorRectangle.setFill(ColorManager.getColorForKey(m.getAuthorPublicKey()));
+        topicHash.setText(m.getIdentifier().toString());
+
         setTopicText(m.getContent());
     }
 
