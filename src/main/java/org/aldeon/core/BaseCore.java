@@ -25,8 +25,8 @@ public abstract class BaseCore implements Core {
     private final ExecutorService serverSideExecutor;
     private final Executor wrappedClientExecutor;
     private final Executor wrappedServerExecutor;
-    private final Thread supervisorThread;
     private final UserManager userManager;
+    private Thread supervisorThread;
 
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
 
@@ -43,10 +43,13 @@ public abstract class BaseCore implements Core {
         this.wrappedClientExecutor = new ExecutorLogger("clientSide", new ThrowableInterceptor(clientSideExecutor));
         this.wrappedServerExecutor = new ExecutorLogger("serverSide", new ThrowableInterceptor(serverSideExecutor));
 
+    }
+
+    protected void initializeSupervisor() {
         supervisorThread = new Thread() {
             @Override
             public void run() {
-                Runnable supervisor = new Supervisor(getTopicManager(), clientSideExecutor());
+                Runnable supervisor = new Supervisor(BaseCore.this, getTopicManager(), clientSideExecutor());
 
                 while(true) {
                     supervisor.run();

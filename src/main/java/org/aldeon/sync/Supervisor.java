@@ -1,5 +1,6 @@
 package org.aldeon.sync;
 
+import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
 import org.aldeon.db.Db;
 import org.aldeon.networking.common.Sender;
@@ -24,7 +25,7 @@ public class Supervisor implements Runnable{
 
     private final Map<SlotState, SlotStateUpgradeProcedure> procedures = new HashMap<>();
 
-    public Supervisor(TopicManager manager, Executor executor) {
+    public Supervisor(Core core, TopicManager manager, Executor executor) {
         this.manager = manager;
         this.executor  = executor;
 
@@ -35,15 +36,14 @@ public class Supervisor implements Runnable{
             }
         };
 
-        Db db = CoreModule.getInstance().getStorage();
-        Sender sender = CoreModule.getInstance().getSender();
+        Db db = core.getStorage();
+        Sender sender = core.getSender();
         // TODO: Wrap db and sender with threading-related decorators
 
         procedures.put(SlotState.EMPTY,             new PeerFindingProcedure());
         procedures.put(SlotState.SYNC_IN_PROGRESS,  new SynchronizationProcedure(db, sender));
         procedures.put(SlotState.IN_SYNC_TIMEOUT,   new DiffDownloadingProcedure(db, sender, timeProvider));
         procedures.put(SlotState.IN_SYNC_ON_TIME,   new CheckTimeoutProcedure(timeProvider));
-
     }
 
     @Override

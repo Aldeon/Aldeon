@@ -50,6 +50,6 @@ public abstract class IpPeerAddress implements PeerAddress {
 
     @Override
     public String toString() {
-        return getHost() + ":" + getPort();
+        return getHost().getHostAddress() + ":" + getPort();
     }
 }
