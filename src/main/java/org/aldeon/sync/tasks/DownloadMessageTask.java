@@ -70,6 +70,7 @@ public class DownloadMessageTask extends AbstractOutboundTask<GetMessageRequest>
 
     @Override
     public void onFailure(Throwable cause) {
+        log.info("Failed to download the message (cause: " + cause + ")");
         onFinished.call(Result.COMMUNICATION_ERROR);
     }
 

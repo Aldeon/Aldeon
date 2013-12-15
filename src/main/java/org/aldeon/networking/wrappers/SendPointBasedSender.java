@@ -10,11 +10,15 @@ import org.aldeon.protocol.Request;
 import org.aldeon.protocol.Response;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.conversion.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Set;
 
 public class SendPointBasedSender implements Sender {
+
+    private static final Logger log = LoggerFactory.getLogger(SendPointBasedSender.class);
 
     private final SendPoint point;
     private final Converter<Request, ByteBuffer> encoder;
@@ -31,6 +35,7 @@ public class SendPointBasedSender implements Sender {
 
     @Override
     public void addTask(final OutboundRequestTask task) {
+        log.info("Sending request: " + task.getRequest());
         try {
             final ByteBuffer buf = encoder.convert(task.getRequest());
             point.send(new SendPoint.OutgoingTransmission() {
@@ -38,6 +43,7 @@ public class SendPointBasedSender implements Sender {
                 public void onSuccess(ByteBuffer data) {
                     try {
                         Response response = decoder.convert(data);
+                        log.info("Received response " + response);
                         task.onSuccess(response);
                     } catch (ConversionException e) {
                         task.onFailure(e);
@@ -46,6 +52,7 @@ public class SendPointBasedSender implements Sender {
 
                 @Override
                 public void onFailure(Throwable cause) {
+                    log.warn("Sender failure", cause);
                     task.onFailure(cause);
                 }
 
