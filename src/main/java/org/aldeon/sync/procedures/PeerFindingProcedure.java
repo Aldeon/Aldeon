@@ -9,11 +9,17 @@ import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.sync.Slot;
 import org.aldeon.sync.SlotState;
 import org.aldeon.sync.SlotStateUpgradeProcedure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
 
+    private static final Logger log = LoggerFactory.getLogger(PeerFindingProcedure.class);
+
     @Override
-    public void handle(final Slot slot, Identifier topic) {
+    public void handle(final Slot slot, final Identifier topic) {
+
+        log.info("Looking for peer interested in topic " + topic);
 
         // 1. Fetch the appropriate DHT
         Dht dht = CoreModule.getInstance().getDht(slot.getAddressType());
@@ -29,6 +35,7 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
         Callback<PeerAddress> handler = new Callback<PeerAddress>() {
             @Override
             public void call(PeerAddress peer) {
+                log.info("Peer (" + peer + ") interested in topic " + topic + " found and assigned to slot.");
                 slot.setPeerAddress(peer);
                 slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
                 slot.setInProgress(false);

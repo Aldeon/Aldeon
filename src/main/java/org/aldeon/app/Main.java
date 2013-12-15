@@ -21,15 +21,11 @@ public class Main {
 
         Codec base64 = new Base64Module().get();
 
-        Identifier topic = Identifier.fromByteBuffer(base64.decode("i5DLsCvFZupO6r4sVqkQ6WPaYYyvKhZlPgrr7V68Ke4-"), false);
+        Identifier topic = Identifier.fromByteBuffer(base64.decode("kWCg9mtJBbc0SqJ/XMusbFCs8QP02NScFhRuCerFXwk-"), false);
 
-        // CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.90", 41530), topic);
+        //CoreModule.getInstance().getDht(IpPeerAddress.IPV4).registerAddress(IpPeerAddress.create("192.168.1.105", 41530), topic);
 
-        // CoreModule.getInstance().getTopicManager().addTopic(topic);
-
-        CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH1", new RsaKeyGen()));
-        CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH2", new RsaKeyGen()));
-        CoreModule.getInstance().getUserManager().addIdentity(Identity.create("BLARGH3", new RsaKeyGen()));
+        //CoreModule.getInstance().getTopicManager().addTopic(topic);
 
         GuiModule.launch();
     }

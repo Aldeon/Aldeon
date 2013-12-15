@@ -12,6 +12,7 @@ import org.aldeon.sync.tasks.BranchSyncTask;
 import org.aldeon.sync.tasks.DownloadMessageTask;
 import org.aldeon.sync.tasks.GetClockTask;
 import org.aldeon.sync.tasks.SyncResult;
+import org.aldeon.utils.various.Reducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +23,12 @@ public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
 
     private final Db db;
     private final Sender sender;
+    private final Reducer<SyncResult> reducer;
 
     public SynchronizationProcedure(Db db, Sender sender) {
         this.db = db;
         this.sender = sender;
+        this.reducer = new SyncResult.SyncResultReducer();
     }
 
     @Override
@@ -35,24 +38,41 @@ public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
             In case of failure, retry at most 3 times.
          */
 
+        log.info("Synchronizing topic" + topic + " with peer " + slot.getPeerAddress());
+
         // TODO: implement the retry system
 
         fetchClock(slot, topic, new Callback<Boolean>() {
             @Override
-            public void call(Boolean val) {
-                synchronize(slot.getPeerAddress(), topic, true, new Callback<SyncResult>() {
-                    @Override
-                    public void call(SyncResult syncResult) {
-                        if(successful(syncResult)) {
-                            log.info("Synchronization successful. Downloaded: " + syncResult.messagesDownloaded + ", suggested: " + syncResult.messagesSuggested + ", accidental errors: " + syncResult.accidentalErrors + ", purposeful errors: " + syncResult.purposefulErrors);
-                            slot.setSlotState(SlotState.EMPTY);
-                        } else {
-                            log.info("Synchronization failed. Downloaded: " + syncResult.messagesDownloaded + ", suggested: " + syncResult.messagesSuggested + ", accidental errors: " + syncResult.accidentalErrors + ", purposeful errors: " + syncResult.purposefulErrors);
-                            slot.setSlotState(SlotState.IN_SYNC_TIMEOUT);
+            public void call(Boolean clockFetched) {
+
+                if (clockFetched) {
+                    synchronize(slot.getPeerAddress(), topic, true, new Callback<SyncResult>() {
+                        @Override
+                        public void call(SyncResult syncResult) {
+                            if (successful(syncResult)) {
+                                log.info("Synchronization successful. Downloaded: " + syncResult.messagesDownloaded
+                                        + ", suggested: " + syncResult.messagesSuggested
+                                        + ", accidental errors: " + syncResult.accidentalErrors
+                                        + ", purposeful errors: " + syncResult.purposefulErrors
+                                        + ", failed requests: " + syncResult.failedRequests);
+                                slot.setSlotState(SlotState.IN_SYNC_TIMEOUT);
+                            } else {
+                                log.info("Synchronization failed. Downloaded: " + syncResult.messagesDownloaded
+                                        + ", suggested: " + syncResult.messagesSuggested
+                                        + ", accidental errors: " + syncResult.accidentalErrors
+                                        + ", purposeful errors: " + syncResult.purposefulErrors
+                                        + ", failed requests: " + syncResult.failedRequests);
+                                slot.setSlotState(SlotState.EMPTY);
+                            }
+                            slot.setInProgress(false);
                         }
-                        slot.setInProgress(false);
-                    }
-                });
+                    });
+                } else {
+                    log.info("Failed to fetch clock.");
+                    slot.setSlotState(SlotState.EMPTY);
+                    slot.setInProgress(false);
+                }
             }
         });
     }
@@ -101,7 +121,12 @@ public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
                 switch(downloadResult) {
                     case MESSAGE_INSERTED:
                         // Great, proceed.
-                        synchronize(peer, branch, false, onOperationCompleted);
+                        synchronize(peer, branch, false, new Callback<SyncResult>() {
+                            @Override
+                            public void call(SyncResult val) {
+                                onOperationCompleted.call(reducer.reduce(val, SyncResult.messageDownloaded()));
+                            }
+                        });
                         break;
 
                     case MESSAGE_EXISTS:

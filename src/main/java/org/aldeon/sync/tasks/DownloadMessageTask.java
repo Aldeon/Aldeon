@@ -9,8 +9,12 @@ import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.GetMessageRequest;
 import org.aldeon.protocol.response.MessageFoundResponse;
 import org.aldeon.protocol.response.MessageNotFoundResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DownloadMessageTask extends AbstractOutboundTask<GetMessageRequest> {
+
+    private static final Logger log = LoggerFactory.getLogger(DownloadMessageTask.class);
 
     private final Callback<Result> onFinished;
 
@@ -28,14 +32,26 @@ public class DownloadMessageTask extends AbstractOutboundTask<GetMessageRequest>
     private final boolean checkAncestry;
     private final Db db;
 
-    public DownloadMessageTask(PeerAddress peerAddress, Identifier identifier, Identifier ancestor, boolean checkAncestry, Db db, Callback<Result> onFinished) {
+    public DownloadMessageTask(PeerAddress peerAddress, final Identifier identifier, Identifier ancestor, boolean checkAncestry, Db db, final Callback<Result> onFinished) {
         super(peerAddress);
+
+        if(checkAncestry) {
+            log.info("Downloading message " + identifier + " (ancestor: " + ancestor + ")");
+        } else {
+            log.info("Downloading message " + identifier + " (parent: " + ancestor + ")");
+        }
 
         this.identifier = identifier;
         this.ancestor = ancestor;
         this.checkAncestry = checkAncestry;
         this.db = db;
-        this.onFinished = onFinished;
+        this.onFinished = new Callback<Result>() {
+            @Override
+            public void call(Result val) {
+                log.info("DownloadMessageTask(" + identifier + ") finished with status " + val);
+                onFinished.call(val);
+            }
+        };
 
         setRequest(new GetMessageRequest());
         getRequest().id = identifier;

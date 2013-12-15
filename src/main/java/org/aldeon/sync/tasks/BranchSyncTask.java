@@ -153,6 +153,7 @@ public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
     }
 
     private void selectBranchWithGivenAncestor(Set<Identifier> branches, Identifier ancestor, Callback<Identifier> onOperationCompleted) {
+        // TODO: select appropriate branch to suggest to server
         onOperationCompleted.call(null);
     }
 
@@ -217,6 +218,20 @@ public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
                         // Lucky guess actually worked, let's synchronize it.
                         // However, after we are done synchronizing this branch, we need to
                         // fall back to synchronizing the original branch.
+
+                        final SyncResult messageDownloadedResult = SyncResult.messageDownloaded();
+
+                        syncBranchWhenRootPresent(response.id, false, new Callback<SyncResult>() {
+                            @Override
+                            public void call(SyncResult guessedBranchSyncResult) {
+                                // We just downloaded the message - it must be
+                                SyncResult afterLuckyGuess = reducer.reduce(guessedBranchSyncResult, messageDownloadedResult);
+
+                                // once again, synchronize the original branch
+                                syncBranchWhenRootPresent(getRequest().branchId, false, aggregatedCallback(afterLuckyGuess, onFinished));
+                            }
+                        });
+                        break;
 
                     case MESSAGE_EXISTS:
                         // We must have received the message in other thread - continue
