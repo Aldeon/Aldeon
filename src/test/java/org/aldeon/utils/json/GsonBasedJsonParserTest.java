@@ -112,20 +112,15 @@ public class GsonBasedJsonParserTest {
 
         JsonParser parser = new GsonBasedJsonParser(codec, new RsaModule().get());
 
+        String expected = "{\"type\":\"indicate_interest\",\"topic\":\"" + emptyId + "\",\"address\":{\"type\":\"IPV4\",\"data\":{\"host\":\"192.168.0.50\",\"port\":8080}}}";
         String json = parser.toJson(req);
 
-        System.out.println(json);
-
-        assertEquals(
-                "{\"type\":\"indicate_interest\",\"topic\":\"" + emptyId + "\",\"address\":{\"type\":\"IPV4\",{\"host\":\"192.168.0.50\",\"port\":8080}}}",
-                json
-        );
+        assertEquals(expected, json);
 
         IndicateInterestRequest res = parser.fromJson(json, IndicateInterestRequest.class);
 
         assertEquals(req.type, res.type);
         assertEquals(req.topic, res.topic);
-
 
         IpPeerAddress a0 = (IpPeerAddress) req.address;
         IpPeerAddress a1 = (IpPeerAddress) res.address;

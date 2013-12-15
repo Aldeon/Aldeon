@@ -3,6 +3,7 @@ package org.aldeon.utils.json.adapters;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.aldeon.networking.NetworkingModule;
@@ -28,9 +29,10 @@ public class PeerAddressSerializer implements JsonSerializer<PeerAddress> {
         }
 
         JsonObject object = new JsonObject();
+        JsonParser parser = new JsonParser();
 
-        object.add("type",      context.serialize(address.getType().getName()));
-        object.add("address",   context.serialize(addressSerialized));
+        object.add("type", context.serialize(address.getType().getName()));
+        object.add("data", parser.parse(addressSerialized));
 
         return object;
     }

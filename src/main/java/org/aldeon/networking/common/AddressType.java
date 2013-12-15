@@ -18,7 +18,7 @@ public class AddressType {
     @Override
     public final boolean equals(Object obj) {
         if(obj instanceof AddressType) {
-            return ((AddressType) obj).getName() == getName();
+            return ((AddressType) obj).getName().equals(getName());
         } else {
             return false;
         }
