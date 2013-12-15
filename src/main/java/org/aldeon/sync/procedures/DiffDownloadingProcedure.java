@@ -18,7 +18,7 @@ public class DiffDownloadingProcedure implements SlotStateUpgradeProcedure {
     private final Db db;
     private final Provider<Long> timeProvider;
 
-    public DiffDownloadingProcedure(Sender sender, Db db, Provider<Long> timeProvider) {
+    public DiffDownloadingProcedure(Db db, Sender sender, Provider<Long> timeProvider) {
         this.sender = sender;
         this.db = db;
         this.timeProvider = timeProvider;

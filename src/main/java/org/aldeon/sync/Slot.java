@@ -1,5 +1,6 @@
 package org.aldeon.sync;
 
+import org.aldeon.events.Callback;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.PeerAddress;
 
@@ -16,6 +17,7 @@ public class Slot {
     private long lastUpdated = Long.MIN_VALUE;
     private SlotType slotType;
     private Runnable revoke;
+    private Callback<PeerAddress> bountyHandler;
 
     public Slot(SlotType slotType, AddressType addressType) {
         this.slotType = slotType;
@@ -110,6 +112,13 @@ public class Slot {
         return lastUpdated;
     }
 
+    public Callback<PeerAddress> getBountyHandler() {
+        return bountyHandler;
+    }
+
+    public void setBountyHandler(Callback<PeerAddress> bountyHandler) {
+        this.bountyHandler = bountyHandler;
+    }
 
     /**
      * Indicated the desired behavior related to this state (ex. how to cope with timeouts)
