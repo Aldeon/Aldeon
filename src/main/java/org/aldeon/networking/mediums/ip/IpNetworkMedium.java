@@ -71,7 +71,7 @@ public class IpNetworkMedium implements NetworkMedium {
     @Override
     public String serialize(PeerAddress address) throws AddressParseException {
         if(address instanceof IpPeerAddress) {
-            return "{\"host\":\"" + ((IpPeerAddress) address).getHost() + "\",\"port\":" + ((IpPeerAddress) address).getPort().getIntValue() + "}";
+            return "{\"host\":\"" + ((IpPeerAddress) address).getHost().getHostAddress() + "\",\"port\":" + ((IpPeerAddress) address).getPort().getIntValue() + "}";
         } else {
             throw new AddressParseException("Address is not an instance of IpPeerAddress");
         }

@@ -1,208 +1,270 @@
 package org.aldeon.sync.tasks;
 
 import com.google.common.collect.Sets;
-import org.aldeon.networking.common.Sender;
-import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.db.Db;
 import org.aldeon.events.BranchingCallbackAggregator;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
-import org.aldeon.model.Message;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.protocol.Response;
 import org.aldeon.protocol.request.CompareTreesRequest;
 import org.aldeon.protocol.response.BranchInSyncResponse;
 import org.aldeon.protocol.response.ChildrenResponse;
 import org.aldeon.protocol.response.LuckyGuessResponse;
 import org.aldeon.protocol.response.MessageNotFoundResponse;
-import org.aldeon.utils.various.BooleanAndReducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.aldeon.utils.various.Reducer;
 
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
-public class BranchSyncTask extends BaseOutboundTask<CompareTreesRequest> implements OutboundRequestTask {
+/**
+ * Synchronizes a selected branch with a selected server.
+ * Keep in mind that, by using this class, you assume that
+ * the branch root is already in storage. To put it in
+ * another words, xor should generally not be empty (unless
+ * the branch really xors to empty(), which is not impossible).
+ */
+public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
 
-    private static final Logger log = LoggerFactory.getLogger(BranchSyncTask.class);
-
-    private final Db storage;
     private final Sender sender;
-    private final Callback<Boolean> onFinished;
+    private final Db db;
+    private final Callback<SyncResult> onFinished;
+    private final Reducer<SyncResult> reducer;
 
-    public BranchSyncTask(PeerAddress peer, Identifier branch, boolean force, Identifier xor, Sender sender, Db storage, Callback<Boolean> onFinished) {
-        super(5000, peer);
-
-        this.storage = storage;
-        this.sender = sender;
-        this.onFinished = onFinished;
+    public BranchSyncTask(PeerAddress peerAddress, Identifier identifier, Identifier xor, boolean avoidLuckyGuess, Sender sender, Db db, Callback<SyncResult> onFinished) {
+        super(peerAddress);
 
         setRequest(new CompareTreesRequest());
+        getRequest().branchId = identifier;
+        getRequest().branchXor = xor;
+        getRequest().force = avoidLuckyGuess;
 
-        req().force = force;
-        req().parent_id = branch;
-        req().parent_xor = xor;
+        this.sender = sender;
+        this.db = db;
+        this.onFinished = onFinished;
+        this.reducer = new SyncResult.SyncResultReducer();
     }
 
     @Override
     public void onSuccess(Response response) {
-
-        if(response instanceof MessageNotFoundResponse) {
-            onMessageNotFound();
-        } else if(response instanceof LuckyGuessResponse) {
-            onLuckyGuess((LuckyGuessResponse) response);
-        } else if(response instanceof ChildrenResponse) {
+        if(response instanceof ChildrenResponse) {
             onChildren((ChildrenResponse) response);
+        } else if(response instanceof LuckyGuessResponse && !getRequest().force) {
+            onLuckyGuess((LuckyGuessResponse) response);
         } else if(response instanceof BranchInSyncResponse) {
-            onBranchInSync();
+            onBranchInSync((BranchInSyncResponse) response);
+        } else if(response instanceof MessageNotFoundResponse) {
+            onMessageNotFound((MessageNotFoundResponse) response);
         } else {
-            onFailure(new InvalidResponseException("Invalid response type"));
+            onFinished.call(SyncResult.requestFailed());
         }
     }
 
     @Override
     public void onFailure(Throwable cause) {
-        log.info("Failed to synchronize with a peer (cause: " + cause.getMessage() + ")", cause);
-        onFinished.call(false);
+        onFinished.call(SyncResult.requestFailed());
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Called if the server has no knowledge about this branch
-     */
-    private void onMessageNotFound() {
-        offerMessage(req().parent_id, onFinished);
+    private void onMessageNotFound(MessageNotFoundResponse response) {
+        onFinished.call(SyncResult.accidentalError());
     }
 
-    /**
-     * Called if the server attempts a lucky guess
-     * @param response response
-     */
-    private void onLuckyGuess(final LuckyGuessResponse response) {
+    private void onBranchInSync(BranchInSyncResponse response) {
+        onFinished.call(SyncResult.noChanges());
+    }
 
-        storage.getMessageById(response.id, new Callback<Message>() {
+    private void suggestMessage(Identifier id, Callback<SyncResult> onOperationCompleted) {
+        // TODO: send SuggestMessageRequest
+        onOperationCompleted.call(SyncResult.messageSuggested());
+    }
+
+    private Callback<SyncResult> aggregatedCallback(final SyncResult syncResult, final Callback<SyncResult> callback) {
+        return new Callback<SyncResult>() {
             @Override
-            public void call(Message val) {
+            public void call(SyncResult val) {
+                callback.call(reducer.reduce(val, syncResult));
+            }
+        };
+    }
 
-                // Check if we already have the suggested message
-                if(val == null) {
-                    // Message unknown
-
-                    // Attempt downloading the message, then repeat the sync.
-                    // Repeating guarantees we do not lose any message.
-                    sender.addTask(new DownloadMessageTask(getAddress(), response.id, req().parent_id, true, storage, new Callback<Boolean>() {
-                        @Override
-                        public void call(Boolean messageSaved) {
-
-                            // (messageSaved == true) => message was saved, no need to set force flag
-                            // (messageSaved != true) => lucky guess failed, set force flag
-
-                            sender.addTask(new BranchSyncTask(getAddress(), req().parent_id, !messageSaved, req().parent_xor, sender, storage, onFinished));
-                        }
-                    }));
+    private void syncBranchWhenRootPresent(final Identifier branch, final boolean avoidLuckyGuess, final Callback<SyncResult> onOperationCompleted) {
+        db.getMessageXorById(branch, new Callback<Identifier>() {
+            @Override
+            public void call(Identifier xor) {
+                if(xor == null) {
+                    // we must have removed the message before actually synchronizing the branch
+                    onOperationCompleted.call(SyncResult.noChanges());
                 } else {
-                    // Message known, resync with force flag
-                    sender.addTask(new BranchSyncTask(getAddress(), req().parent_id, true, req().parent_xor, sender, storage, onFinished));
+                    syncBranchWhenXorKnown(branch, xor, avoidLuckyGuess, onOperationCompleted);
                 }
             }
         });
     }
 
-    /**
-     * Called if the server returns the list of child identifiers
-     * @param response response
-     */
-    private void onChildren(final ChildrenResponse response) {
-        storage.getIdsAndXorsByParentId(req().parent_id, new Callback<Map<Identifier, Identifier>>() {
+    private void syncBranchWhenXorKnown(Identifier branch, Identifier xor, boolean avoidLuckyGuess, Callback<SyncResult> onOperationCompleted) {
+        sender.addTask(new BranchSyncTask(getAddress(), branch, xor, avoidLuckyGuess, sender, db, onOperationCompleted));
+    }
+
+    private void downloadAndThenSync(final Identifier id, Identifier parent, final Callback<SyncResult> onOperationCompleted) {
+        sender.addTask(new DownloadMessageTask(getAddress(), id, parent, false, db, new Callback<DownloadMessageTask.Result>() {
             @Override
-            public void call(Map<Identifier, Identifier> storedMap) {
+            public void call(DownloadMessageTask.Result downloadResult) {
+                switch (downloadResult) {
+                    case MESSAGE_INSERTED:
+                        // Everything went ok, continue synchronization
+                        syncBranchWhenRootPresent(id, false, aggregatedCallback(SyncResult.messageDownloaded(), onOperationCompleted));
+                        break;
 
-                // 0. These are our collections we need to analyse
+                    case MESSAGE_EXISTS:
+                        // We must have received the message in other thread - continue
+                        syncBranchWhenRootPresent(id, false, onOperationCompleted);
+                        break;
 
-                Map<Identifier, Identifier> remoteMap = response.children;
-                final BranchingCallbackAggregator<Boolean> aggregator = new BranchingCallbackAggregator<>(new BooleanAndReducer(), onFinished);
+                    case MESSAGE_NOT_ON_SERVER:
+                        // Server must have removed the message after sending us the identifier, so
+                        // there is no point in synchronizing this branch. This is server's fault,
+                        // but this is nothing particularly bad.
+                        onOperationCompleted.call(SyncResult.accidentalError());
+                        break;
 
-                // 1. Process the common messages
+                    case PARENT_UNKNOWN:
+                        // We must have removed the parent after making the check but before inserting
+                        // the child the database - we should ignore the branch.
+                        onOperationCompleted.call(SyncResult.noChanges());
+                        break;
 
-                for(final Identifier id: Sets.intersection(storedMap.keySet(), remoteMap.keySet())) {
+                    case COMMUNICATION_ERROR:
+                        // Ouch - this should be noted
+                        onOperationCompleted.call(SyncResult.requestFailed());
+                        break;
+                }
+            }
+        }));
+    }
 
-                    final Identifier xor = storedMap.get(id).xor(remoteMap.get(id));
+    private void suggestAndThenSync(final Identifier branch, final Callback<SyncResult> onOperationCompleted) {
+        suggestMessage(branch, new Callback<SyncResult>() {
+            @Override
+            public void call(final SyncResult suggestionCompleted) {
+                syncBranchWhenRootPresent(branch, false, aggregatedCallback(suggestionCompleted, onOperationCompleted));
+            }
+        });
+    }
 
-                    if(!xor.isEmpty()) {
-                        // There is a difference.
+    private void selectBranchWithGivenAncestor(Set<Identifier> branches, Identifier ancestor, Callback<Identifier> onOperationCompleted) {
+        // TODO: select appropriate branch to suggest to server
+        onOperationCompleted.call(null);
+    }
 
-                        // Create callback to be triggered when getMessageIdsByXor query returns
-                        final Callback<Boolean> getByXorQueryFetched = aggregator.childCallback();
+    private void compareXorAndSyncIfNecessary(final Identifier branch, final Identifier ourXor, Identifier hisXor, final Callback<SyncResult> onOperationCompleted) {
+        Identifier difference = ourXor.xor(hisXor);
+        db.getMessageIdsByXor(difference, new Callback<Set<Identifier>>() {
+            @Override
+            public void call(Set<Identifier> branches) {
+                selectBranchWithGivenAncestor(branches, getRequest().branchId, new Callback<Identifier>() {
+                    @Override
+                    public void call(Identifier pickedBranch) {
+                        if(pickedBranch == null) {
+                            syncBranchWhenXorKnown(branch, ourXor, false, onOperationCompleted);
+                        } else {
+                            suggestAndThenSync(branch, onOperationCompleted);
+                        }
+                    }
+                });
+            }
+        });
+    }
 
-                        // Let's see if we have a differing branch
-                        storage.getMessageIdsByXor(xor, new Callback<Set<Identifier>>(){
+    private void onChildren(final ChildrenResponse response) {
+        db.getIdsAndXorsByParentId(getRequest().branchId, new Callback<Map<Identifier, Identifier>>() {
+            @Override
+            public void call(Map<Identifier, Identifier> val) {
+
+                Map<Identifier, Identifier> localChildren = val;
+                Map<Identifier, Identifier> peersChildren = response.children;
+
+                BranchingCallbackAggregator<SyncResult> aggregator = new BranchingCallbackAggregator<>(reducer, onFinished);
+
+                // For each message we have and the server does not
+                for(Identifier id: Sets.difference(localChildren.keySet(), peersChildren.keySet())) {
+                    suggestMessage(id, aggregator.childCallback());
+                }
+
+                // For each message the server has and we do not
+                for(Identifier id: Sets.difference(peersChildren.keySet(), localChildren.keySet())) {
+                    downloadAndThenSync(id, getRequest().branchId, aggregator.childCallback());
+                }
+
+                // For each message we both have
+                for(Identifier id: Sets.intersection(localChildren.keySet(), peersChildren.keySet())) {
+                    compareXorAndSyncIfNecessary(id, localChildren.get(id), peersChildren.get(id), aggregator.childCallback());
+                }
+
+                aggregator.start(SyncResult.noChanges());
+            }
+        });
+    }
+
+    private void onLuckyGuess(final LuckyGuessResponse response) {
+        sender.addTask(new DownloadMessageTask(getAddress(), response.id, getRequest().branchId, true, db, new Callback<DownloadMessageTask.Result>() {
+            @Override
+            public void call(DownloadMessageTask.Result downloadResult) {
+                switch (downloadResult) {
+
+                    // --------- First outcome
+
+                    case MESSAGE_INSERTED:
+                        // Lucky guess actually worked, let's synchronize it.
+                        // However, after we are done synchronizing this branch, we need to
+                        // fall back to synchronizing the original branch.
+
+                        final SyncResult messageDownloadedResult = SyncResult.messageDownloaded();
+
+                        syncBranchWhenRootPresent(response.id, false, new Callback<SyncResult>() {
                             @Override
-                            public void call(Set<Identifier> matchingBranches) {
+                            public void call(SyncResult guessedBranchSyncResult) {
+                                // We just downloaded the message - it must be
+                                SyncResult afterLuckyGuess = reducer.reduce(guessedBranchSyncResult, messageDownloadedResult);
 
-                                /*
-                                    Choose which one is the branch we are looking for
-                                 */
-
-                                // Callback triggered when selectMatchingBranch finishes
-                                final Callback<Boolean> matchingBranchPicked = aggregator.childCallback();
-
-                                selectMatchingBranch(new LinkedList<>(matchingBranches), req().parent_id, new Callback<Identifier>() {
-                                    @Override
-                                    public void call(Identifier differingBranch) {
-                                        if(differingBranch == null) {
-                                            // we must go deeper
-                                            sender.addTask(new BranchSyncTask(getAddress(), id, false, xor, sender, storage, aggregator.childCallback()));
-
-                                        } else {
-                                            // Hey, we have a differing branch. Let's inform the server.
-                                            offerMessage(differingBranch, aggregator.childCallback());
-                                        }
-                                        matchingBranchPicked.call(true);
-                                    }
-                                });
-                                getByXorQueryFetched.call(true);
+                                // once again, synchronize the original branch
+                                syncBranchWhenRootPresent(getRequest().branchId, false, aggregatedCallback(afterLuckyGuess, onFinished));
                             }
                         });
-                    }
+                        break;
+
+                    case MESSAGE_EXISTS:
+                        // We must have received the message in other thread - continue
+                        syncBranchWhenRootPresent(response.id, false, new Callback<SyncResult>() {
+                            @Override
+                            public void call(SyncResult guessedBranchSyncResult) {
+                                // once again, synchronize the original branch
+                                syncBranchWhenRootPresent(getRequest().branchId, false, aggregatedCallback(guessedBranchSyncResult, onFinished));
+                            }
+                        });
+                        break;
+
+                    // --------- Second outcome
+
+                    case MESSAGE_NOT_ON_SERVER:
+                        // Server must have removed the message after sending us the identifier, so
+                        // there is no point in synchronizing this branch. This is server's fault,
+                        // but this is nothing particularly bad.
+
+                    case PARENT_UNKNOWN:
+                        // We must have removed the parent after making the check but before inserting
+                        // the child the database - we should ignore the branch.
+                        syncBranchWhenXorKnown(getRequest().branchId, getRequest().branchXor, true, onFinished);
+                        break;
+
+                    // --------- Third outcome
+
+                    case COMMUNICATION_ERROR:
+                        // Ouch - this should be noted
+                        onFinished.call(SyncResult.requestFailed());
+                        break;
                 }
-
-                // 2. Process the messages we do not know
-
-                for(Identifier id: Sets.difference(remoteMap.keySet(), storedMap.keySet())) {
-                    sender.addTask(new DownloadMessageTask(getAddress(), id, req().parent_id, false, storage, aggregator.childCallback()));
-                }
-
-                // 3. Process the messages the peer does not know
-
-                for(Identifier id: Sets.difference(storedMap.keySet(), remoteMap.keySet())) {
-                    offerMessage(id, aggregator.childCallback());
-                }
-
-                // All callbacks dispatched, enable aggregator fallback
-                aggregator.start(true);
             }
-        });
-    }
-
-    /**
-     * Called if the server has the same branch xor
-     */
-    private void onBranchInSync() {
-        // both we and the server know exactly the same messages
-        onFinished.call(true);
-    }
-
-    private void offerMessage(Identifier id, Callback<Boolean> onOfferCompleted) {
-        // here goes the logic of offering the message to the server
-        System.out.println("Offer message " + id);
-        onOfferCompleted.call(true);
-    }
-
-    private void selectMatchingBranch(Queue<Identifier> branches, Identifier ancestor, Callback<Identifier> onSelected) {
-        // iterate one branch after another
-        onSelected.call(null);
+        }));
     }
 }

@@ -1,6 +1,6 @@
 package org.aldeon.sync.procedures;
 
-import org.aldeon.core.Core;
+
 import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.Callback;
@@ -12,53 +12,38 @@ import org.aldeon.sync.SlotStateUpgradeProcedure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Upgrades the slot from EMPTY to SYNC_IN_PROGRESS.
- *
- * To achieve this, a bounty is registered in appropriate dht
- */
 public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
 
     private static final Logger log = LoggerFactory.getLogger(PeerFindingProcedure.class);
 
     @Override
-    public void handle(final Slot slot, final Identifier topicId) {
+    public void handle(final Slot slot, final Identifier topic) {
 
-        log.info("Finding peers for topic " + topicId);
+        log.info("Looking for peer interested in topic " + topic);
 
-        Core core = CoreModule.getInstance();
-        final Dht dht = core.getDht(slot.getAddressType());
+        // 1. Fetch the appropriate DHT
+        Dht dht = CoreModule.getInstance().getDht(slot.getAddressType());
 
-        Callback<PeerAddress> callback = new Callback<PeerAddress>() {
+        // 2. Unregister last used address, if such address exists
+        if(slot.getPeerAddress() != null) {
+            dht.delBounty(topic,  slot.getBountyHandler());
+            slot.setPeerAddress(null);
+            slot.setBountyHandler(null);
+        }
+
+        // 3. Create appropriate handler
+        Callback<PeerAddress> handler = new Callback<PeerAddress>() {
             @Override
-            public void call(final PeerAddress peerAddress) {
-
-                log.info("Found peer for slot: " + peerAddress);
-
-                final Callback<PeerAddress> cb = this;
-                Runnable revoke = new Runnable() {
-                    @Override
-                    public void run() {
-                        log.info("Revoking address " + peerAddress);
-                        dht.delBounty(topicId, cb);
-                    }
-                };
-
-                if(slot.getAddressType().equals(peerAddress.getType())) {
-                    log.info("Peer type is right. Assigned to slot");
-                    slot.setPeerAddress(peerAddress);
-                    slot.onRevoke(revoke);
-                    slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
-                } else {
-                    log.info("Wrong peer type - expected " + slot.getAddressType());
-                    revoke.run();
-                }
-
+            public void call(PeerAddress peer) {
+                log.info("Peer (" + peer + ") interested in topic " + topic + " found and assigned to slot.");
+                slot.setPeerAddress(peer);
+                slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
                 slot.setInProgress(false);
             }
         };
 
-        log.info("Assigning bounty");
-        dht.addBounty(topicId, callback);
+        // 4. Register demand for a new address
+        slot.setBountyHandler(handler);
+        dht.addBounty(topic, handler);
     }
 }

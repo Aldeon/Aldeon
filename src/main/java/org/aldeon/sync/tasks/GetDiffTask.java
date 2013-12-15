@@ -1,139 +1,123 @@
 package org.aldeon.sync.tasks;
 
-import org.aldeon.networking.common.Sender;
-import org.aldeon.networking.common.OutboundRequestTask;
 import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
+import org.aldeon.events.SingleRunCallback;
 import org.aldeon.model.Identifier;
-import org.aldeon.model.Message;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.common.Sender;
 import org.aldeon.protocol.Response;
-import org.aldeon.protocol.exception.UnexpectedResponseTypeException;
 import org.aldeon.protocol.request.GetDiffRequest;
 import org.aldeon.protocol.response.DiffResponse;
 import org.aldeon.utils.collections.DependencyDispatcher;
 import org.aldeon.utils.collections.DependencyDispatcherModule;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class GetDiffTask extends BaseOutboundTask<GetDiffRequest> implements OutboundRequestTask {
+public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
 
-    private final Callback<Long> onFinished;
-    private final Db storage;
+    private final Db db;
     private final Sender sender;
+    private final Callback<DiffResult> onFinished;
+    private final AtomicInteger messagesDownloaded;
+    private final AtomicInteger failedRequests;
+    private Long receivedClock;
 
-    public GetDiffTask(PeerAddress peer, Identifier topic, long clock, Db storage, Sender sender, Callback<Long> onFinished) {
-        super(5000, peer);
-
-        this.onFinished = onFinished;
-        this.storage = storage;
-        this.sender = sender;
+    public GetDiffTask(PeerAddress peerAddress, Identifier topic, long clock, Db db, Sender sender, Callback<DiffResult> onFinished) {
+        super(peerAddress);
 
         setRequest(new GetDiffRequest());
-        req().clock = clock;
-        req().topic = topic;
+        getRequest().clock = clock;
+        getRequest().topic = topic;
+
+        this.db = db;
+        this.sender = sender;
+        this.onFinished = new SingleRunCallback<>(onFinished);
+
+        this.messagesDownloaded = new AtomicInteger(0);
+        this.failedRequests = new AtomicInteger(0);
+        this.receivedClock = null;
     }
 
     @Override
     public void onSuccess(Response response) {
-
         if(response instanceof DiffResponse) {
             onDiff((DiffResponse) response);
         } else {
-            onFailure(new UnexpectedResponseTypeException());
+            onFinished.call(DiffResult.requestFailed());
         }
     }
 
-    private void onDiff(final DiffResponse response) {
-
+    private void onDiff(DiffResponse response) {
+        receivedClock = response.clock;
         DependencyDispatcher<Identifier> dispatcher = DependencyDispatcherModule.create(response.ids);
-
-        work(Collections.unmodifiableMap(response.ids), dispatcher, new Callback<Boolean>() {
-
-            public boolean notCalled = true;
-
-            @Override
-            public synchronized void call(Boolean success) {
-
-                // Make sure the callback is called once
-                if(notCalled) {
-                    notCalled = false;
-
-                    // Check if we did download all the messages
-                    if(success) {
-                        onFinished.call(response.clock);
-                    } else {
-                        onFinished.call(null);
-                    }
-                }
-            }
-        });
+        dispatchDownloads(dispatcher, response.ids);
     }
 
-    private void work(final Map<Identifier, Identifier> parents, final DependencyDispatcher<Identifier> dispatcher, final Callback<Boolean> onDownloadsCompleted) {
+    private void dispatchDownloads(final DependencyDispatcher<Identifier> dispatcher, final Map<Identifier, Identifier> parents) {
 
         while(true) {
-            final Identifier id = dispatcher.next();
-            if(id == null) {
+            final Identifier downloadTarget = dispatcher.next();
+
+            if(downloadTarget == null) {
                 break;
             }
 
-            final Identifier parent = parents.get(id);
+            // TODO: check if the message exists in our database
+            // TODO: check if every identifier is in the appropriate topic (!!!)
 
-            // We have an identifier. It represents a message that we may possibly want.
-            // Check if we already have its parent
-
-            storage.getMessageById(parent, new Callback<Message>() {
+            sender.addTask(downloadTask(downloadTarget, parents.get(downloadTarget), new Callback<DownloadMessageTask.Result>() {
                 @Override
-                public void call(final Message message) {
+                public void call(DownloadMessageTask.Result downloadResult) {
+                    switch(downloadResult) {
+                        case MESSAGE_INSERTED:
+                            // Great, proceed.
+                            messagesDownloaded.incrementAndGet();
+                            dispatcher.remove(downloadTarget);
+                            break;
 
-                    if(message == null) {
-                        // We do not know about the parent of id. No need to download the message.
-                        dispatcher.remove(id);
-                    } else {
-                        // We have a parent of this message, so we can download it.
+                        case MESSAGE_EXISTS:
+                            // We must have downloaded it from someone else in the meantime. Proceed.
+                            dispatcher.remove(downloadTarget);
+                            break;
 
-                        sender.addTask(new DownloadMessageTask(getAddress(), id, parent, false, storage, new Callback<Boolean>() {
-                            @Override
-                            public void call(Boolean success) {
-                                // DownloadMessageTask ended. Did we download the message?
-                                if(success) {
+                        case MESSAGE_NOT_ON_SERVER:
+                            // Server must have removed it after sending us the diff
+                            dispatcher.removeRecursively(downloadTarget);
+                            break;
 
-                                    // Great, message downloaded.
+                        case PARENT_UNKNOWN:
+                            // We must have deleted the branch. Do not download.
+                            dispatcher.removeRecursively(downloadTarget);
+                            break;
 
-                                    // Unlock dependant identifiers
-                                    dispatcher.remove(id);
-
-                                    // We may proceed
-                                    work(parents, dispatcher, onDownloadsCompleted);
-
-                                } else {
-                                    /*
-                                        Failed to download the message.
-
-                                        This is very bad - subsequent downloads will probably fail.
-                                        We need to abort downloading the delta and resynchronize.
-                                     */
-                                    onDownloadsCompleted.call(false);
-                                }
-                            }
-                        }));
+                        case COMMUNICATION_ERROR:
+                            failedRequests.incrementAndGet();
+                            dispatcher.removeRecursively(downloadTarget);
+                            break;
                     }
+                    // Finally, rerun the loop and check if the work is done
+                    dispatchDownloads(dispatcher, parents);
                 }
-            });
+            }));
         }
 
-        // Check if all messages have been downloaded.
         if(dispatcher.isFinished()) {
-            onDownloadsCompleted.call(true);
+            DiffResult result = new DiffResult();
+            result.messagesDownloaded = messagesDownloaded.get();
+            result.failedRequests = failedRequests.get();
+            result.clock = receivedClock;
+            onFinished.call(result);
         }
+    }
 
-        // TODO: check if dispatcher contains a loop. If it does, the peer gave us an invalid request.
+    private DownloadMessageTask downloadTask(Identifier id, Identifier parent, Callback<DownloadMessageTask.Result> onOperationCompleted) {
+        return new DownloadMessageTask(getAddress(), id, parent, false, db, onOperationCompleted);
     }
 
     @Override
     public void onFailure(Throwable cause) {
-        onFinished.call(null);
+        onFinished.call(DiffResult.requestFailed());
     }
 }

@@ -17,11 +17,11 @@ public class PeerAddressDeserializer implements JsonDeserializer<PeerAddress> {
     public PeerAddress deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
         String type = json.getAsJsonObject().get("type").getAsString();
-        String address = json.getAsJsonObject().get("address").getAsString();
+        String data = json.getAsJsonObject().get("data").toString();
 
         PeerAddress result;
         try {
-            result = NetworkingModule.deserialize(new AddressType(type), address);
+            result = NetworkingModule.deserialize(new AddressType(type), data);
         } catch (AddressParseException e) {
             throw new JsonParseException("Failed to deserialize a given address", e);
         }

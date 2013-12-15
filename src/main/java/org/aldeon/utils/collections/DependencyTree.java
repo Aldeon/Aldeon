@@ -20,6 +20,12 @@ public interface DependencyTree<T> {
     void remove(T element);
 
     /**
+     * Removes the element and all its descendants.
+     * @param element
+     */
+    void removeRecursively(T element);
+
+    /**
      * Checks if the collection contains no elements
      * @return true if no elements are stored in the collection
      */

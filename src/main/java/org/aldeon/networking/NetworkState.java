@@ -90,6 +90,11 @@ public class NetworkState {
     }
 
     public PeerAddress deserialize(AddressType type, String string) throws AddressParseException {
+
+        System.out.println("Type: " + type);
+        System.out.println("Data: " + string);
+        System.out.println("Mediums: " + mediums.size());
+
         NetworkMedium medium = mediums.get(type);
         if(medium != null) {
             return medium.deserialize(string);

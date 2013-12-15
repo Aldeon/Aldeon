@@ -74,6 +74,7 @@ public class AldeonCore extends BaseCore {
         getSender().start();
         getReceiver().start();
 
+        initializeSupervisor();
         log.debug("Initialized the core.");
     }
 

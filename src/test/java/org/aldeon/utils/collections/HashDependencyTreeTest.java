@@ -134,4 +134,67 @@ public class HashDependencyTreeTest {
 
         assertTrue(dt.isEmpty());
     }
+
+    @Test
+    public void shouldRemoveParentWhenRemovedRecursively() {
+        HashDependencyTree<Integer> dt = new HashDependencyTree<>();
+
+        dt.insert(1, 2);
+        dt.insert(2, 3);
+
+        assertTrue(dt.contains(2));
+        dt.removeRecursively(2);
+        assertFalse(dt.contains(2));
+    }
+
+    @Test
+    public void shouldRemoveChildWhenRemovedRecursively() {
+        HashDependencyTree<Integer> dt = new HashDependencyTree<>();
+
+        dt.insert(1, 2);
+        dt.insert(2, 3);
+
+        assertTrue(dt.contains(1));
+        dt.removeRecursively(2);
+        assertFalse(dt.contains(1));
+    }
+
+    @Test
+    public void shouldBecomeEmptyIfAllRemovedRecursively() {
+        HashDependencyTree<Integer> dt = new HashDependencyTree<>();
+
+        dt.insert(1, 2);
+        dt.insert(2, 3);
+        dt.insert(3, 4);
+
+        assertFalse(dt.isEmpty());
+        dt.removeRecursively(3);
+        assertTrue(dt.isEmpty());
+    }
+
+    @Test
+    public void shouldNotRemoveUnrelatedElements() {
+        HashDependencyTree<Integer> dt = new HashDependencyTree<>();
+
+        dt.insert(5, 6);
+
+        dt.insert(1, 2);
+        dt.insert(2, 3);
+
+        dt.removeRecursively(2);
+        assertEquals(1, dt.getOrphans().size());
+        assertTrue(dt.getOrphans().contains(5));
+    }
+
+    @Test
+    public void shouldStopWhenRemovingCyclesRecursively() {
+        HashDependencyTree<Integer> dt = new HashDependencyTree<>();
+
+        dt.insert(1, 2);
+        dt.insert(2, 3);
+        dt.insert(3, 1);
+
+        dt.removeRecursively(3);
+        assertTrue(dt.isEmpty());
+    }
 }

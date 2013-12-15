@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DependencyTreeBasedDispatcherTest {
@@ -125,6 +126,68 @@ public class DependencyTreeBasedDispatcherTest {
         d.remove(1);
 
         assertTrue(d.isFinished());
+    }
+
+    @Test
+    public void shouldFinishImmediatelyIfRemovingRecursivelyAllElements() {
+        DependencyTree<Integer> tree = new HashDependencyTree<>();
+
+        tree.insert(1, 2);
+        tree.insert(2, 3);
+        tree.insert(3, 4);
+
+        DependencyTreeBasedDispatcher<Integer> d = new DependencyTreeBasedDispatcher<>(tree);
+
+        d.removeRecursively(3);
+
+        assertTrue(d.isFinished());
+    }
+
+    @Test
+    public void shouldNotRemoveRecursivelyUnrelatedElements() {
+        DependencyTree<Integer> tree = new HashDependencyTree<>();
+
+        tree.insert(1, 2);
+        tree.insert(2, 3);
+        tree.insert(3, 4);
+        tree.insert(7, 8);
+
+        DependencyTreeBasedDispatcher<Integer> d = new DependencyTreeBasedDispatcher<>(tree);
+
+        d.removeRecursively(3);
+
+        assertEquals(7, (int) d.next());
+        assertEquals(null, d.next());
+        assertFalse(d.isFinished());
+    }
+
+    @Test
+    public void shouldUpdateOrphansOnRecursiveRemoval() {
+        DependencyTree<Integer> tree = new HashDependencyTree<>();
+
+        tree.insert(1, 2);
+        tree.insert(2, 3);
+
+        tree.insert(4, 5);
+        tree.insert(5, 6);
+
+        DependencyTreeBasedDispatcher<Integer> d = new DependencyTreeBasedDispatcher<>(tree);
+
+        Integer next = d.next();
+        assertNotEquals(null, next);
+
+        // Order of returned elements is not defined, so the test must check both possibilities
+        if(next == 2) {
+
+            d.removeRecursively(5);
+            assertEquals(null, d.next());
+
+        } else { //next == 5
+
+            d.removeRecursively(2);
+            assertEquals(null, d.next());
+        }
+
     }
 
 

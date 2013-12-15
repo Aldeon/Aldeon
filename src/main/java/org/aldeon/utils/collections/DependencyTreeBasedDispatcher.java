@@ -49,6 +49,20 @@ public class DependencyTreeBasedDispatcher<T> implements DependencyDispatcher<T>
     }
 
     @Override
+    public void removeRecursively(T element) {
+        // 1. Remove from underlying tree
+        dependencyTree.removeRecursively(element);
+
+        // 2. Update returnable and returned sets
+        returnable.clear();
+        for(T orphan: dependencyTree.getOrphans()) {
+            if(! returned.contains(orphan)) {
+                returnable.add(orphan);
+            }
+        }
+    }
+
+    @Override
     public boolean isFinished() {
         return returnable.isEmpty() && dependencyTree.isEmpty();
     }

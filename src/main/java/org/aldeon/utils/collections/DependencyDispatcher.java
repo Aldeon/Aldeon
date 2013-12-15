@@ -15,6 +15,13 @@ public interface DependencyDispatcher<T> {
     void remove(T element);
 
     /**
+     * Removes the element and all its descendants. The returned values
+     * will never be returned using the next() function.
+     * @param element
+     */
+    void removeRecursively(T element);
+
+    /**
      * Indicates if all elements have been removed
      * @return
      */
