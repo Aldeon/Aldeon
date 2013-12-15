@@ -52,6 +52,13 @@ public interface Core {
      */
     UserManager getUserManager();
 
+
+    /**
+     * Manages program settings stored in Aldeon.conf file
+     * @return
+     */
+    PropertiesManager getPropertiesManager();
+
     /**
      * Sender wrapper - analyses the address and forwards the request to appropriate sender on the fly.
      * @return

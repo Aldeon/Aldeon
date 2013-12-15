@@ -27,12 +27,14 @@ public abstract class BaseCore implements Core {
     private final Executor wrappedServerExecutor;
     private final Thread supervisorThread;
     private final UserManager userManager;
+    private final PropertiesManager propertiesManager;
 
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
 
         this.storage = storage;
         //this.storage = new DbLoggerDecorator(storage);
         this.userManager = new UserManager();
+        this.propertiesManager = new PropertiesManager();
         this.eventLoop = eventLoop;
         this.topicManager = topicManager;
 
@@ -90,6 +92,9 @@ public abstract class BaseCore implements Core {
     public UserManager getUserManager(){
         return userManager;
     }
+
+    @Override
+    public PropertiesManager getPropertiesManager() { return propertiesManager; }
 
     protected void closeExecutors() {
         clientSideExecutor.shutdown();

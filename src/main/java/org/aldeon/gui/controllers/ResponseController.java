@@ -17,6 +17,7 @@ import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -113,7 +114,8 @@ public class ResponseController implements Initializable {
         this.nestingLevel = nestingLevel;
         Identity als=CoreModule.getInstance().getUserManager().getIdentity(msg.getAuthorPublicKey());
         if(als!=null) this.auth.setText(als.getName());
-        else this.auth.setText("Anonymous");
+        else
+            this.auth.setText("Anonymous");
         this.pubKey.setText(msg.getAuthorPublicKey().toString().substring(0,16) + "...");
         //borderPane.prefWidthProperty().bind(root.widthProperty());
         //respPane.prefHeightProperty().bind(colorRectangle.heightProperty());

@@ -67,7 +67,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
     private Parent constructResponse(Message message, int nestingLevel) {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/gui/fxml/Resp.fxml"));
-        if(message==null) System.out.println("DOSTAŁEM NULLA");
         Parent parent=null;
         try {
             parent = (Parent) loader.load(getClass().getResource("/gui/fxml/Resp.fxml").openStream());
@@ -90,7 +89,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
                         }
                     }
                 });
-        if(parent==null) System.out.println("ZWRACAM NULLA");
         return parent;
     }
 

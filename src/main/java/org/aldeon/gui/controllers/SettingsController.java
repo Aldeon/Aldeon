@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.aldeon.core.CoreModule;
 import org.aldeon.gui.GUIController;
 
 import java.net.URL;
@@ -22,23 +23,20 @@ public class SettingsController implements Initializable {
     public StackPane Friends;
     public StackPane Settings;
     public BorderPane main;
-    private GUIController root;
     private int optCount;
 
-    public void setRoot(GUIController root){
-        this.root=root;
-    }
-
-    //Just testing, by default those will be created in fxml
     public void createCheckboxOption(String option) throws Exception{
         CheckBox setting = new CheckBox(option);
         setting.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                System.out.println(((CheckBox)e.getTarget()).getText()); //Do stuff about this setting
+                CheckBox option = (CheckBox) e.getTarget();
+                CoreModule.getInstance().getPropertiesManager().setProperty(option.getText(), option.selectedProperty());
             }
         });
         setting.setStyle("-fx-font:12px Verdana; -fx-text-fill:#ffffff; ");
+        if(Boolean.parseBoolean(CoreModule.getInstance().getPropertiesManager().getProperty(option))==true)
+                setting.setSelected(true);
         content.add(setting, 0, optCount);
         optCount++;
     }
