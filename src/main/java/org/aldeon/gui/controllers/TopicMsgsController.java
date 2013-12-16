@@ -90,7 +90,6 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
                         }
                     }
                 });
-
         return parent;
     }
 

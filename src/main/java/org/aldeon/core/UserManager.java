@@ -9,14 +9,14 @@ import java.util.Map;
 
 public class UserManager {
 
-    private static final Map<Key,Identity> identities = new HashMap<>();
+    private static final Map<String,Identity> identities = new HashMap<>();
 
-    public Map<Key,Identity> getAllIdentities() {
+    public Map<String,Identity> getAllIdentities() {
         return Collections.unmodifiableMap(identities);
     }
 
     public void addIdentity(Identity identity) {
-        identities.put(identity.getPublicKey(),identity);
+        identities.put(identity.getPublicKey().toString(),identity);
     }
 
     public void delIdentity(Identity identity) {
@@ -24,6 +24,6 @@ public class UserManager {
     }
 
     public Identity getIdentity(Key publicKey){
-        return identities.get(publicKey);
+        return identities.get(publicKey.toString());
     }
 }

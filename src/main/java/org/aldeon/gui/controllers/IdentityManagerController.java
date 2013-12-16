@@ -48,7 +48,7 @@ public class IdentityManagerController implements Initializable {
     public StackPane Settings;
     public StackPane idCreator;
     public BorderPane main;
-    private Map<Key,Identity> identities;
+    private Map<String,Identity> identities;
     private Map<Key,Parent> guiIds= new HashMap<>();
 
     public void createId(MouseEvent event) throws Exception{
