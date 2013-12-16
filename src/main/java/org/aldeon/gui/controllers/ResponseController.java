@@ -31,6 +31,7 @@ public class ResponseController implements Initializable {
     public HBox windowContainer;
     public Separator separator;
     public Button showHide;
+    public Text msgHash;
 
     public Parent toPass;
     public Text auth;
@@ -123,6 +124,7 @@ public class ResponseController implements Initializable {
         this.showHide.setVisible(false);
         this.msg = msg;
         this.message.setText(msg.getContent());
+        this.msgHash.setText(msg.getIdentifier().toString());
         this.nestingLevel = nestingLevel;
         Identity als=CoreModule.getInstance().getUserManager().getIdentity(msg.getAuthorPublicKey());
         if(als!=null) this.auth.setText(als.getName());
