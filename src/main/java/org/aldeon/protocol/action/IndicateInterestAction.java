@@ -25,20 +25,16 @@ public class IndicateInterestAction implements Action<IndicateInterestRequest> {
 
         // Someone wants to be inserted into our dht
 
-        Dht dht = core.getDht(request.address.getType());
+        Dht dht = core.getDht();
 
-        if(dht == null) {
-            throw new IllegalStateException("Could not find the appropriate dht for the specified address type");
+        if(sourceCredible(peer, request.address)) {
+            dht.interestTracker().addAddress(request.address, request.topic);
+            dht.closenessTracker().delAddress(request.address);
+            onResponse.call(new AddressSavedResponse());
+
         } else {
-            if(sourceCredible(peer, request.address)) {
-                dht.registerAddress(request.address, request.topic);
-                onResponse.call(new AddressSavedResponse());
-
-            } else {
-                onResponse.call(new AddressDiscardedResponse());
-            }
+            onResponse.call(new AddressDiscardedResponse());
         }
-
     }
 
     private boolean sourceCredible(PeerAddress source, PeerAddress suggestedAddress) {

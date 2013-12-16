@@ -1,4 +1,4 @@
-package org.aldeon.dht2.closeness;
+package org.aldeon.dht.closeness;
 
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.AddressType;

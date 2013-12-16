@@ -3,6 +3,8 @@ package org.aldeon.sync.procedures;
 
 import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
+import org.aldeon.dht.interest.orders.Order;
+import org.aldeon.dht.interest.orders.OrderImpl;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.PeerAddress;
@@ -22,17 +24,9 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
         log.info("Looking for peer interested in topic " + topic);
 
         // 1. Fetch the appropriate DHT
-        Dht dht = CoreModule.getInstance().getDht(slot.getAddressType());
+        Dht dht = CoreModule.getInstance().getDht();
 
-        // 2. Unregister last used address, if such address exists
-        if(slot.getPeerAddress() != null) {
-            dht.delBounty(topic,  slot.getBountyHandler());
-            slot.setPeerAddress(null);
-            slot.setBountyHandler(null);
-        }
-
-        // 3. Create appropriate handler
-        Callback<PeerAddress> handler = new Callback<PeerAddress>() {
+        Order order = new OrderImpl(topic, slot.getAddressType(), new Callback<PeerAddress>() {
             @Override
             public void call(PeerAddress peer) {
                 log.info("Peer (" + peer + ") interested in topic " + topic + " found and assigned to slot.");
@@ -40,10 +34,18 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
                 slot.setSlotState(SlotState.SYNC_IN_PROGRESS);
                 slot.setInProgress(false);
             }
-        };
+        });
+
+        // 2. Unregister last used address, if such address exists
+        if(slot.getOrder() != null) {
+            dht.interestTracker().revokeOrder(order);
+            slot.setPeerAddress(null);
+            slot.setOrder(null);
+        }
+
 
         // 4. Register demand for a new address
-        slot.setBountyHandler(handler);
-        dht.addBounty(topic, handler);
+        slot.setOrder(order);
+        dht.interestTracker().placeOrder(order);
     }
 }

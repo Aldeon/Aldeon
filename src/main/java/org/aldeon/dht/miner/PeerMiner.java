@@ -1,4 +1,4 @@
-package org.aldeon.dht2.miner;
+package org.aldeon.dht.miner;
 
 import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.utils.various.Provider;

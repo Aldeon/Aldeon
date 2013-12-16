@@ -1,8 +1,8 @@
-package org.aldeon.dht2.interest;
+package org.aldeon.dht.interest;
 
-import org.aldeon.dht2.interest.orders.Order;
-import org.aldeon.dht2.interest.orders.TopicOrderLine;
-import org.aldeon.dht2.interest.orders.TopicOrderLineImpl;
+import org.aldeon.dht.interest.orders.Order;
+import org.aldeon.dht.interest.orders.TopicOrderLine;
+import org.aldeon.dht.interest.orders.TopicOrderLineImpl;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.PeerAddress;

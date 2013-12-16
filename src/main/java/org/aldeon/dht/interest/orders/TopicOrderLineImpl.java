@@ -1,4 +1,4 @@
-package org.aldeon.dht2.interest.orders;
+package org.aldeon.dht.interest.orders;
 
 import org.aldeon.networking.common.PeerAddress;
 

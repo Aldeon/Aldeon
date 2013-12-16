@@ -1,4 +1,4 @@
-package org.aldeon.dht2.interest;
+package org.aldeon.dht.interest;
 
 import org.aldeon.events.Event;
 import org.aldeon.model.Identifier;

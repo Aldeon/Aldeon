@@ -1,33 +1,56 @@
 package org.aldeon.dht;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import org.aldeon.networking.common.Sender;
-import org.aldeon.dht.miners.DemandWatcher;
-import org.aldeon.dht.miners.MinerManager;
-import org.aldeon.dht.miners.MinerProvider;
-import org.aldeon.dht.miners.MinerProviderImpl;
-import org.aldeon.dht.ring.RingImpl;
-import org.aldeon.dht.slots.AddressAllocator;
+import org.aldeon.dht.closeness.ClosenessTracker;
+import org.aldeon.dht.closeness.ClosenessTrackerDispatcher;
+import org.aldeon.dht.closeness.RingBasedClosenessTracker;
+import org.aldeon.dht.closeness.RingImpl;
+import org.aldeon.dht.interest.AddressTypeIgnoringInterestTracker;
+import org.aldeon.dht.interest.InterestTracker;
+import org.aldeon.dht.interest.InterestTrackerDispatcher;
 import org.aldeon.networking.common.AddressType;
 
-public class DhtModule implements Module {
-    @Override
-    public void configure(Binder binder) {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-    }
+public class DhtModule {
 
-    public static Dht createDht(Sender sender, AddressType acceptedType) {
+    public static Dht create(Set<AddressType> acceptedTypes) {
 
-        // TODO: make this more elegant
+        // 1. Allocate appropriate structures
 
-        RingBasedDht dht = new RingBasedDht(acceptedType, new AddressAllocator(), new RingImpl());
-        DemandWatcher watcher = dht;
-        Dht wrapped = new DhtTypeCheckDecorator(dht);
+        Map<AddressType, ClosenessTracker> closenessTrackerMap = new HashMap<>();
+        Map<AddressType, InterestTracker> interestTrackerMap = new HashMap<>();
 
-        MinerProvider minerProvider = new MinerProviderImpl(sender, wrapped);
-        new MinerManager(watcher, minerProvider);
+        for(AddressType type: acceptedTypes) {
+            closenessTrackerMap.put(type, new RingBasedClosenessTracker(new RingImpl()));
+            interestTrackerMap.put(type, new AddressTypeIgnoringInterestTracker());
+        }
 
-        return wrapped;
+        // 2. Create AddressType-based dispatchers
+
+        ClosenessTracker closenessTracker = new ClosenessTrackerDispatcher(closenessTrackerMap);
+        InterestTracker interestTracker = new InterestTrackerDispatcher(interestTrackerMap);
+
+        // 3. Apply decorators
+
+        // interestTracker = new InterestTrackerEventDecorator(interestTracker);
+
+        // 4. Return dht object
+
+        final InterestTracker it = interestTracker;
+        final ClosenessTracker ct = closenessTracker;
+
+        return new Dht() {
+            @Override
+            public InterestTracker interestTracker() {
+                return it;
+            }
+
+            @Override
+            public ClosenessTracker closenessTracker() {
+                return ct;
+            }
+        };
     }
 }

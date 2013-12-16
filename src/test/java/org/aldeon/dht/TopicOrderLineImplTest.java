@@ -1,8 +1,8 @@
-package org.aldeon.dht2;
+package org.aldeon.dht;
 
-import org.aldeon.dht2.interest.orders.Order;
-import org.aldeon.dht2.interest.orders.TopicOrderLine;
-import org.aldeon.dht2.interest.orders.TopicOrderLineImpl;
+import org.aldeon.dht.interest.orders.Order;
+import org.aldeon.dht.interest.orders.TopicOrderLine;
+import org.aldeon.dht.interest.orders.TopicOrderLineImpl;
 import org.aldeon.events.Callback;
 import org.aldeon.networking.common.PeerAddress;
 import org.junit.Test;

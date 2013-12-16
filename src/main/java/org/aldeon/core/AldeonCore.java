@@ -20,8 +20,6 @@ import org.aldeon.sync.TopicManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Application core. Aggregates all the services necessary for
@@ -32,7 +30,7 @@ public class AldeonCore extends BaseCore {
 
     private static final Logger log = LoggerFactory.getLogger(AldeonCore.class);
 
-    private final Map<AddressType, Dht> dhts = new HashMap<>();
+    private final Dht dht;
     private final NetworkState networkState;
 
     @Inject
@@ -60,9 +58,9 @@ public class AldeonCore extends BaseCore {
 
         this.networkState = networkState;
 
-        for(AddressType type: getSender().acceptedTypes()) {
-            dhts.put(type, DhtModule.createDht(getSender(), type));
+        dht = DhtModule.create(getSender().acceptedTypes());
 
+        for(AddressType type: getSender().acceptedTypes()) {
             PeerAddress machineAddress = networkState.getMachineAddress(type);
             if(machineAddress != null) {
                 log.info("Detected address (" + machineAddress.getType() + "): " + machineAddress);
@@ -79,8 +77,8 @@ public class AldeonCore extends BaseCore {
     }
 
     @Override
-    public Dht getDht(AddressType addressType) {
-        return dhts.get(addressType);
+    public Dht getDht() {
+        return dht;
     }
 
     @Override

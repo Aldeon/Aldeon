@@ -1,8 +1,8 @@
-package org.aldeon.dht2.miner;
+package org.aldeon.dht.miner;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import org.aldeon.dht2.Dht2;
+import org.aldeon.dht.Dht;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.Sender;
@@ -10,12 +10,12 @@ import org.aldeon.networking.common.Sender;
 
 public class MinerManager {
 
-    private final Dht2 dht;
+    private final Dht dht;
     private SetMultimap<AddressType, Identifier> busy = HashMultimap.create();
 
     private final Sender sender;
 
-    public MinerManager(Dht2 dht, Sender sender) {
+    public MinerManager(Dht dht, Sender sender) {
         this.dht = dht;
         this.sender = sender;
     }

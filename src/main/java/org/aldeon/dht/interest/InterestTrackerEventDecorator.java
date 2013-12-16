@@ -1,6 +1,6 @@
-package org.aldeon.dht2.interest;
+package org.aldeon.dht.interest;
 
-import org.aldeon.dht2.interest.orders.Order;
+import org.aldeon.dht.interest.orders.Order;
 import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.AddressType;

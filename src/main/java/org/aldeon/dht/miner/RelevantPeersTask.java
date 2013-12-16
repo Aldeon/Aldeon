@@ -1,7 +1,7 @@
-package org.aldeon.dht2.miner;
+package org.aldeon.dht.miner;
 
-import org.aldeon.dht2.closeness.ClosenessTracker;
-import org.aldeon.dht2.interest.InterestTracker;
+import org.aldeon.dht.closeness.ClosenessTracker;
+import org.aldeon.dht.interest.InterestTracker;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.PeerAddress;

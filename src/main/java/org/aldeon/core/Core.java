@@ -3,23 +3,18 @@ package org.aldeon.core;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;
-import org.aldeon.model.Identity;
-import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.Receiver;
 import org.aldeon.networking.common.Sender;
 import org.aldeon.sync.TopicManager;
-
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 public interface Core {
 
     /**
-     * Find the appropriate Ring for a given address type.
-     * @param type
+     * Returns the Dht that accepts all used address types.
      * @return
      */
-    Dht getDht(AddressType type);
+    Dht getDht();
 
     /**
      * Returns the global message storage class.

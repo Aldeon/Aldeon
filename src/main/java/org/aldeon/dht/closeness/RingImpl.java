@@ -1,4 +1,4 @@
-package org.aldeon.dht.ring;
+package org.aldeon.dht.closeness;
 
 import com.google.inject.Inject;
 import org.aldeon.model.Identifiable;
