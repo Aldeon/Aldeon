@@ -30,6 +30,11 @@
           <children>
             <HBox alignment="TOP_RIGHT" prefHeight="20.0" prefWidth="200.0" spacing="5.0">
               <children>
+                <ImageView fitHeight="16.0" fitWidth="16.0" onMouseClicked="#linkIconClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+                  <image>
+                    <Image url="@/gui/icons/icons/link_icon16.png" />
+                  </image>
+                </ImageView>
                 <ImageView fitHeight="16.0" fitWidth="16.0" onMouseClicked="#deleteTopicClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                   <Image url="@/gui/icons/icons/delete_icon16.png" backgroundLoading="false" />
                 </ImageView>
@@ -56,8 +61,8 @@
                     <Insets top="3.0" />
                   </HBox.margin>
                 </Text>
-                <Text fill="$x2" strokeType="OUTSIDE" strokeWidth="0.0" text="msg #" />
-                <Text fill="#00e0ff" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="highlight" text="new #" />
+                <Text fill="$x2" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                <Text fill="#00e0ff" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="highlight" text="" />
               </children>
               <padding>
                 <Insets right="30.0" />

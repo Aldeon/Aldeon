@@ -2,6 +2,8 @@ package org.aldeon.gui.controllers;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
@@ -56,5 +58,11 @@ public class TopicController {
 
     public void deleteTopicClicked(MouseEvent event) {
         if (listener != null) listener.deleteTopicClicked(topicNode, message);
+    }
+
+    public void linkIconClicked(MouseEvent event) {
+        final ClipboardContent content = new ClipboardContent();
+        content.putString(message.getIdentifier().toString());
+        Clipboard.getSystemClipboard().setContent(content);
     }
 }
