@@ -1,16 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
-<?import java.net.URL?>
-<BorderPane fx:id="main" prefHeight="700.0" prefWidth="796.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.SettingsController">
+
+<BorderPane fx:id="settings" prefHeight="700.0" prefWidth="796.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.SettingsController">
   <center>
-    <GridPane fx:id="content" hgap="20.0" vgap="20.0">
-      <padding>
-        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-      </padding>
-    </GridPane>
+    <TabPane fx:id="settingTabs" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab text="Connection settings">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <CheckBox fx:id="addressTranslation" layoutX="14.0" layoutY="63.0" mnemonicParsing="false" onAction="#addressTranslationClicked" selected="false" text="Address Translation" />
+                <Label layoutX="14.0" layoutY="14.0" text="Main connection settings" />
+                <Separator layoutX="14.0" layoutY="46.0" prefWidth="200.0" />
+                <fx:define>
+                  <ToggleGroup fx:id="portToggle" />
+                  <ToggleGroup fx:id="ipToggle" />
+                </fx:define>
+                <RadioButton fx:id="randomPort" layoutX="29.0" layoutY="147.0" mnemonicParsing="false" onAction="#portRadioClicked" selected="true" text="Random port" toggleGroup="$portToggle" />
+                <RadioButton fx:id="selectedPort" layoutX="29.0" layoutY="179.0" mnemonicParsing="false" onAction="#portRadioClicked" selected="false" text="Port for connections:" toggleGroup="$portToggle" />
+                <Label layoutX="14.0" layoutY="110.0" text="Port Settings" />
+                <TextField fx:id="portField" disable="true" layoutX="172.0" layoutY="174.0" prefWidth="66.0" />
+                <Separator layoutX="14.0" layoutY="135.0" prefWidth="200.0" />
+                <Label layoutX="14.0" layoutY="216.0" text="IP settings" />
+                <Separator layoutX="14.0" layoutY="248.0" prefWidth="200.0" />
+                <RadioButton fx:id="autodetectIp" layoutX="29.0" layoutY="267.0" mnemonicParsing="false" onAction="#ipRadioClicked" selected="true" text="Autodetect my IP" toggleGroup="$ipToggle" />
+                <RadioButton fx:id="selectedIp" layoutX="29.0" layoutY="299.0" mnemonicParsing="false" onAction="#ipRadioClicked" text="Use fixed IP" toggleGroup="$ipToggle" />
+                <TextField fx:id="ipField" disable="true" layoutX="172.0" layoutY="294.0" prefWidth="170.0" />
+                <Button fx:id="savePort" layoutX="257.0" layoutY="174.0" mnemonicParsing="false" onAction="#changePort" text="Save Port" />
+                <Button fx:id="saveIp" layoutX="358.0" layoutY="294.0" mnemonicParsing="false" onAction="#changeIp" text="Save IP" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="Privacy settings">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <Label layoutX="14.0" layoutY="14.0" text="Privacy level" />
+                <Separator layoutX="14.0" layoutY="46.0" prefWidth="200.0" />
+                <Slider fx:id="privacySlider" layoutX="14.0" layoutY="65.0" majorTickUnit="1.0" max="3.0" minorTickCount="0" orientation="VERTICAL" showTickLabels="false" showTickMarks="false" snapToTicks="true" value="1.0" />
+                <Label layoutX="41.0" layoutY="189.0" text="I'm not really interested in protecting my information" />
+                <Label layoutX="41.0" layoutY="138.0" text="I don't want  my information to be available to public," />
+                <Label layoutX="41.0" layoutY="154.0" text="but i don't particularly mind it either. Default setting." />
+                <Label layoutX="41.0" layoutY="107.0" text="I don't want anyone but the most trusted sources to contact me" />
+                <Label layoutX="41.0" layoutY="62.0" text="Leaking my data may endanger my life" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="Program settings">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <Label layoutX="14.0" layoutY="14.0" text="Path for data to be stored" />
+                <Separator layoutX="14.0" layoutY="46.0" prefWidth="200.0" />
+                <TextField fx:id="pathField" layoutX="14.0" layoutY="65.0" prefWidth="200.0" />
+                <Button layoutX="225.0" layoutY="65.0" mnemonicParsing="false" onAction="#pathChange" text="Change path" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
   </center>
   <stylesheets>
     <URL value="@../css/style.css" />

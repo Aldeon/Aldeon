@@ -9,6 +9,7 @@
 #logo{
     -fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #1d1d1d, #1d1d1d 90%, #1b1b1b 100%);
 }
+
 #threadCreator{
     -fx-background-radius:10px;
     -fx-background-color:#222222;
@@ -30,38 +31,59 @@
     -fx-border-color:transparent transparent #333333 transparent;
 }
 
-.author {
-    -fx-font:20px Verdana;
-}
-.list-cell{
-    -fx-text-fill: #ffffff;
-}
-
-.list-cell:filled:selected:focused, .list-cell:filled:selected {
-    -fx-background-color: #222222;
-    -fx-text-fill: #00E0FF;
-}
-.list-cell:odd {
-    -fx-background-color: #222222;
-}
-.list-cell:even {
-    -fx-background-color: #222222;
-}
-.list-cell:filled:hover {
-    -fx-background-color: #222222;
-    -fx-text-fill: #00E0FF;
-}
-#main Text{
-}
-
 #identityScroll{
     -fx-background-color: #222222;
     -fx-border: 5px;
     -fx-outline: 0px;
     -fx-background-insets: 0px 0px;
 }
+
 #identityList{
     -fx-background-color: #222222;
+}
+
+#settings .separator *.line{
+    -fx-border-color:#4d4d4d transparent transparent transparent;
+}
+
+#settings .text-input{
+    -fx-background-color: #1f1f1f;
+}
+
+#settingTabs .tab {
+    -fx-background-color: #333333;
+    -fx-border: 1px;
+    -fx-border-color: #1d1d1d;
+}
+#settingTabs .tab:selected {
+    -fx-background-color: #444444;
+
+}
+
+#settingTabs .tab-content-area {
+    -fx-background-color: #1d1d1d;
+}
+
+#settingTabs .tab *.tab-label {
+    -fx-text-fill: white;
+}
+
+.author {
+    -fx-font:20px Verdana;
+}
+.list-cell{
+    -fx-text-fill: #333333;
+    -fx-background-color: #222222;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #222222;
+    -fx-text-fill: #00E0FF;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #222222;
+    -fx-text-fill: #00E0FF;
 }
 
 .highlight {
@@ -72,13 +94,14 @@
     -fx-cursor: hand;
 }
 
-.menuhighlight {
+.menuHighlight {
     -fx-background-color: rgba(255,255,255,0.05);
 }
 
 .menuNoHighlight {
     -fx-background-color: rgba(255,255,255,0);
 }
+
 .separator *.line {
     -fx-border-style: solid;
     -fx-border-width: 1px;
@@ -97,18 +120,68 @@
     -fx-background-color: #00E0FF;
     -fx-text-fill: #FFF;
 }
+
 .text-input {
     -fx-background-color:#222222;
     -fx-text-fill: #00E0FF;
     -fx-padding: 5 10 5 10;
 }
+
+.slider *.thumb {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}
+
+.slider *.track {
+    -fx-background-color: #1d1d1d;
+}
+
+.radio-button:selected .radio .dot {
+    -fx-background-color: #222222;
+    -fx-border-radius: 15px;
+    -fx-padding: 3px;
+}
+
+.radio-button .radio {
+    -fx-background-color: #1d1d1d;
+    -fx-border-radius: 15px;
+    -fx-padding: 3px;
+}
+
+.tab-pane *.tab-header-background {
+    -fx-background-color: #222222;
+}
+
 Text{
     -fx-font:12px Verdana;
     -fx-fill:#ccc;
 }
-CheckBox{
-    -fx-fill:#000000;
-    -fx-background-color: #000000;
+
+
+AnchorPane{
+    -fx-background-color: #222222;
 }
 
+Label{
+    -fx-text-fill: #4d4d4d;
+}
+
+CheckBox{
+    -fx-text-fill: #4d4d4d;
+}
+
+CheckBox *.box{
+    -fx-background-color: #1d1d1d;
+    -fx-padding: 3px;
+}
+
+CheckBox:selected:determinate .box .mark{
+    -fx-background-color: #222222;
+    -fx-padding: 4px;
+}
+
+RadioButton{
+    -fx-text-fill: #4d4d4d;
+}
 
