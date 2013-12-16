@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -35,7 +36,8 @@ public class IpNetworkMedium implements NetworkMedium {
 
     public IpNetworkMedium() {
 
-        IpPeerAddress loopback = IpPeerAddress.create("0.0.0.0", PORT);
+        // TODO: use ipv6-compatible bind address (http://stackoverflow.com/a/11110685)
+        IpPeerAddress loopback = IpPeerAddress.create(new InetSocketAddress(PORT));
 
         recvPoint = new NettyRecvPoint(loopback);
         sendPoint = new NettySendPoint();

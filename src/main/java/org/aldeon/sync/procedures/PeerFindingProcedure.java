@@ -23,9 +23,16 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
 
         log.info("Looking for peer interested in topic " + topic);
 
-        // 1. Fetch the appropriate DHT
         Dht dht = CoreModule.getInstance().getDht();
 
+        // 1. Unregister last used address, if such address exists
+        if(slot.getOrder() != null) {
+            dht.interestTracker().revokeOrder(slot.getOrder());
+            slot.setPeerAddress(null);
+            slot.setOrder(null);
+        }
+
+        // 2. Create the Order object
         Order order = new OrderImpl(topic, slot.getAddressType(), new Callback<PeerAddress>() {
             @Override
             public void call(PeerAddress peer) {
@@ -36,15 +43,7 @@ public class PeerFindingProcedure implements SlotStateUpgradeProcedure {
             }
         });
 
-        // 2. Unregister last used address, if such address exists
-        if(slot.getOrder() != null) {
-            dht.interestTracker().revokeOrder(order);
-            slot.setPeerAddress(null);
-            slot.setOrder(null);
-        }
-
-
-        // 4. Register demand for a new address
+        // 3. Register demand for a new address
         slot.setOrder(order);
         dht.interestTracker().placeOrder(order);
     }
