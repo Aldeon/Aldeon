@@ -61,9 +61,10 @@ public class AldeonCore extends BaseCore {
         dht = DhtModule.create(getSender().acceptedTypes());
 
         for(AddressType type: getSender().acceptedTypes()) {
-            PeerAddress machineAddress = networkState.getMachineAddress(type);
-            if(machineAddress != null) {
-                log.info("Detected address (" + machineAddress.getType() + "): " + machineAddress);
+            for(PeerAddress machineAddress: networkState.getMachineAddresses(type)) {
+                if(machineAddress != null) {
+                    log.info("Detected address (" + machineAddress.getType() + "): " + machineAddress);
+                }
             }
         }
 
