@@ -15,7 +15,7 @@ public class UsersQueries {
 
     public static final String SELECT_USERS = "SELECT public_key, name FROM users";
 
-    public static final String SELECT_USER_NAME_BY_PUBLIC_KEY = "SELECT name FROM users WHERE public_key = HEXTORAW(?)";
+    public static final String SELECT_USER_BY_PUBLIC_KEY = "SELECT public_key, name FROM users WHERE public_key = HEXTORAW(?)";
 
     public static final String DELETE_USER_BY_PUBLIC_KEY = "DELETE FROM users WHERE public_key = HEXTORAW(?)";
 }

@@ -8,7 +8,7 @@ public class MessagesQueries
             "author_id BIT(1024) NOT NULL," +
             "content nvarchar(1024) NOT NULL," +
             "node_xor BIT(256) NOT NULL," +
-            "parent_msg_id BIT(256) NOT NULL," +
+            "parent_msg_id BIT(256) NOT NULL," + // CHECK (SELECT COUNT(*) FROM messages m WHERE m.parent_msg_id = parent_msg_id)," +
             "topic_id BIT(256) NOT NULL," +
             "clock BIGINT NOT NULL, " +
             "PRIMARY KEY (msg_id)," +
@@ -37,11 +37,11 @@ public class MessagesQueries
             " END";
 
     public static final String CREATE_MSG_DELETE_TRIGGER = "CREATE TRIGGER msg_delete_trigger AFTER INSERT ON messages" +
-            " REFERENCING NEW AS new_row" +
+            " REFERENCING OLD AS old_row" +
             " FOR EACH ROW" +
             " BEGIN ATOMIC" +
             //"  CALL CALC_XOR(new_row.parent_msg_id);" +
-            "  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = new_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
+            "  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = old_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
             " END";
 
     public static final String CREATE_CALC_XOR_PROCEDURE = "CREATE PROCEDURE" +

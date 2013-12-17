@@ -22,11 +22,11 @@ public interface Db extends Service {
 
     void insertUser(User user, Callback<Boolean> callback);
     void deleteUser(Key publicKey, Callback<Boolean> callback);
-    void getUser(Key publicKey);
-    void getUsers();
+    void getUser(Key publicKey, Callback<User> callback);
+    void getUsers(Callback<Set<User>> callback);
 
     void insertIdentity(Identity identity, Callback<Boolean> callback);
     void deleteIdentity(Key publicKey, Callback<Boolean> callback);
-    void getIdentity(Key publicKey);
-    void getIdentities();
+    void getIdentity(Key publicKey, Callback<Identity> callback);
+    void getIdentities(Callback<Set<Identity>> callback);
 }

@@ -84,7 +84,7 @@ public class RsaKeyGenTest {
     }
 
     @Test
-    public void parsedKeyShouldBeIdenticalToOriginalKey() throws EncryptionFailedException, DecryptionFailedException, KeyParseException {
+    public void parsedPublicKeyShouldBeIdenticalToOriginalKey() throws EncryptionFailedException, DecryptionFailedException, KeyParseException {
 
         KeyGen gen = new RsaKeyGen();
 
@@ -102,6 +102,24 @@ public class RsaKeyGenTest {
     }
 
     @Test
+    public void parsedPrivateKeyShouldBeIdenticalToOriginalKey() throws EncryptionFailedException, DecryptionFailedException, KeyParseException {
+
+        KeyGen gen = new RsaKeyGen();
+
+        KeyGen.KeyPair pair = gen.generate();
+
+        ByteBuffer input = ByteBuffer.wrap(inputBytes);
+
+        ByteBuffer bytePrvKey = pair.privateKey.getByteBuffer();
+        Key decodedPrvKey = gen.parsePrivateKey(bytePrvKey);
+
+        ByteBuffer crypt = decodedPrvKey.encrypt(input);
+        ByteBuffer result = pair.publicKey.decrypt(crypt);
+
+        assertTrue(ByteBuffers.equal(input, result));
+    }
+
+    @Test
     public void keyRepresentedAsByteBufferShouldHaveAppropriateSize() {
 
         KeyGen gen = new RsaKeyGen();
@@ -109,7 +127,9 @@ public class RsaKeyGenTest {
         KeyGen.KeyPair pair = gen.generate();
 
         ByteBuffer bytePubKey = pair.publicKey.getByteBuffer();
+        ByteBuffer bytePrvKey = pair.privateKey.getByteBuffer();
 
-        assertEquals(bytePubKey.capacity(), RsaKeyGen.SIZE_BYTES);
+        assertEquals(RsaKeyGen.SIZE_BYTES * 1, bytePubKey.capacity());
+        assertEquals(RsaKeyGen.SIZE_BYTES * 2, bytePrvKey.capacity());
     }
 }
