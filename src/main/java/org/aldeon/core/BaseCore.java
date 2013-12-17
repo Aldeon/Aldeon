@@ -1,6 +1,7 @@
 package org.aldeon.core;
 
 import org.aldeon.db.Db;
+import org.aldeon.db.wrappers.DbEventCallerDecorator;
 import org.aldeon.db.wrappers.DbLoggerDecorator;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.executors.ExecutorLogger;
@@ -32,6 +33,7 @@ public abstract class BaseCore implements Core {
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
 
         this.storage = storage;
+        // this.storage = new DbEventCallerDecorator(storage, eventLoop);
         //this.storage = new DbLoggerDecorator(storage);
         this.userManager = new UserManager();
         this.propertiesManager = new PropertiesManager();

@@ -1,10 +1,10 @@
 package org.aldeon.db.wrappers;
 
-import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.core.events.MessageRemovedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
+import org.aldeon.events.EventLoop;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
@@ -14,8 +14,11 @@ import java.util.Set;
 
 public class DbEventCallerDecorator extends AbstractDbWrapper {
 
-    public DbEventCallerDecorator(Db db){
+    private final EventLoop eventLoop;
+
+    public DbEventCallerDecorator(Db db, EventLoop eventLoop){
         super(db);
+        this.eventLoop = eventLoop;
     }
 
     @Override
@@ -24,14 +27,21 @@ public class DbEventCallerDecorator extends AbstractDbWrapper {
     }
 
     @Override
-    public void insertMessage(Message message, Callback<Boolean> callback) {
-        CoreModule.getInstance().getEventLoop().notify(new MessageAddedEvent(message));
-        db.insertMessage(message, callback);
+    public void insertMessage(final Message message, final Callback<Boolean> callback) {
+        db.insertMessage(message, new Callback<Boolean>() {
+            @Override
+            public void call(Boolean messageInserted) {
+                if(messageInserted) {
+                    eventLoop.notify(new MessageAddedEvent(message));
+                }
+                callback.call(messageInserted);
+            }
+        });
     }
 
     @Override
     public void deleteMessage(Identifier msgId, Callback<Boolean> callback) {
-        CoreModule.getInstance().getEventLoop().notify(new MessageRemovedEvent(msgId));
+        eventLoop.notify(new MessageRemovedEvent(msgId));
         db.deleteMessage(msgId, callback);
     }
 
