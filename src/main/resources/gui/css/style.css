@@ -31,19 +31,28 @@
     -fx-border-color:transparent transparent #333333 transparent;
 }
 
-#identityScroll{
-    -fx-background-color: #222222;
-    -fx-border: 5px;
-    -fx-outline: 0px;
-    -fx-background-insets: 0px 0px;
-}
-
 #identityList{
     -fx-background-color: #222222;
+    -fx-padding: 0px;
 }
 
+#peerList .list-cell{
+    -fx-text-fill: #4d4d4d;
+}
+
+#peerList .list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #222222;
+    -fx-text-fill: #00E0FF;
+}
+
+#peerList .list-cell:filled:hover {
+    -fx-background-color: #222222;
+    -fx-text-fill: #00E0FF;
+}
+
+
 #settings .separator *.line{
-    -fx-border-color:#4d4d4d transparent transparent transparent;
+    -fx-border-color:#ffffff transparent transparent transparent;
 }
 
 #settings .text-input{
@@ -65,7 +74,12 @@
 }
 
 #settingTabs .tab *.tab-label {
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
+}
+
+#peerList{
+    -fx-background-insets: 0px 0px;
+    -fx-padding: 0px;
 }
 
 .author {
@@ -138,7 +152,7 @@
 }
 
 .radio-button:selected .radio .dot {
-    -fx-background-color: #222222;
+    -fx-background-color: #4d4d4d;
     -fx-border-radius: 15px;
     -fx-padding: 3px;
 }
@@ -160,15 +174,15 @@ Text{
 
 
 AnchorPane{
-    -fx-background-color: #222222;
+    -fx-background-color: #444444;
 }
 
 Label{
-    -fx-text-fill: #4d4d4d;
+    -fx-text-fill: #ffffff;
 }
 
 CheckBox{
-    -fx-text-fill: #4d4d4d;
+    -fx-text-fill: #ffffff;
 }
 
 CheckBox *.box{
@@ -177,11 +191,65 @@ CheckBox *.box{
 }
 
 CheckBox:selected:determinate .box .mark{
-    -fx-background-color: #222222;
+    -fx-background-color: #4d4d4d;
     -fx-padding: 4px;
 }
 
 RadioButton{
-    -fx-text-fill: #4d4d4d;
+    -fx-text-fill: #ffffff;
 }
 
+.scroll-pane{
+    -fx-background-color: #222222;
+    -fx-padding: 0px;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb{
+    -fx-background-color:#4d4d4d;
+}
+
+.scroll-pane .scroll-bar:vertical .track{
+    -fx-background-color:#222222;
+    -fx-background-radius: 1px;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button{
+    -fx-background-color:#222222;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-arrow{
+    -fx-background-color:#4d4d4d;
+}
+
+.scroll-pane .scroll-bar:vertical .decrement-button{
+    -fx-background-color:#222222;
+}
+
+.scroll-pane .scroll-bar:vertical .decrement-arrow{
+    -fx-background-color:#4d4d4d;
+}
+
+.scroll-pane .scroll-bar:horizontal .thumb{
+    -fx-background-color:#4d4d4d;
+}
+
+.scroll-pane .scroll-bar:horizontal .track{
+    -fx-background-color:#222222;
+    -fx-background-radius: 1px;
+}
+
+.scroll-pane .scroll-bar:horizontal .increment-button{
+    -fx-background-color:#222222;
+}
+
+.scroll-pane .scroll-bar:horizontal .increment-arrow{
+    -fx-background-color:#4d4d4d;
+}
+
+.scroll-pane .scroll-bar:horizontal .decrement-button{
+    -fx-background-color:#222222;
+}
+
+.scroll-pane .scroll-bar:horizontal .decrement-arrow{
+    -fx-background-color:#4d4d4d;
+}

@@ -6,7 +6,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -17,8 +19,12 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.core.PropertiesManager;
 import org.aldeon.protocol.Action;
 
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class SettingsController implements Initializable {
     public GridPane content;
@@ -32,13 +38,17 @@ public class SettingsController implements Initializable {
     public RadioButton selectedIp;
     public RadioButton selectedPort;
     public RadioButton randomPort;
-    private int optCount;
+    public TextField syncField;
+    public TextField peerField;
+    public ListView peerList;
     private static final String ADDRESS_TRANSLATION="addressTranslation";
     private static final String IP_AUTO="ipAuto";
     private static final String IP_ADDRESS="ipAddress";
     private static final String PORT_AUTO="portAuto";
     private static final String PORT_NUMBER="portNumber";
     private static final String PRIVACY_LEVEL="privacyLevel";
+    private static final String DIFF_TIMEOUT="syncInterval";
+    private static final String INIT_PEERS="initPeers";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -54,24 +64,21 @@ public class SettingsController implements Initializable {
 
     public void refreshSettings(){
         PropertiesManager props = CoreModule.getInstance().getPropertiesManager();
-        if(!Boolean.parseBoolean(props.getProperty(IP_AUTO))){
+        if(!props.getIpAutodetection()){
             selectedIp.setSelected(true);
             ipField.setDisable(false);
-            String ip = props.getProperty(IP_ADDRESS);
-            ipField.setText(ip);
+            ipField.setText(props.getMyIp().toString());
         }
-        if(!Boolean.parseBoolean(props.getProperty(PORT_AUTO))){
+        if(!props.getPortRandomization()){
             selectedPort.setSelected(true);
             portField.setDisable(false);
-            String ip = props.getProperty(PORT_NUMBER);
-            portField.setText(ip);
+            portField.setText(Integer.toString(props.getPortNumber()));
         }
-        if(Boolean.parseBoolean(props.getProperty(ADDRESS_TRANSLATION)))
+        if(props.getAddressTranslation())
             addressTranslation.setSelected(true);
-        String privacy = props.getProperty(PRIVACY_LEVEL);
-        if(privacy!=null){
-            privacySlider.setValue(Integer.parseInt(props.getProperty(PRIVACY_LEVEL)));
-        }
+        privacySlider.setValue(props.getPrivacyLevel());
+        syncField.setText(Integer.toString(props.getDiffTimeout()));
+        peerList.getItems().addAll(props.getPeersForGUI());
     }
 
     public void pathChange(ActionEvent actionEvent) {
@@ -81,7 +88,7 @@ public class SettingsController implements Initializable {
         if(((RadioButton)actionEvent.getTarget()).getId().equals("autodetectIp")){
             ipField.setText("");
             ipField.setDisable(true);
-            CoreModule.getInstance().getPropertiesManager().setProperty(IP_ADDRESS, null);
+            CoreModule.getInstance().getPropertiesManager().removeProperty(IP_ADDRESS);
         }else{
             ipField.setDisable(false);
         }
@@ -92,7 +99,7 @@ public class SettingsController implements Initializable {
         if(((RadioButton)actionEvent.getTarget()).getId().equals("randomPort")){
             portField.setDisable(true);
             portField.setText("");
-            CoreModule.getInstance().getPropertiesManager().setProperty(PORT_NUMBER,null);
+            CoreModule.getInstance().getPropertiesManager().removeProperty(PORT_NUMBER);
         }
         else
             portField.setDisable(false);
@@ -117,6 +124,37 @@ public class SettingsController implements Initializable {
 
     public void changedPrivacyLevel(int newLevel){
         CoreModule.getInstance().getPropertiesManager().setProperty(PRIVACY_LEVEL,Integer.toString(newLevel));
+    }
+
+    public void addPeer(ActionEvent actionEvent) {
+        if(!peerField.getText().equals("")&&!peerList.getItems().contains(peerField.getText())){
+            try {
+                if(InetAddress.getByName(peerField.getText())!=null)peerList.getItems().add(peerField.getText());
+            } catch (UnknownHostException e) {
+                System.out.println("IP ADDRESS INCORRECT");
+            }
+        }
+        peerField.setText("");
+        refreshPeers();
+    }
+
+    public void removePeer(ActionEvent actionEvent) {
+        peerList.getItems().remove(peerList.getSelectionModel().getSelectedItem());
+        peerList.getSelectionModel().clearSelection();
+        refreshPeers();
+    }
+
+    public void refreshPeers(){
+        String peers="";
+        for(String peer : (List<String>)peerList.getItems()){
+            peers+=peer+",";
+        }
+        peers=peers.substring(0,peers.length()-1);
+        CoreModule.getInstance().getPropertiesManager().setProperty(INIT_PEERS,peers);
+    }
+
+    public void changeDiffTimeout(ActionEvent actionEvent) {
+        CoreModule.getInstance().getPropertiesManager().setProperty(DIFF_TIMEOUT,syncField.getText());
     }
 }
 
