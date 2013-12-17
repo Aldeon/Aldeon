@@ -2,6 +2,7 @@ package org.aldeon.dht.crawler;
 
 import org.aldeon.dht.closeness.ClosenessTracker;
 import org.aldeon.dht.interest.InterestTracker;
+import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Response;
@@ -13,9 +14,9 @@ public class GetRelevantPeersTask extends AbstractOutboundTask<GetRelevantPeersR
 
     private final InterestTracker interestTracker;
     private final ClosenessTracker closenessTracker;
-    private final Runnable onFinished;
+    private final Callback<Boolean> onFinished;
 
-    public GetRelevantPeersTask(PeerAddress peerAddress, Identifier topic, InterestTracker interestTracker, ClosenessTracker closenessTracker, Runnable onFinished) {
+    public GetRelevantPeersTask(PeerAddress peerAddress, Identifier topic, InterestTracker interestTracker, ClosenessTracker closenessTracker, Callback<Boolean> onFinished) {
         super(peerAddress);
 
         this.interestTracker = interestTracker;
@@ -41,11 +42,11 @@ public class GetRelevantPeersTask extends AbstractOutboundTask<GetRelevantPeersR
             closenessTracker.addAddress(address);
             interestTracker.addAddress(address, getRequest().target);
         }
-        onFinished.run();
+        onFinished.call(true);
     }
 
     @Override
     public void onFailure(Throwable cause) {
-        onFinished.run();
+        onFinished.call(false);
     }
 }
