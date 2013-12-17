@@ -359,7 +359,21 @@ public class DbImpl implements Db {
 
     @Override
     public void insertUser(User user, Callback<Boolean> callback) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if (user == null || connection == null) {
+            callback.call(false);
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UsersQueries.INSERT_USER);
+            setIdentifiableInPreparedStatement(1, user.getPublicKey(), preparedStatement);
+            preparedStatement.setString(2, user.getName());
+            preparedStatement.executeUpdate();
+            callback.call(true);
+        } catch (SQLException e) {
+            log.error("Error in insertUser", e);
+            callback.call(false);
+        }
     }
 
     @Override
@@ -382,13 +396,58 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getUser(Key publicKey) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void getUser(Key publicKey, Callback<User> callback) {
+        if (connection == null) {
+            callback.call(null);
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UsersQueries.SELECT_USER_BY_PUBLIC_KEY);
+            setIdentifiableInPreparedStatement(1, publicKey, preparedStatement);
+            ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                String name = result.getString("name");
+                User user = UserImpl.create(name, publicKey);
+                callback.call(user);
+            } else {
+                callback.call(null);
+            }
+        } catch (Exception e) {
+            log.error("ERROR: Error in getUser.", e);
+            callback.call(null);
+        }
     }
 
     @Override
-    public void getUsers() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void getUsers(Callback<Set<User>> callback) {
+        if (connection == null) {
+            callback.call(Collections.<User>emptySet());
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UsersQueries.SELECT_USERS);
+            ResultSet result = preparedStatement.executeQuery();
+
+            Set<User> users = new HashSet<>();
+            RsaKeyGen rsa = new RsaKeyGen();
+
+            while (result.next()) {
+                ByteBuffer publicKeyBuffer = ByteBuffer.wrap(result.getBytes("public_key"));
+                Key publicKey = rsa.parsePublicKey(publicKeyBuffer);
+
+                String name = result.getString("name");
+                User user = UserImpl.create(name, publicKey);
+
+                users.add(user);
+            }
+
+            callback.call(users);
+        } catch (Exception e) {
+            log.error("ERROR: Error in getUsers.", e);
+            callback.call(null);
+        }
     }
 
     @Override
@@ -431,13 +490,64 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void getIdentity(Key publicKey) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void getIdentity(Key publicKey, Callback<Identity> callback) {
+        if (connection == null) {
+            callback.call(null);
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(IdentitiesQueries.SELECT_IDENTITY_BY_PUBLIC_KEY);
+            setIdentifiableInPreparedStatement(1, publicKey, preparedStatement);
+            ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                ByteBuffer privateKeyBuffer = ByteBuffer.wrap(result.getBytes("private_key"));
+                RsaKeyGen rsa = new RsaKeyGen();
+                Key privateKey = rsa.parsePrivateKey(privateKeyBuffer);
+
+                String name = result.getString("name");
+                Identity identity = Identity.create(name, publicKey, privateKey);
+                callback.call(identity);
+            } else {
+                callback.call(null);
+            }
+        } catch (Exception e) {
+            log.error("ERROR: Error in getIdentity.", e);
+            callback.call(null);
+        }
     }
 
     @Override
-    public void getIdentities() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void getIdentities(Callback<Set<Identity>> callback) {
+        if (connection == null) {
+            callback.call(Collections.<Identity>emptySet());
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(IdentitiesQueries.SELECT_IDENTITIES);
+            ResultSet result = preparedStatement.executeQuery();
+
+            Set<Identity> identities = new HashSet<>();
+            RsaKeyGen rsa = new RsaKeyGen();
+
+            while (result.next()) {
+                ByteBuffer publicKeyBuffer = ByteBuffer.wrap(result.getBytes("public_key"));
+                ByteBuffer privateKeyBuffer = ByteBuffer.wrap(result.getBytes("private_key"));
+
+                Key publicKey = rsa.parsePublicKey(publicKeyBuffer);
+                Key privateKey = rsa.parsePrivateKey(privateKeyBuffer);
+                String name = result.getString("name");
+                Identity identity = Identity.create(name, publicKey, privateKey);
+
+                identities.add(identity);
+            }
+
+            callback.call(identities);
+        } catch (Exception e) {
+            log.error("ERROR: Error in getIdentity.", e);
+            callback.call(null);
+        }
     }
 
     private void prepareDbConnection() {

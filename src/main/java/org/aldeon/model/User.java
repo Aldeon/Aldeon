@@ -4,8 +4,6 @@ import org.aldeon.crypt.Key;
 
 /**
  * User - an author of messages.
- *
- * TODO: should there be any username?
  */
 public interface User {
     Key getPublicKey();

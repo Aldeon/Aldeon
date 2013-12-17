@@ -85,13 +85,13 @@ public abstract class AbstractDbWrapper implements Db {
     }
 
     @Override
-    public void getUser(Key publicKey) {
-        db.getUser(publicKey);
+    public void getUser(Key publicKey, Callback<User> callback) {
+        db.getUser(publicKey, callback);
     }
 
     @Override
-    public void getUsers() {
-        db.getUsers();
+    public void getUsers(Callback<Set<User>> callback) {
+        db.getUsers(callback);
     }
 
     @Override
@@ -105,13 +105,13 @@ public abstract class AbstractDbWrapper implements Db {
     }
 
     @Override
-    public void getIdentity(Key publicKey) {
-        db.getIdentity(publicKey);
+    public void getIdentity(Key publicKey, Callback<Identity> callback) {
+        db.getIdentity(publicKey, callback);
     }
 
     @Override
-    public void getIdentities() {
-        db.getIdentities();
+    public void getIdentities(Callback<Set<Identity>> callback) {
+        db.getIdentities(callback);
     }
 
     @Override

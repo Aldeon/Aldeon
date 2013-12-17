@@ -4,21 +4,18 @@ package org.aldeon.crypt.rsa;
 import org.aldeon.crypt.Key;
 import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.exception.KeyParseException;
+import org.aldeon.utils.helpers.BufPrint;
 import org.aldeon.utils.helpers.ByteBuffers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.Security;
+import java.security.*;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
 public class RsaKeyGen implements KeyGen {
@@ -64,6 +61,8 @@ public class RsaKeyGen implements KeyGen {
         java.security.Key pub = kp.getPublic();
         java.security.Key prv = kp.getPrivate();
 
+        // Here goes the public key part
+
         RSAPublicKey rsaPubKey = (RSAPublicKey) pub;
 
         if(! rsaPubKey.getPublicExponent().equals(PUBLIC_EXPONENT)) {
@@ -78,14 +77,37 @@ public class RsaKeyGen implements KeyGen {
         if (modulusBytes[0] == 0x00) { // zero sign byte == positive integer
             modulusBuffer = ByteBuffer.allocate(modulusBytes.length - 1);
             modulusBuffer.put(modulusBytes, 1, modulusBuffer.capacity());
+            modulusBuffer.flip();
         } else {
             throw new IllegalStateException("Modulus must be a positive integer.");
         }
 
+        // Here goes the private key part
+
+        RSAPrivateKey rsaPrvKey = (RSAPrivateKey) prv;
+        BigInteger privateExponent = rsaPrvKey.getPrivateExponent();
+        byte[] exponentBytes = privateExponent.toByteArray();
+
+        ByteBuffer exponentBuffer = ByteBuffer.allocate(SIZE_BYTES);
+
+        if(exponentBytes.length > SIZE_BYTES) {
+            exponentBuffer.put(exponentBytes, exponentBytes.length - SIZE_BYTES, SIZE_BYTES);
+        } else {
+            exponentBuffer.position(SIZE_BYTES - exponentBytes.length);
+            exponentBuffer.put(exponentBytes);
+        }
+
+        exponentBuffer.flip();
+
+        ByteBuffer concat = ByteBuffer.allocate(modulusBuffer.remaining() + exponentBuffer.remaining());
+        concat.put(modulusBuffer);
+        concat.put(exponentBuffer);
+        concat.flip();
+
         KeyPair pair = new KeyPair();
 
         pair.publicKey  = new RsaKey(pub, modulusBuffer, seed, Key.Type.PUBLIC);
-        pair.privateKey = new RsaKey(prv, ByteBuffer.wrap(prv.getEncoded()), seed, Key.Type.PRIVATE);
+        pair.privateKey = new RsaKey(prv, concat, seed, Key.Type.PRIVATE);
 
         return pair;
     }
@@ -118,9 +140,26 @@ public class RsaKeyGen implements KeyGen {
     @Override
     public Key parsePrivateKey(ByteBuffer data) throws KeyParseException {
         try {
-            ByteBuffer copy = ByteBuffers.clone(data);
-            return new RsaKey(keyFactory.generatePrivate(new PKCS8EncodedKeySpec(copy.array())), copy, seed, Key.Type.PRIVATE);
-        } catch (InvalidKeySpecException e) {
+            data = data.asReadOnlyBuffer();
+
+            byte[] modulusBytes = new byte[SIZE_BYTES + 1];
+            byte[] exponentBytes = new byte[SIZE_BYTES + 1];
+
+            modulusBytes[0] = 0x00;
+            data.get(modulusBytes, 1, SIZE_BYTES);
+
+            exponentBytes[0] = 0x00;
+            data.get(exponentBytes, 1, SIZE_BYTES);
+
+            BigInteger modulus = new BigInteger(modulusBytes);
+            BigInteger exponent = new BigInteger(exponentBytes);
+
+            RSAPrivateKeySpec spec = new RSAPrivateKeySpec(modulus, exponent);
+            KeyFactory factory = KeyFactory.getInstance(ALGORITHM);
+            PrivateKey prv = factory.generatePrivate(spec);
+
+            return new RsaKey(prv, data, seed, Key.Type.PRIVATE);
+        } catch (Exception e) {
             throw new KeyParseException("Invalid key structure", e);
         }
     }
