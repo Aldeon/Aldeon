@@ -12,7 +12,7 @@ public interface NetworkMedium {
     SendPoint sendPoint();
     RecvPoint recvPoint();
 
-    PeerAddress getMachineAddress(AddressType addressType);
+    Set<PeerAddress> getMachineAddresses(AddressType addressType);
 
     String serialize(PeerAddress address) throws AddressParseException;
     PeerAddress deserialize(String address) throws AddressParseException;

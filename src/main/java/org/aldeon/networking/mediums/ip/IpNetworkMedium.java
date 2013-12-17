@@ -1,27 +1,26 @@
 package org.aldeon.networking.mediums.ip;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.NetworkMedium;
 import org.aldeon.networking.common.PeerAddress;
-import org.aldeon.networking.common.Port;
 import org.aldeon.networking.common.RecvPoint;
 import org.aldeon.networking.common.SendPoint;
 import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.receiver.NettyRecvPoint;
 import org.aldeon.networking.mediums.ip.sender.NettySendPoint;
-import org.aldeon.utils.net.PortImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 public class IpNetworkMedium implements NetworkMedium {
@@ -31,11 +30,12 @@ public class IpNetworkMedium implements NetworkMedium {
 
     private final RecvPoint recvPoint;
     private final SendPoint sendPoint;
-    private final Map<AddressType, IpPeerAddress> machineAddresses = new HashMap<>();
+    private final SetMultimap<AddressType, IpPeerAddress> machineAddresses = HashMultimap.create();
 
     public IpNetworkMedium() {
 
-        IpPeerAddress loopback = IpPeerAddress.create("0.0.0.0", PORT);
+        // TODO: use ipv6-compatible bind address (http://stackoverflow.com/a/11110685)
+        IpPeerAddress loopback = IpPeerAddress.create(new InetSocketAddress(PORT));
 
         recvPoint = new NettyRecvPoint(loopback);
         sendPoint = new NettySendPoint();
@@ -64,8 +64,8 @@ public class IpNetworkMedium implements NetworkMedium {
     }
 
     @Override
-    public IpPeerAddress getMachineAddress(AddressType addressType) {
-        return machineAddresses.get(addressType);
+    public Set<PeerAddress> getMachineAddresses(AddressType addressType) {
+        return new HashSet<PeerAddress>(machineAddresses.get(addressType));
     }
 
     @Override

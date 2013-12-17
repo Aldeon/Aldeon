@@ -33,14 +33,10 @@ public class GetRelevantPeersAction implements Action<GetRelevantPeersRequest> {
         Set<PeerAddress> interested = new HashSet<>();
         Set<PeerAddress> nearValues = new HashSet<>();
 
-        Dht dht = core.getDht(peer.getType());
+        Dht dht = core.getDht();
 
-        if(dht != null) {
-            nearValues.addAll(dht.getNearest(request.target, LIMIT));
-            interested.addAll(dht.getInterested(request.target, LIMIT));
-        } else {
-            log.warn("Could not fetch a dht for address " + peer.getClass());
-        }
+        nearValues.addAll(dht.closenessTracker().getNearest(peer.getType(), request.target, LIMIT));
+        interested.addAll(dht.interestTracker().getInterested(peer.getType(), request.target, LIMIT));
 
         onResponse.call(new RelevantPeersResponse(interested, nearValues));
     }

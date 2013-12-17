@@ -1,23 +1,9 @@
 package org.aldeon.dht;
 
-import org.aldeon.events.Callback;
-import org.aldeon.model.Identifier;
-import org.aldeon.networking.common.AddressType;
-import org.aldeon.networking.common.PeerAddress;
-
-import java.util.Set;
+import org.aldeon.dht.closeness.ClosenessTracker;
+import org.aldeon.dht.interest.InterestTracker;
 
 public interface Dht {
-
-    void registerUncertainAddress(PeerAddress address, Identifier topic);
-    void registerAddress(PeerAddress address, Identifier topic);
-    void removeAddress(PeerAddress address);
-
-    Set<PeerAddress> getInterested(Identifier topic, int maxResults);
-    Set<PeerAddress> getNearest(Identifier topic, int maxResults);
-
-    void addBounty(Identifier topic, Callback<PeerAddress> callback);
-    void delBounty(Identifier topic, Callback<PeerAddress> callback);
-
-    AddressType acceptedType();
+    InterestTracker interestTracker();
+    ClosenessTracker closenessTracker();
 }

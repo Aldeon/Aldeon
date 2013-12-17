@@ -1,4 +1,4 @@
-package org.aldeon.dht.ring;
+package org.aldeon.dht.closeness;
 
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.PeerAddress;

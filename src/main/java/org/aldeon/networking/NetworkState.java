@@ -25,6 +25,7 @@ import org.aldeon.utils.json.JsonParser;
 import org.aldeon.utils.json.JsonModule;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,8 +35,6 @@ public class NetworkState {
 
     private final Sender unifiedSender;
     private final Receiver unifiedReceiver;
-    private Set<Sender> senders = new HashSet<>();
-    private Set<Receiver> receivers = new HashSet<>();
     private Map<AddressType, NetworkMedium> mediums = new HashMap<>();
 
     @Inject
@@ -49,6 +48,9 @@ public class NetworkState {
         Converter<ByteBuffer, Response> responseDecoder = new ByteBufferToResponseConverter(parser, responseMapper);
         Converter<ByteBuffer, Request> requestDecoder = new ByteBufferToRequestConverter(parser, requestMapper);
         Converter<Response, ByteBuffer> responseEncoder = new ResponseToByteBufferConverter(parser);
+
+        Set<Sender> senders = new HashSet<>();
+        Set<Receiver> receivers = new HashSet<>();
 
         for(NetworkMedium medium: mediumSet) {
             senders.add(new SendPointBasedSender(medium.sendPoint(), medium.addressTypes(), requestEncoder, responseDecoder));
@@ -70,13 +72,12 @@ public class NetworkState {
         return  unifiedReceiver;
     }
 
-    public PeerAddress getMachineAddress(AddressType type) {
-        // TODO: Should this be ambiguous? (What about IP aliasing?)
+    public Set<PeerAddress> getMachineAddresses(AddressType type) {
         NetworkMedium medium = mediums.get(type);
         if(medium != null) {
-            return medium.getMachineAddress(type);
+            return medium.getMachineAddresses(type);
         } else {
-            return null;
+            return Collections.emptySet();
         }
     }
 
