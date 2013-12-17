@@ -128,6 +128,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
         if (index + 1 < msgs.size() && msgs.get(index+1).msg == null) index++;
 
         Parent childNode = constructResponse(child, nesting+1);
+
         fpane.getChildren().add(index+1, childNode);
         msgs.add(index+1, new MsgWithInt(childNode, nesting+1, child));
 
