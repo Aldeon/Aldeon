@@ -5,7 +5,6 @@ import com.google.inject.Guice;
 import com.google.inject.Provider;
 import org.aldeon.db.Db;
 import org.aldeon.db.DbImpl;
-import org.aldeon.dbstub.DbStubModule;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.MultiMapBasedEventLoop;
 import org.aldeon.networking.NetworkState;

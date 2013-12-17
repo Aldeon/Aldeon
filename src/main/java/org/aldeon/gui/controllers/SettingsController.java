@@ -149,7 +149,7 @@ public class SettingsController implements Initializable {
         for(String peer : (List<String>)peerList.getItems()){
             peers+=peer+",";
         }
-        peers=peers.substring(0,peers.length()-1);
+        if(peers.length()>0)peers=peers.substring(0,peers.length()-1);
         CoreModule.getInstance().getPropertiesManager().setProperty(INIT_PEERS,peers);
     }
 
