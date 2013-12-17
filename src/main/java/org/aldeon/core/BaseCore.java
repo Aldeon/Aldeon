@@ -32,10 +32,9 @@ public abstract class BaseCore implements Core {
 
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
 
-        this.storage = storage;
-        // this.storage = new DbEventCallerDecorator(storage, eventLoop);
+        //this.storage = storage;
+        this.storage = new DbEventCallerDecorator(storage, eventLoop);
         //this.storage = new DbLoggerDecorator(storage);
-        this.userManager = new UserManager();
         this.propertiesManager = new PropertiesManager();
         this.eventLoop = eventLoop;
         this.topicManager = topicManager;
@@ -46,7 +45,7 @@ public abstract class BaseCore implements Core {
         this.serverSideExecutor = Executors.newFixedThreadPool(2);
         this.wrappedClientExecutor = new ExecutorLogger("clientSide", new ThrowableInterceptor(clientSideExecutor));
         this.wrappedServerExecutor = new ExecutorLogger("serverSide", new ThrowableInterceptor(serverSideExecutor));
-
+        this.userManager = new UserManager();
     }
 
     protected void initializeSupervisor() {

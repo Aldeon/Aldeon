@@ -78,6 +78,7 @@ public class IdentityManagerController implements Initializable {
     }
 
     public void showIdentities(){
+        CoreModule.getInstance().getUserManager().refreshIdentities();
         identities=CoreModule.getInstance().getUserManager().getAllIdentities();
         for(Identity id : identities.values()){
             Parent childNode =constructIdentity(id);
