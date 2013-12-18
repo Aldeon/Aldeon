@@ -1,24 +1,17 @@
 package org.aldeon.core;
 
-import javafx.beans.property.Property;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- * Created by Prophet on 15.12.13.
- */
+
 public class PropertiesManager {
     private static final String CONFIG_NAME="aldeon.conf";
     private static final Properties props = new Properties();
@@ -129,8 +122,6 @@ public class PropertiesManager {
         return null;
     }
 
-
-
     public void saveChange(){
         try {
             props.store(new FileOutputStream(CONFIG_NAME),null);
@@ -138,8 +129,4 @@ public class PropertiesManager {
             e.printStackTrace();
         }
     }
-
-
-
-
 }
