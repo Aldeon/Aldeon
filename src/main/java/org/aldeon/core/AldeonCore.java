@@ -11,7 +11,6 @@ import org.aldeon.dht.crawler.Crawler;
 import org.aldeon.dht.interest.DemandChangedEvent;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
-import org.aldeon.events.Event;
 import org.aldeon.events.EventLoop;
 import org.aldeon.networking.NetworkState;
 import org.aldeon.networking.common.AddressType;
@@ -59,9 +58,13 @@ public class AldeonCore extends BaseCore {
             }
         };
 
-        this.networkState = networkState;
+        // Initialize DHT
 
         dht = DhtModule.create(getSender().acceptedTypes(), eventLoop);
+
+        // Iterate through machine addresses
+
+        this.networkState = networkState;
 
         for(AddressType type: getSender().acceptedTypes()) {
             for(PeerAddress machineAddress: networkState.getMachineAddresses(type)) {
@@ -71,11 +74,15 @@ public class AldeonCore extends BaseCore {
             }
         }
 
+        // Start communication
+
         getReceiver().setCallback(callback);
 
         getSender().start();
         getReceiver().start();
         initializeSupervisor();
+
+        // Initialize crawler
 
         final Crawler crawler = new Crawler(getDht(), getSender());
         eventLoop.assign(DemandChangedEvent.class, new ACB<DemandChangedEvent>(clientSideExecutor()) {

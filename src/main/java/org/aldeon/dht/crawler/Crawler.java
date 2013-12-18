@@ -10,8 +10,6 @@ import org.aldeon.networking.common.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-
 /**
  * Constantly communicates with other peers in order to
  * broaden our knowledge about the network structure.

@@ -122,8 +122,6 @@ public class PropertiesManager {
         return null;
     }
 
-
-
     public void saveChange(){
         try {
             props.store(new FileOutputStream(CONFIG_NAME),null);
@@ -131,8 +129,4 @@ public class PropertiesManager {
             e.printStackTrace();
         }
     }
-
-
-
-
 }
