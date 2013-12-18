@@ -35,7 +35,7 @@ public class MainController implements Initializable {
     }
 
     private void resetHighlights(StackPane stackPane, ImageView imageView) {
-        int index = stackPane.getStyleClass().indexOf("menuhighlight");
+        int index = stackPane.getStyleClass().indexOf("menuHighlight");
         if (index != -1) {
             stackPane.getStyleClass().remove(index);
             stackPane.getStyleClass().add("menuNoHighlight");
@@ -45,7 +45,7 @@ public class MainController implements Initializable {
 
     private void setHighlights(StackPane stackPane, ImageView imageView) {
         imageView.opacityProperty().set(0.8);
-        stackPane.getStyleClass().add("menuhighlight");
+        stackPane.getStyleClass().add("menuHighlight");
 
         int index = stackPane.getStyleClass().indexOf("menuNoHighlight");
         if (index != -1) {
