@@ -135,6 +135,10 @@ public class ResponseController implements Initializable {
             als = CoreModule.getInstance().getUserManager().getUser(msg.getAuthorPublicKey());
             if(als!=null) this.auth.setText(als.getName());
             else {
+                System.out.println("MAM TAKIE: ");
+                for(int key : CoreModule.getInstance().getUserManager().getAllUsers().keySet())
+                    System.out.println("KLUCZ: "+key);
+                System.out.println("SZUKAM: "+msg.getAuthorPublicKey().hashCode());
                 CoreModule.getInstance().getEventLoop().notify(new UserAddedEvent(UserImpl.create("Anonymous",msg.getAuthorPublicKey())));
                 this.auth.setText("Anonymous");
             }

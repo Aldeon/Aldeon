@@ -100,15 +100,7 @@ public class DbEventCallerDecorator extends AbstractDbWrapper {
 
     @Override
     public void insertUser(final User user, final Callback<Boolean> callback) {
-        db.insertUser(user, new Callback<Boolean>() {
-            @Override
-            public void call(Boolean userInserted) {
-                if (userInserted) {
-                    eventLoop.notify(new UserAddedEvent(user));
-                }
-                callback.call(userInserted);
-            }
-        });
+        db.insertUser(user, callback);
     }
 
     @Override
