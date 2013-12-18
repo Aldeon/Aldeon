@@ -1,11 +1,8 @@
 package org.aldeon.gui.controllers;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -27,7 +23,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.aldeon.core.CoreModule;
 import org.aldeon.crypt.Key;
-import org.aldeon.crypt.rsa.RsaKeyGen;
 import org.aldeon.gui.colors.ColorManager;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Identity;
@@ -42,7 +37,7 @@ public class WriteResponseController {
     public TextArea responseContent;
     public HBox windowContainer;
     public Rectangle colorRectangle;
-    public ListView identityList;
+    public ListView<Identity> identityList;
     public ScrollPane identityScroll;
 
     private int nestingLevel;

@@ -70,7 +70,7 @@
                 <TextField fx:id="pathField" layoutX="14.0" layoutY="65.0" prefWidth="200.0" />
                 <Button layoutX="225.0" layoutY="65.0" mnemonicParsing="false" onAction="#pathChange" text="Change path" />
                 <TextField fx:id="peerField" layoutX="14.0" layoutY="159.0" prefWidth="200.0" />
-                <Label layoutX="14.0" layoutY="107.0" text="Label" />
+                <Label layoutX="14.0" layoutY="107.0" text="List of initial peers" />
                 <Separator layoutX="14.0" layoutY="139.0" prefWidth="200.0" />
                 <Button fx:id="addPeer" layoutX="226.0" layoutY="160.0" mnemonicParsing="false" onAction="#addPeer" text="+" />
                 <Button fx:id="removePeer" layoutX="226.0" layoutY="196.0" mnemonicParsing="false" onAction="#removePeer" prefWidth="31.0" text="-" />
