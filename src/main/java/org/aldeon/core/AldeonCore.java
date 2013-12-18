@@ -58,10 +58,6 @@ public class AldeonCore extends BaseCore {
             }
         };
 
-        // Initialize DHT
-
-        dht = DhtModule.create(getSender().acceptedTypes(), eventLoop);
-
         // Iterate through machine addresses
 
         this.networkState = networkState;
@@ -73,6 +69,10 @@ public class AldeonCore extends BaseCore {
                 }
             }
         }
+
+        // Initialize DHT
+
+        dht = DhtModule.create(getSender().acceptedTypes(), eventLoop);
 
         // Start communication
 
