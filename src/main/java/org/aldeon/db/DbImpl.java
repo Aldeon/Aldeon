@@ -600,6 +600,8 @@ public class DbImpl implements Db {
         try {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(DEFAULT_QUERY_TIMEOUT);
+            statement.execute(UsersQueries.CREATE_USERS_TABLE);
+            statement.execute(IdentitiesQueries.CREATE_IDENTITIES_TABLE);
             statement.execute(MessagesQueries.CREATE_MESSAGES_TABLE);
             statement.execute(MessagesQueries.CREATE_MSG_ID_INDEXES);
             statement.execute(MessagesQueries.CREATE_MSG_SIGN_INDEXES);

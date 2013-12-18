@@ -1,19 +1,20 @@
 package org.aldeon.core.events;
 
+import org.aldeon.crypt.Key;
 import org.aldeon.events.Event;
-import org.aldeon.model.Identifier;
+import org.aldeon.model.Identity;
 
 /**
  * Event triggered when user deletes one of identites
  */
 public class IdentityRemovedEvent implements Event {
-    private final Identifier userId;    //?
+    private final Key userKey;
 
-    public IdentityRemovedEvent(Identifier userId) {
-        this.userId = userId;
+    public IdentityRemovedEvent(Key pubKey) {
+        this.userKey = pubKey;
     }
 
-    public Identifier getIdentifier(){
-        return userId;
+    public Key getPublicKey(){
+        return userKey;
     }
 }

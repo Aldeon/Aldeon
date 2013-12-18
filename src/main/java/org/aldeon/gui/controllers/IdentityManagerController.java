@@ -48,7 +48,7 @@ public class IdentityManagerController implements Initializable {
     public StackPane Settings;
     public StackPane idCreator;
     public BorderPane main;
-    private Map<String,Identity> identities;
+    private Map<Integer,Identity> identities;
     private Map<Key,Parent> guiIds= new HashMap<>();
 
     public void createId(MouseEvent event) throws Exception{
@@ -78,6 +78,7 @@ public class IdentityManagerController implements Initializable {
     }
 
     public void showIdentities(){
+        CoreModule.getInstance().getUserManager().refreshIdentities();
         identities=CoreModule.getInstance().getUserManager().getAllIdentities();
         for(Identity id : identities.values()){
             Parent childNode =constructIdentity(id);

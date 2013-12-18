@@ -5,6 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Provider;
 import org.aldeon.core.Core;
 import org.aldeon.core.CoreModule;
+import org.aldeon.core.UserManager;
 import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.events.ACB;
 import org.slf4j.Logger;
@@ -31,6 +32,10 @@ public class ProtocolModule extends AbstractModule implements Provider<Protocol>
         final Protocol protocol = new ProtocolModule().get();
 
         Core core = CoreModule.getInstance();
+
+        //Initialize UserManager
+
+        UserManager.initialize();
 
         // Handle incoming requests
         core.getEventLoop().assign(InboundRequestEvent.class, new ACB<InboundRequestEvent>(core.serverSideExecutor()) {
