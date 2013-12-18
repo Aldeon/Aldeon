@@ -104,4 +104,9 @@ class RsaKey implements Key {
         return CODEC.encode(getByteBuffer());
     }
 
+    @Override
+    public boolean equals(Object obj){
+        return buf.compareTo(((Key) obj).getByteBuffer()) == 0;
+    }
+
 }

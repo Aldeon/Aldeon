@@ -50,7 +50,7 @@ public class WriteResponseController {
     private WriteResponseControlListener listener;
     private Identifier parentIdentifier;
     private ResponseController parentController;
-    private Map<Integer,Identity> identities;
+    private Map<Key,Identity> identities;
     private Identity currentAuthor;
 
     public void setNode(Parent parent) {

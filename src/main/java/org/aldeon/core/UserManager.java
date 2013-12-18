@@ -19,14 +19,14 @@ import java.util.Set;
 
 public class UserManager {
 
-    private static Map<Integer,Identity> identities = new HashMap<>();
-    private static Map<Integer,User> users = new HashMap<>();
+    private static Map<Key,Identity> identities = new HashMap<>();
+    private static Map<Key,User> users = new HashMap<>();
 
     public static void initialize(){
         CoreModule.getInstance().getEventLoop().assign(IdentityAddedEvent.class, new ACB<IdentityAddedEvent>(CoreModule.getInstance().clientSideExecutor()) {
             @Override
             public void react(IdentityAddedEvent val) {
-                identities.put(val.getIdentity().getPublicKey().hashCode(), val.getIdentity());
+                identities.put(val.getIdentity().getPublicKey(), val.getIdentity());
             }
         });
 
@@ -48,11 +48,11 @@ public class UserManager {
         refreshUsers();
     }
 
-    public Map<Integer,Identity> getAllIdentities() {
+    public Map<Key,Identity> getAllIdentities() {
         return Collections.unmodifiableMap(identities);
     }
 
-    public Map<Integer,User> getAllUsers(){
+    public Map<Key,User> getAllUsers(){
         return Collections.unmodifiableMap(users);
     }
 
@@ -70,8 +70,8 @@ public class UserManager {
             @Override
             public void call(Boolean userInserted) {
                 if (userInserted&&success[0]) {
-                    identities.put(identity.getPublicKey().hashCode(), identity);
-                    users.put(identity.getPublicKey().hashCode(),identity);
+                    identities.put(identity.getPublicKey(), identity);
+                    users.put(identity.getPublicKey(),identity);
                 }
             }
         });
@@ -82,7 +82,7 @@ public class UserManager {
             @Override
             public void call(Boolean userInserted) {
                 if (userInserted) {
-                    users.put(user.getPublicKey().hashCode(), user);
+                    users.put(user.getPublicKey(), user);
                 }
             }
         });
@@ -90,18 +90,18 @@ public class UserManager {
 
     public void renameUser(final User usr, final Callback<Boolean> callback){
         refreshIdentities();
-        if(!identities.containsKey(usr.getPublicKey().hashCode()))
+        if(!identities.containsKey(usr.getPublicKey()))
         CoreModule.getInstance().getStorage().deleteUser(usr.getPublicKey(), new Callback<Boolean>() {
             @Override
             public void call(Boolean val) {
                 if(val==true){
-                    users.remove(usr.getPublicKey().hashCode());
+                    users.remove(usr.getPublicKey());
                     CoreModule.getInstance().getStorage().insertUser(usr,new Callback<Boolean>() {
                         @Override
                         public void call(Boolean val) {
                             if(val==true){
                                 callback.call(true);
-                                users.put(usr.getPublicKey().hashCode(), usr);
+                                users.put(usr.getPublicKey(), usr);
                             }
                             else callback.call(false);
                         }
@@ -127,19 +127,19 @@ public class UserManager {
             @Override
             public void call(Boolean userRemoved) {
                 if (userRemoved&&success[0]) {
-                    identities.remove(identity.getPublicKey().hashCode());
-                    users.remove(identity.getPublicKey().hashCode());
+                    identities.remove(identity.getPublicKey());
+                    users.remove(identity.getPublicKey());
                 }
             }
         });
     }
 
     public Identity getIdentity(Key publicKey){
-        return identities.get(publicKey.hashCode());
+        return identities.get(publicKey);
     }
 
     public User getUser(Key publicKey){
-        return users.get(publicKey.hashCode());
+        return users.get(publicKey);
     }
 
     public static void refreshIdentities(){
@@ -148,7 +148,7 @@ public class UserManager {
             @Override
             public void call(Set<Identity> ids) {
                 for(Identity id : ids)
-                    if(!identities.containsValue(id)) identities.put(id.getPublicKey().hashCode(),id);
+                    if(!identities.containsValue(id)) identities.put(id.getPublicKey(),id);
             }
         });
     }
@@ -159,7 +159,7 @@ public class UserManager {
             @Override
             public void call(Set<User> userSet) {
                 for(User usr : userSet)
-                    if(!users.containsValue(usr)) users.put(usr.getPublicKey().hashCode(),usr);
+                    if(!users.containsValue(usr)) users.put(usr.getPublicKey(),usr);
             }
         });
     }

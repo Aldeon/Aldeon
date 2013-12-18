@@ -7,7 +7,6 @@ import javafx.scene.layout.FlowPane;
 import org.aldeon.core.CoreModule;
 import org.aldeon.crypt.Key;
 import org.aldeon.events.Callback;
-import org.aldeon.model.Identity;
 import org.aldeon.model.User;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class FriendsManagerController implements Initializable{
     public FlowPane fpane;
-    private Map<Integer,User> users= new HashMap<>();
+    private Map<Key,User> users= new HashMap<>();
     private Map<Key,Parent> guiIds= new HashMap<>();
 
 
