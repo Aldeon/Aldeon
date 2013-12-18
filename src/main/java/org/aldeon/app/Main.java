@@ -28,13 +28,6 @@ public class Main {
         //CoreModule.getInstance().getTopicManager().addTopic(topic);
         //CoreModule.getInstance().getDht().interestTracker().addAddress(peer, topic);
 
-        System.out.println("TESTING: kmCggz0RLgoWQeuV1a6.BBIXsqwKFnUpg1p8UiXoMCJW7uDVp5OS8yLLLjqkZiaGMbvTCC9j4acQxt5pUhNpCc3MKh38gx1Olv.Ur.EI6jEDD76MAVoFxwJFzDcaT9wfTpdf6uhzXXaBRjjw/lG0KgzpLX0fVutocIODfh0ks7c-");
-        /*for(Key id :CoreModule.getInstance().getUserManager().getAllIdentities().keySet()){
-            System.out.println("MAM KLUCZ: "+id.toString());
-            if(id.equals(decodedPrvKey))
-                System.out.println("LOL JEST MATCH :/"+id);
-        }*/
-
         GuiModule.launch();
     }
 

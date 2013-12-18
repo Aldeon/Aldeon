@@ -94,16 +94,23 @@ public class UserManager {
         CoreModule.getInstance().getStorage().deleteUser(usr.getPublicKey(), new Callback<Boolean>() {
             @Override
             public void call(Boolean val) {
-                if(val==true) CoreModule.getInstance().getStorage().insertUser(usr,new Callback<Boolean>() {
-                    @Override
-                    public void call(Boolean val) {
-                        if(val==true) callback.call(true);
-                        else callback.call(false);
-                    }
-                });
+                if(val==true){
+                    users.remove(usr.getPublicKey().hashCode());
+                    CoreModule.getInstance().getStorage().insertUser(usr,new Callback<Boolean>() {
+                        @Override
+                        public void call(Boolean val) {
+                            if(val==true){
+                                callback.call(true);
+                                users.put(usr.getPublicKey().hashCode(), usr);
+                            }
+                            else callback.call(false);
+                        }
+                    });
+                }
             else callback.call(false);
             }
         });
+        refreshIdentities();
     }
 
     public void delIdentity(final Identity identity) {

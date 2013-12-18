@@ -24,7 +24,7 @@ public class PropertiesManager {
     public static final String DIFF_TIMEOUT="syncInterval";
     public static final String INIT_PEERS="initPeers";
     public static final String DEFAULT_ADDRESS_TRANSLATION = "true";
-    public static final String DEFAULT_IP_ADDRESS = "127.0.0.1";
+    public static final String DEFAULT_IP_ADDRESS = "127.0.0.1:41530";
     public static final String DEFAULT_IP_AUTO = "true";
     public static final String DEFAULT_PORT_RANDOM = "true";
     public static final String DEFAULT_PORT_NUMBER = "41530";
@@ -89,9 +89,11 @@ public class PropertiesManager {
     public Set<String> getPeersForGUI(){
         Set<String>peers = new HashSet<>();
         String rawPeers = getProperty(INIT_PEERS,DEFAULT_INIT_PEERS);
-        String processPeers[] = rawPeers.split(",");
-        for(String peer : processPeers){
-                peers.add(peer);
+        if(!rawPeers.equals("")){
+            String processPeers[] = rawPeers.split(",");
+            for(String peer : processPeers){
+                    peers.add(peer);
+            }
         }
         return peers;
     }
@@ -100,11 +102,12 @@ public class PropertiesManager {
         Set<IpPeerAddress> peers = new HashSet<>();
         String rawPeers = getProperty(INIT_PEERS,DEFAULT_INIT_PEERS);
         String processPeers[] = rawPeers.split(",");
-        for(String peer : processPeers){
-            try {
-                peers.add(IpPeerAddress.create(InetAddress.getByName(peer),getPortNumber()));
-            } catch (UnknownHostException e) {
-                System.out.println("One of peers is invalid: "+peer);
+        if(!rawPeers.equals("")){
+            for(String peer : processPeers){
+                String ip [] = peer.split(":");
+                if(ip.length==2)
+                    peers.add(IpPeerAddress.create(ip[0],Integer.parseInt(ip[1])));
+                else peers.add(IpPeerAddress.create(ip[0],Integer.parseInt(DEFAULT_PORT_NUMBER)));
             }
         }
         return peers;

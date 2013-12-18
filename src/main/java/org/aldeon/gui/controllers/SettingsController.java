@@ -17,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.PropertiesManager;
+import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.protocol.Action;
 
 import java.net.InetAddress;
@@ -49,6 +50,7 @@ public class SettingsController implements Initializable {
     private static final String PRIVACY_LEVEL="privacyLevel";
     private static final String DIFF_TIMEOUT="syncInterval";
     private static final String INIT_PEERS="initPeers";
+    private static final int DEFAULT_PORT_NUMBER=41530;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -59,6 +61,7 @@ public class SettingsController implements Initializable {
                     if(oldLvl.intValue()!=newLvl.intValue()) changedPrivacyLevel(newLvl.intValue());
                 }
             });
+        peerList.getItems().clear();
         refreshSettings();
     }
 
@@ -127,11 +130,17 @@ public class SettingsController implements Initializable {
     }
 
     public void addPeer(ActionEvent actionEvent) {
-        if(!peerField.getText().equals("")&&!peerList.getItems().contains(peerField.getText())){
-            try {
-                if(InetAddress.getByName(peerField.getText())!=null)peerList.getItems().add(peerField.getText());
-            } catch (UnknownHostException e) {
-                System.out.println("IP ADDRESS INCORRECT");
+        if(!peerField.getText().equals("")){
+            String ip [] = peerField.getText().split(":");
+            if(ip.length==2&&!peerList.getItems().contains(ip[0]+":"+ip[1])){
+                if(IpPeerAddress.create(ip[0],Integer.parseInt(ip[1]))!=null)
+                    peerList.getItems().add(peerField.getText());
+            }
+            else {
+                if(!peerList.getItems().contains(ip[0]+":"+Integer.toString(DEFAULT_PORT_NUMBER)))
+                if(IpPeerAddress.create(ip[0],DEFAULT_PORT_NUMBER)!=null){
+                    peerList.getItems().add(peerField.getText()+":"+Integer.toString(DEFAULT_PORT_NUMBER));
+                }
             }
         }
         peerField.setText("");
