@@ -1,12 +1,12 @@
 package org.aldeon.dht.crawler;
 
 
-import java.util.Set;
+import java.util.List;
 
 public interface JobManager {
     void maintainJobCount(Job job, int count);
     void makeInactive(Job job);
     void makeInactiveAndReinsert(Job job);
 
-    Set<Job> popAndMakeJobsActive(int maxActiveJobs);
+    List<Job> popAndMakeJobsActive(int maxActiveJobs);
 }

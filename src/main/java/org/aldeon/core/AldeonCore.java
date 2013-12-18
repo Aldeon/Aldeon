@@ -7,8 +7,11 @@ import org.aldeon.core.events.InboundRequestEvent;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.dht.DhtModule;
+import org.aldeon.dht.crawler.Crawler;
+import org.aldeon.dht.interest.DemandChangedEvent;
 import org.aldeon.events.ACB;
 import org.aldeon.events.AsyncCallback;
+import org.aldeon.events.Event;
 import org.aldeon.events.EventLoop;
 import org.aldeon.networking.NetworkState;
 import org.aldeon.networking.common.AddressType;
@@ -58,7 +61,7 @@ public class AldeonCore extends BaseCore {
 
         this.networkState = networkState;
 
-        dht = DhtModule.create(getSender().acceptedTypes());
+        dht = DhtModule.create(getSender().acceptedTypes(), eventLoop);
 
         for(AddressType type: getSender().acceptedTypes()) {
             for(PeerAddress machineAddress: networkState.getMachineAddresses(type)) {
@@ -72,8 +75,16 @@ public class AldeonCore extends BaseCore {
 
         getSender().start();
         getReceiver().start();
-
         initializeSupervisor();
+
+        final Crawler crawler = new Crawler(getDht(), getSender());
+        eventLoop.assign(DemandChangedEvent.class, new ACB<DemandChangedEvent>(clientSideExecutor()) {
+            @Override
+            protected void react(DemandChangedEvent val) {
+                crawler.notifyDemandChanged(val.addressType(), val.topic());
+            }
+        });
+
         log.debug("Initialized the core.");
     }
 

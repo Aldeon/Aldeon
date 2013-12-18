@@ -3,10 +3,9 @@ package org.aldeon.dht.crawler;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
-import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 
 public class JobManagerImpl implements JobManager {
 
@@ -37,10 +36,12 @@ public class JobManagerImpl implements JobManager {
     }
 
     @Override
-    public synchronized Set<Job> popAndMakeJobsActive(int maxActiveJobs) {
-        Set<Job> result = new HashSet<>();
+    public synchronized List<Job> popAndMakeJobsActive(int maxActiveJobs) {
+        List<Job> result = new LinkedList<>();
         int toPop = maxActiveJobs - active.size();
-        for(int i = 0; i < toPop; ++i) {
+        int limit = Math.min(toPop, queue.size());
+
+        for(int i = 0; i < limit; ++i) {
             Job job = queue.poll();
             result.add(job);
             active.add(job);

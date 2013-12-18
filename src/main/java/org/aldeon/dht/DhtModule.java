@@ -7,6 +7,8 @@ import org.aldeon.dht.closeness.RingImpl;
 import org.aldeon.dht.interest.AddressTypeIgnoringInterestTracker;
 import org.aldeon.dht.interest.InterestTracker;
 import org.aldeon.dht.interest.InterestTrackerDispatcher;
+import org.aldeon.dht.interest.InterestTrackerEventCaller;
+import org.aldeon.events.EventLoop;
 import org.aldeon.networking.common.AddressType;
 
 import java.util.HashMap;
@@ -15,7 +17,7 @@ import java.util.Set;
 
 public class DhtModule {
 
-    public static Dht create(Set<AddressType> acceptedTypes) {
+    public static Dht create(Set<AddressType> acceptedTypes, EventLoop eventLoop) {
 
         // 1. Allocate appropriate structures
 
@@ -34,7 +36,7 @@ public class DhtModule {
 
         // 3. Apply decorators
 
-        // interestTracker = new InterestTrackerEventDecorator(interestTracker);
+        interestTracker = new InterestTrackerEventCaller(interestTracker, eventLoop);
 
         // 4. Return dht object
 
