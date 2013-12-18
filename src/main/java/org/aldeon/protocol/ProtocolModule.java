@@ -36,7 +36,6 @@ public class ProtocolModule extends AbstractModule implements Provider<Protocol>
         //Initialize UserManager
 
         UserManager.initialize();
-        CoreModule.getInstance().getUserManager().refreshIdentities();
 
         // Handle incoming requests
         core.getEventLoop().assign(InboundRequestEvent.class, new ACB<InboundRequestEvent>(core.serverSideExecutor()) {

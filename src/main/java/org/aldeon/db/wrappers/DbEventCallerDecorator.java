@@ -4,6 +4,7 @@ import org.aldeon.core.events.IdentityAddedEvent;
 import org.aldeon.core.events.IdentityRemovedEvent;
 import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.core.events.MessageRemovedEvent;
+import org.aldeon.core.events.UserAddedEvent;
 import org.aldeon.crypt.Key;
 import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
@@ -98,8 +99,16 @@ public class DbEventCallerDecorator extends AbstractDbWrapper {
     }
 
     @Override
-    public void insertUser(User user, Callback<Boolean> callback) {
-        db.insertUser(user, callback);
+    public void insertUser(final User user, final Callback<Boolean> callback) {
+        db.insertUser(user, new Callback<Boolean>() {
+            @Override
+            public void call(Boolean userInserted) {
+                if (userInserted) {
+                    eventLoop.notify(new UserAddedEvent(user));
+                }
+                callback.call(userInserted);
+            }
+        });
     }
 
     @Override

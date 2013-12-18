@@ -11,10 +11,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.UserAddedEvent;
 import org.aldeon.crypt.Key;
 import org.aldeon.gui.colors.ColorManager;
 import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
+import org.aldeon.model.User;
+import org.aldeon.model.UserImpl;
 
 import java.net.URL;
 import java.util.Map;
@@ -126,10 +129,16 @@ public class ResponseController implements Initializable {
         this.message.setText(msg.getContent());
         this.msgHash.setText(msg.getIdentifier().toString());
         this.nestingLevel = nestingLevel;
-        Identity als=CoreModule.getInstance().getUserManager().getIdentity(msg.getAuthorPublicKey());
+        User als=CoreModule.getInstance().getUserManager().getIdentity(msg.getAuthorPublicKey());
         if(als!=null) this.auth.setText(als.getName());
-        else
-            this.auth.setText("Anonymous");
+        else{
+            als = CoreModule.getInstance().getUserManager().getUser(msg.getAuthorPublicKey());
+            if(als!=null) this.auth.setText(als.getName());
+            else {
+                CoreModule.getInstance().getEventLoop().notify(new UserAddedEvent(UserImpl.create("Anonymous",msg.getAuthorPublicKey())));
+                this.auth.setText("Anonymous");
+            }
+        }
         this.pubKey.setText(msg.getAuthorPublicKey().toString().substring(0,16) + "...");
         //borderPane.prefWidthProperty().bind(root.widthProperty());
         //respPane.prefHeightProperty().bind(colorRectangle.heightProperty());

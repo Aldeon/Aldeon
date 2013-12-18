@@ -4,6 +4,7 @@ import org.aldeon.core.events.IdentityAddedEvent;
 import org.aldeon.core.events.IdentityRemovedEvent;
 import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.core.events.MessageRemovedEvent;
+import org.aldeon.core.events.UserAddedEvent;
 import org.aldeon.crypt.Key;
 import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
@@ -18,14 +19,14 @@ import java.util.Set;
 
 public class UserManager {
 
-    private static Map<String,Identity> identities = new HashMap<>();
-    private static Map<String,User> users = new HashMap<>();
+    private static Map<Integer,Identity> identities = new HashMap<>();
+    private static Map<Integer,User> users = new HashMap<>();
 
     public static void initialize(){
         CoreModule.getInstance().getEventLoop().assign(IdentityAddedEvent.class, new ACB<IdentityAddedEvent>(CoreModule.getInstance().clientSideExecutor()) {
             @Override
             public void react(IdentityAddedEvent val) {
-                identities.put(val.getIdentity().getPublicKey().toString(),val.getIdentity());
+                identities.put(val.getIdentity().getPublicKey().hashCode(), val.getIdentity());
             }
         });
 
@@ -35,13 +36,23 @@ public class UserManager {
                 identities.remove(val.getPublicKey());
             }
         });
+
+        CoreModule.getInstance().getEventLoop().assign(UserAddedEvent.class , new ACB<UserAddedEvent>(CoreModule.getInstance().clientSideExecutor()) {
+            @Override
+            protected void react(UserAddedEvent usr) {
+                addUser(usr.getUser());
+            }
+        });
+
+        refreshIdentities();
+        refreshUsers();
     }
 
-    public Map<String,Identity> getAllIdentities() {
+    public Map<Integer,Identity> getAllIdentities() {
         return Collections.unmodifiableMap(identities);
     }
 
-    public Map<String,User> getAllUsers(){
+    public Map<Integer,User> getAllUsers(){
         return Collections.unmodifiableMap(users);
     }
 
@@ -59,20 +70,38 @@ public class UserManager {
             @Override
             public void call(Boolean userInserted) {
                 if (userInserted&&success[0]) {
-                    identities.put(identity.getPublicKey().toString(), identity);
-                    users.put(identity.getPublicKey().toString(),identity);
+                    identities.put(identity.getPublicKey().hashCode(), identity);
+                    users.put(identity.getPublicKey().hashCode(),identity);
                 }
             }
         });
     }
 
-    public void addUser(final User user){
-        CoreModule.getInstance().getStorage().insertUser(user,new Callback<Boolean>() {
+    public static void addUser(final User user){
+        CoreModule.getInstance().getStorage().insertUser(user, new Callback<Boolean>() {
             @Override
             public void call(Boolean userInserted) {
                 if (userInserted) {
-                    users.put(user.getPublicKey().toString(),user);
+                    users.put(user.getPublicKey().hashCode(), user);
                 }
+            }
+        });
+    }
+
+    public void renameUser(final User usr, final Callback<Boolean> callback){
+        refreshIdentities();
+        if(!identities.containsKey(usr.getPublicKey().hashCode()))
+        CoreModule.getInstance().getStorage().deleteUser(usr.getPublicKey(), new Callback<Boolean>() {
+            @Override
+            public void call(Boolean val) {
+                if(val==true) CoreModule.getInstance().getStorage().insertUser(usr,new Callback<Boolean>() {
+                    @Override
+                    public void call(Boolean val) {
+                        if(val==true) callback.call(true);
+                        else callback.call(false);
+                    }
+                });
+            else callback.call(false);
             }
         });
     }
@@ -91,36 +120,39 @@ public class UserManager {
             @Override
             public void call(Boolean userRemoved) {
                 if (userRemoved&&success[0]) {
-                    identities.remove(identity.getPublicKey().toString());
-                    users.remove(identity.getPublicKey().toString());
+                    identities.remove(identity.getPublicKey().hashCode());
+                    users.remove(identity.getPublicKey().hashCode());
                 }
             }
         });
     }
 
     public Identity getIdentity(Key publicKey){
-        return identities.get(publicKey.toString());
+        return identities.get(publicKey.hashCode());
     }
 
+    public User getUser(Key publicKey){
+        return users.get(publicKey.hashCode());
+    }
 
-    public void refreshIdentities(){
+    public static void refreshIdentities(){
         identities=new HashMap<>();
         CoreModule.getInstance().getStorage().getIdentities(new Callback <Set<Identity>>(){
             @Override
             public void call(Set<Identity> ids) {
                 for(Identity id : ids)
-                    if(!identities.containsValue(id)) identities.put(id.getPublicKey().toString(),id);
+                    if(!identities.containsValue(id)) identities.put(id.getPublicKey().hashCode(),id);
             }
         });
     }
 
-    public void refreshUsers(){
+    public static void refreshUsers(){
         users=new HashMap<>();
         CoreModule.getInstance().getStorage().getUsers(new Callback <Set<User>>(){
             @Override
             public void call(Set<User> userSet) {
                 for(User usr : userSet)
-                    if(!users.containsValue(usr)) users.put(usr.getPublicKey().toString(),usr);
+                    if(!users.containsValue(usr)) users.put(usr.getPublicKey().hashCode(),usr);
             }
         });
     }

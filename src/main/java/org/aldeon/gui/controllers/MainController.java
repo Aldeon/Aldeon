@@ -79,7 +79,7 @@ public class MainController implements Initializable {
     public void friendsClicked(MouseEvent event) {
         resetAllHighlights();
         setHighlights(Friends, FriendsImage);
-        changeFxml("Friends.fxml");
+        changeFxml("FriendsManager.fxml");
     }
 
     public void settingsClicked(MouseEvent event) {
