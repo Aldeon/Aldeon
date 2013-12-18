@@ -10,6 +10,8 @@
     -fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #1d1d1d, #1d1d1d 90%, #1b1b1b 100%);
 }
 
+
+
 #threadCreator{
     -fx-background-radius:10px;
     -fx-background-color:#222222;
@@ -29,6 +31,14 @@
 
 #sidebar StackPane{
     -fx-border-color:transparent transparent #333333 transparent;
+}
+
+#sidebar StackPane:hover{
+    -fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #1d1d1d, #1d1d1d 90%, #222222 100%);
+}
+
+#logo:hover{
+    -fx-background-color:linear-gradient(from 0% 0% to 100% 0%, #1d1d1d, #1d1d1d 90%, #1b1b1b 100%);
 }
 
 #identityList{
@@ -106,6 +116,10 @@
 
 .clickable {
     -fx-cursor: hand;
+}
+
+.menuHover{
+    -fx-background-color: #4d4d4d;
 }
 
 .menuHighlight {

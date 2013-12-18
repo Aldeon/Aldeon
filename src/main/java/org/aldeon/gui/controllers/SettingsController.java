@@ -3,29 +3,20 @@ package org.aldeon.gui.controllers;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.PropertiesManager;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
-import org.aldeon.protocol.Action;
 
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 public class SettingsController implements Initializable {
     public GridPane content;
@@ -41,7 +32,7 @@ public class SettingsController implements Initializable {
     public RadioButton randomPort;
     public TextField syncField;
     public TextField peerField;
-    public ListView peerList;
+    public ListView<String> peerList;
     private static final String ADDRESS_TRANSLATION="addressTranslation";
     private static final String IP_AUTO="ipAuto";
     private static final String IP_ADDRESS="ipAddress";
@@ -155,7 +146,7 @@ public class SettingsController implements Initializable {
 
     public void refreshPeers(){
         String peers="";
-        for(String peer : (List<String>)peerList.getItems()){
+        for(String peer : peerList.getItems()){
             peers+=peer+",";
         }
         if(peers.length()>0)peers=peers.substring(0,peers.length()-1);
