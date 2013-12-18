@@ -13,9 +13,11 @@ import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 import org.aldeon.utils.helpers.Callbacks;
+import org.aldeon.utils.helpers.Identifiers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ public class TopicListController implements Initializable, TopicControlListener 
     public TextField topicName;
     private MainController mainController;
     public FlowPane fpane;
+    private ArrayList<Identifier> topicsSyncing = new ArrayList<Identifier>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -67,7 +70,21 @@ public class TopicListController implements Initializable, TopicControlListener 
     }
 
     public void createTopic(MouseEvent event){
-        //TODO fire topic subscription event
+        //TODO helper function checking if identifier is in valid format
+        Identifier topic = Identifiers.fromBase64(topicName.getText());
+        if (isTopicInSync(topic)) {
+            System.out.println("topic is syncing");
+        } else {
+            topicsSyncing.add(topic);
+            CoreModule.getInstance().getTopicManager().addTopic(topic);
+        }
+    }
+
+    private boolean isTopicInSync(Identifier identifier) {
+        for (Identifier i : topicsSyncing) {
+            if (i.equals(identifier)) return true;
+        }
+        return false;
     }
 
     public void setMainController(MainController mainController) {
