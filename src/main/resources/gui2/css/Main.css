@@ -1,0 +1,38 @@
+/* -- Sidebar -- */
+#sideBar {
+    -fx-background-color: linear-gradient(to right, #222222 80%, #181818);
+    -fx-border-color: #666666;
+    -fx-border-width: 0 1px 0 0;
+}
+
+/* -- Common button styles -- */
+
+.sideButton {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-background-repeat: no-repeat;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.sideButtonHover {
+    -fx-background-color: rgba(0, 0, 0, 0.4);
+    -fx-cursor: hand;
+}
+
+#sideBar Label {
+    -fx-text-fill: #666666;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* -- Specific button styles -- */
+
+.logoButton {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-image: url("../icons/logo.png");
+}
+
+/* -- Main content -- */
+#content {
+    -fx-background-color: #444444;
+}
