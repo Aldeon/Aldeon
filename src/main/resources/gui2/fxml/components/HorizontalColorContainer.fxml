@@ -8,7 +8,7 @@
     <StackPane fx:id="container" minHeight="32.0" minWidth="32.0" />
   </center>
   <left>
-    <Pane maxWidth="16.0" minWidth="16.0" prefWidth="16.0" style="" styleClass="side" />
+    <Pane maxWidth="16.0" minWidth="16.0" prefWidth="16.0" styleClass="side" />
   </left>
   <right>
     <Pane maxWidth="16.0" minWidth="16.0" prefWidth="16.0" styleClass="side" />

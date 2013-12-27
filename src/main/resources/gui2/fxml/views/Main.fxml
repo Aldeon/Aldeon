@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.aldeon.gui2.components.SidebarButton?>
 
-<BorderPane fx:id="main" prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.MainController">
+<BorderPane fx:id="main" prefHeight="540.0" prefWidth="720.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.MainController">
   <center>
     <StackPane fx:id="content" />
   </center>
@@ -21,5 +21,6 @@
   </left>
   <stylesheets>
     <URL value="@/gui2/css/Main.css" />
+    <URL value="@/gui2/css/ScrollPane.css" />
   </stylesheets>
 </BorderPane>

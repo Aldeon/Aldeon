@@ -609,7 +609,7 @@ public class DbImpl implements Db {
             statement.execute(MessagesQueries.CREATE_CALC_XOR_PROCEDURE);
             statement.execute(MessagesQueries.CREATE_MSG_INSERT_TRIGGER);
             statement.execute(MessagesQueries.CREATE_MSG_UPDATE_TRIGGER);
-            statement.execute(MessagesQueries.CREATE_MSG_DELETE_TRIGGER);
+            // statement.execute(MessagesQueries.CREATE_MSG_DELETE_TRIGGER);  // TODO: FIX (causes exception)
             insertTestData();
         } catch (SQLException e) {
             log.error("Could not create the database schema", e);
@@ -634,6 +634,10 @@ public class DbImpl implements Db {
         insertMessage(response1, cb);
         insertMessage(response11, cb);
         insertMessage(otherBranch2, cb);
+
+        Identity aliceIdentity = Identity.create("Alice", alice.publicKey, alice.privateKey);
+
+        insertIdentity(aliceIdentity, cb);
 
         log.info("Inserted topic: " + topic.getIdentifier());
     }

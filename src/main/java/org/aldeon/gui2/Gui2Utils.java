@@ -3,12 +3,17 @@ package org.aldeon.gui2;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
+import org.aldeon.core.CoreModule;
+import org.aldeon.db.Db;
+import org.aldeon.db.wrappers.DbCallbackThreadDecorator;
+import org.aldeon.db.wrappers.DbWorkThreadDecorator;
 
 import java.io.IOException;
 import java.net.URL;
 
 public class Gui2Utils {
     private static final String FXML_PATH = "/gui2/fxml";
+    private static Db db;
 
     public static String toWebHex(Color color) {
         return String.format( "#%02X%02X%02X",
@@ -39,5 +44,14 @@ public class Gui2Utils {
         } catch (IOException exception) {
             return null;
         }
+    }
+
+    public static Db guiDb() {
+        if(db == null) {
+            db = CoreModule.getInstance().getStorage();
+            db = new DbCallbackThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
+            db = new DbWorkThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
+        }
+        return db;
     }
 }

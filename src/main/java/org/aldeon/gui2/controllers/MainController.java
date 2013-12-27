@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import org.aldeon.gui2.components.HorizontalColorContainer;
 
 public class MainController {
 
@@ -23,15 +22,11 @@ public class MainController {
         // Allocate all view nodes
         welcomeNode = WelcomeController.create();
         topicsNode = TopicsController.create();
-        friendsNode = new HorizontalColorContainer();
+        identitiesNode = IdentitiesController.create();
+    }
 
-        // Display first node
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                setContent(welcomeNode);
-            }
-        });
+    public void initialize() {
+        setContent(welcomeNode);
     }
 
     private void clearContent() {

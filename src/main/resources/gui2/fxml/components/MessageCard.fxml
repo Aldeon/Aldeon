@@ -25,7 +25,8 @@
       <top>
         <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">
           <children>
-            <Button mnemonicParsing="false" text="Button" />
+              <Button mnemonicParsing="false" text="1" />
+              <Button mnemonicParsing="false" text="2" />
           </children>
         </FlowPane>
       </top>

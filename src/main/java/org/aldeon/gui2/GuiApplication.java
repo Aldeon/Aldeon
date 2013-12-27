@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.AppClosingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,6 @@ public class GuiApplication extends Application {
         TODO:
             - list topics in topicsview, autorefresh
             - list identities / friends
-
      */
 
     @Override
@@ -40,5 +41,6 @@ public class GuiApplication extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
+        CoreModule.getInstance().getEventLoop().notify(new AppClosingEvent());
     }
 }

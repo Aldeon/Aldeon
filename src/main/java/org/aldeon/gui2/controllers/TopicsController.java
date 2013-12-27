@@ -27,16 +27,11 @@ public class TopicsController {
     // Topic containers
     protected Map<Identifier, HorizontalColorContainer> topicContainers = new HashMap<>();
 
-    public TopicsController() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                HorizontalColorContainer c = new HorizontalColorContainer();
-                c.setContent(new MessageCard());
-                c.setColor(Color.AQUA);
-                addContainer(c);
-            }
-        });
+    public void initialize() {
+        HorizontalColorContainer c = new HorizontalColorContainer();
+        c.setContent(new MessageCard());
+        c.setColor(Color.AQUA);
+        addContainer(c);
     }
 
     // Container management helper methods
