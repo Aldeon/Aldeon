@@ -7,7 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.aldeon.gui2.Gui2Utils;
 
@@ -15,7 +15,7 @@ public class HorizontalColorContainer extends BorderPane {
 
     private final ObjectProperty<Color> color = new SimpleObjectProperty<>();
     private final ObjectProperty<Node> content = new SimpleObjectProperty<>();
-    @FXML protected Pane container;
+    @FXML protected StackPane container;
     @FXML protected BorderPane main;
 
     public HorizontalColorContainer(){

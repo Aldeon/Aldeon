@@ -1,17 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane id="BorderPane" style="-fx-padding: 16px;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<BorderPane id="BorderPane" style="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.TopicsController">
+  <center>
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-width: 0;&#10;-fx-background-color: transparent;" vbarPolicy="ALWAYS">
+      <content>
+        <VBox fx:id="topics" spacing="16.0" style="">
+          <padding>
+            <Insets bottom="16.0" left="16.0" right="16.0" />
+          </padding>
+        </VBox>
+      </content>
+    </ScrollPane>
+  </center>
   <top>
     <BorderPane prefHeight="32.0" prefWidth="-1.0">
       <center>
-        <TextField focusTraversable="false" prefWidth="-1.0" styleClass="styled" />
+        <TextField fx:id="watchTopicTextField" focusTraversable="true" prefWidth="-1.0" styleClass="styled" />
       </center>
       <right>
-        <Button graphicTextGap="4.0" mnemonicParsing="false" styleClass="styled" text="Watch topic" />
+        <Button fx:id="watchTopicButton" mnemonicParsing="false" styleClass="styled" text="Watch topic">
+          <BorderPane.margin>
+            <Insets left="1.0" top="4.0" />
+          </BorderPane.margin>
+        </Button>
       </right>
+      <BorderPane.margin>
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+      </BorderPane.margin>
     </BorderPane>
   </top>
 </BorderPane>

@@ -17,7 +17,6 @@ public class GuiApplication extends Application {
 
     /*
         TODO:
-            - common style for buttons, textfields
             - list topics in topicsview, autorefresh
             - list identities / friends
 
