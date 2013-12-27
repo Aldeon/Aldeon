@@ -5,34 +5,36 @@
     -fx-border-width: 0 1px 0 0;
 }
 
-/* -- Common button styles -- */
+/* -- Main content -- */
+#content {
+    -fx-background-color: #444444;
+}
 
+/* -- Common button styles -- */
 .sideButton {
-    -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-background-repeat: no-repeat;
+    -fx-background-color: transparent;
     -fx-border-color: #333333;
     -fx-border-width: 0 0 1px 0;
 }
 
-.sideButtonHover {
-    -fx-background-color: rgba(0, 0, 0, 0.4);
-    -fx-cursor: hand;
-}
-
 #sideBar Label {
-    -fx-text-fill: #666666;
+    -fx-text-fill: #999999;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }
 
-/* -- Specific button styles -- */
-
 .logoButton {
     -fx-background-color: rgba(0, 0, 0, 0.2);
     -fx-background-image: url("../icons/logo.png");
+    -fx-cursor: hand;
 }
 
-/* -- Main content -- */
-#content {
-    -fx-background-color: #444444;
+/* -- Common input components -- */
+
+.styled {
+    -fx-background-color: #111111;
+    -fx-border-color: #666666;
+    -fx-border-width: 1px;
+    -fx-text-fill: #666666;
+    -fx-padding: 0;
 }

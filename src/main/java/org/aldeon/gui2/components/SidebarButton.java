@@ -1,43 +1,30 @@
-package org.aldeon.gui2.elements;
+package org.aldeon.gui2.components;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import java.io.IOException;
-import java.net.URL;
+import org.aldeon.gui2.Gui2Utils;
 
 public class SidebarButton extends Pane {
 
     private final StringProperty imagePath = new SimpleStringProperty();
-    private final DoubleProperty normalOpacity = new SimpleDoubleProperty();
-    private final DoubleProperty hoverOpacity = new SimpleDoubleProperty();
     @FXML private Label label;
     @FXML private ImageView imageView;
 
     public SidebarButton() {
         super();
 
-        URL url = getClass().getResource("SidebarButton.fxml");
-
-        FXMLLoader fxmlLoader = new FXMLLoader(url);
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/SidebarButton.fxml", this);
 
         imagePathProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -50,29 +37,35 @@ public class SidebarButton extends Pane {
         this.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                System.out.println("entered");
+                onMouseEnter();
             }
         });
 
         this.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                System.out.println("exited");
+                onMouseExit();
             }
         });
 
-        normalOpacityProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
-                System.out.println("changed from " + number + " to " + number2);
-            }
-        });
-
-        setNormalOpacity(0.0);
-
+        onMouseExit();
     }
 
     ////
+
+    private void onMouseEnter() {
+        imageView.setOpacity(0.8);
+        label.setOpacity(0.8);
+        setStyle("-fx-background-color: rgba(0, 0, 0, 0.1)");
+        setCursor(Cursor.HAND);
+    }
+
+    private void onMouseExit() {
+        imageView.setOpacity(0.4);
+        label.setOpacity(0.4);
+        setStyle("-fx-background-color: transparent");
+        setCursor(Cursor.DEFAULT);
+    }
 
     public String getText() {
         return textProperty().get();
@@ -99,33 +92,4 @@ public class SidebarButton extends Pane {
     public StringProperty imagePathProperty() {
         return imagePath;
     }
-
-    ////
-
-    public double getNormalOpacity() {
-        return normalOpacityProperty().get();
-    }
-
-    public void setNormalOpacity(Double value) {
-        normalOpacityProperty().set(value);
-    }
-
-    public DoubleProperty normalOpacityProperty() {
-        return normalOpacity;
-    }
-
-    ////
-
-    public double getHoverOpacity() {
-        return hoverOpacityProperty().get();
-    }
-
-    public void setHoverOpacity(Double value) {
-        hoverOpacityProperty().set(value);
-    }
-
-    public DoubleProperty hoverOpacityProperty() {
-        return hoverOpacity;
-    }
-
 }

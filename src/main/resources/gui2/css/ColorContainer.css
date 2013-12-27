@@ -1,0 +1,13 @@
+.coloredRoundedRectangle {
+    -fx-background-color: #ff0000;
+    -fx-background-radius: 16px;
+    -fx-border-width: 0;
+}
+
+#container {
+    -fx-background-color: #222222;
+}
+
+.side {
+    -fx-background-color: transparent;
+}

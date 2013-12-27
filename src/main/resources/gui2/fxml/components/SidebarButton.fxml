@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 
 <fx:root type="javafx.scene.layout.Pane" prefHeight="96.0" prefWidth="96.0" styleClass="sideButton" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
     <ImageView fx:id="imageView" fitHeight="96.0" fitWidth="96.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" styleClass="sideButtonImage" />
-    <Label fx:id="label" layoutX="0.0" layoutY="67.0" text="_label_" textAlignment="CENTER" />
+    <Label fx:id="label" layoutX="0.0" layoutY="64.0" prefHeight="32.0" prefWidth="96.0" text="_label_" />
   </children>
 </fx:root>

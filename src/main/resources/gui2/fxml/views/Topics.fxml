@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane id="BorderPane" style="-fx-padding: 16px;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <top>
+    <BorderPane prefHeight="32.0" prefWidth="-1.0">
+      <center>
+        <TextField focusTraversable="false" prefWidth="-1.0" styleClass="styled" />
+      </center>
+      <right>
+        <Button graphicTextGap="4.0" mnemonicParsing="false" styleClass="styled" text="Watch topic" />
+      </right>
+    </BorderPane>
+  </top>
+</BorderPane>

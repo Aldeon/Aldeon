@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,22 +15,31 @@ public class GuiApplication extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(GuiApplication.class);
 
+    /*
+        TODO:
+            - common style for buttons, textfields
+            - list topics in topicsview, autorefresh
+            - list identities / friends
+
+     */
+
     @Override
     public void start(Stage primaryStage) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/gui2/fxml/Main.fxml"));
-            Scene scene = new Scene(root);
-            primaryStage.setTitle("Aldeon");
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Parent root = Gui2Utils.loadFXMLfromDefaultPath("views/Main.fxml");
+
+        if(root == null) {
+            System.err.println("Failed to load Main.fxml");
+            return;
         }
+
+        primaryStage.setTitle("Aldeon");
+        primaryStage.getIcons().add(new Image("/gui2/images/appIcon.png"));
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
     }
 
     @Override
     public void stop() throws Exception {
         super.stop();
     }
-
 }
