@@ -13,7 +13,7 @@
       <bottom>
         <BorderPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" prefWidth="-1.0">
           <left>
-            <Label fx:id="messageIdLabel" text="-message-id-" wrapText="true">
+            <Label fx:id="messageIdLabel" text="-message-id-" styleClass="hash" wrapText="true">
               <BorderPane.margin>
                 <Insets left="4.0" />
               </BorderPane.margin>
@@ -53,7 +53,7 @@
         <Pane minHeight="-Infinity" prefHeight="72.0" prefWidth="-1.0">
           <children>
             <Label fx:id="userNameLabel" layoutX="7.0" layoutY="6.0" prefWidth="91.0" style="-fx-font-weight: bold;&#10;-fx-text-fill: #999999;" text="-user_name-" />
-            <Label fx:id="userIdLabel" layoutX="7.0" layoutY="56.0" prefWidth="91.0" text="-user-id-" textAlignment="LEFT" />
+            <Label fx:id="userIdLabel" styleClass="hash" layoutX="7.0" layoutY="56.0" prefWidth="91.0" text="-user-id-" textAlignment="LEFT" />
           </children>
         </Pane>
       </center>

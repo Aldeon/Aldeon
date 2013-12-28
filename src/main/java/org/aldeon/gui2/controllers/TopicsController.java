@@ -7,7 +7,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
-import org.aldeon.gui2.components.HorizontalColorContainer;
 import org.aldeon.gui2.components.MessageCard;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
@@ -43,23 +42,11 @@ public class TopicsController {
         });
     }
 
-    // Container management helper methods
-    protected void addContainer(HorizontalColorContainer container) {
-        if(container != null) {
-            topics.getChildren().add(container);
-        }
-    }
-
-    protected void delContainer(HorizontalColorContainer container) {
-        topics.getChildren().remove(container);
-    }
-
-    // Actual topic management
     protected void addTopicToList(Message topic) {
         if(!topicContainers.containsKey(topic.getIdentifier())) {
             MessageCard card = new MessageCard();
             card.setMessage(topic);
-            addContainer(card);
+            topics.getChildren().add(card);
             topicContainers.put(topic.getIdentifier(), card);
         }
     }
@@ -68,7 +55,7 @@ public class TopicsController {
         MessageCard card = topicContainers.get(topic.getIdentifier());
         if(card != null) {
             topicContainers.remove(topic.getIdentifier());
-            delContainer(card);
+            topics.getChildren().remove(card);
         }
     }
 
