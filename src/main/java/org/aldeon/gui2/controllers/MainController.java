@@ -2,13 +2,15 @@ package org.aldeon.gui2.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import org.aldeon.gui2.components.SlidingStackPane;
 
 public class MainController {
 
     // Node references
-    @FXML private StackPane content;
+    @FXML private SlidingStackPane content;
 
     // View nodes (allocated once)
     private Node welcomeNode    = null;
@@ -16,6 +18,7 @@ public class MainController {
     private Node topicsNode     = null;
     private Node friendsNode    = null;
     private Node settingsNode   = null;
+    private Node active = null;
 
     public MainController() {
         // Allocate all view nodes
@@ -28,13 +31,15 @@ public class MainController {
      * "second constructor" - fired as soon as all the Node references are set.
      */
     public void initialize() {
-        setContent(welcomeNode);
+        content.getChildren().add(welcomeNode);
+        active = welcomeNode;
     }
 
     private void setContent(Node node) {
-        content.getChildren().clear();
-        if(node != null) {
-            content.getChildren().add(node);
+        if(node != active && node != null) {
+            content.slideOut(active);
+            content.slideIn(node);
+            active = node;
         }
     }
 
