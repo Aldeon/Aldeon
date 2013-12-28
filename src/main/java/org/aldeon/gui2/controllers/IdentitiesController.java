@@ -2,13 +2,16 @@ package org.aldeon.gui2.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
+import org.aldeon.crypt.Key;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
-import org.aldeon.gui2.components.VerticalColorContainer;
+import org.aldeon.gui2.components.IdentityCard;
+import org.aldeon.gui2.various.DeterministicColorGenerator;
 import org.aldeon.model.Identity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class IdentitiesController {
@@ -16,6 +19,8 @@ public class IdentitiesController {
     @FXML protected FlowPane container;
 
     public static final String FXML_FILE = "views/Identities.fxml";
+
+    private Map<Key, IdentityCard> identityCards = new HashMap<>();
 
     public static Node create() {
         return Gui2Utils.loadFXMLfromDefaultPath(FXML_FILE);
@@ -26,12 +31,28 @@ public class IdentitiesController {
             @Override
             public void call(Set<Identity> identities) {
                 for(Identity identity: identities) {
-                    VerticalColorContainer vcc = new VerticalColorContainer();
-                    vcc.setContent(new Label(identity.getName()));
-                    addToContainer(vcc);
+                    addCard(identity);
                 }
             }
         });
+    }
+
+    protected void addCard(Identity identity) {
+        if(identityCards.get(identity.getPublicKey()) == null) {
+            IdentityCard card = new IdentityCard();
+            card.setIdentity(identity);
+            card.setColor(DeterministicColorGenerator.getColorForSeed(identity.getPublicKey().hashCode()));
+            addToContainer(card);
+
+            identityCards.put(identity.getPublicKey(), card);
+        }
+    }
+
+    protected void delCard(Identity identity) {
+        IdentityCard card = identityCards.get(identity.getPublicKey());
+        if(card != null) {
+            delFromContainer(card);
+        }
     }
 
     protected void addToContainer(Node node) {

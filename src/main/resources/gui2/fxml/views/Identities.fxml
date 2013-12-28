@@ -1,17 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane fx:controller="org.aldeon.gui2.controllers.IdentitiesController" id="BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<BorderPane id="BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.IdentitiesController">
+  <bottom>
+    <Pane prefHeight="24.0" prefWidth="-1.0" style="-fx-background-color: #111111">
+      <children>
+        <Label text="Some info here" />
+      </children>
+    </Pane>
+  </bottom>
   <center>
     <FlowPane fx:id="container" hgap="16.0" prefHeight="-1.0" prefWidth="-1.0" prefWrapLength="0.0" vgap="16.0">
+      <children>
+        <Pane prefHeight="160.0" prefWidth="128.0" style="-fx-background-color: #222222;&#10;-fx-background-radius: 8px;">
+          <children>
+            <Label alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="160.0" prefWidth="128.0" text="+" textFill="#44ffff">
+              <font>
+                <Font size="72.0" />
+              </font>
+            </Label>
+            <Label alignment="CENTER" layoutX="0.0" layoutY="33.0" prefWidth="128.0" text="NEW" textFill="#999999">
+              <font>
+                <Font name="System Bold" size="11.0" />
+              </font>
+            </Label>
+          </children>
+        </Pane>
+      </children>
       <padding>
-        <Insets bottom="16.0" left="16.0" right="16.0" />
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
       </padding>
     </FlowPane>
   </center>
-  <top>
-    <Pane prefHeight="24.0" prefWidth="-1.0" style="-fx-background-color: #111111"/>
-  </top>
 </BorderPane>

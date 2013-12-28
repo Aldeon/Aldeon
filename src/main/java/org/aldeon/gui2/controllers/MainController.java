@@ -1,10 +1,11 @@
 package org.aldeon.gui2.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import org.aldeon.gui2.components.ColorizedImageView;
 
 public class MainController {
 
@@ -23,6 +24,11 @@ public class MainController {
         welcomeNode = WelcomeController.create();
         topicsNode = TopicsController.create();
         identitiesNode = IdentitiesController.create();
+
+        ColorizedImageView img = new ColorizedImageView("/gui2/images/person-icon.png");
+        img.setColorize(Color.CHOCOLATE);
+
+        settingsNode = img;
     }
 
     public void initialize() {

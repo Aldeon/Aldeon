@@ -25,7 +25,7 @@
 
 .logoButton {
     -fx-background-color: rgba(0, 0, 0, 0.2);
-    -fx-background-image: url("../icons/logo.png");
+    -fx-background-image: url("../images/menu-icons/logo.png");
     -fx-cursor: hand;
 }
 
@@ -34,8 +34,10 @@
 .styled {
     -fx-background-insets: 0, 0, 0, 0;  /* Removes overflowing background (works, don't ask why) */
     -fx-background-color: #191919;
+    -fx-background-radius: 4px;
     -fx-border-color: #666666;
     -fx-border-width: 1px;
+    -fx-border-radius: 4px;
     -fx-text-fill: #666666;
     -fx-padding: 4px;
     -fx-focus-color: transparent;
