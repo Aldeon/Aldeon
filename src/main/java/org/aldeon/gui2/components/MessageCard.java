@@ -1,24 +1,44 @@
 package org.aldeon.gui2.components;
 
-import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import org.aldeon.gui2.Gui2Utils;
+import org.aldeon.gui2.various.DeterministicColorGenerator;
+import org.aldeon.model.Message;
 
-public class MessageCard extends BorderPane{
+public class MessageCard extends HorizontalColorContainer {
 
-    @FXML protected Label content;
+    @FXML protected MessageContent messageData;
+
+    private final ObjectProperty<Message> messageProperty = new SimpleObjectProperty<>();
 
     public MessageCard() {
         Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageCard.fxml", this);
 
-        Platform.runLater(new Runnable() {
+        messageProperty().addListener(new ChangeListener<Message>() {
             @Override
-            public void run() {
-                content.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sapien erat, condimentum ut dictum sit amet, aliquet a enim. Nulla justo nisi, hendrerit pretium lacus nec");
-                //content.setText("Lorem");
+            public void changed(ObservableValue<? extends Message> observableValue, Message oldMessage, Message newMessage) {
+                messageData.setAuthorName("Anonymous");
+                messageData.setAuthorHash(newMessage.getAuthorPublicKey().toString());
+                messageData.setMessageHash(newMessage.getIdentifier().toString());
+                messageData.setText(newMessage.getContent());
+                setColor(DeterministicColorGenerator.getColorForSeed(newMessage.getAuthorPublicKey().hashCode()));
             }
         });
+    }
+
+    public ObjectProperty<Message> messageProperty() {
+        return messageProperty;
+    }
+
+    public Message getMessage() {
+        return messageProperty().get();
+    }
+
+    public void setMessage(Message message) {
+        messageProperty().set(message);
     }
 }

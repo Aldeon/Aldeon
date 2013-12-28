@@ -1,77 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import org.aldeon.gui2.components.MessageContent?>
 
-<fx:root type="javafx.scene.layout.BorderPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #222222;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
-  <center>
-    <BorderPane fx:id="leftContainer" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-color: #2e2e2e;&#10;-fx-border-width: 0 1px 0 0;&#10;">
-      <bottom>
-        <BorderPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" prefWidth="-1.0">
-          <left>
-            <Label text="-message-id-">
-              <BorderPane.margin>
-                <Insets left="4.0" />
-              </BorderPane.margin>
-            </Label>
-          </left>
-        </BorderPane>
-      </bottom>
-      <center>
-        <Label fx:id="content" alignment="TOP_LEFT" maxHeight="65536.0" maxWidth="65536.0" prefWidth="0.0" style="-fx-font-weight: bold;&#10;-fx-text-fill: #999999;&#10;-fx-padding: 8px;&#10;-fx-background-color: transparent;&#10;&#10;&#10;" text="Lorem ipsum dolor" textAlignment="JUSTIFY" underline="false" wrapText="true" />
-      </center>
-      <top>
-        <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">
-          <children>
-            <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-              <image>
-                <Image url="@../../images/message-icons/link.png" />
-              </image>
-            </ImageView>
-            <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-              <image>
-                <Image url="@../../images/message-icons/bubble.png" />
-              </image>
-            </ImageView>
-            <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-              <image>
-                <Image url="@../../images/message-icons/delete.png" />
-              </image>
-            </ImageView>
-          </children>
-        </FlowPane>
-      </top>
-    </BorderPane>
-  </center>
-  <right>
-    <BorderPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="160.0" style="-fx-background-color: #1c1c1c;&#10;-fx-border-color: #0b0b0b;&#10;-fx-border-width: 0 0 0 1px;">
-      <center>
-        <Pane minHeight="-Infinity" prefHeight="72.0" prefWidth="-1.0">
-          <children>
-            <Label layoutX="7.0" layoutY="6.0" prefWidth="91.0" style="-fx-font-weight: bold;&#10;-fx-text-fill: #999999;" text="-user_name-" />
-            <Label layoutX="7.0" layoutY="56.0" prefWidth="91.0" text="-user-id-" textAlignment="LEFT" />
-          </children>
-        </Pane>
-      </center>
-      <top>
-        <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="-1.0" prefWrapLength="0.0">
-          <children>
-            <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-              <image>
-                <Image url="@../../images/message-icons/person.png" />
-              </image>
-            </ImageView>
-            <ImageView fitHeight="24.0" fitWidth="24.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-              <image>
-                <Image url="@../../images/message-icons/block.png" />
-              </image>
-            </ImageView>
-          </children>
-        </FlowPane>
-      </top>
-    </BorderPane>
-  </right>
+<fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+    <content>
+        <MessageContent fx:id="messageData"/>
+    </content>
 </fx:root>

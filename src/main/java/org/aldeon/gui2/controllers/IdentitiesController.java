@@ -6,8 +6,7 @@ import javafx.scene.layout.FlowPane;
 import org.aldeon.crypt.Key;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
-import org.aldeon.gui2.components.IdentityCard;
-import org.aldeon.gui2.various.DeterministicColorGenerator;
+import org.aldeon.gui2.components.UserCard;
 import org.aldeon.model.Identity;
 
 import java.util.HashMap;
@@ -20,7 +19,7 @@ public class IdentitiesController {
 
     public static final String FXML_FILE = "views/Identities.fxml";
 
-    private Map<Key, IdentityCard> identityCards = new HashMap<>();
+    private Map<Key, UserCard> identityCards = new HashMap<>();
 
     public static Node create() {
         return Gui2Utils.loadFXMLfromDefaultPath(FXML_FILE);
@@ -39,9 +38,8 @@ public class IdentitiesController {
 
     protected void addCard(Identity identity) {
         if(identityCards.get(identity.getPublicKey()) == null) {
-            IdentityCard card = new IdentityCard();
-            card.setIdentity(identity);
-            card.setColor(DeterministicColorGenerator.getColorForSeed(identity.getPublicKey().hashCode()));
+            UserCard card = new UserCard();
+            card.setUser(identity);
             addToContainer(card);
 
             identityCards.put(identity.getPublicKey(), card);
@@ -49,7 +47,7 @@ public class IdentitiesController {
     }
 
     protected void delCard(Identity identity) {
-        IdentityCard card = identityCards.get(identity.getPublicKey());
+        UserCard card = identityCards.get(identity.getPublicKey());
         if(card != null) {
             delFromContainer(card);
         }

@@ -7,7 +7,6 @@
 <?import javafx.scene.image.Image?>
 <?import org.aldeon.gui2.components.ColorizedImageView?>
 
-<?import javafx.geometry.Insets?>
 <fx:root type="org.aldeon.gui2.components.VerticalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <content>
         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="128.0" prefWidth="128.0" style="-fx-background-color: #222222;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">

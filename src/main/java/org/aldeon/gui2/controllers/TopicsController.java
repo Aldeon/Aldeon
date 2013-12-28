@@ -1,19 +1,20 @@
 package org.aldeon.gui2.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.components.HorizontalColorContainer;
 import org.aldeon.gui2.components.MessageCard;
 import org.aldeon.model.Identifier;
+import org.aldeon.model.Message;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class TopicsController {
 
@@ -25,13 +26,21 @@ public class TopicsController {
     @FXML protected VBox topics;
 
     // Topic containers
-    protected Map<Identifier, HorizontalColorContainer> topicContainers = new HashMap<>();
+    protected Map<Identifier, MessageCard> topicContainers = new HashMap<>();
 
     public void initialize() {
-        HorizontalColorContainer c = new HorizontalColorContainer();
-        c.setContent(new MessageCard());
-        c.setColor(Color.AQUA);
-        addContainer(c);
+        fetchTopics();
+    }
+
+    private void fetchTopics() {
+        Gui2Utils.guiDb().getMessagesByParentId(Identifier.empty(), new Callback<Set<Message>>() {
+            @Override
+            public void call(Set<Message> topics) {
+                for(Message topic: topics) {
+                    addTopicToList(topic);
+                }
+            }
+        });
     }
 
     // Container management helper methods
@@ -46,12 +55,21 @@ public class TopicsController {
     }
 
     // Actual topic management
-    protected void addTopicToList(Identifier topic) {
-
+    protected void addTopicToList(Message topic) {
+        if(!topicContainers.containsKey(topic.getIdentifier())) {
+            MessageCard card = new MessageCard();
+            card.setMessage(topic);
+            addContainer(card);
+            topicContainers.put(topic.getIdentifier(), card);
+        }
     }
 
-    protected void removeTopicFromList(Identifier topic) {
-
+    protected void removeTopicFromList(Message topic) {
+        MessageCard card = topicContainers.get(topic.getIdentifier());
+        if(card != null) {
+            topicContainers.remove(topic.getIdentifier());
+            delContainer(card);
+        }
     }
 
     public static Node create() {
