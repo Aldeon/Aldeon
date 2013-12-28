@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import org.aldeon.gui2.components.SlidingStackPane;
+import org.aldeon.gui2.various.Direction;
 
 public class MainController {
 
@@ -37,8 +38,8 @@ public class MainController {
 
     private void setContent(Node node) {
         if(node != active && node != null) {
-            content.slideOut(active);
-            content.slideIn(node);
+            content.slideOut(active, Direction.TOP);
+            content.slideIn(node, Direction.RIGHT);
             active = node;
         }
     }
