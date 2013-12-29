@@ -7,6 +7,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
@@ -23,6 +24,9 @@ public class SlidingStackPane extends StackPane {
         if(getChildren().contains(node)) {
             return;
         }
+
+        final CacheHint oldCacheHint = node.getCacheHint();
+        node.setCacheHint(CacheHint.SPEED);
 
         getChildren().add(node);
 
@@ -43,6 +47,7 @@ public class SlidingStackPane extends StackPane {
             @Override
             public void handle(ActionEvent actionEvent) {
                 node.setClip(null);
+                node.setCacheHint(oldCacheHint);
             }
         };
 
@@ -62,6 +67,9 @@ public class SlidingStackPane extends StackPane {
             return;
         }
 
+        final CacheHint oldCacheHint = node.getCacheHint();
+        node.setCacheHint(CacheHint.SPEED);
+
         Rectangle clip = new Rectangle();
         clip.setWidth(getWidth());
         clip.setHeight(getHeight());
@@ -76,6 +84,7 @@ public class SlidingStackPane extends StackPane {
             @Override
             public void handle(ActionEvent actionEvent) {
                 node.setClip(null);
+                node.setCacheHint(oldCacheHint);
                 getChildren().remove(node);
             }
         };
