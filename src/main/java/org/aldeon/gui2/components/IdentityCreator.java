@@ -35,11 +35,20 @@ public class IdentityCreator extends BorderPane {
     private KeyGen.KeyPair keyPair;
 
     public IdentityCreator() {
+        this(null);
+    }
+
+    public IdentityCreator(Identity identity) {
         super();
         Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/IdentityCreator.fxml", this);
 
-        shuffleAndUpdate();
-        nameTextField.setText("");
+        if(identity == null) {
+            shuffleKeys();
+            update("");
+        } else {
+            keyPair = new KeyGen.KeyPair(identity.getPublicKey(), identity.getPrivateKey());
+            update(identity.getName());
+        }
 
         shuffleAllowedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -51,7 +60,8 @@ public class IdentityCreator extends BorderPane {
         shuffleButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                shuffleAndUpdate();
+                shuffleKeys();
+                update(nameTextField.getText());
             }
         });
 
@@ -70,10 +80,14 @@ public class IdentityCreator extends BorderPane {
         });
     }
 
-    private void shuffleAndUpdate() {
-        keyPair = generator.generate();
+    private void update(String name) {
+        nameTextField.setText(name);
         hashTextField.setText(keyPair.publicKey.toString());
         avatar.setColorize(DeterministicColorGenerator.getColorForSeed(keyPair.publicKey.hashCode()));
+    }
+
+    private void shuffleKeys() {
+        keyPair = generator.generate();
     }
 
     private void triggerEvent(Identity identity) {

@@ -5,7 +5,7 @@
 <?import org.aldeon.gui2.components.SidebarButton?>
 
 <?import org.aldeon.gui2.components.SlidingStackPane?>
-<BorderPane fx:id="main" prefHeight="540.0" prefWidth="720.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.MainController">
+<BorderPane fx:id="main" prefHeight="540.0" prefWidth="690.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.MainController">
   <center>
     <SlidingStackPane fx:id="content" />
   </center>

@@ -11,7 +11,6 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.IdentityAddedEvent;
 import org.aldeon.core.events.IdentityRemovedEvent;
 import org.aldeon.crypt.Key;
-import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
 import org.aldeon.events.EventLoop;
 import org.aldeon.gui2.Gui2Utils;
@@ -19,14 +18,13 @@ import org.aldeon.gui2.components.IdentityCreator;
 import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.components.UserCard;
 import org.aldeon.gui2.various.Direction;
+import org.aldeon.gui2.various.FxCallback;
 import org.aldeon.gui2.various.IdentityEvent;
 import org.aldeon.model.Identity;
 import org.aldeon.utils.helpers.Callbacks;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
 
 public class IdentitiesController {
 
@@ -44,16 +42,15 @@ public class IdentitiesController {
 
     public void initialize() {
         EventLoop loop = CoreModule.getInstance().getEventLoop();
-        Executor ex = Gui2Utils.fxExecutor();
 
-        loop.assign(IdentityAddedEvent.class, new ACB<IdentityAddedEvent>(ex) {
+        loop.assign(IdentityAddedEvent.class, new FxCallback<IdentityAddedEvent>() {
             @Override
             protected void react(IdentityAddedEvent event) {
                 addCard(event.getIdentity());
             }
         });
 
-        loop.assign(IdentityRemovedEvent.class, new ACB<IdentityRemovedEvent>(ex) {
+        loop.assign(IdentityRemovedEvent.class, new FxCallback<IdentityRemovedEvent>() {
             @Override
             protected void react(IdentityRemovedEvent event) {
                 delCard(event.getPublicKey());
@@ -70,19 +67,26 @@ public class IdentitiesController {
         });
     }
 
-    protected void addCard(Identity identity) {
+    private void addCard(Identity identity) {
         if(identityCards.get(identity.getPublicKey()) == null) {
-            UserCard card = new UserCard();
+            final UserCard card = new UserCard();
             card.setUser(identity);
             identityCards.put(identity.getPublicKey(), card);
             container.getChildren().add(card);
+            card.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    cardClicked(card);
+                }
+            });
         }
     }
 
-    protected void delCard(Key publicKey) {
+    private void delCard(Key publicKey) {
         UserCard card = identityCards.get(publicKey);
         if(card != null) {
             container.getChildren().remove(card);
+            identityCards.remove(publicKey);
         }
     }
 
@@ -95,6 +99,47 @@ public class IdentitiesController {
                 slider.slideOut(creator, Direction.RIGHT);
                 if(identityEvent.identity() != null) {
                     Gui2Utils.db().insertIdentity(identityEvent.identity(), Callbacks.<Boolean>emptyCallback());
+                }
+            }
+        });
+
+        slider.slideIn(creator, Direction.RIGHT);
+    }
+
+    private void cardClicked(UserCard card) {
+        Gui2Utils.db().getIdentity(card.getUser().getPublicKey(), new FxCallback<Identity>() {
+            @Override
+            protected void react(Identity identity) {
+                if(identity != null) {
+                    editIdentity(identity);
+                }
+            }
+        });
+    }
+
+    private void editIdentity(final Identity identity) {
+        final IdentityCreator creator = new IdentityCreator(identity);
+        creator.setShuffleAllowed(false);
+
+        creator.setOnCreatorClosed(new EventHandler<IdentityEvent>() {
+            @Override
+            public void handle(final IdentityEvent identityEvent) {
+                slider.slideOut(creator, Direction.RIGHT);
+                if(identityEvent.identity() != null) {
+                    delCard(identity.getPublicKey());
+                    Gui2Utils.db().deleteIdentity(identity.getPublicKey(), new Callback<Boolean>() {
+                        @Override
+                        public void call(Boolean deleteStatus) {
+                            System.out.println("delete status: " + deleteStatus);
+                            Gui2Utils.db().insertIdentity(identityEvent.identity(), new FxCallback<Boolean>() {
+                                @Override
+                                protected void react(Boolean insertStatus) {
+                                    System.out.println("insert status: " + insertStatus);
+                                    addCard(identityEvent.identity());
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
