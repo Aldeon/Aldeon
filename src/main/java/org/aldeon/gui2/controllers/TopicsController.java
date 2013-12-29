@@ -32,7 +32,7 @@ public class TopicsController {
     }
 
     private void fetchTopics() {
-        Gui2Utils.guiDb().getMessagesByParentId(Identifier.empty(), new Callback<Set<Message>>() {
+        Gui2Utils.db().getMessagesByParentId(Identifier.empty(), new Callback<Set<Message>>() {
             @Override
             public void call(Set<Message> topics) {
                 for(Message topic: topics) {

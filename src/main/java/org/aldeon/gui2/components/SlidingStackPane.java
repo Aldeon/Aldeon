@@ -15,7 +15,7 @@ import org.aldeon.gui2.various.Direction;
 
 public class SlidingStackPane extends StackPane {
 
-    public static final int DEFAULT_TRANSITION_TIME = 1000;
+    public static final int DEFAULT_TRANSITION_TIME = 500;
 
     private final IntegerProperty transitionTime = new SimpleIntegerProperty(DEFAULT_TRANSITION_TIME);
 
@@ -91,7 +91,6 @@ public class SlidingStackPane extends StackPane {
         KeyValue kv6 = new KeyValue(node.translateYProperty(), dir.getY() * getHeight());
         KeyFrame kf = new KeyFrame(Duration.millis(getTransitionTime()), onFinished, kv1, kv2, kv3, kv4, kv5, kv6);
         timeline.getKeyFrames().add(kf);
-
         timeline.play();
     }
 

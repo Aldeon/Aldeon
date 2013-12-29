@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <bottom>
+    <FlowPane alignment="CENTER" hgap="16.0" prefHeight="32.0" prefWidth="-1.0">
+      <children>
+        <Button mnemonicParsing="false" text="OK" />
+        <Button mnemonicParsing="false" text="Reset" />
+        <Button mnemonicParsing="false" text="Cancel" />
+      </children>
+    </FlowPane>
+  </bottom>
+  <center>
+    <TextArea prefWidth="-1.0" wrapText="true" />
+  </center>
+  <right>
+    <ListView prefHeight="-1.0" prefWidth="160.0" />
+  </right>
+</BorderPane>

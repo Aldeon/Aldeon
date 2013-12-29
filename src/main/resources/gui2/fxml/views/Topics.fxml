@@ -24,7 +24,7 @@
       <right>
         <Button fx:id="watchTopicButton" mnemonicParsing="false" styleClass="styled" text="Watch topic">
           <BorderPane.margin>
-            <Insets left="1.0" top="4.0" />
+            <Insets left="1.0" top="2.0" />
           </BorderPane.margin>
         </Button>
       </right>

@@ -1,5 +1,6 @@
 package org.aldeon.gui2;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
@@ -10,10 +11,25 @@ import org.aldeon.db.wrappers.DbWorkThreadDecorator;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.Executor;
 
 public class Gui2Utils {
     private static final String FXML_PATH = "/gui2/fxml";
     private static Db db;
+    private static Executor fxExecutor = null;
+
+    static {
+        fxExecutor = new Executor() {
+            @Override
+            public void execute(Runnable command) {
+                Platform.runLater(command);
+            }
+        };
+
+        db = CoreModule.getInstance().getStorage();
+        db = new DbCallbackThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
+        db = new DbWorkThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
+    }
 
     public static String toWebHex(Color color) {
         return String.format( "#%02X%02X%02X",
@@ -46,12 +62,11 @@ public class Gui2Utils {
         }
     }
 
-    public static Db guiDb() {
-        if(db == null) {
-            db = CoreModule.getInstance().getStorage();
-            db = new DbCallbackThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
-            db = new DbWorkThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
-        }
+    public static Db db() {
         return db;
+    }
+
+    public static Executor fxExecutor() {
+        return fxExecutor;
     }
 }

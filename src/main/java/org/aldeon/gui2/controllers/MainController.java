@@ -2,9 +2,7 @@ package org.aldeon.gui2.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
 import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.various.Direction;
 
@@ -20,6 +18,7 @@ public class MainController {
     private Node friendsNode    = null;
     private Node settingsNode   = null;
     private Node active = null;
+    private int activeId = 0;
 
     public MainController() {
         // Allocate all view nodes
@@ -36,32 +35,35 @@ public class MainController {
         active = welcomeNode;
     }
 
-    private void setContent(Node node) {
+    private void setContent(Node node, int id) {
         if(node != active && node != null) {
-            content.slideOut(active, Direction.TOP);
-            content.slideIn(node, Direction.RIGHT);
+            Direction dir = Direction.BOTTOM;
+            if(id > activeId) dir = dir.opposite();
+            content.slideOut(active, dir);
+            content.slideIn(node, dir.opposite());
             active = node;
+            activeId = id;
         }
     }
 
     @FXML protected void clickedLogo(MouseEvent event) {
-        setContent(welcomeNode);
+        setContent(welcomeNode, 0);
     }
 
     @FXML protected void clickedIdentities(MouseEvent event) {
-        setContent(identitiesNode);
+        setContent(identitiesNode, 1);
     }
 
     @FXML protected void clickedTopics(MouseEvent event) {
-        setContent(topicsNode);
+        setContent(topicsNode, 2);
     }
 
     @FXML protected void clickedFriends(MouseEvent event) {
-        setContent(friendsNode);
+        setContent(friendsNode, 3);
     }
 
     @FXML protected void clickedSettings(MouseEvent event) {
-        setContent(settingsNode);
+        setContent(settingsNode, 4);
     }
 }
 

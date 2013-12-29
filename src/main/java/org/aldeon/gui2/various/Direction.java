@@ -25,4 +25,12 @@ public enum Direction {
         if(this == TOP) return -1;
         return 0;
     }
+
+    public Direction opposite() {
+        if(this == TOP)     return BOTTOM;
+        if(this == BOTTOM)  return TOP;
+        if(this == LEFT)    return RIGHT;
+        if(this == RIGHT)   return LEFT;
+        return null;
+    }
 }
