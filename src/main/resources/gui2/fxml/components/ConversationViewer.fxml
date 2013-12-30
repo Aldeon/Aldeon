@@ -4,9 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
-  <center>
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #444444;" vbarPolicy="ALWAYS">
+<?import java.net.URL?>
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" style="-fx-background-color: #444444;">
+    <center>
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0"  vbarPolicy="ALWAYS" style="-fx-background-color: transparent">
       <content>
           <BorderPane>
               <top>
@@ -17,7 +18,7 @@
                   </VBox>
               </top>
               <center>
-                  <VBox fx:id="focused" spacing="16.0" style="-fx-background-color: #111111;-fx-background-insets: 8px;-fx-background-radius: 16px;">
+                  <VBox fx:id="focused" spacing="16.0" style="-fx-background-color: #333333;-fx-background-insets: 8px;-fx-background-radius: 16px;">
                       <padding>
                           <Insets top="16.0" bottom="16.0" left="16.0" right="16.0" />
                       </padding>
@@ -33,12 +34,23 @@
           </BorderPane>
       </content>
     </ScrollPane>
-  </center>
-  <top>
-    <BorderPane prefHeight="32.0" style="-fx-background-color: #333333;">
-      <left>
-        <Button fx:id="back" text="Back" styleClass="styled"></Button>
-      </left>
-    </BorderPane>
-  </top>
+    </center>
+    <top>
+      <BorderPane prefHeight="48.0" styleClass="topBar">
+        <left>
+            <FlowPane alignment="CENTER_LEFT" hgap="8.0">
+                <children>
+                    <Button fx:id="back" text="Back" styleClass="styled"></Button>
+                    <Button text="Toggle view" styleClass="styled"></Button>
+                </children>
+            </FlowPane>
+        </left>
+        <padding>
+            <Insets top="8.0" bottom="8.0" left="8.0" right="8.0" />
+        </padding>
+      </BorderPane>
+    </top>
+    <stylesheets>
+        <URL value="@../../css/TopBar.css" />
+    </stylesheets>
 </fx:root>

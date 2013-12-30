@@ -1,6 +1,8 @@
 package org.aldeon.gui2.components;
 
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -9,6 +11,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import org.aldeon.gui2.Gui2Utils;
 
 public class MessageContent extends BorderPane{
@@ -25,15 +28,9 @@ public class MessageContent extends BorderPane{
         linkIcon.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                copyHashToClipboard();
+                Gui2Utils.copyToClipboard(messageIdLabel.getText());
             }
         });
-    }
-
-    private void copyHashToClipboard() {
-        ClipboardContent content = new ClipboardContent();
-        content.putString(getMessageHash());
-        Clipboard.getSystemClipboard().setContent(content);
     }
 
     public StringProperty textProperty() {

@@ -41,7 +41,7 @@ public class UserCard extends VerticalColorContainer {
     protected void update(User user) {
         usernameLabel.setText(user.getName());
         identifierLabel.setText(user.getPublicKey().toString());
-        setColor(DeterministicColorGenerator.getColorForSeed(user.getPublicKey().hashCode()));
+        setColor(DeterministicColorGenerator.get(user.getPublicKey().hashCode()));
     }
 
     public ObjectProperty<User> userProperty() {

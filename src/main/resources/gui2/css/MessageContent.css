@@ -12,9 +12,18 @@
     -fx-font-family: monospace;
 }
 
-.topicContent {
+.messageContent {
     -fx-font-weight: bold;
     -fx-text-fill: #999999;
     -fx-padding: 0 8px 8px 8px;
-    -fx-background-color: transparent;
+}
+
+.pill {
+    -fx-font-size: 9px;
+    -fx-background-color: #222222;
+    -fx-border-color: #aaaaff;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-text-fill: #aaaaff;
+    -fx-padding: 2px;
 }

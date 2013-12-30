@@ -42,6 +42,7 @@
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
+
 .styled:hover {
     -fx-background-color: #282828;
 }
@@ -53,4 +54,11 @@
 
 Button.styled {
     -fx-cursor: hand;
+}
+
+.styledTextArea {
+    -fx-background-color: #333333;
+    -fx-border-color: #222222;
+    -fx-text-fill: #999999;
+    -fx-font-weight: bold;
 }

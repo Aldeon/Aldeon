@@ -3,11 +3,15 @@ package org.aldeon.gui2;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.paint.Color;
 import org.aldeon.core.CoreModule;
 import org.aldeon.db.Db;
 import org.aldeon.db.wrappers.DbCallbackThreadDecorator;
 import org.aldeon.db.wrappers.DbWorkThreadDecorator;
+import org.aldeon.events.EventLoop;
+import org.aldeon.events.executors.ExecutorLogger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,19 +20,22 @@ import java.util.concurrent.Executor;
 public class Gui2Utils {
     private static final String FXML_PATH = "/gui2/fxml";
     private static Db db;
+    private static EventLoop loop;
     private static Executor fxExecutor = null;
 
     static {
-        fxExecutor = new Executor() {
+        fxExecutor = new ExecutorLogger("javafx", new Executor() {
             @Override
             public void execute(Runnable command) {
                 Platform.runLater(command);
             }
-        };
+        });
 
         db = CoreModule.getInstance().getStorage();
         db = new DbCallbackThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
         db = new DbWorkThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
+
+        loop = CoreModule.getInstance().getEventLoop();
     }
 
     public static String toWebHex(Color color) {
@@ -66,7 +73,17 @@ public class Gui2Utils {
         return db;
     }
 
+    public EventLoop loop() {
+        return loop;
+    }
+
     public static Executor fxExecutor() {
         return fxExecutor;
+    }
+
+    public static void copyToClipboard(String data) {
+        ClipboardContent content = new ClipboardContent();
+        content.putString(data);
+        Clipboard.getSystemClipboard().setContent(content);
     }
 }

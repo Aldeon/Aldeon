@@ -20,7 +20,7 @@
     </FlowPane>
   </bottom>
   <center>
-    <TextArea prefWidth="200.0" style="-fx-background-color: #333333;&#10;-fx-border-color: #222222;&#10;-fx-text-fill: #999999;&#10;-fx-font-weight: bold;" text="{&#10;&#9;&quot;avatar-image&quot;:&quot;http://example.org/images/avatar.png&quot;,&#10;&#9;&quot;signature&quot;:&quot;Sygnaturka&quot;&#10;}" wrapText="true">
+    <TextArea prefWidth="200.0" styleClass="styledTextArea" text="{&#10;&#9;&quot;avatar-image&quot;:&quot;http://example.org/images/avatar.png&quot;,&#10;&#9;&quot;signature&quot;:&quot;Sygnaturka&quot;&#10;}" wrapText="true">
       <BorderPane.margin>
         <Insets left="16.0" right="16.0" top="16.0" />
       </BorderPane.margin>

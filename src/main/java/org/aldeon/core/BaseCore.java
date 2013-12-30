@@ -43,8 +43,8 @@ public abstract class BaseCore implements Core {
 
         this.clientSideExecutor = Executors.newFixedThreadPool(2);
         this.serverSideExecutor = Executors.newFixedThreadPool(2);
-        this.wrappedClientExecutor = new ExecutorLogger("clientSide", new ThrowableInterceptor(clientSideExecutor));
-        this.wrappedServerExecutor = new ExecutorLogger("serverSide", new ThrowableInterceptor(serverSideExecutor));
+        this.wrappedClientExecutor = new ExecutorLogger("client", new ThrowableInterceptor(clientSideExecutor));
+        this.wrappedServerExecutor = new ExecutorLogger("server", new ThrowableInterceptor(serverSideExecutor));
         this.userManager = new UserManager();
     }
 

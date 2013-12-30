@@ -21,13 +21,20 @@
             </center>
             <top>
                 <BorderPane prefHeight="32.0" prefWidth="-1.0">
+                    <left>
+                        <Button fx:id="newTopicButton" mnemonicParsing="false" styleClass="styled" text="New topic">
+                            <BorderPane.margin>
+                                <Insets right="2.0" top="2.0" />
+                            </BorderPane.margin>
+                        </Button>
+                    </left>
                     <center>
                         <TextField fx:id="watchTopicTextField" focusTraversable="true" prefWidth="-1.0" styleClass="styled" />
                     </center>
                     <right>
                         <Button fx:id="watchTopicButton" mnemonicParsing="false" styleClass="styled" text="Watch topic">
                             <BorderPane.margin>
-                                <Insets left="1.0" top="2.0" />
+                                <Insets left="2.0" top="2.0" />
                             </BorderPane.margin>
                         </Button>
                     </right>

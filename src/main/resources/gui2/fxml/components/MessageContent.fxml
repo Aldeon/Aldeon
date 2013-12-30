@@ -8,20 +8,31 @@
 
 <fx:root type="javafx.scene.layout.BorderPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #222222;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <center>
-    <BorderPane fx:id="leftContainer" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-color: #2e2e2e;&#10;-fx-border-width: 0 1px 0 0;&#10;">
+    <BorderPane minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-color: #2e2e2e;&#10;-fx-border-width: 0 1px 0 0;&#10;">
       <bottom>
-        <BorderPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" prefWidth="-1.0">
-          <left>
-            <Label fx:id="messageIdLabel" text="-message-id-" styleClass="hash" wrapText="true">
-              <BorderPane.margin>
-                <Insets left="4.0" />
-              </BorderPane.margin>
-            </Label>
-          </left>
-        </BorderPane>
+          <BorderPane>
+              <center>
+                  <Label fx:id="messageIdLabel" text="-message-id-" styleClass="hash" alignment="TOP_LEFT" maxWidth="65536.0" prefWidth="0.0" textAlignment="JUSTIFY" wrapText="false" textOverrun="WORD_ELLIPSIS" >
+                      <BorderPane.margin>
+                          <Insets left="4.0" />
+                      </BorderPane.margin>
+                  </Label>
+              </center>
+              <right>
+                  <Button styleClass="pill" text="ANSWERS">
+                      <BorderPane.margin>
+                          <Insets bottom="4.0" right="4.0" />
+                      </BorderPane.margin>
+                  </Button>
+              </right>
+          </BorderPane>
       </bottom>
       <center>
-        <Label fx:id="messageContentLabel" alignment="TOP_LEFT" maxHeight="65536.0" maxWidth="65536.0" prefWidth="0.0" style="-fx-font-weight: bold;&#10;-fx-text-fill: #999999;&#10;-fx-padding: 8px;&#10;-fx-background-color: transparent;&#10;&#10;&#10;" text="-message_content-" textAlignment="JUSTIFY" underline="false" wrapText="true" />
+        <StackPane fx:id="asdf">
+            <children>
+                <Label fx:id="messageContentLabel" maxWidth="65536.0" prefWidth="0.0" styleClass="messageContent" text="-message_content-" textAlignment="JUSTIFY" wrapText="true" />
+            </children>
+        </StackPane>
       </center>
       <top>
         <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">

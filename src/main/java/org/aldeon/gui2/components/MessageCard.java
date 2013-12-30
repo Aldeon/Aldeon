@@ -25,7 +25,7 @@ public class MessageCard extends HorizontalColorContainer {
                 messageData.setAuthorHash(newMessage.getAuthorPublicKey().toString());
                 messageData.setMessageHash(newMessage.getIdentifier().toString());
                 messageData.setText(newMessage.getContent());
-                setColor(DeterministicColorGenerator.getColorForSeed(newMessage.getAuthorPublicKey().hashCode()));
+                setColor(DeterministicColorGenerator.get(newMessage.getAuthorPublicKey().hashCode()));
             }
         });
     }

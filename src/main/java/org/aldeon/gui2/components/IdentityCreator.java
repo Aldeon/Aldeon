@@ -83,7 +83,7 @@ public class IdentityCreator extends BorderPane {
     private void update(String name) {
         nameTextField.setText(name);
         hashTextField.setText(keyPair.publicKey.toString());
-        avatar.setColorize(DeterministicColorGenerator.getColorForSeed(keyPair.publicKey.hashCode()));
+        avatar.setColorize(DeterministicColorGenerator.get(keyPair.publicKey.hashCode()));
     }
 
     private void shuffleKeys() {

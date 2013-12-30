@@ -36,7 +36,7 @@ public class TopicCard extends HorizontalColorContainer {
     private void update(Message message) {
         messageContentLabel.setText(message.getContent());
         messageIdLabel.setText(message.getIdentifier().toString());
-        setColor(DeterministicColorGenerator.getColorForMessage(message));
+        setColor(DeterministicColorGenerator.get(message));
     }
 
     public ObjectProperty<Message> messageProperty() {

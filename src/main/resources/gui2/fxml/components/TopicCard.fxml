@@ -18,7 +18,7 @@
                 </Label>
             </bottom>
             <center>
-                <Label fx:id="messageContentLabel" alignment="TOP_LEFT" maxHeight="65536.0" maxWidth="65536.0" prefWidth="0.0" styleClass="topicContent" text="-message_content-" textAlignment="JUSTIFY" wrapText="true" />
+                <Label fx:id="messageContentLabel" alignment="TOP_LEFT" maxWidth="65536.0" prefWidth="0.0" styleClass="messageContent" text="-message_content-" textAlignment="JUSTIFY" wrapText="false" textOverrun="WORD_ELLIPSIS" />
             </center>
             <top>
                 <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">
