@@ -5,34 +5,38 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.various.DeterministicColorGenerator;
 import org.aldeon.model.Message;
 
-public class MessageCard extends HorizontalColorContainer {
+public class TopicCard extends HorizontalColorContainer {
 
-    @FXML protected MessageContent messageData;
+    @FXML protected Label messageContentLabel;
+    @FXML protected Label messageIdLabel;
 
     private final ObjectProperty<Message> messageProperty = new SimpleObjectProperty<>();
 
-    public MessageCard() {
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageCard.fxml", this);
+    public TopicCard() {
+        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/TopicCard.fxml", this);
 
         messageProperty().addListener(new ChangeListener<Message>() {
             @Override
             public void changed(ObservableValue<? extends Message> observableValue, Message oldMessage, Message newMessage) {
-                messageData.setAuthorName("Anonymous");
-                messageData.setAuthorHash(newMessage.getAuthorPublicKey().toString());
-                messageData.setMessageHash(newMessage.getIdentifier().toString());
-                messageData.setText(newMessage.getContent());
-                setColor(DeterministicColorGenerator.getColorForSeed(newMessage.getAuthorPublicKey().hashCode()));
+                update(newMessage);
             }
         });
     }
 
-    public MessageCard(Message message) {
+    public TopicCard(Message topic) {
         this();
-        setMessage(message);
+        setMessage(topic);
+    }
+
+    private void update(Message message) {
+        messageContentLabel.setText(message.getContent());
+        messageIdLabel.setText(message.getIdentifier().toString());
+        setColor(DeterministicColorGenerator.getColorForMessage(message));
     }
 
     public ObjectProperty<Message> messageProperty() {

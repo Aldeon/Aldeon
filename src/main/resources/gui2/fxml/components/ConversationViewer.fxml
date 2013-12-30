@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <center>
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #444444;" vbarPolicy="ALWAYS">
+      <content>
+          <BorderPane>
+              <top>
+                  <VBox fx:id="parents" spacing="16.0" style="">
+                      <padding>
+                          <Insets top="16.0" left="16.0" right="16.0" />
+                      </padding>
+                  </VBox>
+              </top>
+              <center>
+                  <VBox fx:id="focused" spacing="16.0" style="-fx-background-color: #111111;-fx-background-insets: 8px;-fx-background-radius: 16px;">
+                      <padding>
+                          <Insets top="16.0" bottom="16.0" left="16.0" right="16.0" />
+                      </padding>
+                  </VBox>
+              </center>
+              <bottom>
+                  <VBox fx:id="children" spacing="16.0" style="">
+                      <padding>
+                          <Insets bottom="16.0" left="48.0" right="16.0" />
+                      </padding>
+                  </VBox>
+              </bottom>
+          </BorderPane>
+      </content>
+    </ScrollPane>
+  </center>
+  <top>
+    <BorderPane prefHeight="32.0" style="-fx-background-color: #333333;">
+      <left>
+        <Button fx:id="back" text="Back" styleClass="styled"></Button>
+      </left>
+    </BorderPane>
+  </top>
+</fx:root>

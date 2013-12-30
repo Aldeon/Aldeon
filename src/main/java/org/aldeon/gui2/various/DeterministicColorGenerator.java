@@ -1,6 +1,7 @@
 package org.aldeon.gui2.various;
 
 import javafx.scene.paint.Color;
+import org.aldeon.model.Message;
 import org.bouncycastle.crypto.prng.RandomGenerator;
 
 import java.util.Random;
@@ -14,5 +15,9 @@ public class DeterministicColorGenerator {
         s = (seed * 0.23456) % 0.2 + 0.8;
         b = (seed * 0.34567) % 0.2 + 0.8;
         return Color.hsb(h,s,b);
+    }
+
+    public static Color getColorForMessage(Message message) {
+        return getColorForSeed(message.getAuthorPublicKey().hashCode());
     }
 }

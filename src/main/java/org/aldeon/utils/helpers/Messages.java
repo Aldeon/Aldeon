@@ -14,10 +14,15 @@ import java.nio.ByteBuffer;
 
 public class Messages {
 
-    private static final Signer signer;
+    private static final ThreadLocal<Signer> signerThreadLocal;
 
     static {
-        signer = new SignerModule().get();
+        signerThreadLocal = new ThreadLocal<Signer>() {
+            @Override
+            protected Signer initialValue() {
+                return new SignerModule().get();
+            }
+        };
     }
 
     /**
@@ -29,6 +34,8 @@ public class Messages {
      * @return signed message
      */
     public static Message createAndSign(Identifier parent, Key pubKey, Key privKey, String content) {
+
+        Signer signer = signerThreadLocal.get();
 
         if(
                 pubKey == null
@@ -108,6 +115,8 @@ public class Messages {
      */
     public static boolean verify(Message m) {
         if(m.getAuthorPublicKey().getType() != Key.Type.PUBLIC) return false;
+
+        Signer signer = signerThreadLocal.get();
 
         signer.add(m.getParentMessageIdentifier());
         signer.add(m.getAuthorPublicKey());

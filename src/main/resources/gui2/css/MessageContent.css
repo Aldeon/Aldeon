@@ -11,3 +11,10 @@
     -fx-font-size: 10px;
     -fx-font-family: monospace;
 }
+
+.topicContent {
+    -fx-font-weight: bold;
+    -fx-text-fill: #999999;
+    -fx-padding: 0 8px 8px 8px;
+    -fx-background-color: transparent;
+}

@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.IdentityAddedEvent;
@@ -29,7 +28,6 @@ import java.util.Set;
 public class IdentitiesController {
 
     @FXML protected SlidingStackPane slider;
-    @FXML protected BorderPane cardView;
     @FXML protected FlowPane container;
 
     public static final String FXML_FILE = "views/Identities.fxml";

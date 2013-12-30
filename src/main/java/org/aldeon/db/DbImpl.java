@@ -621,23 +621,28 @@ public class DbImpl implements Db {
         log.info("Inserting test data");
         // Create two users
         KeyGen rsa = new RsaKeyGen();
-        KeyGen.KeyPair alice = rsa.generate();
-        KeyGen.KeyPair bob = rsa.generate();
+        KeyGen.KeyPair vader = rsa.generate();
+        KeyGen.KeyPair luke = rsa.generate();
 
-        Message topic = Messages.createAndSign(null, alice.publicKey, alice.privateKey, "Some topic");
-        Message response1 = Messages.createAndSign(topic.getIdentifier(), bob.publicKey, bob.privateKey, "Response 1");
-        Message response11 = Messages.createAndSign(response1.getIdentifier(), alice.publicKey, alice.privateKey, "Response 1.1");
-        Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), alice.publicKey, alice.privateKey, "Response 2");
+        Message topic = Messages.createAndSign(null, vader.publicKey, vader.privateKey, "Obi-Wan never told you what happened to your father.");
+        Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), luke.publicKey, luke.privateKey, "He told me enough!");
+        Message response1 = Messages.createAndSign(topic.getIdentifier(), luke.publicKey, luke.privateKey, "He told me you killed him!");
+        Message response11 = Messages.createAndSign(response1.getIdentifier(), vader.publicKey, vader.privateKey, "No, I am your father.");
+        Message response111 = Messages.createAndSign(response11.getIdentifier(), luke.publicKey, luke.privateKey, "Nooooooooooooooooooo!!!1");
+
 
         Callback<Boolean> cb = Callbacks.emptyCallback();
         insertMessage(topic, cb);
         insertMessage(response1, cb);
         insertMessage(response11, cb);
         insertMessage(otherBranch2, cb);
+        insertMessage(response111, cb);
 
-        Identity aliceIdentity = Identity.create("Alice", alice.publicKey, alice.privateKey);
+        Identity vaderIdentity = Identity.create("Vader", vader.publicKey, vader.privateKey);
+        Identity lukeIdentity = Identity.create("Luke", luke.publicKey, luke.privateKey);
 
-        insertIdentity(aliceIdentity, cb);
+        insertIdentity(vaderIdentity, cb);
+        insertIdentity(lukeIdentity, cb);
 
         log.info("Inserted topic: " + topic.getIdentifier());
     }

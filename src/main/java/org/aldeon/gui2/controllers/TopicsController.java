@@ -1,13 +1,19 @@
 package org.aldeon.gui2.controllers;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
+import org.aldeon.gui2.components.ConversationViewer;
 import org.aldeon.gui2.components.MessageCard;
+import org.aldeon.gui2.components.SlidingStackPane;
+import org.aldeon.gui2.components.TopicCard;
+import org.aldeon.gui2.various.Direction;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
@@ -20,43 +26,43 @@ public class TopicsController {
     public static final String FXML_FILE = "views/Topics.fxml";
 
     // Topics view elements
+    @FXML protected SlidingStackPane slider;
     @FXML protected TextField watchTopicTextField;
     @FXML protected Button watchTopicButton;
     @FXML protected VBox topics;
 
-    // Topic containers
-    protected Map<Identifier, MessageCard> topicContainers = new HashMap<>();
-
     public void initialize() {
-        fetchTopics();
-    }
-
-    private void fetchTopics() {
         Gui2Utils.db().getMessagesByParentId(Identifier.empty(), new Callback<Set<Message>>() {
             @Override
-            public void call(Set<Message> topics) {
-                for(Message topic: topics) {
-                    addTopicToList(topic);
+            public void call(Set<Message> topicsSet) {
+                for (Message topic : topicsSet) {
+                    addTopic(topic);
                 }
             }
         });
     }
 
-    protected void addTopicToList(Message topic) {
-        if(!topicContainers.containsKey(topic.getIdentifier())) {
-            MessageCard card = new MessageCard();
-            card.setMessage(topic);
-            topics.getChildren().add(card);
-            topicContainers.put(topic.getIdentifier(), card);
-        }
+    private void addTopic(final Message topic) {
+        TopicCard card = new TopicCard(topic);
+        card.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                focusOnTopic(topic);
+            }
+        });
+        topics.getChildren().add(card);
     }
 
-    protected void removeTopicFromList(Message topic) {
-        MessageCard card = topicContainers.get(topic.getIdentifier());
-        if(card != null) {
-            topicContainers.remove(topic.getIdentifier());
-            topics.getChildren().remove(card);
-        }
+    private void focusOnTopic(Message topic) {
+        final ConversationViewer viewer = new ConversationViewer();
+        viewer.setFocus(topic);
+        viewer.setOnViewerClosed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                slider.slideOut(viewer, Direction.RIGHT);
+            }
+        });
+        slider.slideIn(viewer, Direction.RIGHT);
     }
 
     public static Node create() {
