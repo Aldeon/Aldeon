@@ -20,6 +20,7 @@ public class MessageCard extends HorizontalColorContainer {
     @FXML protected Label userNameLabel;
     @FXML protected Label userIdLabel;
     @FXML protected Button responseButton;
+    @FXML protected Button removeButton;
 
     private final ObjectProperty<Message> messageProperty = new SimpleObjectProperty<>();
 
@@ -38,13 +39,13 @@ public class MessageCard extends HorizontalColorContainer {
         });
     }
 
-    @FXML protected void onLink(ActionEvent event) {
-        Gui2Utils.copyToClipboard(messageIdLabel.getText());
-    }
-
     public MessageCard(Message message) {
         this();
         setMessage(message);
+    }
+
+    @FXML protected void onLink(ActionEvent event) {
+        Gui2Utils.copyToClipboard(messageIdLabel.getText());
     }
 
     public ObjectProperty<Message> messageProperty() {
@@ -69,5 +70,17 @@ public class MessageCard extends HorizontalColorContainer {
 
     public void setOnResponse(EventHandler<ActionEvent> onResponse) {
         onResponseProperty().set(onResponse);
+    }
+
+    public ObjectProperty<EventHandler<ActionEvent>> onRemoveProperty() {
+        return removeButton.onActionProperty();
+    }
+
+    public EventHandler<ActionEvent> getOnRemove() {
+        return onRemoveProperty().get();
+    }
+
+    public void setOnRemove(EventHandler<ActionEvent> onRemove) {
+        onRemoveProperty().set(onRemove);
     }
 }

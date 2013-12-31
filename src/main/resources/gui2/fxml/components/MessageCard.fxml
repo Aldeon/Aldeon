@@ -2,7 +2,6 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -23,13 +22,6 @@
                                         </BorderPane.margin>
                                     </Label>
                                 </center>
-                                <right>
-                                    <Button styleClass="pill" text="ANSWERS">
-                                        <BorderPane.margin>
-                                            <Insets bottom="4.0" right="4.0" />
-                                        </BorderPane.margin>
-                                    </Button>
-                                </right>
                             </BorderPane>
                         </bottom>
                         <center>
@@ -44,7 +36,7 @@
                                 <children>
                                     <ImageButton styleClass="btn" image="@/gui2/images/message-icons/link.png" onAction="#onLink"/>
                                     <ImageButton styleClass="btn" image="@/gui2/images/message-icons/bubble.png" fx:id="responseButton"/>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/delete.png"/>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/delete.png" fx:id="removeButton"/>
                                 </children>
                             </FlowPane>
                         </top>

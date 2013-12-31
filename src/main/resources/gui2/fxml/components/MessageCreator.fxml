@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import java.net.URL?>
-<fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" prefHeight="256.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <content>
         <BorderPane>
             <bottom>

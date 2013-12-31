@@ -11,7 +11,7 @@
     <FlowPane alignment="CENTER" hgap="16.0" prefHeight="32.0" prefWidth="-1.0" prefWrapLength="0.0">
       <children>
         <Button onAction="#onOk" fx:id="okButton" mnemonicParsing="false" styleClass="styled" text="OK" />
-        <Button onAction="#onShuffle" mnemonicParsing="false" styleClass="styled" text="Shuffle ID" />
+        <Button onAction="#onShuffle" fx:id="shuffleButton" mnemonicParsing="false" styleClass="styled" text="Shuffle ID" />
         <Button onAction="#onCancel" mnemonicParsing="false" styleClass="styled" text="Cancel" />
       </children>
       <BorderPane.margin>
