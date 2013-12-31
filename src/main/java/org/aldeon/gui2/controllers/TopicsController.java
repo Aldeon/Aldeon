@@ -1,5 +1,6 @@
 package org.aldeon.gui2.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -11,9 +12,11 @@ import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.components.ConversationViewer;
 import org.aldeon.gui2.components.MessageCard;
+import org.aldeon.gui2.components.MessageCreator;
 import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.components.TopicCard;
 import org.aldeon.gui2.various.Direction;
+import org.aldeon.gui2.various.MessageEvent;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
@@ -67,5 +70,20 @@ public class TopicsController {
 
     public static Node create() {
         return Gui2Utils.loadFXMLfromDefaultPath(FXML_FILE);
+    }
+
+    @FXML public void newTopicClicked(ActionEvent actionEvent) {
+        final MessageCreator creator = new MessageCreator(Identifier.empty());
+        creator.setOnCreatorClosed(new EventHandler<MessageEvent>() {
+            @Override
+            public void handle(MessageEvent messageEvent) {
+                if(messageEvent.message() != null) {
+                    // add message to db
+                    addTopic(messageEvent.message());
+                }
+                slider.slideOut(creator, Direction.RIGHT);
+            }
+        });
+        slider.slideIn(creator, Direction.RIGHT);
     }
 }

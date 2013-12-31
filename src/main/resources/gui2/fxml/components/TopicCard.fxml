@@ -4,9 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <?import java.net.URL?>
+<?import org.aldeon.gui2.components.ImageButton?>
 <fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <content>
         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #222222;" >
@@ -23,16 +22,8 @@
             <top>
                 <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">
                     <children>
-                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" styleClass="btn">
-                            <image>
-                                <Image url="@../../images/message-icons/link.png" />
-                            </image>
-                        </ImageView>
-                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" styleClass="btn">
-                            <image>
-                                <Image url="@../../images/message-icons/delete.png" />
-                            </image>
-                        </ImageView>
+                        <ImageButton styleClass="btn" image="@/gui2/images/message-icons/link.png" onAction="#onLink"/>
+                        <ImageButton styleClass="btn" image="@/gui2/images/message-icons/delete.png"/>
                     </children>
                 </FlowPane>
             </top>

@@ -22,7 +22,7 @@
             <top>
                 <BorderPane prefHeight="32.0" prefWidth="-1.0">
                     <left>
-                        <Button fx:id="newTopicButton" mnemonicParsing="false" styleClass="styled" text="New topic">
+                        <Button onAction="#newTopicClicked" fx:id="newTopicButton" mnemonicParsing="false" styleClass="styled" text="New topic">
                             <BorderPane.margin>
                                 <Insets right="2.0" top="2.0" />
                             </BorderPane.margin>

@@ -3,6 +3,7 @@ package org.aldeon.gui2.components;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -20,17 +21,13 @@ public class MessageContent extends BorderPane{
     @FXML protected Label messageIdLabel;
     @FXML protected Label userNameLabel;
     @FXML protected Label userIdLabel;
-    @FXML protected ImageView linkIcon;
 
     public MessageContent() {
         Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageContent.fxml", this);
+    }
 
-        linkIcon.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                Gui2Utils.copyToClipboard(messageIdLabel.getText());
-            }
-        });
+    @FXML protected void onLink(ActionEvent event) {
+        Gui2Utils.copyToClipboard(messageIdLabel.getText());
     }
 
     public StringProperty textProperty() {

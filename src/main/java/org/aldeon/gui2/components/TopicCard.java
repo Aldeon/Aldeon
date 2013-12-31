@@ -4,6 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.aldeon.gui2.Gui2Utils;
@@ -31,6 +32,10 @@ public class TopicCard extends HorizontalColorContainer {
     public TopicCard(Message topic) {
         this();
         setMessage(topic);
+    }
+
+    @FXML protected void onLink(ActionEvent event) {
+        Gui2Utils.copyToClipboard(messageIdLabel.getText());
     }
 
     private void update(Message message) {

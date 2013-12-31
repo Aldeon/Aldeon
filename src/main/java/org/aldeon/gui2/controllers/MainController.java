@@ -1,14 +1,10 @@
 package org.aldeon.gui2.controllers;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-import org.aldeon.gui2.components.MessageCreator;
 import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.various.Direction;
-import org.aldeon.gui2.various.MessageEvent;
-import org.aldeon.model.Identifier;
 
 public class MainController {
 
@@ -29,14 +25,6 @@ public class MainController {
         welcomeNode = WelcomeController.create();
         topicsNode = TopicsController.create();
         identitiesNode = IdentitiesController.create();
-        MessageCreator creator = new MessageCreator(Identifier.empty());
-        creator.setOnCreatorClosed(new EventHandler<MessageEvent>() {
-            @Override
-            public void handle(MessageEvent messageEvent) {
-                System.out.println(messageEvent.message());
-            }
-        });
-        settingsNode = creator;
     }
 
     /**

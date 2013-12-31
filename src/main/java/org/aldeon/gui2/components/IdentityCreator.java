@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,9 +22,7 @@ import org.aldeon.model.Identity;
 
 public class IdentityCreator extends BorderPane {
 
-    @FXML protected Button okButton;
     @FXML protected Button shuffleButton;
-    @FXML protected Button cancelButton;
     @FXML protected TextField nameTextField;
     @FXML protected TextField hashTextField;
     @FXML protected ColorizedImageView avatar;
@@ -56,28 +55,19 @@ public class IdentityCreator extends BorderPane {
                 shuffleButton.setVisible(newValue);
             }
         });
+    }
 
-        shuffleButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                shuffleKeys();
-                update(nameTextField.getText());
-            }
-        });
+    @FXML protected void onOk(ActionEvent event) {
+        triggerEvent(Identity.create(nameTextField.getText(), keyPair.publicKey, keyPair.privateKey));
+    }
 
-        okButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                triggerEvent(Identity.create(nameTextField.getText(), keyPair.publicKey, keyPair.privateKey));
-            }
-        });
+    @FXML protected void onShuffle(ActionEvent event) {
+        shuffleKeys();
+        update(nameTextField.getText());
+    }
 
-        cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                triggerEvent(null);
-            }
-        });
+    @FXML protected void onCancel(ActionEvent event) {
+        triggerEvent(null);
     }
 
     private void update(String name) {

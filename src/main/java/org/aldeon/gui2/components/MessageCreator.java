@@ -31,8 +31,8 @@ public class MessageCreator extends HorizontalColorContainer {
     @FXML protected TextArea textArea;
     @FXML protected ListView<Identity> identities;
     @FXML protected Button okButton;
-    @FXML protected Button cancelButton;
 
+    private final Identifier parent;
     private final ObjectProperty<EventHandler<MessageEvent>> onCreatorClosed = new SimpleObjectProperty<>();
 
     private Identity author;
@@ -41,6 +41,7 @@ public class MessageCreator extends HorizontalColorContainer {
         super();
         Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageCreator.fxml", this);
         setAuthor(null);
+        this.parent = parent;
 
         identities.setCellFactory(new javafx.util.Callback<ListView<Identity>, ListCell<Identity>>() {
             @Override
@@ -57,21 +58,15 @@ public class MessageCreator extends HorizontalColorContainer {
             }
         });
 
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                trigger(Messages.createAndSign(parent, author.getPublicKey(), author.getPrivateKey(), textArea.getText()));
-            }
-        });
-
-        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                trigger(null);
-            }
-        });
-
         fillData();
+    }
+
+    @FXML protected void onOk(ActionEvent event) {
+        trigger(Messages.createAndSign(parent, author.getPublicKey(), author.getPrivateKey(), textArea.getText()));
+    }
+
+    @FXML protected void onCancel(ActionEvent event) {
+        trigger(null);
     }
 
     private void fillData() {
@@ -101,6 +96,18 @@ public class MessageCreator extends HorizontalColorContainer {
         }
     }
 
+    public ObjectProperty<EventHandler<MessageEvent>> onCreatorClosedProperty() {
+        return onCreatorClosed;
+    }
+
+    public EventHandler<MessageEvent> getOnCreatorClosed() {
+        return onCreatorClosedProperty().get();
+    }
+
+    public void setOnCreatorClosed(EventHandler<MessageEvent> eventHandler) {
+        onCreatorClosedProperty().set(eventHandler);
+    }
+
     private static class IdentityCell extends ListCell<Identity> {
         @Override
         public void updateItem(Identity identity, boolean empty) {
@@ -114,17 +121,5 @@ public class MessageCreator extends HorizontalColorContainer {
                 setStyle("-fx-text-fill: " + Gui2Utils.toWebHex(color));
             }
         }
-    }
-
-    public ObjectProperty<EventHandler<MessageEvent>> onCreatorClosedProperty() {
-        return onCreatorClosed;
-    }
-
-    public EventHandler<MessageEvent> getOnCreatorClosed() {
-        return onCreatorClosedProperty().get();
-    }
-
-    public void setOnCreatorClosed(EventHandler<MessageEvent> eventHandler) {
-        onCreatorClosedProperty().set(eventHandler);
     }
 }
