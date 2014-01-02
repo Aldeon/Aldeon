@@ -13,5 +13,14 @@ public interface KeyGen {
     public class KeyPair {
         public Key publicKey;
         public Key privateKey;
+
+        public KeyPair() {
+
+        }
+
+        public KeyPair(Key publicKey, Key privateKey) {
+            this.publicKey = publicKey;
+            this.privateKey = privateKey;
+        }
     }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root fx:id="main" type="javafx.scene.layout.BorderPane" styleClass="coloredRoundedRectangle" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <center>
+    <StackPane fx:id="container" minHeight="32.0" minWidth="32.0" />
+  </center>
+  <left>
+    <Pane maxWidth="16.0" minWidth="16.0" prefWidth="16.0" styleClass="side" />
+  </left>
+  <right>
+    <Pane maxWidth="16.0" minWidth="16.0" prefWidth="16.0" styleClass="side" />
+  </right>
+  <stylesheets>
+    <URL value="@/gui2/css/ColorContainer.css" />
+  </stylesheets>
+</fx:root>

@@ -1,0 +1,23 @@
+.messageCreatorTextArea {
+    -fx-background-color: transparent;
+    -fx-text-fill: #999999;
+    -fx-font-weight: bold;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.messageCreatorListView {
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+    -fx-control-inner-background: #222222;
+    -fx-border-color: #111111;
+    -fx-border-width: 0 0 0 1px;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #111111;
+}
+
+.list-cell:filled:hover {
+    -fx-cell-hover-color: #181818;
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import org.aldeon.gui2.components.SlidingStackPane?>
+<SlidingStackPane fx:id="slider" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.TopicsController">
+    <children>
+        <BorderPane fx:id="topicsView">
+            <center>
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: transparent;" vbarPolicy="ALWAYS">
+                    <content>
+                        <VBox fx:id="topics" spacing="16.0" style="">
+                            <padding>
+                                <Insets bottom="16.0" left="16.0" right="16.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+            <top>
+                <BorderPane prefHeight="32.0" prefWidth="-1.0">
+                    <left>
+                        <Button onAction="#newTopicClicked" fx:id="newTopicButton" mnemonicParsing="false" styleClass="styled" text="New topic">
+                            <BorderPane.margin>
+                                <Insets right="2.0" top="2.0" />
+                            </BorderPane.margin>
+                        </Button>
+                    </left>
+                    <center>
+                        <TextField fx:id="watchTopicTextField" focusTraversable="true" prefWidth="-1.0" styleClass="styled" />
+                    </center>
+                    <right>
+                        <Button fx:id="watchTopicButton" mnemonicParsing="false" styleClass="styled" text="Watch topic">
+                            <BorderPane.margin>
+                                <Insets left="2.0" top="2.0" />
+                            </BorderPane.margin>
+                        </Button>
+                    </right>
+                    <BorderPane.margin>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                    </BorderPane.margin>
+                </BorderPane>
+            </top>
+        </BorderPane>
+    </children>
+</SlidingStackPane>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import org.aldeon.gui2.components.ImageButton?>
+<?import javafx.scene.layout.Pane?>
+<?import java.net.URL?>
+<fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+    <content>
+        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #222222;">
+                <center>
+                    <BorderPane minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-color: #2e2e2e;&#10;-fx-border-width: 0 1px 0 0;&#10;">
+                        <bottom>
+                            <BorderPane>
+                                <center>
+                                    <Label fx:id="messageIdLabel" text="-message-id-" styleClass="hash" alignment="TOP_LEFT" maxWidth="65536.0" prefWidth="0.0" textAlignment="JUSTIFY" wrapText="false" textOverrun="WORD_ELLIPSIS" >
+                                        <BorderPane.margin>
+                                            <Insets left="4.0" />
+                                        </BorderPane.margin>
+                                    </Label>
+                                </center>
+                            </BorderPane>
+                        </bottom>
+                        <center>
+                            <StackPane fx:id="asdf">
+                                <children>
+                                    <Label fx:id="messageContentLabel" maxWidth="65536.0" prefWidth="0.0" styleClass="messageContent" text="-message_content-" textAlignment="JUSTIFY" wrapText="true" />
+                                </children>
+                            </StackPane>
+                        </center>
+                        <top>
+                            <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">
+                                <children>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/link.png" onAction="#onLink"/>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/bubble.png" fx:id="responseButton"/>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/delete.png" fx:id="removeButton"/>
+                                </children>
+                            </FlowPane>
+                        </top>
+                    </BorderPane>
+                </center>
+                <right>
+                    <BorderPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="160.0" style="-fx-background-color: #1c1c1c;&#10;-fx-border-color: #0b0b0b;&#10;-fx-border-width: 0 0 0 1px;">
+                        <center>
+                            <Pane minHeight="-Infinity" prefHeight="72.0" prefWidth="-1.0">
+                                <children>
+                                    <Label fx:id="userNameLabel" layoutX="7.0" layoutY="6.0" prefWidth="91.0" style="-fx-font-weight: bold;&#10;-fx-text-fill: #999999;" text="-user_name-" />
+                                    <Label fx:id="userIdLabel" styleClass="hash" layoutX="7.0" layoutY="48.0" prefWidth="91.0" text="-user-id-" textAlignment="LEFT" />
+                                </children>
+                            </Pane>
+                        </center>
+                        <top>
+                            <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="-1.0" prefWrapLength="0.0">
+                                <children>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/person.png"/>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/block.png"/>
+                                </children>
+                            </FlowPane>
+                        </top>
+                    </BorderPane>
+                </right>
+                <stylesheets>
+                    <URL value="@../../css/MessageContent.css" />
+                </stylesheets>
+        </BorderPane>
+    </content>
+</fx:root>

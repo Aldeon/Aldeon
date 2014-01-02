@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.Image?>
+<?import org.aldeon.gui2.components.ColorizedImageView?>
+
+<?import java.net.URL?>
+<fx:root type="org.aldeon.gui2.components.VerticalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+    <content>
+        <AnchorPane styleClass="cardBackground" prefHeight="128.0" prefWidth="128.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+            <children>
+                <ColorizedImageView fx:id="avatar" fitHeight="128.0" fitWidth="128.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../images/person-icon.png" />
+                    </image>
+                </ColorizedImageView>
+                <Label fx:id="usernameLabel" alignment="CENTER" layoutX="0.0" layoutY="14.0" prefHeight="17.0" prefWidth="128.0" text="-username-">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                    <textFill>
+                        <Color blue="0.600" green="0.600" red="0.600" fx:id="x1" />
+                    </textFill>
+                </Label>
+                <Label fx:id="identifierLabel" alignment="CENTER" layoutX="8.0" layoutY="106.0" prefWidth="112.0" text="CAFEBABEAA" textFill="$x1">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+            </children>
+        </AnchorPane>
+    </content>
+    <stylesheets>
+        <URL value="@/gui2/css/UserCard.css" />
+    </stylesheets>
+</fx:root>
