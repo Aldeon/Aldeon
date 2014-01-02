@@ -20,12 +20,14 @@ public class TopicManager {
      * @param topic topic in which the user wishes to participate in.
      */
     public void addTopic(Identifier topic) {
-
-        topics.put(topic, createTopicState(topic));
+        if(!topics.containsKey(topic)) {
+            topics.put(topic, createTopicState(topic));
+        }
     }
 
     public void delTopic(Identifier topicId) {
         // TODO: wait until all slots are not in progress, then revoke and remove
+        // Change topic state into a retracting one
     }
 
     Set<TopicState> getTopicStates() {

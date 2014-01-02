@@ -88,7 +88,7 @@ public class AldeonCore extends BaseCore {
         eventLoop.assign(DemandChangedEvent.class, new ACB<DemandChangedEvent>(clientSideExecutor()) {
             @Override
             protected void react(DemandChangedEvent val) {
-                crawler.notifyDemandChanged(val.addressType(), val.topic());
+                crawler.handleDemand(val.topic(), val.addressType());
             }
         });
 
