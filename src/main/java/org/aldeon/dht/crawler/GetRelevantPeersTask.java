@@ -46,7 +46,6 @@ public class GetRelevantPeersTask extends AbstractOutboundTask<GetRelevantPeersR
 
     @Override
     public void onFailure(Throwable cause) {
-        System.out.println("Cause: " + cause);
         onFinished.call(false);
     }
 }

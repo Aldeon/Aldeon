@@ -36,8 +36,9 @@ public class JobQueue  {
     }
 
     public void markAsDone(Job job) {
-        counter.remove(job);
-        working.decrementAndGet();
+        if(counter.remove(job)) {
+            working.decrementAndGet();
+        }
     }
 
     public void add(Job job) {

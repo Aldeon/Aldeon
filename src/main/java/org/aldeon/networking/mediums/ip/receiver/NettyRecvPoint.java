@@ -12,6 +12,9 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timer;
 import org.aldeon.events.Callback;
 import org.aldeon.networking.common.RecvPoint;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
@@ -51,8 +54,6 @@ public class NettyRecvPoint implements RecvPoint {
                 // inbound traffic
                 p.addLast("decoder",    new HttpRequestDecoder());
                 p.addLast("aggregator", new HttpObjectAggregator(1024 * 1024));
-
-                //TODO: addTask timeout mechanism
 
                 // outbound traffic
                 p.addLast("encoder",    new HttpResponseEncoder());

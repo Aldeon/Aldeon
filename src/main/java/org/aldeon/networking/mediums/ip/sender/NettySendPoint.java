@@ -17,6 +17,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.SendPoint;
 import org.aldeon.networking.exceptions.AddressUnreachableException;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.net.NoRouteToHostException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
 
 
 public class NettySendPoint implements SendPoint {
@@ -54,6 +56,7 @@ public class NettySendPoint implements SendPoint {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline p = ch.pipeline();
                 // p.addLast("log",        new LoggingHandler(LogLevel.INFO));
+                p.addLast("timer",      new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS));
                 p.addLast("codec",      new HttpClientCodec());
                 p.addLast("aggregator", new HttpObjectAggregator(1024 * 1024));
                 p.addLast("handler",    new NettySenderHandler());

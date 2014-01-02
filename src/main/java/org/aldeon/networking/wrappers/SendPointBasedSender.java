@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SendPointBasedSender implements Sender {
 
@@ -39,8 +40,12 @@ public class SendPointBasedSender implements Sender {
         try {
             final ByteBuffer buf = encoder.convert(task.getRequest());
             point.send(new SendPoint.OutgoingTransmission() {
+
+                private AtomicInteger callCount = new AtomicInteger(0);
+
                 @Override
                 public void onSuccess(ByteBuffer data) {
+                    markAsDone();
                     try {
                         Response response = decoder.convert(data);
                         log.info("Received response " + response);
@@ -52,8 +57,9 @@ public class SendPointBasedSender implements Sender {
 
                 @Override
                 public void onFailure(Throwable cause) {
+                    markAsDone();
                     //log.warn("Sender failure", cause);
-                    log.warn("Sender failure (cause: " + cause + ")");
+                    log.warn("Sender failure: " + cause);
                     task.onFailure(cause);
                 }
 
@@ -70,6 +76,12 @@ public class SendPointBasedSender implements Sender {
                 @Override
                 public ByteBuffer data() {
                     return buf;
+                }
+
+                private void markAsDone() {
+                    if(callCount.incrementAndGet() > 1) {
+                        throw new IllegalStateException("Task result called more than once");
+                    }
                 }
             });
         } catch (UnexpectedAddressClassException e) {
