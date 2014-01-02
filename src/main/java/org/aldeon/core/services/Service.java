@@ -1,4 +1,4 @@
-package org.aldeon.model;
+package org.aldeon.core.services;
 
 public interface Service {
     /**

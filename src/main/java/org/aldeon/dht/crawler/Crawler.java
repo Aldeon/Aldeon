@@ -4,84 +4,66 @@ import org.aldeon.dht.Dht;
 import org.aldeon.dht.crawler.pickers.PickerModule;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
+import org.aldeon.core.services.Service;
 import org.aldeon.networking.common.AddressType;
-import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.Sender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.aldeon.utils.various.LoopWorker;
 
-/**
- * Constantly communicates with other peers in order to
- * broaden our knowledge about the network structure.
- *
- * Tasks:
- *  - find peers with ids closest to our address hash (hashes).
- *  - fulfill non-zero demands for peers interested in particular topics       // done
- *  - remove unresponsive peers from our dht structures                        // done
- */
-public class Crawler {
+public class Crawler implements Service {
 
-    private static final Logger log = LoggerFactory.getLogger(Crawler.class);
+    private static final long INTERVAL = 1000;
+    private static final long JOBS_PER_DEMAND = 1;
 
-    private static final int MAX_ACTIVE_JOBS = 8;
-    private static final int REQUESTS_PER_JOB = 4;
-
-    private final Dht dht;
-    private final Sender sender;
-    private final JobManager jobManager;
-    private final TargetPicker targetPicker;
-
+    private LoopWorker loop;
+    private final JobWorker worker;
+    private final JobQueue queue;
 
     public Crawler(Dht dht, Sender sender) {
-        this.dht = dht;
-        this.sender = sender;
-        targetPicker = PickerModule.create(dht);
-        jobManager = new JobManagerImpl();
-    }
 
-    private int demand(Job job) {
-        return dht.interestTracker().getDemand(job.addressType(),job.topic());
-    }
+        worker = new JobWorker(dht, sender, PickerModule.create(dht));
+        queue = new JobQueue();
 
-    private void runJob(final Job job) {
-        final PeerAddress peer = targetPicker.findTarget(job);
-        if(peer == null) {
-            log.info("Failed to run job " + job + " - is the dht empty?");
-            jobManager.makeInactive(job);
-            // TODO: figure out how to reschedule job after a new peer is inserted into dht
-        } else {
-            log.info("Running job " + job);
-            sender.addTask(new GetRelevantPeersTask(peer, job.topic(), dht.interestTracker(), dht.closenessTracker(), new Callback<Boolean>() {
-                @Override
-                public void call(Boolean peerResponded) {
-                    log.info("Job " + job + " ended with status " + peerResponded);
-                    if(!peerResponded) {
-                        dht.interestTracker().delAddress(peer);
-                        dht.closenessTracker().delAddress(peer);
+        loop = new LoopWorker(INTERVAL, new Runnable() {
+            @Override
+            public void run() {
+                queue.dispatch();
+            }
+        });
+
+        queue.setWorker(new Callback<Job>() {
+            @Override
+            public void call(final Job job) {
+                worker.process(job, new Callback<Boolean>() {
+                    @Override
+                    public void call(Boolean workDone) {
+                        queue.markAsDone(job);
+                        if(!workDone) {
+                            addJob(job);
+                        }
                     }
-                    if(demand(job) > 0) {
-                        jobManager.makeInactiveAndReinsert(job);
-                    } else {
-                        jobManager.makeInactive(job);
-                    }
-                    rerun();
-                }
-            }));
-        }
+                });
+            }
+        });
     }
 
-    public void rerun() {
-        for(Job job: jobManager.popAndMakeJobsActive(MAX_ACTIVE_JOBS)) {
-            runJob(job);
-        }
+    protected void addJob(Job job) {
+        queue.add(job);
     }
 
-    public void notifyDemandChanged(AddressType addressType, Identifier topic) {
+    @Override
+    public void start() {
+        loop.start();
+    }
+
+    @Override
+    public void close() {
+        loop.close();
+    }
+
+    public void handleDemand(Identifier topic, AddressType addressType) {
         Job job = new Job(topic, addressType);
-        if(demand(job) > 0) {
-            jobManager.maintainJobCount(job, REQUESTS_PER_JOB);
+        for(int i = queue.count(job); i < JOBS_PER_DEMAND; ++i) {
+            queue.add(job);
         }
-        rerun();
     }
-
 }

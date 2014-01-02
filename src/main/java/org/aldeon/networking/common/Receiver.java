@@ -1,7 +1,7 @@
 package org.aldeon.networking.common;
 
 import org.aldeon.events.Callback;
-import org.aldeon.model.Service;
+import org.aldeon.core.services.Service;
 
 /**
  * Accepts connections from peers.

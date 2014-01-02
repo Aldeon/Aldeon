@@ -1,5 +1,6 @@
 package org.aldeon.db;
 
+import org.aldeon.core.services.Service;
 import org.aldeon.crypt.Key;
 import org.aldeon.events.Callback;
 import org.aldeon.model.*;
