@@ -16,6 +16,7 @@ import org.aldeon.gui2.components.MessageCreator;
 import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.components.TopicCard;
 import org.aldeon.gui2.various.Direction;
+import org.aldeon.gui2.various.GuiDbUtils;
 import org.aldeon.gui2.various.MessageEvent;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
@@ -35,7 +36,7 @@ public class TopicsController {
     @FXML protected VBox topics;
 
     public void initialize() {
-        Gui2Utils.db().getMessagesByParentId(Identifier.empty(), new Callback<Set<Message>>() {
+        GuiDbUtils.db().getMessagesByParentId(Identifier.empty(), new Callback<Set<Message>>() {
             @Override
             public void call(Set<Message> topicsSet) {
                 for (Message topic : topicsSet) {

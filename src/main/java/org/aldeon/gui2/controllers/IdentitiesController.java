@@ -18,6 +18,7 @@ import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.components.UserCard;
 import org.aldeon.gui2.various.Direction;
 import org.aldeon.gui2.various.FxCallback;
+import org.aldeon.gui2.various.GuiDbUtils;
 import org.aldeon.gui2.various.IdentityEvent;
 import org.aldeon.model.Identity;
 import org.aldeon.utils.helpers.Callbacks;
@@ -55,7 +56,7 @@ public class IdentitiesController {
             }
         });
 
-        Gui2Utils.db().getIdentities(new Callback<Set<Identity>>() {
+        GuiDbUtils.db().getIdentities(new Callback<Set<Identity>>() {
             @Override
             public void call(Set<Identity> identities) {
                 for(Identity identity: identities) {
@@ -96,7 +97,7 @@ public class IdentitiesController {
             public void handle(IdentityEvent identityEvent) {
                 slider.slideOut(creator, Direction.RIGHT);
                 if(identityEvent.identity() != null) {
-                    Gui2Utils.db().insertIdentity(identityEvent.identity(), Callbacks.<Boolean>emptyCallback());
+                    GuiDbUtils.db().insertIdentity(identityEvent.identity(), Callbacks.<Boolean>emptyCallback());
                 }
             }
         });
@@ -105,7 +106,7 @@ public class IdentitiesController {
     }
 
     private void cardClicked(UserCard card) {
-        Gui2Utils.db().getIdentity(card.getUser().getPublicKey(), new FxCallback<Identity>() {
+        GuiDbUtils.db().getIdentity(card.getUser().getPublicKey(), new FxCallback<Identity>() {
             @Override
             protected void react(Identity identity) {
                 if(identity != null) {
@@ -125,11 +126,11 @@ public class IdentitiesController {
                 slider.slideOut(creator, Direction.RIGHT);
                 if(identityEvent.identity() != null) {
                     delCard(identity.getPublicKey());
-                    Gui2Utils.db().deleteIdentity(identity.getPublicKey(), new Callback<Boolean>() {
+                    GuiDbUtils.db().deleteIdentity(identity.getPublicKey(), new Callback<Boolean>() {
                         @Override
                         public void call(Boolean deleteStatus) {
                             System.out.println("delete status: " + deleteStatus);
-                            Gui2Utils.db().insertIdentity(identityEvent.identity(), new FxCallback<Boolean>() {
+                            GuiDbUtils.db().insertIdentity(identityEvent.identity(), new FxCallback<Boolean>() {
                                 @Override
                                 protected void react(Boolean insertStatus) {
                                     System.out.println("insert status: " + insertStatus);

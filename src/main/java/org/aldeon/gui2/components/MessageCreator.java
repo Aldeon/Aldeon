@@ -18,6 +18,7 @@ import javafx.scene.shape.Rectangle;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.various.DeterministicColorGenerator;
+import org.aldeon.gui2.various.GuiDbUtils;
 import org.aldeon.gui2.various.MessageEvent;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Identity;
@@ -70,7 +71,7 @@ public class MessageCreator extends HorizontalColorContainer {
     }
 
     private void fillData() {
-        Gui2Utils.db().getIdentities(new Callback<Set<Identity>>() {
+        GuiDbUtils.db().getIdentities(new Callback<Set<Identity>>() {
             @Override
             public void call(Set<Identity> val) {
                 identities.getItems().addAll(val);

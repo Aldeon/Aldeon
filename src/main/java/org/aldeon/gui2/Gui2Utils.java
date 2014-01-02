@@ -12,6 +12,7 @@ import org.aldeon.db.wrappers.DbCallbackThreadDecorator;
 import org.aldeon.db.wrappers.DbWorkThreadDecorator;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.executors.ExecutorLogger;
+import org.aldeon.events.executors.ThrowableInterceptor;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,22 +20,16 @@ import java.util.concurrent.Executor;
 
 public class Gui2Utils {
     private static final String FXML_PATH = "/gui2/fxml";
-    private static Db db;
     private static EventLoop loop;
     private static Executor fxExecutor = null;
 
     static {
-        fxExecutor = new ExecutorLogger("javafx", new Executor() {
+        fxExecutor = new ExecutorLogger("javafx", new ThrowableInterceptor(new Executor() {
             @Override
             public void execute(Runnable command) {
                 Platform.runLater(command);
             }
-        });
-
-        db = CoreModule.getInstance().getStorage();
-        db = new DbCallbackThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
-        db = new DbWorkThreadDecorator(db, CoreModule.getInstance().clientSideExecutor());
-
+        }));
         loop = CoreModule.getInstance().getEventLoop();
     }
 
@@ -67,10 +62,6 @@ public class Gui2Utils {
         } catch (IOException exception) {
             return null;
         }
-    }
-
-    public static Db db() {
-        return db;
     }
 
     public EventLoop loop() {
