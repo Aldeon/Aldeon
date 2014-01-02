@@ -12,7 +12,7 @@ import org.aldeon.utils.various.LoopWorker;
 public class Crawler implements Service {
 
     private static final long INTERVAL = 1000;
-    private static final long JOBS_PER_DEMAND = 1;
+    private static final long JOBS_PER_DEMAND = 2;
 
     private LoopWorker loop;
     private final JobWorker worker;

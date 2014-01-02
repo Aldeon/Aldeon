@@ -35,4 +35,5 @@ aldeon.db.log
 aldeon.db.properties
 aldeon.db.script
 aldeon.conf
+aldeon.properties
 

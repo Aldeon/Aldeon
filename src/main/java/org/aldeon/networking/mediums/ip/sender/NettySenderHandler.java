@@ -46,12 +46,25 @@ public class NettySenderHandler extends SimpleChannelInboundHandler<FullHttpResp
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) {
-        // TODO: handle response timeouts, not only connection timeouts
         if(!handled) {
             if(task != null) {
                 task.onFailure(new ConnectionBrokenException("Connection was closed by the server"));
+                handled = true;
+            } else {
+                //log.warn("Channel unregistered while task==null");
             }
-            handled = true;
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        if(!handled) {
+            if(task != null) {
+                task.onFailure(cause);
+                handled = true;
+            } else {
+                //log.warn("Exception caught while task==null");
+            }
         }
     }
 
