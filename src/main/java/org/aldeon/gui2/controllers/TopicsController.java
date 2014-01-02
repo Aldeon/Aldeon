@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.aldeon.core.CoreModule;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.components.ConversationViewer;
@@ -74,13 +75,13 @@ public class TopicsController {
         card.setOnResume(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("add " + topic.getIdentifier() + " to topic manager");
+                CoreModule.getInstance().getTopicManager().addTopic(topic.getIdentifier());
             }
         });
         card.setOnPause(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("del " + topic.getIdentifier() + " from topic manager");
+                CoreModule.getInstance().getTopicManager().delTopic(topic.getIdentifier());
             }
         });
         topicCards.add(card);

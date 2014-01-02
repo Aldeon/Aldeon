@@ -6,6 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -18,6 +19,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.SendPoint;
+import org.aldeon.networking.exceptions.AddressUnreachableException;
+import org.aldeon.networking.exceptions.ConnectionTimeoutException;
 import org.aldeon.networking.exceptions.UnexpectedAddressClassException;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.conversion.ByteBufferToFullHttpRequestConverter;
@@ -25,6 +28,7 @@ import org.aldeon.utils.conversion.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.NoRouteToHostException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CancellationException;
 
@@ -122,7 +126,14 @@ public class NettySendPoint implements SendPoint {
                         ? new CancellationException("Connection cancelled")
                         : future.cause();
 
-                task.onFailure(cause);
+                if(cause instanceof ConnectTimeoutException) {
+                    task.onFailure(new ConnectionTimeoutException());
+                } else if(cause instanceof NoRouteToHostException) {
+                    task.onFailure(new AddressUnreachableException());
+                } else {
+                    task.onFailure(cause);
+                }
+
             }
         }
     }

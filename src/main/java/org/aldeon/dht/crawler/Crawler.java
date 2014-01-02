@@ -1,7 +1,7 @@
 package org.aldeon.dht.crawler;
 
-import org.aldeon.core.AldeonCore;
 import org.aldeon.dht.Dht;
+import org.aldeon.dht.crawler.pickers.PickerModule;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.AddressType;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Crawler {
 
-    private static final Logger log = LoggerFactory.getLogger(AldeonCore.class);
+    private static final Logger log = LoggerFactory.getLogger(Crawler.class);
 
     private static final int MAX_ACTIVE_JOBS = 8;
     private static final int REQUESTS_PER_JOB = 4;
@@ -35,7 +35,7 @@ public class Crawler {
     public Crawler(Dht dht, Sender sender) {
         this.dht = dht;
         this.sender = sender;
-        targetPicker = new SemiRandomTargetPicker(5, dht.interestTracker());
+        targetPicker = PickerModule.create(dht);
         jobManager = new JobManagerImpl();
     }
 
