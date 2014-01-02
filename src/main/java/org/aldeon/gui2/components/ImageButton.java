@@ -26,7 +26,11 @@ public class ImageButton extends Button {
     }
 
     private void update(String imagePath) {
-        setGraphic(new ImageView(new Image(imagePath)));
+        try {
+            setGraphic(new ImageView(new Image(imagePath)));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid image path");
+        }
     }
 
     public StringProperty imageProperty() {

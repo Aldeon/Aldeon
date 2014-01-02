@@ -22,6 +22,7 @@ import org.aldeon.gui2.various.GuiDbUtils;
 import org.aldeon.gui2.various.IdentityEvent;
 import org.aldeon.model.Identity;
 import org.aldeon.utils.helpers.Callbacks;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

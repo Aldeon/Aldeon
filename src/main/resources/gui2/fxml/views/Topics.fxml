@@ -32,7 +32,7 @@
                         <TextField fx:id="watchTopicTextField" focusTraversable="true" prefWidth="-1.0" styleClass="styled" />
                     </center>
                     <right>
-                        <Button fx:id="watchTopicButton" mnemonicParsing="false" styleClass="styled" text="Watch topic">
+                        <Button onAction="#watchTopicClicked" fx:id="watchTopicButton" mnemonicParsing="false" styleClass="styled" text="Watch topic">
                             <BorderPane.margin>
                                 <Insets left="2.0" top="2.0" />
                             </BorderPane.margin>
