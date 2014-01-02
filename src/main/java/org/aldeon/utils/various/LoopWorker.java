@@ -1,6 +1,6 @@
 package org.aldeon.utils.various;
 
-import org.aldeon.model.Service;
+import org.aldeon.core.services.Service;
 
 public class LoopWorker implements Service {
 

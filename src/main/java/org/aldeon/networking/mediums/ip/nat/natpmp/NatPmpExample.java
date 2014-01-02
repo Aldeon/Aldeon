@@ -97,7 +97,7 @@ public class NatPmpExample {
 
             pmpDevice.shutdown();
 
-            // Please refer to the javadoc if you run into trouble. As always,
+            // Please refer to the javadoc if you updateSlots into trouble. As always,
             // contact a developer on the SourceForge project or post in the
             // forums if you have questions.
         } catch (NatPmpException ex) {

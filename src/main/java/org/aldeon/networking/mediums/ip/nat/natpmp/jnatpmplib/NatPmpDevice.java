@@ -231,7 +231,7 @@ public class NatPmpDevice {
                 }
             }, "NatPmpDevice:ShutdownAsync");
 
-            // Configure and run the thread.
+            // Configure and updateSlots the thread.
             t.setDaemon(daemon);
             t.start();
 

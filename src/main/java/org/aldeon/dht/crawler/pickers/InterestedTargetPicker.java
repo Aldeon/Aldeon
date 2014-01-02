@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Picks a new target from a set of closest identifiers
+ * Picks a new target from a set of peers (supposedly) interested in a topic
  */
 public class InterestedTargetPicker implements TargetPicker {
 

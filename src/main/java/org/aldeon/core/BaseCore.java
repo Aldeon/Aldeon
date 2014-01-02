@@ -1,70 +1,40 @@
 package org.aldeon.core;
 
+import org.aldeon.core.services.ExecutorPoolService;
+import org.aldeon.core.services.ServiceManager;
 import org.aldeon.db.Db;
 import org.aldeon.db.wrappers.DbEventCallerDecorator;
-import org.aldeon.db.wrappers.DbLoggerDecorator;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.executors.ExecutorLogger;
 import org.aldeon.events.executors.ThrowableInterceptor;
-import org.aldeon.model.Identity;
-import org.aldeon.sync.Supervisor;
 import org.aldeon.sync.TopicManager;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public abstract class BaseCore implements Core {
+public abstract class BaseCore extends ServiceManager implements Core {
 
     private final Db storage;
     private final EventLoop eventLoop;
     private final TopicManager topicManager;
-    private final ExecutorService clientSideExecutor;
-    private final ExecutorService serverSideExecutor;
-    private final Executor wrappedClientExecutor;
-    private final Executor wrappedServerExecutor;
-    private final UserManager userManager;
-    private Thread supervisorThread;
-    private final PropertiesManager propertiesManager;
+    private final Executor clientExecutor;
+    private final Executor serverExecutor;
+    private final UserManager userManager = new UserManager();
+    private final PropertiesManager propertiesManager = new PropertiesManager();
 
     public BaseCore(Db storage, EventLoop eventLoop, TopicManager topicManager) {
 
-        //this.storage = storage;
         this.storage = new DbEventCallerDecorator(storage, eventLoop);
-        //this.storage = new DbLoggerDecorator(storage);
-        this.propertiesManager = new PropertiesManager();
         this.eventLoop = eventLoop;
         this.topicManager = topicManager;
 
-        storage.start();
+        ExecutorPoolService clientSideExecutor = new ExecutorPoolService(2);
+        ExecutorPoolService serverSideExecutor = new ExecutorPoolService(2);
+        this.clientExecutor = new ExecutorLogger("client", new ThrowableInterceptor(clientSideExecutor));
+        this.serverExecutor = new ExecutorLogger("server", new ThrowableInterceptor(serverSideExecutor));
 
-        this.clientSideExecutor = Executors.newFixedThreadPool(2);
-        this.serverSideExecutor = Executors.newFixedThreadPool(2);
-        this.wrappedClientExecutor = new ExecutorLogger("client", new ThrowableInterceptor(clientSideExecutor));
-        this.wrappedServerExecutor = new ExecutorLogger("server", new ThrowableInterceptor(serverSideExecutor));
-        this.userManager = new UserManager();
-    }
-
-    protected void initializeSupervisor() {
-        supervisorThread = new Thread() {
-            @Override
-            public void run() {
-                Runnable supervisor = new Supervisor(BaseCore.this, getTopicManager(), clientSideExecutor());
-
-                while(true) {
-                    supervisor.run();
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        break;
-                    }
-                }
-            }
-        };
-        supervisorThread.start();
+        registerService(clientSideExecutor);
+        registerService(serverSideExecutor);
+        registerService(storage);
     }
 
     @Override
@@ -79,12 +49,12 @@ public abstract class BaseCore implements Core {
 
     @Override
     public Executor serverSideExecutor() {
-        return wrappedServerExecutor;
+        return serverExecutor;
     }
 
     @Override
     public Executor clientSideExecutor() {
-        return wrappedClientExecutor;
+        return clientExecutor;
     }
 
     @Override
@@ -99,14 +69,4 @@ public abstract class BaseCore implements Core {
 
     @Override
     public PropertiesManager getPropertiesManager() { return propertiesManager; }
-
-    protected void closeExecutors() {
-        clientSideExecutor.shutdown();
-        serverSideExecutor.shutdown();
-        supervisorThread.interrupt();
-    }
-
-    protected void closeDb() {
-        storage.close();
-    }
 }

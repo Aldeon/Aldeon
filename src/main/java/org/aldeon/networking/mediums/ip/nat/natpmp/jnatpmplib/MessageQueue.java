@@ -71,7 +71,7 @@ class MessageQueue implements Runnable {
         MessageQueue messageQueue = new MessageQueue(gatewayIP);
         messageQueue.thread.start();
         
-        // Allow the thread that we just started to run to its wait().
+        // Allow the thread that we just started to updateSlots to its wait().
         while (messageQueue.thread.getState() != Thread.State.TIMED_WAITING) {
             Thread.yield();
         }
@@ -147,7 +147,7 @@ class MessageQueue implements Runnable {
             // Wait in quarter-second intervals until the size is zero.
             while (size > 0) {
                 // Release the messageLock for a 1/4 second. This prevents
-                // deadlock with run().
+                // deadlock with updateSlots().
                 try {
                     messageLock.wait(250);
                 } catch (InterruptedException ex) {

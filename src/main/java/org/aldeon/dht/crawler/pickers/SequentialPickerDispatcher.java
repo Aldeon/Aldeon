@@ -6,11 +6,11 @@ import org.aldeon.networking.common.PeerAddress;
 
 import java.util.List;
 
-public class PickerDispatcher implements TargetPicker {
+public class SequentialPickerDispatcher implements TargetPicker {
 
     private final List<TargetPicker> pickers;
 
-    public PickerDispatcher(List<TargetPicker> pickers) {
+    public SequentialPickerDispatcher(List<TargetPicker> pickers) {
         this.pickers = pickers;
     }
 

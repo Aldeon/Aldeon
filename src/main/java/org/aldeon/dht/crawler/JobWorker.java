@@ -14,6 +14,7 @@ public class JobWorker {
     private final Dht dht;
     private final Sender sender;
     private final TargetPicker picker;
+    private static boolean dhtEmpty = false;
 
     public JobWorker(Dht dht, Sender sender, TargetPicker picker) {
         this.dht = dht;
@@ -24,22 +25,23 @@ public class JobWorker {
     public void process(final Job job, final Callback<Boolean> workDone) {
         final PeerAddress peer = picker.findTarget(job);
         if(peer == null) {
-            log.info("No target found. Is the DHT empty?");
+            if(!dhtEmpty) {
+                log.info("No target found. Is the DHT empty?");
+                dhtEmpty = true;
+            }
             workDone.call(false);
         } else {
-            sender.addTask(new GetRelevantPeersTask(null, job.topic(), dht, new Callback<Boolean>() {
+            dhtEmpty = false;
+            sender.addTask(new GetRelevantPeersTask(peer, job.topic(), dht, new Callback<Boolean>() {
                 @Override
                 public void call(Boolean responseReceived) {
-
                     if(!responseReceived) {
                         // remove address from our dht
                         log.info("Failed to receive response from peer (" + peer + "). Removing from DHT.");
                         dht.interestTracker().delAddress(peer);
                         dht.closenessTracker().delAddress(peer);
                     }
-
                     int demand = dht.interestTracker().getDemand(job.addressType(), job.topic());
-
                     workDone.call(demand == 0);
                 }
             }));
