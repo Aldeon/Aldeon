@@ -1,5 +1,7 @@
-package org.aldeon.dht.crawler;
+package org.aldeon.dht.crawler.pickers;
 
+import org.aldeon.dht.crawler.Job;
+import org.aldeon.dht.crawler.TargetPicker;
 import org.aldeon.dht.interest.InterestTracker;
 import org.aldeon.networking.common.PeerAddress;
 
@@ -11,12 +13,12 @@ import java.util.Set;
 /**
  * Picks a new target from a set of closest identifiers
  */
-public class SemiRandomTargetPicker implements TargetPicker{
+public class InterestedTargetPicker implements TargetPicker {
 
     private final int range;
     private final InterestTracker tracker;
 
-    public SemiRandomTargetPicker(int range, InterestTracker tracker) {
+    public InterestedTargetPicker(InterestTracker tracker, int range) {
         this.tracker = tracker;
         this.range = range;
     }
@@ -32,5 +34,4 @@ public class SemiRandomTargetPicker implements TargetPicker{
             return list.get(0);
         }
     }
-
 }

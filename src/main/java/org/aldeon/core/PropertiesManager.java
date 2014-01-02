@@ -13,7 +13,7 @@ import java.util.Set;
 
 
 public class PropertiesManager {
-    private static final String CONFIG_NAME="aldeon.conf";
+    private static final String CONFIG_NAME="aldeon.properties";
     private static final Properties props = new Properties();
     public static final String ADDRESS_TRANSLATION="addressTranslation";
     public static final String IP_AUTO="ipAuto";

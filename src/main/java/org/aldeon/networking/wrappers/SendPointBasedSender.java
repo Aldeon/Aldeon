@@ -52,7 +52,8 @@ public class SendPointBasedSender implements Sender {
 
                 @Override
                 public void onFailure(Throwable cause) {
-                    log.warn("Sender failure", cause);
+                    //log.warn("Sender failure", cause);
+                    log.warn("Sender failure (cause: " + cause + ")");
                     task.onFailure(cause);
                 }
 

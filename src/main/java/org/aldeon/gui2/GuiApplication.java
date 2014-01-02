@@ -1,7 +1,6 @@
 package org.aldeon.gui2;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -10,8 +9,6 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.AppClosingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class GuiApplication extends Application {
 

@@ -20,6 +20,7 @@ import org.aldeon.gui2.various.GuiDbUtils;
 import org.aldeon.gui2.various.MessageEvent;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
+import org.aldeon.utils.helpers.Callbacks;
 
 import java.util.Iterator;
 import java.util.List;
@@ -103,12 +104,8 @@ public class ConversationViewer extends BorderPane {
             @Override
             public void handle(final MessageEvent messageEvent) {
                 if(messageEvent.message() != null) {
-                    GuiDbUtils.db().insertMessage(messageEvent.message(), new FxCallback<Boolean>() {
-                        @Override
-                        protected void react(Boolean val) {
-                            childrenCards.add(card(messageEvent.message()));
-                        }
-                    });
+                    childrenCards.add(card(messageEvent.message()));
+                    GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Boolean>emptyCallback());
                 }
                 children.getChildren().remove(creator);
             }
