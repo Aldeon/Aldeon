@@ -47,7 +47,7 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
 
         try {
             InetAddress devIp = InetAddress.getByName(device.getDetails().getBaseURL().getHost());
-            log.info("Device address: " + devIp);
+            log.info("Device address: " + devIp.getHostAddress());
 
             NetworkAddressFactory factory = registry.getConfiguration().createNetworkAddressFactory();
             Iterator<NetworkInterface> it = factory.getNetworkInterfaces();
@@ -121,7 +121,7 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
         while(it.hasNext()) {
             final Service service = it.next();
 
-            log.info("Attempting to delete port mapping on service" + service);
+            log.info("Attempting to delete port mapping on service " + service);
             new PortMappingDelete(service, registry.getUpnpService().getControlPoint(), portMapping) {
 
                 @Override

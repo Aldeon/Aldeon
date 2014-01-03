@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class UpnpAddressTranslationFactory {
 
@@ -38,7 +39,7 @@ public class UpnpAddressTranslationFactory {
         return future;
     }
 
-    private static class FutureImpl implements Future<AddressTranslation> {
+    private static class FutureImpl extends Thread implements Future<AddressTranslation> {
 
         private Port desiredInternalPort;
         private Port desiredExternalPort;
@@ -54,6 +55,9 @@ public class UpnpAddressTranslationFactory {
             } else {
                 upnp.shutdown();
                 isCancelled = true;
+                if(mayInterruptIfRunning) {
+                    this.interrupt();
+                }
                 return true;
             }
         }
@@ -72,10 +76,28 @@ public class UpnpAddressTranslationFactory {
         }
 
         @Override
-        public AddressTranslation get() {
-            if(! isDone()) {
+        public AddressTranslation get() throws InterruptedException {
+            try {
+                return get(Long.MAX_VALUE, TimeUnit.DAYS);
+            } catch (TimeoutException e) {
+                e.printStackTrace();
                 return null;
             }
+        }
+
+        @Override
+        public AddressTranslation get(long timeout, TimeUnit unit) throws TimeoutException, InterruptedException {
+            long milisecondsToWait = unit.toMillis(timeout);
+
+            long start = System.currentTimeMillis();
+            while(!isDone()) {
+                if(System.currentTimeMillis() - start > milisecondsToWait) {
+                    throw new TimeoutException();
+                } else {
+                    sleep(100);
+                }
+            }
+
             Set<PortMappingAndIpListener.AddressPair> addresses = listener.getActiveMappings();
             final PortMappingAndIpListener.AddressPair addressPair = addresses.iterator().next(); //we take only the first one
 
@@ -105,11 +127,6 @@ public class UpnpAddressTranslationFactory {
                     upnp.shutdown();
                 }
             };
-        }
-
-        @Override
-        public AddressTranslation get(long timeout, TimeUnit unit) {
-            throw new IllegalStateException("Not yet supported");
         }
     }
 }

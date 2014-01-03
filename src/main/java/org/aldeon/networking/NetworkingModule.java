@@ -10,9 +10,9 @@ import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.networking.mediums.ip.IpNetworkMedium;
 
-public class NetworkingModule extends AbstractModule implements Provider<NetworkState> {
+public class NetworkingModule extends AbstractModule implements Provider<NetworkService> {
 
-    private static NetworkState networkState = null;
+    private static NetworkService networkService = null;
 
     @Override
     protected void configure() {
@@ -35,10 +35,10 @@ public class NetworkingModule extends AbstractModule implements Provider<Network
     }
 
     @Override
-    public NetworkState get() {
-        if(networkState == null) {
-            networkState = Guice.createInjector(this).getInstance(NetworkState.class);
+    public NetworkService get() {
+        if(networkService == null) {
+            networkService = Guice.createInjector(this).getInstance(NetworkService.class);
         }
-        return networkState;
+        return networkService;
     }
 }
