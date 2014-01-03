@@ -8,6 +8,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class UpnpExample {
 
@@ -25,32 +27,26 @@ public class UpnpExample {
 
         System.out.println("Trying to map a port...");
 
-        int cycles = 0;
+        try {
+            AddressTranslation addressTranslation = future.get(5000, TimeUnit.MILLISECONDS);
 
-        while(!future.isDone()) {
-            Thread.sleep(100);
-            if(++cycles > 50) break;
-        }
+            System.out.println("Success!");
 
-        AddressTranslation addressTranslation = future.get();
+            System.out.println("Internal port : " + addressTranslation.getInternalPort());
+            System.out.println("External port : " + addressTranslation.getExternalPort());
+            System.out.println("Internal IP   : " + addressTranslation.getInternalAddress());
+            System.out.println("External IP   : " + addressTranslation.getExternalAddress());
 
-        if(addressTranslation == null) {
+            System.in.read();
+
+            System.out.println("Shutting down...");
+
+            addressTranslation.shutdown();
+
+        } catch (TimeoutException e) {
             System.out.println("No address translation obtained.");
             future.cancel(true);
             return;
         }
-
-        System.out.println("Success!");
-
-        System.out.println("Internal port : " + addressTranslation.getInternalPort());
-        System.out.println("External port : " + addressTranslation.getExternalPort());
-        System.out.println("Internal IP   : " + addressTranslation.getInternalAddress());
-        System.out.println("External IP   : " + addressTranslation.getExternalAddress());
-
-        System.in.read();
-
-        System.out.println("Shutting down...");
-
-        addressTranslation.shutdown();
     }
 }

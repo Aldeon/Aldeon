@@ -1,18 +1,19 @@
 package org.aldeon.networking.common;
 
+import org.aldeon.core.services.Service;
 import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.utils.json.ParseException;
 
 import java.util.Set;
 
-public interface NetworkMedium {
+public interface NetworkMedium extends Service {
 
     Set<AddressType> addressTypes();
 
     SendPoint sendPoint();
     RecvPoint recvPoint();
 
-    Set<PeerAddress> getMachineAddresses(AddressType addressType);
+    PeerAddress machineAddressForForeignAddress(PeerAddress peerAddress);
 
     String serialize(PeerAddress address) throws AddressParseException;
     PeerAddress deserialize(String address) throws AddressParseException;

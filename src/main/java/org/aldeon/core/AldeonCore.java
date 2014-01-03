@@ -11,9 +11,8 @@ import org.aldeon.dht.DhtModule;
 import org.aldeon.dht.crawler.Crawler;
 import org.aldeon.dht.interest.DemandChangedEvent;
 import org.aldeon.events.ACB;
-import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.EventLoop;
-import org.aldeon.networking.NetworkState;
+import org.aldeon.networking.NetworkService;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.InboundRequestTask;
 import org.aldeon.networking.common.PeerAddress;
@@ -23,7 +22,6 @@ import org.aldeon.sync.Supervisor;
 import org.aldeon.sync.TopicManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.print.resources.serviceui_sv;
 
 
 /**
@@ -39,13 +37,15 @@ public class AldeonCore extends BaseCore implements Service {
     private final Crawler crawler;
     private final Sender sender;
     private final Receiver receiver;
+    private final NetworkService networkService;
 
     @Inject
-    public AldeonCore(Db storage, EventLoop eventLoop, TopicManager topicManager, NetworkState networkState) {
+    public AldeonCore(Db storage, EventLoop eventLoop, TopicManager topicManager, NetworkService networkService) {
         super(storage, eventLoop, topicManager);
 
-        this.sender = networkState.getUnifiedSender();
-        this.receiver = networkState.getUnifiedReceiver();
+        this.networkService = networkService;
+        this.sender = networkService.getUnifiedSender();
+        this.receiver = networkService.getUnifiedReceiver();
         this.dht = DhtModule.create(getSender().acceptedTypes(), eventLoop);
         this.crawler = new Crawler(getDht(), getSender());
 
@@ -71,19 +71,12 @@ public class AldeonCore extends BaseCore implements Service {
             }
         });
 
-        for(AddressType type: getSender().acceptedTypes()) {
-            for(PeerAddress machineAddress: networkState.getMachineAddresses(type)) {
-                if(machineAddress != null) {
-                    log.info("Detected address (" + machineAddress.getType() + "): " + machineAddress);
-                }
-            }
-        }
-
         for(PeerAddress address: getPropertiesManager().getInitPeers()) {
             getDht().closenessTracker().addAddress(address);
             log.info("Adding initial peer: " + address);
         }
 
+        registerService(networkService);
         registerService(getSender());
         registerService(getReceiver());
         registerService(crawler);
@@ -96,6 +89,11 @@ public class AldeonCore extends BaseCore implements Service {
     @Override
     public Dht getDht() {
         return dht;
+    }
+
+    @Override
+    public PeerAddress reachableLocalAddress(PeerAddress peer) {
+        return networkService.machineAddress(peer);
     }
 
     @Override

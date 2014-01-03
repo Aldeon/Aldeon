@@ -16,7 +16,6 @@ public class Slot {
     private long clock = Long.MIN_VALUE;
     private long lastUpdated = Long.MIN_VALUE;
     private SlotType slotType;
-    private Runnable revoke;
     private Order order;
 
     public Slot(SlotType slotType, AddressType addressType) {
@@ -121,7 +120,7 @@ public class Slot {
     }
 
     /**
-     * Indicated the desired behavior related to this state (ex. how to cope with timeouts)
+     * Indicates the desired behavior related to this state (ex. how to cope with unanswered requests)
      * @return
      */
     public SlotType getSlotType() {

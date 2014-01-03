@@ -1,6 +1,7 @@
 package org.aldeon.networking;
 
 import com.google.inject.Inject;
+import org.aldeon.core.services.Service;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.NetworkMedium;
 import org.aldeon.networking.common.PeerAddress;
@@ -31,14 +32,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class NetworkState {
+public class NetworkService implements Service {
 
     private final Sender unifiedSender;
     private final Receiver unifiedReceiver;
     private Map<AddressType, NetworkMedium> mediums = new HashMap<>();
+    private Set<NetworkMedium> mediumSet;
 
     @Inject
-    public NetworkState(Set<NetworkMedium> mediumSet) {
+    public NetworkService(Set<NetworkMedium> mediumSet) {
+
+        this.mediumSet = mediumSet;
 
         JsonParser parser = new JsonModule().get();
         ClassMapper<Request> requestMapper = new RequestClassMapper();
@@ -69,15 +73,15 @@ public class NetworkState {
     }
 
     public Receiver getUnifiedReceiver() {
-        return  unifiedReceiver;
+        return unifiedReceiver;
     }
 
-    public Set<PeerAddress> getMachineAddresses(AddressType type) {
-        NetworkMedium medium = mediums.get(type);
+    public PeerAddress machineAddress(PeerAddress peerAddress) {
+        NetworkMedium medium = mediums.get(peerAddress.getType());
         if(medium != null) {
-            return medium.getMachineAddresses(type);
+            return medium.machineAddressForForeignAddress(peerAddress);
         } else {
-            return Collections.emptySet();
+            return null;
         }
     }
 
@@ -91,11 +95,6 @@ public class NetworkState {
     }
 
     public PeerAddress deserialize(AddressType type, String string) throws AddressParseException {
-
-        System.out.println("Type: " + type);
-        System.out.println("Data: " + string);
-        System.out.println("Mediums: " + mediums.size());
-
         NetworkMedium medium = mediums.get(type);
         if(medium != null) {
             return medium.deserialize(string);
@@ -104,4 +103,17 @@ public class NetworkState {
         }
     }
 
+    @Override
+    public void start() {
+        for(NetworkMedium medium: mediumSet) {
+            medium.start();
+        }
+    }
+
+    @Override
+    public void close() {
+        for(NetworkMedium medium: mediumSet) {
+            medium.close();
+        }
+    }
 }

@@ -7,7 +7,7 @@ import org.aldeon.db.Db;
 import org.aldeon.db.DbImpl;
 import org.aldeon.events.EventLoop;
 import org.aldeon.events.MultiMapBasedEventLoop;
-import org.aldeon.networking.NetworkState;
+import org.aldeon.networking.NetworkService;
 import org.aldeon.networking.NetworkingModule;
 
 public class CoreModule extends AbstractModule implements Provider<Core> {
@@ -20,7 +20,7 @@ public class CoreModule extends AbstractModule implements Provider<Core> {
         bind(Core.class).to(AldeonCore.class);
         bind(Db.class).to(DbImpl.class);
         bind(EventLoop.class).to(MultiMapBasedEventLoop.class);
-        bind(NetworkState.class).toProvider(NetworkingModule.class);
+        bind(NetworkService.class).toProvider(NetworkingModule.class);
     }
 
     @Override

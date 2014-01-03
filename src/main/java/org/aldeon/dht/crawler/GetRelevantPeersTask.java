@@ -34,7 +34,7 @@ public class GetRelevantPeersTask extends AbstractOutboundTask<GetRelevantPeersR
     }
 
     private void onRelevantPeers(RelevantPeersResponse response) {
-        for(PeerAddress address: response.closestIds) {
+        for(PeerAddress address: response.closest) {
             dht.closenessTracker().addAddress(address);
         }
         for(PeerAddress address: response.interested) {

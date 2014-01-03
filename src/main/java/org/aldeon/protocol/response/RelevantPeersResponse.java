@@ -15,16 +15,16 @@ public class RelevantPeersResponse implements Response {
 
     public String type = TYPE;
     public Set<PeerAddress> interested;
-    public Set<PeerAddress> closestIds;
+    public Set<PeerAddress> closest;
 
     public RelevantPeersResponse() {
         interested = new HashSet<>();
-        closestIds = new HashSet<>();
+        closest = new HashSet<>();
     }
 
     public RelevantPeersResponse(Set<PeerAddress> interested,
-                                 Set<PeerAddress> closestIds) {
+                                 Set<PeerAddress> closest) {
         this.interested = interested;
-        this.closestIds = closestIds;
+        this.closest = closest;
     }
 }

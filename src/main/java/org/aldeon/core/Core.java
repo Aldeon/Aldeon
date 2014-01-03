@@ -3,6 +3,7 @@ package org.aldeon.core;
 import org.aldeon.db.Db;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.EventLoop;
+import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.Receiver;
 import org.aldeon.networking.common.Sender;
 import org.aldeon.sync.TopicManager;
@@ -39,6 +40,12 @@ public interface Core {
      * @return
      */
     Executor clientSideExecutor();
+
+    /**
+     * Finds the local address (this machine's address) that is
+     * (or should be) reachable for a given peer.
+     */
+    PeerAddress reachableLocalAddress(PeerAddress peer);
 
 
     /**

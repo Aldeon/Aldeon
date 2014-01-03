@@ -32,7 +32,6 @@ public class JobWorker {
             workDone.call(false);
         } else {
             dhtEmpty = false;
-            System.out.println("--> SEND TO " + peer);
             sender.addTask(new GetRelevantPeersTask(peer, job.topic(), dht, new Callback<Boolean>() {
                 @Override
                 public void call(Boolean responseReceived) {
