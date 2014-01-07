@@ -9,6 +9,6 @@ public class GetRelevantPeersRequest implements Request {
     public static String TYPE = "get_relevant_peers";
 
     public String type = TYPE;
-    public Identifier target;
+    public Identifier topic;
 
 }

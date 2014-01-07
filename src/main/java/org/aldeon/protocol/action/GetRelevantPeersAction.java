@@ -35,8 +35,8 @@ public class GetRelevantPeersAction implements Action<GetRelevantPeersRequest> {
 
         Dht dht = core.getDht();
 
-        nearValues.addAll(dht.closenessTracker().getNearest(peer.getType(), request.target, LIMIT));
-        interested.addAll(dht.interestTracker().getInterested(peer.getType(), request.target, LIMIT));
+        nearValues.addAll(dht.closenessTracker().getNearest(peer.getType(), request.topic, LIMIT));
+        interested.addAll(dht.interestTracker().getInterested(peer.getType(), request.topic, LIMIT));
 
         onResponse.call(new RelevantPeersResponse(interested, nearValues));
     }

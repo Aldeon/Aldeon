@@ -78,7 +78,7 @@ public class GsonBasedJsonParserTest {
     public void shouldParseGetPeersInterestedRequest() throws ParseException, ConversionException {
 
         GetRelevantPeersRequest req = new GetRelevantPeersRequest();
-        req.target = Identifier.empty();
+        req.topic = Identifier.empty();
 
         Codec codec = mock(Codec.class);
         when(codec.encode(Identifier.empty().getByteBuffer())).thenReturn(emptyId);
@@ -89,7 +89,7 @@ public class GsonBasedJsonParserTest {
         String json = parser.toJson(req);
 
         assertEquals(
-                "{\"type\":\"get_relevant_peers\",\"target\":\"" + emptyId + "\"}",
+                "{\"type\":\"get_relevant_peers\",\"topic\":\"" + emptyId + "\"}",
                 json
 
         );
@@ -97,7 +97,7 @@ public class GsonBasedJsonParserTest {
         GetRelevantPeersRequest res = parser.fromJson(json, GetRelevantPeersRequest.class);
 
         assertEquals(req.type, res.type);
-        assertEquals(req.target, res.target);
+        assertEquals(req.topic, res.topic);
     }
 
     @Test

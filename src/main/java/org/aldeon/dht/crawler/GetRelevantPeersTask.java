@@ -21,7 +21,7 @@ public class GetRelevantPeersTask extends AbstractOutboundTask<GetRelevantPeersR
         this.onFinished = onFinished;
 
         setRequest(new GetRelevantPeersRequest());
-        getRequest().target = topic;
+        getRequest().topic = topic;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class GetRelevantPeersTask extends AbstractOutboundTask<GetRelevantPeersR
         }
         for(PeerAddress address: response.interested) {
             dht.closenessTracker().addAddress(address);
-            dht.interestTracker().addAddress(address, getRequest().target);
+            dht.interestTracker().addAddress(address, getRequest().topic);
         }
         onFinished.call(true);
     }

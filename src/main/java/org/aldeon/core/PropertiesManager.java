@@ -30,7 +30,7 @@ public class PropertiesManager {
     public static final String DEFAULT_PORT_NUMBER = "41530";
     public static final String DEFAULT_DIFF_TIMEOUT = "5";
     public static final String DEFAULT_PRIVACY_LEVEL = "1";
-    public static final String DEFAULT_INIT_PEERS = "";
+    public static final String DEFAULT_INIT_PEERS = "aldeon.org:80";
 
     public PropertiesManager(){
         File config = new File(CONFIG_NAME);
