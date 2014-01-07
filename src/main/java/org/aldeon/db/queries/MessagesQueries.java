@@ -22,13 +22,15 @@ public class MessagesQueries
 
     public static final String CREATE_NODE_XOR_INDEXES = "CREATE INDEX node_xor_index ON messages(node_xor)";
 
+
     public static final String CREATE_MSG_INSERT_TRIGGER = "CREATE TRIGGER msg_insert_trigger AFTER INSERT ON messages" +
             " REFERENCING NEW AS new_row" +
             " FOR EACH ROW" +
             " BEGIN ATOMIC" +
-            "  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = new_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
+            //"  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = new_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
+            "  CALL treewalk(new_row.msg_id, new_row.parent_msg_id);" +
             " END";
-
+    /*
     public static final String CREATE_MSG_UPDATE_TRIGGER = "CREATE TRIGGER msg_update_trigger AFTER INSERT ON messages" +
             " REFERENCING NEW AS new_row" +
             " FOR EACH ROW" +
@@ -36,12 +38,12 @@ public class MessagesQueries
             "  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = new_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
             " END";
 
-    public static final String CREATE_MSG_DELETE_TRIGGER = "CREATE TRIGGER msg_delete_trigger AFTER INSERT ON messages" +
+    public static final String CREATE_MSG_DELETE_TRIGGER = "CREATE TRIGGER msg_delete_trigger AFTER DELETE ON messages" +
             " REFERENCING OLD AS old_row" +
             " FOR EACH ROW" +
             " BEGIN ATOMIC" +
             //"  CALL CALC_XOR(new_row.parent_msg_id);" +
-            "  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = old_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
+            "  UPDATE messages SET node_xor = BITXOR(old_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = old_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
             " END";
 
     public static final String CREATE_CALC_XOR_PROCEDURE = "CREATE PROCEDURE" +
@@ -54,6 +56,44 @@ public class MessagesQueries
             "  END FOR for_loop;" +
             "  UPDATE messages SET node_xor = calculated_xor WHERE msg_id = parent_msg_id_p;" +
             " END";
+    */
+
+    public static final String CREATE_REC_DEL_BRANCH_PROCEDURE1 = "CREATE PROCEDURE rec_del_branch(IN node_id_p BIT(256))" +
+            " SPECIFIC rec_del_branch_impl" +
+            " MODIFIES SQL DATA" +
+            " SIGNAL SQLSTATE '45000' ";
+
+    public static final String CREATE_REC_DEL_BRANCH_PROCEDURE2 = "ALTER SPECIFIC ROUTINE rec_del_branch_impl " +
+            "BEGIN ATOMIC" +
+            " for_loop:" +
+            " FOR SELECT msg_id FROM messages WHERE parent_msg_id = node_id_p DO"+
+            "  CALL rec_del_branch(msg_id);" +
+            " END FOR for_loop;" +
+            " DELETE FROM messages WHERE msg_id = node_id_p;" +
+            "END";
+
+    public static final String CREATE_TREEWALK_PROCEDURE = "CREATE PROCEDURE treewalk(IN xor_p BIT(256), IN node_id_p BIT(256)) " +
+            "MODIFIES SQL DATA " +
+            "BEGIN ATOMIC" +
+            " DECLARE current_node BIT(256);" +
+            " SET current_node = node_id_p;" +
+            " while_loop: WHILE current_node <> X'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' DO" +
+            "  UPDATE messages SET node_xor = BITXOR(node_xor, xor_p) WHERE msg_id = current_node;" +
+            "  SELECT parent_msg_id INTO current_node FROM messages WHERE msg_id = current_node;" +
+            " END WHILE while_loop; " +
+            "END";
+
+    public static final String CREATE_SAFE_REMOVE_BRANCH_PROCEDURE = "CREATE PROCEDURE safe_remove_branch(IN node_id_p BIT(256))" +
+            "MODIFIES SQL DATA " +
+            "BEGIN ATOMIC" +
+            " DECLARE branch_xor BIT(256);" +
+            " DECLARE branch_parent BIT(256);" +
+            " SELECT node_xor, parent_msg_id INTO branch_xor, branch_parent FROM messages WHERE msg_id = node_id_p;" +
+            " CALL treewalk(branch_xor, branch_parent);" +
+            " CALL rec_del_branch(node_id_p);" +
+            "END";
+
+    public static final String CALL_SAFE_REMOVE_BRANCH = "CALL safe_remove_branch(?);";
 
     public static final String SELECT_MSG_BY_ID = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE msg_id = HEXTORAW(?)";
 

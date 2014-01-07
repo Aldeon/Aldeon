@@ -4,6 +4,7 @@ import org.aldeon.dht.Dht;
 import org.aldeon.events.Callback;
 import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.Sender;
+import org.aldeon.protocol.request.IndicateInterestRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,11 @@ public class JobWorker {
             sender.addTask(new GetRelevantPeersTask(peer, job.topic(), dht, new Callback<Boolean>() {
                 @Override
                 public void call(Boolean responseReceived) {
-                    if(!responseReceived) {
+                    if(responseReceived) {
+
+                        // The peer is alive. Let's give him an interest entry
+
+                    } else {
                         // remove address from our dht
                         log.info("Failed to receive response from peer (" + peer + "). Removing from DHT.");
                         dht.interestTracker().delAddress(peer);
