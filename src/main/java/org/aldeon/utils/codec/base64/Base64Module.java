@@ -14,6 +14,6 @@ public class Base64Module extends AbstractModule implements Provider<Codec> {
 
     @Override
     public Codec get() {
-        return new Base64CharReplacer(new MiGBase64());
+        return new MiGBase64();
     }
 }
