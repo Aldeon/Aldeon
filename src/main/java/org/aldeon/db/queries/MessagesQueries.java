@@ -27,36 +27,8 @@ public class MessagesQueries
             " REFERENCING NEW AS new_row" +
             " FOR EACH ROW" +
             " BEGIN ATOMIC" +
-            //"  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = new_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
             "  CALL treewalk(new_row.msg_id, new_row.parent_msg_id);" +
             " END";
-    /*
-    public static final String CREATE_MSG_UPDATE_TRIGGER = "CREATE TRIGGER msg_update_trigger AFTER INSERT ON messages" +
-            " REFERENCING NEW AS new_row" +
-            " FOR EACH ROW" +
-            " BEGIN ATOMIC" +
-            "  UPDATE messages SET node_xor = BITXOR(new_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = new_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
-            " END";
-
-    public static final String CREATE_MSG_DELETE_TRIGGER = "CREATE TRIGGER msg_delete_trigger AFTER DELETE ON messages" +
-            " REFERENCING OLD AS old_row" +
-            " FOR EACH ROW" +
-            " BEGIN ATOMIC" +
-            //"  CALL CALC_XOR(new_row.parent_msg_id);" +
-            "  UPDATE messages SET node_xor = BITXOR(old_row.msg_id, (SELECT node_xor FROM messages WHERE msg_id = old_row.parent_msg_id)) WHERE msg_id = new_row.parent_msg_id;" +
-            " END";
-
-    public static final String CREATE_CALC_XOR_PROCEDURE = "CREATE PROCEDURE" +
-            "  CALC_XOR(IN parent_msg_id_p BIT(256))" +
-            "  MODIFIES SQL DATA" +
-            " BEGIN ATOMIC" +
-            "  DECLARE calculated_xor BIT(256) DEFAULT X'00';" +
-            "  for_loop: FOR SELECT node_xor FROM messages WHERE parent_msg_id = parent_msg_id_p DO" +
-            "   SET calculated_xor = BITXOR(calculated_xor, node_xor);" +
-            "  END FOR for_loop;" +
-            "  UPDATE messages SET node_xor = calculated_xor WHERE msg_id = parent_msg_id_p;" +
-            " END";
-    */
 
     public static final String CREATE_REC_DEL_BRANCH_PROCEDURE1 = "CREATE PROCEDURE rec_del_branch(IN node_id_p BIT(256))" +
             " SPECIFIC rec_del_branch_impl" +
@@ -93,7 +65,7 @@ public class MessagesQueries
             " CALL rec_del_branch(node_id_p);" +
             "END";
 
-    public static final String CALL_SAFE_REMOVE_BRANCH = "CALL safe_remove_branch(?);";
+    public static final String CALL_SAFE_REMOVE_BRANCH = "CALL safe_remove_branch(HEXTORAW(?))";
 
     public static final String SELECT_MSG_BY_ID = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE msg_id = HEXTORAW(?)";
 
@@ -120,8 +92,6 @@ public class MessagesQueries
             "topic_id," +
             "clock" +
             ") VALUES (HEXTORAW(?), HEXTORAW(?), HEXTORAW(?), ?, HEXTORAW(?), HEXTORAW(?), HEXTORAW(?), (SELECT ISNULL(MAX(clock) + 1, 0) FROM messages) )";
-
-    public static final String DELETE_MSG_BY_ID = "DELETE FROM messages WHERE msg_id = HEXTORAW(?)";
 
     public static final String SELECT_MSG_XOR_BY_ID = "SELECT node_xor FROM messages WHERE msg_id = HEXTORAW(?)";
 

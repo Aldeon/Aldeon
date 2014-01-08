@@ -135,10 +135,9 @@ public class DbImpl implements Db {
         }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.CALL_SAFE_REMOVE_BRANCH);
-            setIdentifiableInPreparedStatement(1, msgId, preparedStatement);
-
-            preparedStatement.executeUpdate();
+            CallableStatement callableStatement = connection.prepareCall(MessagesQueries.CALL_SAFE_REMOVE_BRANCH);
+            setIdentifiableInCallableStatement(1, msgId, callableStatement);
+            callableStatement.execute();
 
             callback.call(true);
         } catch (SQLException e) {
@@ -606,14 +605,11 @@ public class DbImpl implements Db {
             statement.execute(MessagesQueries.CREATE_MSG_ID_INDEXES);
             statement.execute(MessagesQueries.CREATE_MSG_SIGN_INDEXES);
             statement.execute(MessagesQueries.CREATE_NODE_XOR_INDEXES);
-            //statement.execute(MessagesQueries.CREATE_CALC_XOR_PROCEDURE);
             statement.execute(MessagesQueries.CREATE_TREEWALK_PROCEDURE);
             statement.execute(MessagesQueries.CREATE_REC_DEL_BRANCH_PROCEDURE1);
             statement.execute(MessagesQueries.CREATE_REC_DEL_BRANCH_PROCEDURE2);
             statement.execute(MessagesQueries.CREATE_SAFE_REMOVE_BRANCH_PROCEDURE);
             statement.execute(MessagesQueries.CREATE_MSG_INSERT_TRIGGER);
-            //statement.execute(MessagesQueries.CREATE_MSG_UPDATE_TRIGGER);
-            //statement.execute(MessagesQueries.CREATE_MSG_DELETE_TRIGGER);  // TODO: FIX (causes exception)
             insertTestData();
         } catch (SQLException e) {
             log.error("Could not create the database schema", e);
@@ -653,6 +649,10 @@ public class DbImpl implements Db {
 
     private void setIdentifiableInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(parameterIndex, hex.encode(byteSource.getByteBuffer()));
+    }
+
+    private void setIdentifiableInCallableStatement(int parameterIndex, ByteSource byteSource, CallableStatement callableStatement) throws SQLException {
+        callableStatement.setString(parameterIndex, hex.encode(byteSource.getByteBuffer()));
     }
 
     @Override
