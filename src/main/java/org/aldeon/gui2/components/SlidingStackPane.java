@@ -20,6 +20,17 @@ public class SlidingStackPane extends StackPane {
 
     private final IntegerProperty transitionTime = new SimpleIntegerProperty(DEFAULT_TRANSITION_TIME);
 
+    public void insertWithoutAnimation(Node node) {
+        if(getChildren().contains(node)) {
+            return;
+        }
+        getChildren().add(node);
+    }
+
+    public void removeWithoutAnimation(Node node) {
+        getChildren().remove(node);
+    }
+
     public void slideIn(final Node node, Direction dir) {
         if(getChildren().contains(node)) {
             return;

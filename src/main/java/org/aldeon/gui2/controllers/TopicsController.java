@@ -14,7 +14,8 @@ import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
-import org.aldeon.gui2.components.ConversationViewer;
+import org.aldeon.gui2.components.ConversationViewerSwitcher;
+import org.aldeon.gui2.components.ListConversationViewer;
 import org.aldeon.gui2.components.MessageCreator;
 import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.components.TopicCard;
@@ -102,11 +103,11 @@ public class TopicsController {
     }
 
     private void focusOnTopic(Message topic) {
-        final ConversationViewer viewer = new ConversationViewer();
+        final ConversationViewerSwitcher viewer = new ConversationViewerSwitcher();
         viewer.setFocus(topic);
-        viewer.setOnViewerClosed(new EventHandler<MouseEvent>() {
+        viewer.setOnViewerClosed(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(MouseEvent mouseEvent) {
+            public void handle(ActionEvent actionEvent) {
                 slider.slideOut(viewer, Direction.RIGHT);
             }
         });

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<?import org.aldeon.gui2.components.SlidingStackPane?>
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" style="-fx-background-color: #444444;">
+    <top>
+        <BorderPane prefHeight="48.0" styleClass="topBar">
+            <left>
+                <FlowPane alignment="CENTER_LEFT" hgap="8.0">
+                    <children>
+                        <Button fx:id="back" text="Back" styleClass="styled"></Button>
+                        <Button fx:id="toggle" onAction="#onToggle" text="Toggle view" styleClass="styled"></Button>
+                    </children>
+                </FlowPane>
+            </left>
+            <padding>
+                <Insets top="8.0" bottom="8.0" left="8.0" right="8.0" />
+            </padding>
+        </BorderPane>
+    </top>
+    <center>
+        <SlidingStackPane fx:id="slider" />
+    </center>
+    <stylesheets>
+        <URL value="@../../css/TopBar.css" />
+    </stylesheets>
+</fx:root>
