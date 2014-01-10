@@ -87,19 +87,20 @@ public class DownloadMessageTask extends AbstractOutboundTask<GetMessageRequest>
     }
 
     private void tryToInsert(Message message) {
-        db.insertMessage(message, new Callback<Boolean>() {
+        db.insertMessage(message, new Callback<Db.InsertResult>() {
             @Override
-            public void call(Boolean messageInserted) {
-                if(messageInserted) {
+            public void call(Db.InsertResult result) {
+
+                if(result == Db.InsertResult.INSERTED) {
                     onFinished.call(Result.MESSAGE_INSERTED);
-                } else {
-                    /*
-                        TODO: Differentiate between following situations:
-                            - message already exists in the database
-                            - parent not in the database
-                     */
+                } else if(result == Db.InsertResult.NO_PARENT) {
                     onFinished.call(Result.PARENT_UNKNOWN);
+                } else if(result == Db.InsertResult.ALREADY_EXISTS) {
+                    onFinished.call(Result.MESSAGE_EXISTS);
+                } else {
+                    throw new IllegalStateException("Invalid insert result");
                 }
+
             }
         });
     }

@@ -134,6 +134,11 @@ public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
                         onOperationCompleted.call(SyncResult.noChanges());
                         break;
 
+                    case CHECK_FAILED:
+                        // This clearly means the server is spamming us
+                        onOperationCompleted.call(SyncResult.purposefulError());
+                        break;
+
                     case COMMUNICATION_ERROR:
                         // Ouch - this should be noted
                         onOperationCompleted.call(SyncResult.requestFailed());
@@ -250,10 +255,21 @@ public class BranchSyncTask extends AbstractOutboundTask<CompareTreesRequest> {
                         // Server must have removed the message after sending us the identifier, so
                         // there is no point in synchronizing this branch. This is server's fault,
                         // but this is nothing particularly bad.
+                        syncBranchWhenXorKnown(getRequest().branchId, getRequest().branchXor, true, onFinished);
+                        break;
 
                     case PARENT_UNKNOWN:
                         // We must have removed the parent after making the check but before inserting
                         // the child the database - we should ignore the branch.
+                        syncBranchWhenXorKnown(getRequest().branchId, getRequest().branchXor, true, onFinished);
+                        break;
+
+                    case CHECK_FAILED:
+                        // Now this is interesting - because lucky guess checks include ancestry checks,
+                        // it is possible that the user removes the branch where the lucky guess was supposed
+                        // to go. This is why we must treat this as an accidental error, even if it may have
+                        // been intentional. The damage here is zero (we go back to synchronizing branch anyway),
+                        // so we can afford not caring whether the server is malicious.
                         syncBranchWhenXorKnown(getRequest().branchId, getRequest().branchXor, true, onFinished);
                         break;
 

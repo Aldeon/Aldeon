@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.components.ConversationViewerSwitcher;
@@ -141,12 +142,8 @@ public class TopicsController {
             @Override
             public void handle(final MessageEvent messageEvent) {
                 if(messageEvent.message() != null) {
-                    GuiDbUtils.db().insertMessage(messageEvent.message(), new FxCallback<Boolean>() {
-                        @Override
-                        protected void react(Boolean val) {
-                            addTopic(messageEvent.message());
-                        }
-                    });
+                    addTopic(messageEvent.message());
+                    GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Db.InsertResult>emptyCallback());
                 }
                 slider.slideOut(creator, Direction.RIGHT);
             }

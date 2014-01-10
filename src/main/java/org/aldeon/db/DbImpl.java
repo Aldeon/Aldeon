@@ -89,9 +89,9 @@ public class DbImpl implements Db {
     }
 
     @Override
-    public void insertMessage(Message message, Callback<Boolean> callback) {
+    public void insertMessage(Message message, Callback<InsertResult> callback) {
         if (message == null || connection == null) {
-            callback.call(false);
+            callback.call(InsertResult.CRITICAL_ERROR);
             return;
         }
 
@@ -120,10 +120,11 @@ public class DbImpl implements Db {
 
             preparedStatement.executeUpdate();
 
-            callback.call(true);
+            callback.call(InsertResult.INSERTED);
         } catch (SQLException e) {
             log.error("Error in insertMessage", e);
-            callback.call(false);
+            // TODO: Differentiate between NO_PARENT and ALREADY_EXISTS
+            callback.call(InsertResult.NO_PARENT);
         }
     }
 
@@ -291,7 +292,7 @@ public class DbImpl implements Db {
     @Override
     public void checkAncestry(Identifier descendant, Identifier ancestor, Callback<Boolean> callback) {
         // TODO: implement
-        callback.call(false);
+        callback.call(true);
     }
 
     @Override
@@ -631,7 +632,7 @@ public class DbImpl implements Db {
         Message response111 = Messages.createAndSign(response11.getIdentifier(), luke.publicKey, luke.privateKey, "Nooooooooooooooooooo!!!1");
 
 
-        Callback<Boolean> cb = Callbacks.emptyCallback();
+        Callback<InsertResult> cb = Callbacks.emptyCallback();
         insertMessage(topic, cb);
         insertMessage(response1, cb);
         insertMessage(response11, cb);
@@ -641,8 +642,8 @@ public class DbImpl implements Db {
         Identity vaderIdentity = Identity.create("Vader", vader.publicKey, vader.privateKey);
         Identity lukeIdentity = Identity.create("Luke", luke.publicKey, luke.privateKey);
 
-        insertIdentity(vaderIdentity, cb);
-        insertIdentity(lukeIdentity, cb);
+        insertIdentity(vaderIdentity, Callbacks.<Boolean>emptyCallback());
+        insertIdentity(lukeIdentity, Callbacks.<Boolean>emptyCallback());
 
         log.info("Inserted topic: " + topic.getIdentifier());
     }

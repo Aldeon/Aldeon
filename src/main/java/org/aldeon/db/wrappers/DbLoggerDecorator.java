@@ -44,7 +44,7 @@ public class DbLoggerDecorator extends AbstractDbWrapper {
     }
 
     @Override
-    public void insertMessage(Message message, Callback<Boolean> callback) {
+    public void insertMessage(Message message, Callback<InsertResult> callback) {
         System.out.println("------------");
         final String rand = randomHex();
         System.out.println(rand + " QUERY: insert message");

@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.db.Db;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.various.FxCallback;
@@ -111,7 +112,7 @@ public class ListConversationViewer extends ConversationViewer {
             @Override
             public void handle(final MessageEvent messageEvent) {
                 if(messageEvent.message() != null) {
-                    GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Boolean>emptyCallback());
+                    GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Db.InsertResult>emptyCallback());
                 }
                 children.getChildren().remove(creator);
             }
