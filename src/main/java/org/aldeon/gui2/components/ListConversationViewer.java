@@ -58,7 +58,9 @@ public class ListConversationViewer extends ConversationViewer {
         messageAddedCallback = new FxCallback<MessageAddedEvent>() {
             @Override
             protected void react(MessageAddedEvent event) {
+                System.out.println("Message added - checking if the message should be presented");
                 if(event.getMessage().getParentMessageIdentifier().equals(getFocus())) {
+                    System.out.println("Yep, it should");
                     childrenCards.add(card(event.getMessage()));
                 }
             }
