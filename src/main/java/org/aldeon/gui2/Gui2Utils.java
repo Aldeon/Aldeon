@@ -61,7 +61,7 @@ public class Gui2Utils {
         }
     }
 
-    public EventLoop loop() {
+    public static EventLoop loop() {
         return loop;
     }
 

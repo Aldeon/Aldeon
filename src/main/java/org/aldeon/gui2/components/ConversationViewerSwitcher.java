@@ -30,7 +30,9 @@ public class ConversationViewerSwitcher extends BorderPane {
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                unshow();
+                if(conversationViewer != null) {
+                    conversationViewer.onRemovedFromScene();
+                }
                 if(getOnViewerClosed() != null) {
                     getOnViewerClosed().handle(actionEvent);
                 }

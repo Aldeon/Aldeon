@@ -12,10 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.components.ConversationViewerSwitcher;
-import org.aldeon.gui2.components.ListConversationViewer;
 import org.aldeon.gui2.components.MessageCreator;
 import org.aldeon.gui2.components.SlidingStackPane;
 import org.aldeon.gui2.components.TopicCard;
@@ -31,6 +31,8 @@ import org.aldeon.utils.codec.base64.Base64Module;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.helpers.Callbacks;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class TopicsController {
@@ -45,6 +47,7 @@ public class TopicsController {
     @FXML protected VBox topics;
 
     private final ObservableList<TopicCard> topicCards = FXCollections.observableArrayList();
+    private final Map<Identifier, UnknownTopicCard> unknownTopics = new HashMap<>();
 
     public void initialize() {
         Bindings.bindContent(topics.getChildren(), topicCards);
@@ -56,12 +59,23 @@ public class TopicsController {
                 }
             }
         });
+        Gui2Utils.loop().assign(MessageAddedEvent.class, new FxCallback<MessageAddedEvent>() {
+            @Override
+            protected void react(MessageAddedEvent event) {
+                UnknownTopicCard card = unknownTopics.get(event.getMessage().getIdentifier());
+                if(card != null) {
+                    card.setMessage(event.getMessage());
+                    unknownTopics.remove(event.getMessage().getIdentifier());
+                }
+            }
+        });
     }
 
     private void addUnknownTopic(Identifier topic) {
-        TopicCard card = new UnknownTopicCard(topic);
+        UnknownTopicCard card = new UnknownTopicCard(topic);
         addCardCallbacks(card);
         topicCards.add(card);
+        unknownTopics.put(topic, card);
     }
 
     private void addTopic(final Message topic) {
@@ -83,6 +97,9 @@ public class TopicsController {
             @Override
             public void handle(ActionEvent event) {
                 topicCards.remove(card);
+                if(unknownTopics.containsKey(card.getMessageId())) {
+                    unknownTopics.remove(card.getMessageId());
+                }
                 if(card.getMessage() != null) {
                     GuiDbUtils.db().deleteMessage(card.getMessage().getIdentifier(), Callbacks.<Boolean>emptyCallback());
                 }
