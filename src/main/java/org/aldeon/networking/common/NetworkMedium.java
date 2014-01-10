@@ -13,7 +13,7 @@ public interface NetworkMedium extends Service {
     SendPoint sendPoint();
     RecvPoint recvPoint();
 
-    PeerAddress localAddressForForeignAddress(PeerAddress peerAddress);
+    PeerAddress localAddressForRemoteAddress(PeerAddress peerAddress);
     Set<? extends PeerAddress> localAddresses();
     boolean remoteAddressBelievable(PeerAddress address);
 

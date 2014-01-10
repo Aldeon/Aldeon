@@ -80,7 +80,7 @@ public class NetworkService implements Service {
     public PeerAddress localAddress(PeerAddress peerAddress) {
         NetworkMedium medium = mediums.get(peerAddress.getType());
         if(medium != null) {
-            return medium.localAddressForForeignAddress(peerAddress);
+            return medium.localAddressForRemoteAddress(peerAddress);
         } else {
             return null;
         }

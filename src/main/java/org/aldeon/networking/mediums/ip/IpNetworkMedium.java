@@ -126,7 +126,7 @@ public class IpNetworkMedium implements NetworkMedium {
     ///////////////////////////////////////////////////////
 
     @Override
-    public IpPeerAddress localAddressForForeignAddress(PeerAddress peerAddress) {
+    public IpPeerAddress localAddressForRemoteAddress(PeerAddress peerAddress) {
 
         if(!(peerAddress instanceof IpPeerAddress)) {
             return null;
