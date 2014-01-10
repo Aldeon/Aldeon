@@ -19,20 +19,17 @@ public class AddressTypeIgnoringInterestTracker implements InterestTracker {
 
     @Override
     public void addAddress(PeerAddress address, Identifier topic) {
-        System.out.println("INTADD: " + address + " TOPIC: " + topic);
         line(topic).addAddress(address);
     }
 
     @Override
     public void delAddress(PeerAddress address, Identifier topic) {
-        System.out.println("INTDEL: " + address + " TOPIC: " + topic);
         line(topic).delAddress(address);
         clean(topic);
     }
 
     @Override
     public void delAddress(PeerAddress address) {
-        System.out.println("INTDEL: " + address);
         Iterator<TopicOrderLine> it = lines.values().iterator();
         while(it.hasNext()) {
             TopicOrderLine line = it.next();
@@ -46,7 +43,6 @@ public class AddressTypeIgnoringInterestTracker implements InterestTracker {
     @Override
     public Set<PeerAddress> getInterested(AddressType addressType, Identifier topic, int maxResults) {
         Set<PeerAddress> result = line(topic).getAddresses(maxResults);
-        System.out.println("INTSET: " + result.size());
         clean(topic);
         return result;
     }

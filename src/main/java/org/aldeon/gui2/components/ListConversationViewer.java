@@ -41,6 +41,12 @@ public class ListConversationViewer extends ConversationViewer {
         focusProperty().addListener(new ChangeListener<Message>() {
             @Override
             public void changed(ObservableValue<? extends Message> observableValue, Message oldMessage, Message newMessage) {
+                if(newMessage == null) {
+                    ancestorCards.clear();
+                    childrenCards.clear();
+                    focused.getChildren().clear();
+                    return;
+                }
                 if (cardListContains(ancestorCards, newMessage)) {
                     trimAncestors(newMessage);
                 } else if (cardListContains(childrenCards, newMessage)) {
@@ -91,6 +97,7 @@ public class ListConversationViewer extends ConversationViewer {
                     protected void react(Boolean removedSuccessfully) {
                         if(message.getParentMessageIdentifier().isEmpty()) {
                             //TODO: indicate to parent that conversation closed
+                            setFocus(null);
                         } else {
                             if(getFocus().getIdentifier().equals(message.getParentMessageIdentifier())) {
                                 removeChild(message.getIdentifier());

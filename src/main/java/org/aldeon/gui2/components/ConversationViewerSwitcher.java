@@ -3,6 +3,8 @@ package org.aldeon.gui2.components;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -30,11 +32,19 @@ public class ConversationViewerSwitcher extends BorderPane {
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(conversationViewer != null) {
+                if (conversationViewer != null) {
                     conversationViewer.onRemovedFromScene();
                 }
-                if(getOnViewerClosed() != null) {
+                if (getOnViewerClosed() != null) {
                     getOnViewerClosed().handle(actionEvent);
+                }
+            }
+        });
+        focusProperty().addListener(new ChangeListener<Message>() {
+            @Override
+            public void changed(ObservableValue<? extends Message> observableValue, Message message, Message message2) {
+                if(message2 == null) {
+                    back.getOnAction().handle(null);
                 }
             }
         });
