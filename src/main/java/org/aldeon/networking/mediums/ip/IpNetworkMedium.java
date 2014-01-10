@@ -32,6 +32,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -41,6 +42,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Aggregates all functionality related to TCP/IP communication.
+ */
 public class IpNetworkMedium implements NetworkMedium {
 
     static {
@@ -122,7 +126,7 @@ public class IpNetworkMedium implements NetworkMedium {
     ///////////////////////////////////////////////////////
 
     @Override
-    public IpPeerAddress machineAddressForForeignAddress(PeerAddress peerAddress) {
+    public IpPeerAddress localAddressForForeignAddress(PeerAddress peerAddress) {
 
         if(!(peerAddress instanceof IpPeerAddress)) {
             return null;
@@ -159,6 +163,44 @@ public class IpNetworkMedium implements NetworkMedium {
         }
 
         return null;
+    }
+
+    @Override
+    public Set<IpPeerAddress> localAddresses() {
+        Set<IpPeerAddress> addresses = new HashSet<>();
+        for(Iface iface: interfaces) {
+            addresses.add(iface.address);
+        }
+        if(translatedAddress != null) {
+            addresses.add(translatedAddress);
+        }
+        return addresses;
+    }
+
+    @Override
+    public boolean remoteAddressBelievable(PeerAddress address) {
+
+        /*
+            Address is considered believable if:
+                - it is not a local address with a different port
+                - it is not in an unreachable private subnet //TODO: figure out how to check if network is unreachable
+                - it is not a loopback address (0.0.0.0, 127.0.0.1 itp)
+         */
+
+        if(! (address instanceof IpPeerAddress)) return false;
+        IpPeerAddress peer = (IpPeerAddress) address;
+
+        if(peer.getHost().isAnyLocalAddress() || peer.getHost().isLoopbackAddress()) {
+            return false;
+        }
+
+        for(IpPeerAddress localAddress: localAddresses()) {
+            if(localAddress.getHost().equals(peer.getHost())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

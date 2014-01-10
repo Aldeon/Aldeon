@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 public class UpnpAddressTranslationFactory {
 
-    private static final int LEASE_DURATION_SECONDS = 120; //debug
+    private static final int LEASE_DURATION_SECONDS = 3600 * 24; //debug
 
     public static Future<AddressTranslation> create(Port desiredInternalPort, Port desiredExternalPort) {
 

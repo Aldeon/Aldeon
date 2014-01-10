@@ -12,8 +12,8 @@ import org.aldeon.dht.crawler.Crawler;
 import org.aldeon.dht.interest.DemandChangedEvent;
 import org.aldeon.events.ACB;
 import org.aldeon.events.EventLoop;
+import org.aldeon.networking.AddressFilter;
 import org.aldeon.networking.NetworkService;
-import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.InboundRequestTask;
 import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.Receiver;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * proper functioning of server-side and client-side elements.
  *
  */
-public class AldeonCore extends BaseCore implements Service {
+public class AldeonCore extends BaseCore {
 
     private static final Logger log = LoggerFactory.getLogger(AldeonCore.class);
 
@@ -46,7 +46,7 @@ public class AldeonCore extends BaseCore implements Service {
         this.networkService = networkService;
         this.sender = networkService.getUnifiedSender();
         this.receiver = networkService.getUnifiedReceiver();
-        this.dht = DhtModule.create(getSender().acceptedTypes(), eventLoop);
+        this.dht = DhtModule.create(getSender().acceptedTypes(), eventLoop, new AddressFilter(networkService));
         this.crawler = new Crawler(getDht(), getSender());
 
         getEventLoop().assign(DemandChangedEvent.class, new ACB<DemandChangedEvent>(clientSideExecutor()) {
@@ -93,7 +93,7 @@ public class AldeonCore extends BaseCore implements Service {
 
     @Override
     public PeerAddress reachableLocalAddress(PeerAddress peer) {
-        return networkService.machineAddress(peer);
+        return networkService.localAddress(peer);
     }
 
     @Override

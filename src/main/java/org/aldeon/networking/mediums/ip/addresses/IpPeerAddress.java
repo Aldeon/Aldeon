@@ -57,4 +57,17 @@ public abstract class IpPeerAddress implements PeerAddress {
     public String toString() {
         return getHost().getHostAddress() + ":" + getPort();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof IpPeerAddress) {
+            IpPeerAddress addr = (IpPeerAddress) obj;
+            return addr.getHost().equals(getHost()) && (addr.getPort().getIntValue() == getPort().getIntValue());
+        } else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getHost().hashCode() + getPort().hashCode();
+    }
 }

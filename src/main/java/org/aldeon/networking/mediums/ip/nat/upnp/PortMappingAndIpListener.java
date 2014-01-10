@@ -75,6 +75,7 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
                 @Override
                 public void success(ActionInvocation invocation) {
                     log.info("Added port mapping: " + portMapping);
+                    log.info("Port mapping lease duration: " + portMapping.getLeaseDurationSeconds() + " seconds");
                     activeServices.put(service, ap);
 
                     controlPoint.execute(new GetExternalIP(service) {
