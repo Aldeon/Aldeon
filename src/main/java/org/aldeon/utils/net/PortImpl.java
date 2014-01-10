@@ -29,4 +29,11 @@ public class PortImpl implements Port {
     public int hashCode() {
         return hashCode;
     }
+
+    public boolean equals(Object obj) {
+        if(obj instanceof Port) {
+            return ((Port) obj).getIntValue() == getIntValue();
+        }
+        return false;
+    }
 }

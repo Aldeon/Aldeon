@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import org.aldeon.gui2.components.SlidingStackPane;
+import org.aldeon.gui2.components.TreeConversationViewer;
 import org.aldeon.gui2.various.Direction;
 
 public class MainController {
@@ -25,13 +26,14 @@ public class MainController {
         welcomeNode = WelcomeController.create();
         topicsNode = TopicsController.create();
         identitiesNode = IdentitiesController.create();
+        settingsNode = new TreeConversationViewer();
     }
 
     /**
      * "second constructor" - fired as soon as all the Node references are set.
      */
     public void initialize() {
-        content.getChildren().add(welcomeNode);
+        content.insertWithoutAnimation(welcomeNode);
         active = welcomeNode;
     }
 
