@@ -1,5 +1,6 @@
 package org.aldeon.dht.crawler;
 
+import org.aldeon.core.CoreModule;
 import org.aldeon.dht.Dht;
 import org.aldeon.events.Callback;
 import org.aldeon.networking.common.PeerAddress;
@@ -39,6 +40,18 @@ public class JobWorker {
                     if(responseReceived) {
 
                         // The peer is alive. Let's give him an interest entry
+                        // 1. Figure out who should we advertise ourselves as
+                        final PeerAddress myself  = CoreModule.getInstance().reachableLocalAddress(peer);
+                        if(myself != null) {
+                            sender.addTask(new IndicateInterestTask(job.topic(), peer, myself, new Callback<Boolean>() {
+                                @Override
+                                public void call(Boolean success) {
+                                    if(success) {
+                                        log.info("Indicated interest in topic " + job.topic() + " to peer " + peer + " (as " + myself + ")");
+                                    }
+                                }
+                            }));
+                        }
 
                     } else {
                         // remove address from our dht
