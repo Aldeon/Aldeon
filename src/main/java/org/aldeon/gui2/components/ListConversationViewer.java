@@ -111,7 +111,6 @@ public class ListConversationViewer extends ConversationViewer {
             @Override
             public void handle(final MessageEvent messageEvent) {
                 if(messageEvent.message() != null) {
-                    childrenCards.add(card(messageEvent.message()));
                     GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Boolean>emptyCallback());
                 }
                 children.getChildren().remove(creator);

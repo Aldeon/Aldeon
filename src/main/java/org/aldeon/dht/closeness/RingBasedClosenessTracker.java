@@ -16,16 +16,20 @@ public class RingBasedClosenessTracker implements ClosenessTracker {
 
     @Override
     public void addAddress(PeerAddress address) {
+        System.out.println("CLSADD: " + address);
         ring.insert(address);
     }
 
     @Override
     public void delAddress(PeerAddress address) {
+        System.out.println("CLSDEL: " + address);
         ring.remove(address);
     }
 
     @Override
     public Set<PeerAddress> getNearest(AddressType addressType, Identifier identifier, int maxResults) {
-        return ring.getNearest(identifier, maxResults);
+        Set<PeerAddress> result = ring.getNearest(identifier, maxResults);
+        System.out.println("CLSSET: " + result.size());
+        return result;
     }
 }
