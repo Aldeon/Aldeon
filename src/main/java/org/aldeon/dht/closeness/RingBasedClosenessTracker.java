@@ -11,25 +11,21 @@ public class RingBasedClosenessTracker implements ClosenessTracker {
     private final Ring ring;
 
     public RingBasedClosenessTracker(Ring ring) {
-        this.ring = ring;
+        this.ring = new ConcurrentRingDecorator(ring);
     }
 
     @Override
     public void addAddress(PeerAddress address) {
-        System.out.println("CLSADD: " + address);
         ring.insert(address);
     }
 
     @Override
     public void delAddress(PeerAddress address) {
-        System.out.println("CLSDEL: " + address);
         ring.remove(address);
     }
 
     @Override
     public Set<PeerAddress> getNearest(AddressType addressType, Identifier identifier, int maxResults) {
-        Set<PeerAddress> result = ring.getNearest(identifier, maxResults);
-        System.out.println("CLSSET: " + result.size());
-        return result;
+        return ring.getNearest(identifier, maxResults);
     }
 }

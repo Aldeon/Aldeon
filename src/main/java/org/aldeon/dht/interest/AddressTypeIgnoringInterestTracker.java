@@ -1,5 +1,6 @@
 package org.aldeon.dht.interest;
 
+import org.aldeon.dht.interest.orders.ConcurrentTopicOrderLine;
 import org.aldeon.dht.interest.orders.Order;
 import org.aldeon.dht.interest.orders.TopicOrderLine;
 import org.aldeon.dht.interest.orders.TopicOrderLineImpl;
@@ -64,7 +65,7 @@ public class AddressTypeIgnoringInterestTracker implements InterestTracker {
     private TopicOrderLine line(Identifier topic) {
         TopicOrderLine line = lines.get(topic);
         if(line == null) {
-            line = new TopicOrderLineImpl();
+            line = new ConcurrentTopicOrderLine(new TopicOrderLineImpl());
             lines.put(topic, line);
         }
         return line;
