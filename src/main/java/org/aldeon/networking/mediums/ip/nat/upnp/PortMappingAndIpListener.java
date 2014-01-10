@@ -1,5 +1,6 @@
 package org.aldeon.networking.mediums.ip.nat.upnp;
 
+import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.Device;
@@ -71,40 +72,42 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
         } else {
             log.info("Activating port mapping on " + device.getDisplayString());
 
-            portMapping.setInternalClient(ap.getInternalAddress().getHostAddress());
+            ControlPoint controlPoint = registry.getUpnpService().getControlPoint();
 
-            new PortMappingAdd(service, registry.getUpnpService().getControlPoint(), portMapping) {
-
+            controlPoint.execute(new GetExternalIP(service) {
                 @Override
-                public void success(ActionInvocation invocation) {
-                    log.info("Added port mapping: " + portMapping);
-                    log.info("Port mapping lease duration: " + portMapping.getLeaseDurationSeconds() + " seconds");
-                    activeServices.put(service, ap);
+                protected void success(String externalIPAddress) {
+                    try {
+                        InetAddress externalInetAddress = InetAddress.getByName(externalIPAddress);
+                        log.info("External IP address for this service is " + externalIPAddress);
+                        ap.externalAddress = externalInetAddress;
 
-                    controlPoint.execute(new GetExternalIP(service) {
-                        @Override
-                        protected void success(String externalIPAddress) {
-                            try {
-                                activeServices.get(service).externalAddress = InetAddress.getByName(externalIPAddress);
-                                log.info("External IP address for this service is " + externalIPAddress);
-                            } catch (UnknownHostException e) {
-                                log.warn("Obtained invalid external IP address (" + externalIPAddress + ").");
+                        portMapping.setInternalClient(ap.getInternalAddress().getHostAddress());
+                        new PortMappingAdd(service, controlPoint, portMapping) {
+
+                            @Override
+                            public void success(ActionInvocation invocation) {
+                                log.info("Added port mapping: " + portMapping);
+                                log.info("Port mapping lease duration: " + portMapping.getLeaseDurationSeconds() + " seconds");
+                                activeServices.put(service, ap);
                             }
-                        }
 
-                        @Override
-                        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                            log.warn("Failed to obtain an external IP address for this service.");
-                        }
-                    });
+                            @Override
+                            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                                log.warn("Failed to add port mapping to service " + service + " (reason: " + defaultMsg + ")");
+                            }
+
+                        }.run();
+                    } catch (UnknownHostException e) {
+                        log.warn("Obtained invalid external IP address (" + externalIPAddress + ").");
+                    }
                 }
 
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    log.warn("Failed to add port mapping to service " + service + " (reason: " + defaultMsg + ")");
+                    log.warn("Failed to obtain an external IP address for this service.");
                 }
-
-            }.run();
+            });
         }
     }
 
