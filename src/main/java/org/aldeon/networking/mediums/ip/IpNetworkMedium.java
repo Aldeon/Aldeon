@@ -15,6 +15,9 @@ import org.aldeon.networking.mediums.ip.receiver.NettyRecvPoint;
 import org.aldeon.networking.mediums.ip.sender.NettySendPoint;
 import org.aldeon.utils.collections.IterableEnumeration;
 import org.aldeon.utils.helpers.InetAddresses;
+import org.aldeon.utils.json.JsonModule;
+import org.aldeon.utils.json.JsonParser;
+import org.aldeon.utils.json.ParseException;
 import org.aldeon.utils.net.PortImpl;
 import org.aldeon.utils.various.Provider;
 import org.slf4j.Logger;
@@ -22,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
@@ -46,6 +50,7 @@ public class IpNetworkMedium implements NetworkMedium {
 
     private static final Logger log = LoggerFactory.getLogger(IpNetworkMedium.class);
     private static final int PORT = 41530;
+    private static final JsonParser parser = new JsonModule().get();
 
     private final RecvPoint recvPoint;
     private final SendPoint sendPoint;
@@ -66,7 +71,6 @@ public class IpNetworkMedium implements NetworkMedium {
 
         recvPoint = new NettyRecvPoint(loopback);
         sendPoint = new NettySendPoint();
-
     }
 
     @Override
@@ -94,8 +98,14 @@ public class IpNetworkMedium implements NetworkMedium {
     }
 
     @Override
-    public PeerAddress deserialize(String address) {
-        throw new IllegalStateException("Not yet implemented");
+    public IpPeerAddress deserialize(String address) throws AddressParseException {
+        try {
+            IpPeerAddressTemplate template = parser.fromJson(address, IpPeerAddressTemplate.class);
+            InetAddress host = com.google.common.net.InetAddresses.forString(template.host);
+            return IpPeerAddress.create(host, template.port);
+        } catch (Exception e) {
+            throw new AddressParseException("Failed to deserialize the given string to IpPeerAddress", e);
+        }
     }
 
     private Iterable<NetworkInterface> networkInterfaces() {
@@ -215,5 +225,10 @@ public class IpNetworkMedium implements NetworkMedium {
             log.info("Shutting down address translation...");
             natPortMapping.shutdown();
         }
+    }
+
+    public static class IpPeerAddressTemplate {
+        public String host;
+        public int port;
     }
 }
