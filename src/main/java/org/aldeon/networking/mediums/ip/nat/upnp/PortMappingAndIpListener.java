@@ -1,8 +1,10 @@
 package org.aldeon.networking.mediums.ip.nat.upnp;
 
+import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.Device;
+import org.fourthline.cling.model.meta.RemoteDeviceIdentity;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.registry.DefaultRegistryListener;
 import org.fourthline.cling.registry.Registry;
@@ -15,6 +17,7 @@ import org.fourthline.cling.transport.spi.NetworkAddressFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
@@ -45,21 +48,22 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
 
         final AddressPair ap = new AddressPair();
 
-        try {
-            InetAddress devIp = InetAddress.getByName(device.getDetails().getBaseURL().getHost());
+        // We need to obtain an IP address of the gateway.
+        InetAddress devIp = deviceAddress(device);
+
+        if(devIp != null) {
             log.info("Device address: " + devIp.getHostAddress());
 
             NetworkAddressFactory factory = registry.getConfiguration().createNetworkAddressFactory();
             Iterator<NetworkInterface> it = factory.getNetworkInterfaces();
             while(it.hasNext()) {
                 try {
-                    ap.internalAddress = factory.getLocalAddress(it.next(), false, devIp);
+                    ap.internalAddress = factory.getLocalAddress(it.next(), devIp instanceof Inet6Address, devIp);
+                    break;
                 } catch(IllegalStateException e) {
-                    // this is the interface you're looking for <waves a hand>
+                    // this is not the interface you're looking for <waves a hand>
                 }
             }
-        } catch (UnknownHostException e) {
-            log.warn("Device address is invalid.");
         }
 
 
@@ -68,39 +72,42 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
         } else {
             log.info("Activating port mapping on " + device.getDisplayString());
 
-            portMapping.setInternalClient(ap.getInternalAddress().getHostAddress());
+            ControlPoint controlPoint = registry.getUpnpService().getControlPoint();
 
-            new PortMappingAdd(service, registry.getUpnpService().getControlPoint(), portMapping) {
-
+            controlPoint.execute(new GetExternalIP(service) {
                 @Override
-                public void success(ActionInvocation invocation) {
-                    log.info("Added port mapping: " + portMapping);
-                    activeServices.put(service, ap);
+                protected void success(String externalIPAddress) {
+                    try {
+                        InetAddress externalInetAddress = InetAddress.getByName(externalIPAddress);
+                        log.info("External IP address for this service is " + externalIPAddress);
+                        ap.externalAddress = externalInetAddress;
 
-                    controlPoint.execute(new GetExternalIP(service) {
-                        @Override
-                        protected void success(String externalIPAddress) {
-                            try {
-                                activeServices.get(service).externalAddress = InetAddress.getByName(externalIPAddress);
-                                log.info("External IP address for this service is " + externalIPAddress);
-                            } catch (UnknownHostException e) {
-                                log.warn("Obtained invalid external IP address (" + externalIPAddress + ").");
+                        portMapping.setInternalClient(ap.getInternalAddress().getHostAddress());
+                        new PortMappingAdd(service, controlPoint, portMapping) {
+
+                            @Override
+                            public void success(ActionInvocation invocation) {
+                                log.info("Added port mapping: " + portMapping);
+                                log.info("Port mapping lease duration: " + portMapping.getLeaseDurationSeconds() + " seconds");
+                                activeServices.put(service, ap);
                             }
-                        }
 
-                        @Override
-                        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                            log.warn("Failed to obtain an external IP address for this service.");
-                        }
-                    });
+                            @Override
+                            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                                log.warn("Failed to add port mapping to service " + service + " (reason: " + defaultMsg + ")");
+                            }
+
+                        }.run();
+                    } catch (UnknownHostException e) {
+                        log.warn("Obtained invalid external IP address (" + externalIPAddress + ").");
+                    }
                 }
 
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    log.warn("Failed to add port mapping to service " + service + " (reason: " + defaultMsg + ")");
+                    log.warn("Failed to obtain an external IP address for this service.");
                 }
-
-            }.run();
+            });
         }
     }
 
@@ -162,6 +169,25 @@ class PortMappingAndIpListener extends DefaultRegistryListener {
         }
 
         return ipConnectionService != null ? ipConnectionService : pppConnectionService;
+    }
+
+    public InetAddress deviceAddress (Device device) {
+        /*
+            I have no idea how to do this right. If you do - please, tell us.
+         */
+        try {
+            String host;
+            if(device.getIdentity() instanceof RemoteDeviceIdentity) {
+                RemoteDeviceIdentity identity = (RemoteDeviceIdentity) device.getIdentity();
+                host = identity.getDescriptorURL().getHost();
+            } else {
+                host = device.getDetails().getBaseURL().getHost();
+            }
+
+            return host == null  ? null : InetAddress.getByName(host);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     public class AddressPair{

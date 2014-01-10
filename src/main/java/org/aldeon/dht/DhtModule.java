@@ -2,14 +2,18 @@ package org.aldeon.dht;
 
 import org.aldeon.dht.closeness.ClosenessTracker;
 import org.aldeon.dht.closeness.ClosenessTrackerDispatcher;
+import org.aldeon.dht.closeness.ClosenessTrackerFilter;
 import org.aldeon.dht.closeness.RingBasedClosenessTracker;
 import org.aldeon.dht.closeness.RingImpl;
 import org.aldeon.dht.interest.AddressTypeIgnoringInterestTracker;
 import org.aldeon.dht.interest.InterestTracker;
 import org.aldeon.dht.interest.InterestTrackerDispatcher;
 import org.aldeon.dht.interest.InterestTrackerEventCaller;
+import org.aldeon.dht.interest.InterestTrackerFilter;
 import org.aldeon.events.EventLoop;
 import org.aldeon.networking.common.AddressType;
+import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.utils.various.Predicate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +21,7 @@ import java.util.Set;
 
 public class DhtModule {
 
-    public static Dht create(Set<AddressType> acceptedTypes, EventLoop eventLoop) {
+    public static Dht create(Set<AddressType> acceptedTypes, EventLoop eventLoop, Predicate<PeerAddress> filter) {
 
         // 1. Allocate appropriate structures
 
@@ -36,7 +40,10 @@ public class DhtModule {
 
         // 3. Apply decorators
 
+        closenessTracker = new ClosenessTrackerFilter(closenessTracker, filter);
+
         interestTracker = new InterestTrackerEventCaller(interestTracker, eventLoop);
+        interestTracker = new InterestTrackerFilter(interestTracker, filter);
 
         // 4. Return dht object
 

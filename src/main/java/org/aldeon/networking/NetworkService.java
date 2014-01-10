@@ -38,6 +38,7 @@ public class NetworkService implements Service {
     private final Receiver unifiedReceiver;
     private Map<AddressType, NetworkMedium> mediums = new HashMap<>();
     private Set<NetworkMedium> mediumSet;
+    private Set<PeerAddress> localAddresses = new HashSet<>();
 
     @Inject
     public NetworkService(Set<NetworkMedium> mediumSet) {
@@ -76,12 +77,25 @@ public class NetworkService implements Service {
         return unifiedReceiver;
     }
 
-    public PeerAddress machineAddress(PeerAddress peerAddress) {
+    public PeerAddress localAddress(PeerAddress peerAddress) {
         NetworkMedium medium = mediums.get(peerAddress.getType());
         if(medium != null) {
-            return medium.machineAddressForForeignAddress(peerAddress);
+            return medium.localAddressForRemoteAddress(peerAddress);
         } else {
             return null;
+        }
+    }
+
+    public Set<PeerAddress> getLocalAddresses() {
+        return localAddresses;
+    }
+
+    public boolean addressBelieveable(PeerAddress peerAddress) {
+        NetworkMedium medium = mediums.get(peerAddress.getType());
+        if(medium != null) {
+            return medium.remoteAddressBelievable(peerAddress);
+        } else {
+            return false;
         }
     }
 
@@ -107,7 +121,9 @@ public class NetworkService implements Service {
     public void start() {
         for(NetworkMedium medium: mediumSet) {
             medium.start();
+            localAddresses.addAll(medium.localAddresses());
         }
+        localAddresses = Collections.unmodifiableSet(localAddresses);
     }
 
     @Override

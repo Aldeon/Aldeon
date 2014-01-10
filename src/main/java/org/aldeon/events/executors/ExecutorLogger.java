@@ -19,13 +19,12 @@ public class ExecutorLogger implements Executor {
 
     @Override
     public void execute(Runnable command) {
-
-        log.info("Executor <" + label + ">: " + sourceFile(command));
-
+        //log.info("Executor <" + label + ">: " + sourceFile(command));
         executor.execute(command);
     }
 
     private String sourceFile(Object obj) {
+        // TODO: find a way to return a file where the class was declared.
         return obj.toString();
     }
 }

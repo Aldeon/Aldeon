@@ -7,28 +7,31 @@ import org.aldeon.model.Identifier;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.PeerAddress;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AddressTypeIgnoringInterestTracker implements InterestTracker {
 
-    private Map<Identifier, TopicOrderLine> lines = new HashMap<>();
+    private Map<Identifier, TopicOrderLine> lines = new ConcurrentHashMap<>();
 
     @Override
     public void addAddress(PeerAddress address, Identifier topic) {
+        System.out.println("INTADD: " + address + " TOPIC: " + topic);
         line(topic).addAddress(address);
     }
 
     @Override
     public void delAddress(PeerAddress address, Identifier topic) {
+        System.out.println("INTDEL: " + address + " TOPIC: " + topic);
         line(topic).delAddress(address);
         clean(topic);
     }
 
     @Override
     public void delAddress(PeerAddress address) {
+        System.out.println("INTDEL: " + address);
         Iterator<TopicOrderLine> it = lines.values().iterator();
         while(it.hasNext()) {
             TopicOrderLine line = it.next();

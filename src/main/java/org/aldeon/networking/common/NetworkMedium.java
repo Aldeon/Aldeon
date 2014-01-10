@@ -13,7 +13,9 @@ public interface NetworkMedium extends Service {
     SendPoint sendPoint();
     RecvPoint recvPoint();
 
-    PeerAddress machineAddressForForeignAddress(PeerAddress peerAddress);
+    PeerAddress localAddressForRemoteAddress(PeerAddress peerAddress);
+    Set<? extends PeerAddress> localAddresses();
+    boolean remoteAddressBelievable(PeerAddress address);
 
     String serialize(PeerAddress address) throws AddressParseException;
     PeerAddress deserialize(String address) throws AddressParseException;

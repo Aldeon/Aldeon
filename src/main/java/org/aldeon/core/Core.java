@@ -7,6 +7,8 @@ import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.networking.common.Receiver;
 import org.aldeon.networking.common.Sender;
 import org.aldeon.sync.TopicManager;
+
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 public interface Core {
@@ -46,7 +48,6 @@ public interface Core {
      * (or should be) reachable for a given peer.
      */
     PeerAddress reachableLocalAddress(PeerAddress peer);
-
 
     /**
      * Manages user identities
