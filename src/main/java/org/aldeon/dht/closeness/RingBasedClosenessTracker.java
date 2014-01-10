@@ -11,7 +11,7 @@ public class RingBasedClosenessTracker implements ClosenessTracker {
     private final Ring ring;
 
     public RingBasedClosenessTracker(Ring ring) {
-        this.ring = ring;
+        this.ring = new ConcurrentRingDecorator(ring);
     }
 
     @Override

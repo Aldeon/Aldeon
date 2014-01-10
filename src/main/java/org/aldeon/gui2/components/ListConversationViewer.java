@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.db.Db;
 import org.aldeon.events.AsyncCallback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.various.FxCallback;
@@ -40,6 +41,12 @@ public class ListConversationViewer extends ConversationViewer {
         focusProperty().addListener(new ChangeListener<Message>() {
             @Override
             public void changed(ObservableValue<? extends Message> observableValue, Message oldMessage, Message newMessage) {
+                if(newMessage == null) {
+                    ancestorCards.clear();
+                    childrenCards.clear();
+                    focused.getChildren().clear();
+                    return;
+                }
                 if (cardListContains(ancestorCards, newMessage)) {
                     trimAncestors(newMessage);
                 } else if (cardListContains(childrenCards, newMessage)) {
@@ -58,7 +65,7 @@ public class ListConversationViewer extends ConversationViewer {
         messageAddedCallback = new FxCallback<MessageAddedEvent>() {
             @Override
             protected void react(MessageAddedEvent event) {
-                if(event.getMessage().getParentMessageIdentifier().equals(getFocus())) {
+                if(event.getMessage().getParentMessageIdentifier().equals(getFocus().getIdentifier())) {
                     childrenCards.add(card(event.getMessage()));
                 }
             }
@@ -90,6 +97,7 @@ public class ListConversationViewer extends ConversationViewer {
                     protected void react(Boolean removedSuccessfully) {
                         if(message.getParentMessageIdentifier().isEmpty()) {
                             //TODO: indicate to parent that conversation closed
+                            setFocus(null);
                         } else {
                             if(getFocus().getIdentifier().equals(message.getParentMessageIdentifier())) {
                                 removeChild(message.getIdentifier());
@@ -111,8 +119,7 @@ public class ListConversationViewer extends ConversationViewer {
             @Override
             public void handle(final MessageEvent messageEvent) {
                 if(messageEvent.message() != null) {
-                    childrenCards.add(card(messageEvent.message()));
-                    GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Boolean>emptyCallback());
+                    GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Db.InsertResult>emptyCallback());
                 }
                 children.getChildren().remove(creator);
             }

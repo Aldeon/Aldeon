@@ -11,6 +11,7 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.core.events.MessageRemovedEvent;
 import org.aldeon.crypt.rsa.RsaKeyGen;
+import org.aldeon.db.Db;
 import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identifier;
@@ -288,7 +289,7 @@ public class TopicMsgsController implements Initializable, ResponseControlListen
                                 int nestingLevel) {
 
         Message newMsg = Messages.createAndSign(parentIdentifier, author.getPublicKey(), author.getPrivateKey(), responseText);
-        CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
+        CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Db.InsertResult>emptyCallback());
         Parent msg = constructResponse(newMsg, nestingLevel+1);
 
         synchronized (this) {

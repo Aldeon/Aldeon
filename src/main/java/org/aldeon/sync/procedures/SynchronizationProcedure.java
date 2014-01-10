@@ -101,7 +101,7 @@ public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
             public void call(Identifier xor) {
                 if(xor == null) {
                     // Whoops, we need to download the topic first.
-                    // the boolean flag alleviates the possible threat of uncontrolled recursion
+                    // the boolean flag alleviates a possible threat of uncontrolled recursion
                     if(allowDownload) {
                         downloadAndThenSynchronize(peer, branch, onOperationCompleted);
                     } else {
@@ -139,8 +139,14 @@ public class SynchronizationProcedure implements SlotStateUpgradeProcedure {
                         onOperationCompleted.call(SyncResult.requestFailed());
                         break;
 
+                    case CHECK_FAILED:
+                        // Whoa - this means we are not downloading a topic.
+                        // TODO: handle situation when user downloads a non-topic message
+                        onOperationCompleted.call(SyncResult.requestFailed());
+                        break;
+
                     case PARENT_UNKNOWN:
-                        // Impossible
+                        // Impossible - the database cannot throw away a topic message
                         onOperationCompleted.call(SyncResult.requestFailed());
                         break;
 

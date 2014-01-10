@@ -33,14 +33,14 @@ public class DbEventCallerDecorator extends AbstractDbWrapper {
     }
 
     @Override
-    public void insertMessage(final Message message, final Callback<Boolean> callback) {
-        db.insertMessage(message, new Callback<Boolean>() {
+    public void insertMessage(final Message message, final Callback<InsertResult> callback) {
+        db.insertMessage(message, new Callback<InsertResult>() {
             @Override
-            public void call(Boolean messageInserted) {
-                if(messageInserted) {
+            public void call(InsertResult result) {
+                if(result == InsertResult.INSERTED) {
                     eventLoop.notify(new MessageAddedEvent(message));
                 }
-                callback.call(messageInserted);
+                callback.call(result);
             }
         });
     }

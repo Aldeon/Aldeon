@@ -54,6 +54,7 @@ public class DiffDownloadingProcedure implements SlotStateUpgradeProcedure {
     }
 
     private boolean successful(DiffResult result) {
+        // TODO: use the number of accidents that occurred when downloading diff
         return result.clock != null && result.failedRequests == 0;
     }
 }

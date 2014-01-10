@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
+import org.aldeon.db.Db;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Identity;
 import org.aldeon.model.Message;
@@ -51,7 +52,7 @@ public class CreateThreadController implements Initializable, WriteResponseContr
     @Override
     public void createdResponse(Parent wrcNode, WriteResponseController wrc, String responseText, Identity author, Identifier parentIdentifier, int nestingLevel) {
         Message newMsg = Messages.createAndSign(parentIdentifier, author.getPublicKey(), author.getPrivateKey(), responseText);
-        CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Boolean>emptyCallback());
+        CoreModule.getInstance().getStorage().insertMessage(newMsg, Callbacks.<Db.InsertResult>emptyCallback());
         mainController.threadsClicked(null);
     }
 }

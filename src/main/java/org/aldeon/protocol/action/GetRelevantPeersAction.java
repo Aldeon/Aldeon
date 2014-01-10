@@ -3,7 +3,9 @@ package org.aldeon.protocol.action;
 import com.google.inject.Inject;
 import org.aldeon.core.Core;
 import org.aldeon.dht.Dht;
+import org.aldeon.events.ACB;
 import org.aldeon.events.Callback;
+import org.aldeon.model.Message;
 import org.aldeon.networking.common.PeerAddress;
 import org.aldeon.protocol.Action;
 import org.aldeon.protocol.Response;
@@ -28,16 +30,28 @@ public class GetRelevantPeersAction implements Action<GetRelevantPeersRequest> {
     }
 
     @Override
-    public void respond(PeerAddress peer, GetRelevantPeersRequest request, Callback<Response> onResponse) {
+    public void respond(final PeerAddress peer, GetRelevantPeersRequest request, final Callback<Response> onResponse) {
 
-        Set<PeerAddress> interested = new HashSet<>();
-        Set<PeerAddress> nearValues = new HashSet<>();
+        final Set<PeerAddress> interested = new HashSet<>();
+        final Set<PeerAddress> nearValues = new HashSet<>();
 
         Dht dht = core.getDht();
 
         nearValues.addAll(dht.closenessTracker().getNearest(peer.getType(), request.topic, LIMIT));
         interested.addAll(dht.interestTracker().getInterested(peer.getType(), request.topic, LIMIT));
 
-        onResponse.call(new RelevantPeersResponse(interested, nearValues));
+        // If we are interested in a topic, include our address in the list
+
+        core.getStorage().getMessageById(request.topic, new ACB<Message>(core.serverSideExecutor()) {
+            @Override
+            protected void react(Message message) {
+
+                if(message != null) {
+                    interested.add(core.reachableLocalAddress(peer));
+                }
+
+                onResponse.call(new RelevantPeersResponse(interested, nearValues));
+            }
+        });
     }
 }

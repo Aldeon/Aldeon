@@ -29,7 +29,7 @@ public class DbWorkThreadDecorator extends AbstractDbWrapper{
     }
 
     @Override
-    public void insertMessage(final Message message, final Callback<Boolean> callback) {
+    public void insertMessage(final Message message, final Callback<InsertResult> callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {

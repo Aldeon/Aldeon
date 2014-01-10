@@ -20,8 +20,9 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
     private final Db db;
     private final Sender sender;
     private final Callback<DiffResult> onFinished;
-    private final AtomicInteger messagesDownloaded;
-    private final AtomicInteger failedRequests;
+    private final AtomicInteger messagesDownloaded = new AtomicInteger(0);
+    private final AtomicInteger failedRequests = new AtomicInteger(0);
+    private final AtomicInteger accidents = new AtomicInteger(0);
     private Long receivedClock;
 
     public GetDiffTask(PeerAddress peerAddress, Identifier topic, long clock, Db db, Sender sender, Callback<DiffResult> onFinished) {
@@ -35,8 +36,6 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
         this.sender = sender;
         this.onFinished = new SingleRunCallback<>(onFinished);
 
-        this.messagesDownloaded = new AtomicInteger(0);
-        this.failedRequests = new AtomicInteger(0);
         this.receivedClock = null;
     }
 
@@ -84,13 +83,20 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
 
                         case MESSAGE_NOT_ON_SERVER:
                             // Server must have removed it after sending us the diff
+                            accidents.incrementAndGet();
                             dispatcher.removeRecursively(downloadTarget);
                             break;
 
                         case PARENT_UNKNOWN:
                             // We must have deleted the branch. Do not download.
+                            accidents.incrementAndGet();
                             dispatcher.removeRecursively(downloadTarget);
                             break;
+
+                        case CHECK_FAILED:
+                            // Very suspicious - the server may be spamming us
+                            failedRequests.incrementAndGet();
+                            dispatcher.removeRecursively(downloadTarget);
 
                         case COMMUNICATION_ERROR:
                             failedRequests.incrementAndGet();
@@ -107,6 +113,7 @@ public class GetDiffTask extends AbstractOutboundTask<GetDiffRequest> {
             DiffResult result = new DiffResult();
             result.messagesDownloaded = messagesDownloaded.get();
             result.failedRequests = failedRequests.get();
+            result.accidents = accidents.get();
             result.clock = receivedClock;
             onFinished.call(result);
         }

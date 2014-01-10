@@ -25,7 +25,7 @@ public class DbCallbackThreadDecorator extends AbstractDbWrapper {
     }
 
     @Override
-    public void insertMessage(Message message, Callback<Boolean> callback) {
+    public void insertMessage(Message message, Callback<InsertResult> callback) {
         db.insertMessage(message, new CallbackAndExecutor<>(callback, executor));
     }
 

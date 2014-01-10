@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface Db extends Service {
-    void insertMessage(Message message, Callback<Boolean> callback);
+    void insertMessage(Message message, Callback<InsertResult> callback);
     void deleteMessage(Identifier msgId, Callback<Boolean> callback);
     void getMessageById(Identifier msgId, Callback<Message> callback);
     void getMessageXorById(Identifier msgId, Callback<Identifier> callback);
@@ -30,4 +30,11 @@ public interface Db extends Service {
     void deleteIdentity(Key publicKey, Callback<Boolean> callback);
     void getIdentity(Key publicKey, Callback<Identity> callback);
     void getIdentities(Callback<Set<Identity>> callback);
+
+    public enum InsertResult {
+        INSERTED,
+        ALREADY_EXISTS,
+        NO_PARENT,
+        CRITICAL_ERROR
+    }
 }

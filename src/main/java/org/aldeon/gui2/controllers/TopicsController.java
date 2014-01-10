@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.MessageAddedEvent;
+import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.components.ConversationViewerSwitcher;
@@ -84,6 +85,10 @@ public class TopicsController {
         topicCards.add(card);
     }
 
+    private void delTopic(Message topic) {
+        topicCards.remove(findCard(topic));
+    }
+
     private void addCardCallbacks(final TopicCard card) {
         card.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -119,12 +124,13 @@ public class TopicsController {
         });
     }
 
-    private void focusOnTopic(Message topic) {
+    private void focusOnTopic(final Message topic) {
         final ConversationViewerSwitcher viewer = new ConversationViewerSwitcher();
         viewer.setFocus(topic);
         viewer.setOnViewerClosed(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                if(viewer.getFocus() == null) delTopic(topic);
                 slider.slideOut(viewer, Direction.RIGHT);
             }
         });
@@ -135,18 +141,14 @@ public class TopicsController {
         return Gui2Utils.loadFXMLfromDefaultPath(FXML_FILE);
     }
 
-    @FXML public void newTopicClicked(ActionEvent actionEvent) {
+    @FXML protected void newTopicClicked(ActionEvent actionEvent) {
         final MessageCreator creator = new MessageCreator(Identifier.empty());
         creator.setOnCreatorClosed(new EventHandler<MessageEvent>() {
             @Override
             public void handle(final MessageEvent messageEvent) {
                 if(messageEvent.message() != null) {
-                    GuiDbUtils.db().insertMessage(messageEvent.message(), new FxCallback<Boolean>() {
-                        @Override
-                        protected void react(Boolean val) {
-                            addTopic(messageEvent.message());
-                        }
-                    });
+                    addTopic(messageEvent.message());
+                    GuiDbUtils.db().insertMessage(messageEvent.message(), Callbacks.<Db.InsertResult>emptyCallback());
                 }
                 slider.slideOut(creator, Direction.RIGHT);
             }
@@ -154,7 +156,7 @@ public class TopicsController {
         slider.slideIn(creator, Direction.RIGHT);
     }
 
-    @FXML public void watchTopicClicked(ActionEvent actionEvent) {
+    @FXML protected void watchTopicClicked(ActionEvent actionEvent) {
         String topicHash = watchTopicTextField.getText();
         try {
             Identifier topic = Identifier.fromByteBuffer(base64.decode(topicHash), false);
@@ -162,5 +164,12 @@ public class TopicsController {
         } catch (ConversionException e) {
             System.out.println("illegal identifier");
         }
+    }
+
+    private TopicCard findCard(Message topic) {
+        for(TopicCard card: topicCards) {
+            if(card.getMessage().equals(topic)) return card;
+        }
+        return null;
     }
 }

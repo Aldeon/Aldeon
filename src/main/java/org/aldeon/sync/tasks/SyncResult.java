@@ -25,6 +25,12 @@ public class SyncResult {
         return result;
     }
 
+    public static SyncResult purposefulError() {
+        SyncResult result = new SyncResult();
+        result.purposefulErrors++;
+        return result;
+    }
+
     public static SyncResult messageSuggested() {
         SyncResult result = new SyncResult();
         result.messagesSuggested++;
