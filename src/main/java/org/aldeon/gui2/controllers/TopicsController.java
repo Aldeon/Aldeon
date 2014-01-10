@@ -57,34 +57,48 @@ public class TopicsController {
         });
     }
 
+    private void addUnknownTopic(Identifier topic) {
+        TopicCard card = new UnknownTopicCard(topic);
+        addCardCallbacks(card);
+        topicCards.add(card);
+    }
+
     private void addTopic(final Message topic) {
-        final TopicCard card = new TopicCard(topic);
+        TopicCard card = new TopicCard(topic);
+        addCardCallbacks(card);
+        topicCards.add(card);
+    }
+
+    private void addCardCallbacks(final TopicCard card) {
         card.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                focusOnTopic(topic);
+                if(card.getMessage() != null) {
+                    focusOnTopic(card.getMessage());
+                }
             }
         });
         card.setOnRemove(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 topicCards.remove(card);
-                GuiDbUtils.db().deleteMessage(card.getMessage().getIdentifier(), Callbacks.<Boolean>emptyCallback());
+                if(card.getMessage() != null) {
+                    GuiDbUtils.db().deleteMessage(card.getMessage().getIdentifier(), Callbacks.<Boolean>emptyCallback());
+                }
             }
         });
         card.setOnResume(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                CoreModule.getInstance().getTopicManager().addTopic(topic.getIdentifier());
+                CoreModule.getInstance().getTopicManager().addTopic(card.getMessageId());
             }
         });
         card.setOnPause(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                CoreModule.getInstance().getTopicManager().delTopic(topic.getIdentifier());
+                CoreModule.getInstance().getTopicManager().delTopic(card.getMessageId());
             }
         });
-        topicCards.add(card);
     }
 
     private void focusOnTopic(Message topic) {
@@ -126,7 +140,7 @@ public class TopicsController {
         String topicHash = watchTopicTextField.getText();
         try {
             Identifier topic = Identifier.fromByteBuffer(base64.decode(topicHash), false);
-            topicCards.add(new UnknownTopicCard(topic));
+            addUnknownTopic(topic);
         } catch (ConversionException e) {
             System.out.println("illegal identifier");
         }

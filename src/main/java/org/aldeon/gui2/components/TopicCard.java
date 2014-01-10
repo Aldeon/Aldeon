@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.various.DeterministicColorGenerator;
+import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
 public class TopicCard extends HorizontalColorContainer {
@@ -118,5 +119,10 @@ public class TopicCard extends HorizontalColorContainer {
 
     public void setOnPause(EventHandler<ActionEvent> onPause) {
         onPauseProperty().set(onPause);
+    }
+
+    public Identifier getMessageId() {
+        if(getMessage() == null) return null;
+        return getMessage().getIdentifier();
     }
 }
