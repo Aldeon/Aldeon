@@ -245,7 +245,7 @@ public class IpNetworkMedium implements NetworkMedium {
             Future<AddressTranslation> future = UpnpAddressTranslationFactory.create(new PortImpl(PORT), new PortImpl(publicPort));
 
             try {
-                natPortMapping = future.get(1000, TimeUnit.MILLISECONDS);
+                natPortMapping = future.get(6000, TimeUnit.MILLISECONDS);
                 log.info("Successfully obtained an address translation ("
                         + natPortMapping.getInternalAddress().getHostAddress() + ":" + natPortMapping.getInternalPort() + " -> "
                         + natPortMapping.getExternalAddress().getHostAddress() + ":" + natPortMapping.getExternalPort() + ")");

@@ -96,6 +96,19 @@ public class DbImpl implements Db {
         }
 
         try {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+
+            PreparedStatement selectMsgPreparedStatement = connection.prepareStatement(MessagesQueries.SELECT_MSG_BY_ID);
+            setIdentifiableInPreparedStatement(1, message.getIdentifier(), selectMsgPreparedStatement);
+            ResultSet selectResult = selectMsgPreparedStatement.executeQuery();
+
+            if (selectResult.next()) {
+                connection.setAutoCommit(true);
+                callback.call(InsertResult.ALREADY_EXISTS);
+                return;
+            }
+
             PreparedStatement preparedStatement;
 
             if (message.getParentMessageIdentifier().isEmpty()) {
@@ -120,11 +133,20 @@ public class DbImpl implements Db {
 
             preparedStatement.executeUpdate();
 
+            connection.commit();
+
             callback.call(InsertResult.INSERTED);
         } catch (SQLException e) {
             log.error("Error in insertMessage", e);
-            // TODO: Differentiate between NO_PARENT and ALREADY_EXISTS
             callback.call(InsertResult.NO_PARENT);
+        }
+        finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                log.error("Error in insertMessage", e);
+                callback.call(InsertResult.CRITICAL_ERROR);
+            }
         }
     }
 
