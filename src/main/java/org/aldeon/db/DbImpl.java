@@ -28,7 +28,6 @@ public class DbImpl implements Db {
 
     private static final Logger log = LoggerFactory.getLogger(DbImpl.class);
 
-    //TODO: Extract to settings / program constants?
     public static final String DEFAULT_DRIVER_CLASS_NAME = "org.hsqldb.jdbcDriver";
     public static final String DEFAULT_DRIVER_NAME = "jdbc:hsqldb:file:";
     public static final String DEFAULT_DB_PATH = System.getProperty("user.home") + "/.aldeon/aldeon.db";
@@ -313,8 +312,24 @@ public class DbImpl implements Db {
 
     @Override
     public void checkAncestry(Identifier descendant, Identifier ancestor, Callback<Boolean> callback) {
-        // TODO: implement
-        callback.call(true);
+        if (descendant == null || ancestor == null || connection == null) {
+            callback.call(false);
+            return;
+        }
+
+        try {
+            CallableStatement callableStatement = connection.prepareCall(MessagesQueries.CALL_CHECK_ANCESTRY);
+            callableStatement.registerOutParameter(1, Types.BOOLEAN);
+            setIdentifiableInCallableStatement(2, descendant, callableStatement);
+            setIdentifiableInCallableStatement(3, ancestor, callableStatement);
+            callableStatement.executeUpdate();
+            Boolean result = callableStatement.getBoolean(1);
+
+            callback.call(result);
+        } catch (SQLException e) {
+            log.error("Error in checkAncestry", e);
+            callback.call(false);
+        }
     }
 
     @Override
@@ -629,9 +644,10 @@ public class DbImpl implements Db {
             statement.execute(MessagesQueries.CREATE_MSG_SIGN_INDEXES);
             statement.execute(MessagesQueries.CREATE_NODE_XOR_INDEXES);
             statement.execute(MessagesQueries.CREATE_TREEWALK_PROCEDURE);
-            statement.execute(MessagesQueries.CREATE_REC_DEL_BRANCH_PROCEDURE1);
-            statement.execute(MessagesQueries.CREATE_REC_DEL_BRANCH_PROCEDURE2);
+            statement.execute(MessagesQueries.CREATE_REC_DEL_BRANCH_PROCEDURE);
+            statement.execute(MessagesQueries.CREATE_REC_DEL_BRANCH_SPEC_PROCEDURE);
             statement.execute(MessagesQueries.CREATE_SAFE_REMOVE_BRANCH_PROCEDURE);
+            statement.execute(MessagesQueries.CREATE_CHECK_ANCESTRY_ROCEDURE);
             statement.execute(MessagesQueries.CREATE_MSG_INSERT_TRIGGER);
             insertTestData();
         } catch (SQLException e) {
