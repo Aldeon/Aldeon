@@ -2,7 +2,6 @@ package org.aldeon.networking.common;
 
 import org.aldeon.core.services.Service;
 import org.aldeon.networking.exceptions.AddressParseException;
-import org.aldeon.utils.json.ParseException;
 
 import java.util.Set;
 

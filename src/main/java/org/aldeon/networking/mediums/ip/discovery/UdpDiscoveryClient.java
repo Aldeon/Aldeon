@@ -21,7 +21,6 @@ public class UdpDiscoveryClient implements Runnable {
         data[0] = buffer.get(2);
         data[1] = buffer.get(3);
 
-
         packet = new DatagramPacket(data, data.length, broadcast, broadcastPort);
     }
 

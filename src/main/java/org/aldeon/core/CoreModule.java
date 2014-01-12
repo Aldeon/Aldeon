@@ -45,4 +45,8 @@ public class CoreModule extends AbstractModule implements Provider<Core> {
         return new CoreModule().get();
     }
 
+    public static boolean isInitialized() {
+        return coreInstance != null;
+    }
+
 }

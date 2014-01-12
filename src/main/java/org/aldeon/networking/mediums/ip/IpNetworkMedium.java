@@ -2,6 +2,7 @@ package org.aldeon.networking.mediums.ip;
 
 import com.google.common.collect.Sets;
 import org.aldeon.config.Config;
+import org.aldeon.core.CoreModule;
 import org.aldeon.core.services.ServiceManager;
 import org.aldeon.events.Callback;
 import org.aldeon.networking.common.AddressType;
@@ -267,7 +268,6 @@ public class IpNetworkMedium implements NetworkMedium {
 
             int upnpPublicPort = 40000 + new Random().nextInt(10000);
 
-
             Future<AddressTranslation> future = UpnpAddressTranslationFactory.create(new PortImpl(port()), new PortImpl(upnpPublicPort));
 
             try {
@@ -289,9 +289,11 @@ public class IpNetworkMedium implements NetworkMedium {
         if(Config.config().getBoolean("peers.local-discovery.enabled")) {
             LocalPeerDiscoveryService discoveryService = new LocalPeerDiscoveryService(new Callback<IpPeerAddress>() {
                 @Override
-                public void call(IpPeerAddress val) {
-                    // TODO: insert into DHT
-                    System.out.println("Peer detected: " + val);
+                public void call(IpPeerAddress address) {
+                    log.info("Local peer detected: " + address);
+                    if(CoreModule.isInitialized()) {
+                        CoreModule.getInstance().getDht().closenessTracker().addAddress(address);
+                    }
                 }
             });
             for(Iface iface: interfaces) {

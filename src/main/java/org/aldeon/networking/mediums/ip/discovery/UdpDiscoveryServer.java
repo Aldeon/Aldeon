@@ -35,24 +35,25 @@ public class UdpDiscoveryServer extends GenericServer<IpPeerAddress> {
 
     @Override
     protected IpPeerAddress provide() {
+        DatagramPacket packet;
         try {
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            packet = new DatagramPacket(buffer, buffer.length);
             socket.receive(packet);
-
-            // check if the data matches
-            if(packet.getLength() == 2) {
-
-                ByteBuffer b = ByteBuffer.allocate(4);
-                b.put(2, buffer[0]);
-                b.put(3, buffer[1]);
-                int port = b.getInt(0);
-                InetAddress host = packet.getAddress();
-                return IpPeerAddress.create(host, port);
-            } else {
-                return null;
-            }
         } catch (IOException e) {
-            e.printStackTrace();
+            // No problem, just return null
+            return null;
+        }
+
+        // check if the data matches
+        if(packet.getLength() == 2) {
+
+            ByteBuffer b = ByteBuffer.allocate(4);
+            b.put(2, buffer[0]);
+            b.put(3, buffer[1]);
+            int port = b.getInt(0);
+            InetAddress host = packet.getAddress();
+            return IpPeerAddress.create(host, port);
+        } else {
             return null;
         }
     }
