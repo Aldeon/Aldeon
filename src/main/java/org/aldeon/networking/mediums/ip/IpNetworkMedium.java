@@ -2,6 +2,7 @@ package org.aldeon.networking.mediums.ip;
 
 import com.google.common.collect.Sets;
 import org.aldeon.config.Config;
+import org.aldeon.core.services.ServiceManager;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.NetworkMedium;
 import org.aldeon.networking.common.PeerAddress;
@@ -10,6 +11,7 @@ import org.aldeon.networking.common.SendPoint;
 import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.addresses.IpV4PeerAddress;
+import org.aldeon.networking.mediums.ip.discovery.LocalAutoDiscovery;
 import org.aldeon.networking.mediums.ip.nat.upnp.UpnpAddressTranslationFactory;
 import org.aldeon.networking.mediums.ip.nat.utils.AddressTranslation;
 import org.aldeon.networking.mediums.ip.receiver.NettyRecvPoint;
@@ -57,6 +59,7 @@ public class IpNetworkMedium implements NetworkMedium {
     private final RecvPoint recvPoint;
     private final SendPoint sendPoint;
     private Integer definedPort = null;
+    private ServiceManager autoDiscoveryServices = new ServiceManager();
 
     private static class Iface {
         IpPeerAddress address;
@@ -280,10 +283,21 @@ public class IpNetworkMedium implements NetworkMedium {
             }
 
         }
+
+        if(Config.config().getBoolean("peers.local-discovery.enabled")) {
+            for(Iface iface: interfaces) {
+                InetAddress address = iface.address.getHost();
+                if(InetAddresses.isLocal(address)) {
+                    autoDiscoveryServices.registerService(new LocalAutoDiscovery(address, iface.mask));
+                }
+            }
+        }
+        autoDiscoveryServices.start();
     }
 
     @Override
     public void close() {
+        autoDiscoveryServices.close();
         if(natPortMapping != null) {
             log.info("Shutting down address translation...");
             natPortMapping.shutdown();
