@@ -2,6 +2,9 @@ package org.aldeon.networking.mediums.ip;
 
 import com.google.common.collect.Sets;
 import org.aldeon.config.Config;
+import org.aldeon.core.CoreModule;
+import org.aldeon.core.services.ServiceManager;
+import org.aldeon.events.Callback;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.NetworkMedium;
 import org.aldeon.networking.common.PeerAddress;
@@ -10,6 +13,7 @@ import org.aldeon.networking.common.SendPoint;
 import org.aldeon.networking.exceptions.AddressParseException;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.networking.mediums.ip.addresses.IpV4PeerAddress;
+import org.aldeon.networking.mediums.ip.discovery.LocalPeerDiscoveryService;
 import org.aldeon.networking.mediums.ip.nat.upnp.UpnpAddressTranslationFactory;
 import org.aldeon.networking.mediums.ip.nat.utils.AddressTranslation;
 import org.aldeon.networking.mediums.ip.receiver.NettyRecvPoint;
@@ -57,6 +61,7 @@ public class IpNetworkMedium implements NetworkMedium {
     private final RecvPoint recvPoint;
     private final SendPoint sendPoint;
     private Integer definedPort = null;
+    private ServiceManager serviceManager;
 
     private static class Iface {
         IpPeerAddress address;
@@ -74,6 +79,7 @@ public class IpNetworkMedium implements NetworkMedium {
 
         recvPoint = new NettyRecvPoint(loopback);
         sendPoint = new NettySendPoint();
+        serviceManager = new ServiceManager();
     }
 
     private int port() {
@@ -260,10 +266,9 @@ public class IpNetworkMedium implements NetworkMedium {
         if(hasIpv4 && onlyPrivateIpv4) {
             log.info("No public IPv4 detected. Trying UPnP...");
 
-            int publicPort = 40000 + new Random().nextInt(10000);
+            int upnpPublicPort = 40000 + new Random().nextInt(10000);
 
-
-            Future<AddressTranslation> future = UpnpAddressTranslationFactory.create(new PortImpl(port()), new PortImpl(publicPort));
+            Future<AddressTranslation> future = UpnpAddressTranslationFactory.create(new PortImpl(port()), new PortImpl(upnpPublicPort));
 
             try {
                 natPortMapping = future.get(1000, TimeUnit.MILLISECONDS);
@@ -280,10 +285,28 @@ public class IpNetworkMedium implements NetworkMedium {
             }
 
         }
+
+        if(Config.config().getBoolean("peers.local-discovery.enabled")) {
+            LocalPeerDiscoveryService discoveryService = new LocalPeerDiscoveryService(new Callback<IpPeerAddress>() {
+                @Override
+                public void call(IpPeerAddress address) {
+                    log.info("Local peer detected: " + address);
+                    if(CoreModule.isInitialized()) {
+                        CoreModule.getInstance().getDht().closenessTracker().addAddress(address);
+                    }
+                }
+            });
+            for(Iface iface: interfaces) {
+                discoveryService.advertiseAddress(iface.address, iface.mask);
+            }
+            serviceManager.registerService(discoveryService);
+        }
+        serviceManager.start();
     }
 
     @Override
     public void close() {
+        serviceManager.close();
         if(natPortMapping != null) {
             log.info("Shutting down address translation...");
             natPortMapping.shutdown();

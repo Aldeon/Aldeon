@@ -21,8 +21,16 @@ public class InetAddresses {
         return false;
     }
 
+    public static Inet4Address makeBroadcastAddress(Inet4Address address, int mask) {
+        int a = intValue(address);
+        int b = maskToBitMask(mask);
+        int r = a | ~b;
+
+        return com.google.common.net.InetAddresses.fromInteger(r);
+    }
+
     private static boolean sameSubnet(Inet4Address a, Inet4Address b, int mask) {
-        int m = ~(0xffffffff >>> mask);
+        int m = maskToBitMask(mask);
         return (intValue(a) & m) == (intValue(b) & m);
     }
 
@@ -41,18 +49,21 @@ public class InetAddresses {
         return true;
     }
 
+    private static int maskToBitMask(int mask) {
+        return ~(0xffffffff >>> mask);
+    }
+
     public static int intValue(Inet4Address address) {
-        byte[] b = address.getAddress();
-        int val = 0;
-        for(int i = 0; i < INET4_BYTES; ++i) {
-            val += b[i] << (INET4_BYTES - 1 - i) * 8;
-        }
-        return val;
+        return com.google.common.net.InetAddresses.coerceToInteger(address);
     }
 
     public static boolean isLocal(InetAddress address) {
-        return  sameSubnet(address, com.google.common.net.InetAddresses.forString("10.0.0.0"), 8)
-            ||  sameSubnet(address, com.google.common.net.InetAddresses.forString("172.16.0.0"), 12)
-            ||  sameSubnet(address, com.google.common.net.InetAddresses.forString("192.168.0.0"), 16);
+        return  sameSubnet(address, fromString("10.0.0.0"), 8)
+            ||  sameSubnet(address, fromString("172.16.0.0"), 12)
+            ||  sameSubnet(address, fromString("192.168.0.0"), 16);
+    }
+
+    private static InetAddress fromString(String s) {
+        return com.google.common.net.InetAddresses.forString(s);
     }
 }

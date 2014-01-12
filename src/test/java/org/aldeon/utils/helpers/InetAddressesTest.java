@@ -2,9 +2,11 @@ package org.aldeon.utils.helpers;
 
 import org.junit.Test;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -72,5 +74,17 @@ public class InetAddressesTest {
                 InetAddress.getByName("2001:cdba:0000:0000:0000:0000:3257:a652"),
                 InetAddress.getByName("2001:cdba:0000:0000:0000:0000:3257:9652"),
                 125));
+    }
+
+    @Test
+    public void shouldCreateCorrectBroadcastV4() throws UnknownHostException {
+
+        Inet4Address address = (Inet4Address) InetAddress.getByName("192.168.1.100");
+        Inet4Address broadcast = (Inet4Address) InetAddress.getByName("192.168.1.255");
+
+        assertEquals(
+                broadcast,
+                InetAddresses.makeBroadcastAddress(address, 24)
+        );
     }
 }

@@ -62,7 +62,7 @@ public class Config {
         configuration.setProperty("upnp.enabled",   "true");
         configuration.setProperty("upnp.always",    "false");
 
-        configuration.setProperty("peers.local-discovery.enabled", "false");
+        configuration.setProperty("peers.local-discovery.enabled", "true");
 
         configuration.addProperty("peers.initial", "aldeon.org:80");
 

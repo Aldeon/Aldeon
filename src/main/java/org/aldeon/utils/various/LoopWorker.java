@@ -7,8 +7,9 @@ public class LoopWorker implements Service {
     private final Runnable worker;
     private boolean working = false;
     private boolean keepWorking = false;
+    private Thread thread;
 
-    public LoopWorker(final long intervalMilis, final Runnable task) {
+    public LoopWorker(final long intervalMilliseconds, final Runnable task) {
 
         worker = new Runnable() {
 
@@ -17,9 +18,9 @@ public class LoopWorker implements Service {
                 while(keepWorking) {
                     task.run();
                     try {
-                        Thread.sleep(intervalMilis);
+                        Thread.sleep(intervalMilliseconds);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        // closing?
                     }
                 }
                 working = false;
@@ -33,13 +34,20 @@ public class LoopWorker implements Service {
 
     @Override
     public void start() {
-        working = true;
-        keepWorking = true;
-        new Thread(worker).start();
+        if(!working) {
+            working = true;
+            keepWorking = true;
+            thread = new Thread(worker);
+            thread.start();
+        }
     }
 
     @Override
     public void close() {
-        keepWorking = false;
+        if(working && keepWorking) {
+            keepWorking = false;
+            working = false;
+            thread.interrupt();
+        }
     }
 }
