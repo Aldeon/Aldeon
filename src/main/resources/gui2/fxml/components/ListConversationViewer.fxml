@@ -10,7 +10,7 @@
       <content>
           <BorderPane>
               <top>
-                  <VBox fx:id="ancestors" spacing="16.0" style="">
+                  <VBox fx:id="ancestors" spacing="16.0" style="" opacity="0.8">
                       <padding>
                           <Insets top="16.0" left="16.0" right="16.0" />
                       </padding>

@@ -26,7 +26,7 @@ public class MainController {
         welcomeNode = WelcomeController.create();
         topicsNode = TopicsController.create();
         identitiesNode = IdentitiesController.create();
-        settingsNode = new TreeConversationViewer();
+        settingsNode = SettingsController.create();
     }
 
     /**

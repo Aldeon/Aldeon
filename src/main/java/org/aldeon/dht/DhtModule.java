@@ -1,5 +1,7 @@
 package org.aldeon.dht;
 
+import com.google.common.net.HostAndPort;
+import org.aldeon.config.Config;
 import org.aldeon.dht.closeness.ClosenessTracker;
 import org.aldeon.dht.closeness.ClosenessTrackerDispatcher;
 import org.aldeon.dht.closeness.ClosenessTrackerFilter;
@@ -13,13 +15,20 @@ import org.aldeon.dht.interest.InterestTrackerFilter;
 import org.aldeon.events.EventLoop;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.PeerAddress;
+import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 import org.aldeon.utils.various.Predicate;
+import org.apache.commons.configuration.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class DhtModule {
+
+    private static final Logger log = LoggerFactory.getLogger(DhtModule.class);
 
     public static Dht create(Set<AddressType> acceptedTypes, EventLoop eventLoop, Predicate<PeerAddress> filter) {
 
@@ -45,7 +54,21 @@ public class DhtModule {
         interestTracker = new InterestTrackerEventCaller(interestTracker, eventLoop);
         interestTracker = new InterestTrackerFilter(interestTracker, filter);
 
-        // 4. Return dht object
+        // 4. Insert initial peers from config
+        for(String peer: Config.config().getStringArray("peers.initial")) {
+            try {
+                HostAndPort hnp = HostAndPort.fromString(peer).withDefaultPort(80);
+                InetAddress host = InetAddress.getByName(hnp.getHostText());
+                int port = hnp.getPort();
+                PeerAddress peerAddress = IpPeerAddress.create(host, port);
+                closenessTracker.addAddress(peerAddress);
+                log.info("Added initial peer: " + peerAddress);
+            } catch (Exception e) {
+                System.out.println("Failed to parse address " + peer);
+            }
+        }
+
+        // 5. Return dht object
 
         final InterestTracker it = interestTracker;
         final ClosenessTracker ct = closenessTracker;

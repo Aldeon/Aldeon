@@ -1,6 +1,7 @@
 package org.aldeon.networking.mediums.ip;
 
 import com.google.common.collect.Sets;
+import org.aldeon.config.Config;
 import org.aldeon.networking.common.AddressType;
 import org.aldeon.networking.common.NetworkMedium;
 import org.aldeon.networking.common.PeerAddress;
@@ -17,21 +18,18 @@ import org.aldeon.utils.collections.IterableEnumeration;
 import org.aldeon.utils.helpers.InetAddresses;
 import org.aldeon.utils.json.JsonModule;
 import org.aldeon.utils.json.JsonParser;
-import org.aldeon.utils.json.ParseException;
 import org.aldeon.utils.net.PortImpl;
-import org.aldeon.utils.various.Provider;
+import org.apache.commons.configuration.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,11 +51,12 @@ public class IpNetworkMedium implements NetworkMedium {
     }
 
     private static final Logger log = LoggerFactory.getLogger(IpNetworkMedium.class);
-    private static final int PORT = 41530;
     private static final JsonParser parser = new JsonModule().get();
+    private static final int FALLBACK_PORT = 41530;
 
     private final RecvPoint recvPoint;
     private final SendPoint sendPoint;
+    private Integer definedPort = null;
 
     private static class Iface {
         IpPeerAddress address;
@@ -71,10 +70,32 @@ public class IpNetworkMedium implements NetworkMedium {
     public IpNetworkMedium() {
 
         // TODO: use ipv6-compatible bind address (http://stackoverflow.com/a/11110685)
-        IpPeerAddress loopback = IpPeerAddress.create(new InetSocketAddress(PORT));
+        IpPeerAddress loopback = IpPeerAddress.create(new InetSocketAddress(port()));
 
         recvPoint = new NettyRecvPoint(loopback);
         sendPoint = new NettySendPoint();
+    }
+
+    private int port() {
+        if(definedPort == null) {
+
+            // Read port from configuration
+            Configuration cfg = Config.config();
+
+            if(cfg.getBoolean("port.randomize")) {
+                definedPort = new Random().nextInt(50000) + 10000;
+            } else {
+                definedPort = cfg.getInt("port.value");
+            }
+
+        }
+
+        if(definedPort <= 0 || definedPort > 65535) {
+            log.warn("Invalid port value (" + definedPort + ") using " + FALLBACK_PORT + " instead.");
+            definedPort = FALLBACK_PORT;
+        }
+
+        return definedPort;
     }
 
     @Override
@@ -217,7 +238,7 @@ public class IpNetworkMedium implements NetworkMedium {
                     for(InterfaceAddress interfaceAddress: networkInterface.getInterfaceAddresses()) {
 
                         Iface iface = new Iface();
-                        iface.address = IpPeerAddress.create(interfaceAddress.getAddress(), PORT);
+                        iface.address = IpPeerAddress.create(interfaceAddress.getAddress(), port());
                         iface.mask = interfaceAddress.getNetworkPrefixLength();
                         interfaces.add(iface);
 
@@ -242,7 +263,7 @@ public class IpNetworkMedium implements NetworkMedium {
             int publicPort = 40000 + new Random().nextInt(10000);
 
 
-            Future<AddressTranslation> future = UpnpAddressTranslationFactory.create(new PortImpl(PORT), new PortImpl(publicPort));
+            Future<AddressTranslation> future = UpnpAddressTranslationFactory.create(new PortImpl(port()), new PortImpl(publicPort));
 
             try {
                 natPortMapping = future.get(1000, TimeUnit.MILLISECONDS);

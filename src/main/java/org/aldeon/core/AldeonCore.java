@@ -71,11 +71,6 @@ public class AldeonCore extends BaseCore {
             }
         });
 
-        for(PeerAddress address: getPropertiesManager().getInitPeers()) {
-            getDht().closenessTracker().addAddress(address);
-            log.info("Adding initial peer: " + address);
-        }
-
         registerService(networkService);
         registerService(getSender());
         registerService(getReceiver());

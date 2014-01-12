@@ -1,0 +1,32 @@
+.tab-pane *.tab-header-background {
+    -fx-background-color: #222222;
+}
+
+.tab {
+    -fx-background-color: #333333;
+    -fx-border: 1px;
+    -fx-border-color: #1d1d1d;
+    -fx-cursor: hand;
+}
+
+.tab:selected {
+    -fx-background-color: #444444;
+}
+
+.tab-content-area {
+    -fx-background-color: #444444;
+}
+
+.tab *.tab-label {
+    -fx-text-fill: #999999;
+}
+
+.tabExplanation {
+    -fx-text-fill: #999999;
+    -fx-padding: 16px;
+    -fx-font-weight: bold;
+}
+
+.titled-pane {
+    -fx-background-color: #444444;
+}
