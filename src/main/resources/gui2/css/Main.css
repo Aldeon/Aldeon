@@ -32,7 +32,7 @@
 /* -- Common input components -- */
 
 .styled {
-    -fx-background-insets: 0, 0, 0, 0;  /* Removes overflowing background (works, don't ask why) */
+    -fx-background-insets: 0, 0, 0, 0;
     -fx-background-color: #333333;
     -fx-border-color: #222222;
     -fx-border-width: 1px;

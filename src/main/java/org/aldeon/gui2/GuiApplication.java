@@ -14,21 +14,10 @@ public class GuiApplication extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(GuiApplication.class);
 
-    /*
-        TODO:
-            - list topics in topicsview, autorefresh
-            - list identities / friends
-     */
-
     @Override
     public void start(Stage primaryStage) {
+        log.info("Starting GUI...");
         Parent root = Gui2Utils.loadFXMLfromDefaultPath("views/Main.fxml");
-
-        if(root == null) {
-            System.err.println("Failed to load Main.fxml");
-            return;
-        }
-
         primaryStage.setTitle("Aldeon");
         primaryStage.getIcons().add(new Image("/gui2/images/appIcon.png"));
         primaryStage.setScene(new Scene(root));
@@ -37,6 +26,7 @@ public class GuiApplication extends Application {
 
     @Override
     public void stop() throws Exception {
+        log.info("Closing GUI...");
         super.stop();
         CoreModule.getInstance().getEventLoop().notify(new AppClosingEvent());
     }
