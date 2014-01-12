@@ -8,8 +8,8 @@ public class PortImpl implements Port {
     private int value;
 
     public PortImpl(int value) {
-        if(value > 65535) {
-            throw new IllegalArgumentException();
+        if(value > 65535 || value < 0) {
+            throw new IllegalArgumentException("Invalid port value (" + value + "), must be in range <0, 65535>");
         }
         this.value = value;
         this.hashCode = new Integer(value).hashCode();

@@ -21,7 +21,7 @@ public abstract class IpPeerAddress implements PeerAddress {
     public abstract Port getPort();
 
     public static IpPeerAddress create(ByteBuffer buffer) {
-        return null;
+        throw new IllegalStateException("Not yet implemented");
     }
 
     @Deprecated
