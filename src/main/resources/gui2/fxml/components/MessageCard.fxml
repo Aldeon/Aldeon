@@ -8,6 +8,7 @@
 <?import org.aldeon.gui2.components.ImageButton?>
 <?import javafx.scene.layout.Pane?>
 <?import java.net.URL?>
+<?import javafx.scene.control.Button?>
 <fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <content>
         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #222222;">
@@ -22,6 +23,9 @@
                                         </BorderPane.margin>
                                     </Label>
                                 </center>
+                                <right>
+                                    <Button fx:id="toggleChildrenButton" text="toggle?" />
+                                </right>
                             </BorderPane>
                         </bottom>
                         <center>

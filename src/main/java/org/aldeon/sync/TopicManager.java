@@ -39,6 +39,7 @@ public class TopicManager {
         TopicState state = new TopicState(topic);
 
         state.addSlot(new Slot(SlotType.NORMAL, IpPeerAddress.IPV4));
+        state.addSlot(new Slot(SlotType.NORMAL, IpPeerAddress.IPV4));
 
         return state;
     }

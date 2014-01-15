@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.various.DeterministicColorGenerator;
+import org.aldeon.gui2.various.ToggleEvent;
 import org.aldeon.model.Message;
 
 public class MessageCard extends HorizontalColorContainer {
@@ -21,8 +22,11 @@ public class MessageCard extends HorizontalColorContainer {
     @FXML protected Label userIdLabel;
     @FXML protected Button responseButton;
     @FXML protected Button removeButton;
+    @FXML protected Button toggleChildrenButton;
+    protected boolean toggle = false;
 
     private final ObjectProperty<Message> messageProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<EventHandler<ToggleEvent>> onToggleProperty = new SimpleObjectProperty<>();
 
     public MessageCard() {
         Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageCard.fxml", this);
@@ -35,6 +39,24 @@ public class MessageCard extends HorizontalColorContainer {
                 messageIdLabel.setText(newMessage.getIdentifier().toString());
                 messageContentLabel.setText(newMessage.getContent());
                 setColor(DeterministicColorGenerator.get(newMessage.getAuthorPublicKey().hashCode()));
+            }
+        });
+
+        toggleChildrenButton.setText("Show");
+
+        toggleChildrenButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                toggle = !toggle;
+                if(toggle) {
+                    toggleChildrenButton.setText("Hide");
+                } else {
+                    toggleChildrenButton.setText("Show");
+                }
+                EventHandler<ToggleEvent> eventHandler = getOnToggle();
+                if(eventHandler != null) {
+                    eventHandler.handle(new ToggleEvent(toggle));
+                }
             }
         });
     }
@@ -82,5 +104,21 @@ public class MessageCard extends HorizontalColorContainer {
 
     public void setOnRemove(EventHandler<ActionEvent> onRemove) {
         onRemoveProperty().set(onRemove);
+    }
+
+    public ObjectProperty<EventHandler<ToggleEvent>> onToggleProperty() {
+        return onToggleProperty;
+    }
+
+    public EventHandler<ToggleEvent> getOnToggle() {
+        return onToggleProperty().get();
+    }
+
+    public void setOnToggle(EventHandler<ToggleEvent> onToggle) {
+        onToggleProperty().set(onToggle);
+    }
+
+    public boolean getToggleState() {
+        return toggle;
     }
 }
