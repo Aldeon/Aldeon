@@ -65,20 +65,20 @@ public class MessagesQueries
             " CALL rec_del_branch(node_id_p);" +
             "END";
 
-    public static final String CREATE_CHECK_ANCESTRY_ROCEDURE = "CREATE PROCEDURE check_ancestry(OUT result BOOLEAN, IN descendant BIT(256), IN ancestor BIT(256))" +
+    public static final String CREATE_CHECK_ANCESTRY_ROCEDURE = "CREATE PROCEDURE check_ancestry(OUT result_p BOOLEAN, IN descendant_p BIT(256), IN ancestor_p BIT(256)) " +
             "READS SQL DATA " +
             "BEGIN ATOMIC" +
-            " DECLARE current_msg_id BIT(256) DEFAULT descend;" +
-            " IF descendant = ancestor THEN " +
-            "  RETURN FALSE;" +
-            " END IF;" +
-            " while_loop: WHILE current_msg_id <> X'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' DO" +
-            "  SELECT parent_msg_id INTO current_msg_id FROM messages WHERE msg_id = current_msg_id;" +
-            "  IF current_msg_id = ancestor THEN " +
-            "   RETURN TRUE;" +
-            "  END IF;" +
-            " END WHILE while_loop; " +
-            " RETURN FALSE;" +
+            " DECLARE current_msg_id BIT(256);" +
+            " SET current_msg_id = descendant_p;" +
+            " SET result_p = FALSE;" +
+            " IF descendant_p <> ancestor_p THEN " +
+            "  while_loop: WHILE (current_msg_id <> X'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF') DO" +
+            "   SELECT parent_msg_id INTO current_msg_id FROM messages WHERE msg_id = current_msg_id;" +
+            "   IF current_msg_id = ancestor_p THEN " +
+            "    SET result_p = TRUE;" +
+            "   END IF;" +
+            "  END WHILE while_loop;" +
+            " END IF; " +
             "END";
 
     public static final String CALL_SAFE_REMOVE_BRANCH = "CALL safe_remove_branch(HEXTORAW(?))";
