@@ -125,8 +125,7 @@ public class TopicsController {
     }
 
     private void focusOnTopic(final Message topic) {
-        final ConversationViewerSwitcher viewer = new ConversationViewerSwitcher();
-        viewer.setFocus(topic);
+        final ConversationViewerSwitcher viewer = new ConversationViewerSwitcher(topic);
         viewer.setOnViewerClosed(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

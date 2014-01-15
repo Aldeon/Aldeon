@@ -23,8 +23,9 @@ public class ConversationViewerSwitcher extends BorderPane {
     @FXML protected SlidingStackPane slider;
     protected ConversationViewer conversationViewer;
     protected boolean isList = true;
+    protected Message topicMessage;
 
-    public ConversationViewerSwitcher() {
+    public ConversationViewerSwitcher(Message topic) {
         super();
         Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/ConversationViewerSwitcher.fxml", this);
 
@@ -48,11 +49,14 @@ public class ConversationViewerSwitcher extends BorderPane {
                 }
             }
         });
+
+        this.topicMessage = topic;
+        setFocus(topic);
     }
 
     @FXML protected void onToggle(ActionEvent event) {
         if(isList) {
-            show(new TreeConversationViewer());
+            show(new TreeConversationViewer(topicMessage));
         } else {
             show(new ListConversationViewer());
         }
