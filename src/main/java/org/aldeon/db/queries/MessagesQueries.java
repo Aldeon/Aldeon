@@ -123,4 +123,6 @@ public class MessagesQueries
     public static final String SELECT_MSGS_AFTER_CLOCK = "SELECT msg_id, msg_sign, author_id, content, parent_msg_id FROM messages WHERE topic_id = HEXTORAW(?) AND clock > ?";
 
     public static final String CALL_CHECK_ANCESTRY = "{? = CALL checkAncestry(HEXTORAW(?), HEXTORAW(?))}";
+
+    public static final String DUMP_MESSAGES = "SELECT * FROM messages";
 }

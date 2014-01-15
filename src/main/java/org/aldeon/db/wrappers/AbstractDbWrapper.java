@@ -75,6 +75,11 @@ public abstract class AbstractDbWrapper implements Db {
     }
 
     @Override
+    public void dumpMessages(Callback<Set<Message>> callback) {
+        db.dumpMessages(callback);
+    };
+
+    @Override
     public void insertUser(User user, Callback<Boolean> callback) {
         db.insertUser(user, callback);
     }
