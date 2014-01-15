@@ -686,6 +686,52 @@ public class DbImpl implements Db {
         log.info("Inserted topic: " + topic.getIdentifier());
     }
 
+    @Override
+    public void dumpMessages(Callback<Set<Message>> callback) {
+        if (connection == null) {
+            callback.call(Collections.<Message>emptySet());
+            return;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(MessagesQueries.DUMP_MESSAGES);
+            ResultSet result = preparedStatement.executeQuery();
+
+            Set<Message> messages = new HashSet<>();
+
+            while (result.next()) {
+                Identifier msgIdentifier = Identifier.fromBytes(result.getBytes("msg_id"), false);
+                Identifier parentIdentifier = Identifier.fromBytes(result.getBytes("parent_msg_id"), false);
+
+                ByteBuffer pubKeyBuffer = ByteBuffer.wrap(result.getBytes("author_id"));
+                RsaKeyGen rsa = new RsaKeyGen();
+                Key pubKey = rsa.parsePublicKey(pubKeyBuffer);
+
+                ByteBuffer signatureBuffer = ByteBuffer.wrap(result.getBytes("msg_sign"));
+                Signature signature = new Signature(signatureBuffer, false);
+
+                String content = result.getString("content");
+
+                Message message = Messages.create(msgIdentifier, parentIdentifier, pubKey, content, signature);
+
+                messages.add(message);
+
+                ByteBuffer nodeXor = ByteBuffer.wrap(result.getBytes("node_xor"));
+                int clock = result.getInt("clock");
+
+                System.out.println(message);
+                System.out.println("Node XOR: " + Identifier.fromByteBuffer(nodeXor, true));
+                System.out.println("Clock: " + clock);
+                System.out.println("");
+            }
+
+            callback.call(messages);
+        } catch (Exception e) {
+            log.error("Error in dumpMessages", e);
+            callback.call(Collections.<Message>emptySet());
+        }
+    }
+
     private void setIdentifiableInPreparedStatement(int parameterIndex, ByteSource byteSource, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(parameterIndex, hex.encode(byteSource.getByteBuffer()));
     }

@@ -20,6 +20,7 @@ public interface Db extends Service {
     void checkAncestry(Identifier descendant, Identifier ancestor, Callback<Boolean> callback);
     void getClock(Callback<Long> callback);
     void getMessagesAfterClock(Identifier topic, long clock, Callback<Set<Message>> callback);
+    void dumpMessages(Callback<Set<Message>> callback);
 
     void insertUser(User user, Callback<Boolean> callback);
     void deleteUser(Key publicKey, Callback<Boolean> callback);
