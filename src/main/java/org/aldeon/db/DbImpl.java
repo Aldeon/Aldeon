@@ -346,7 +346,7 @@ public class DbImpl implements Db {
                 Long clock = result.getLong("clock");
                 callback.call(clock);
             } else {
-                log.error("Could not retrieve the result for CLOCK query");
+                log.error("Can not retrieve the result for CLOCK query");
                 callback.call(null);
             }
         } catch (Exception e) {
@@ -451,7 +451,7 @@ public class DbImpl implements Db {
                 callback.call(null);
             }
         } catch (Exception e) {
-            log.error("ERROR: Error in getUser.", e);
+            log.error("Error in getUser.", e);
             callback.call(null);
         }
     }
@@ -482,7 +482,7 @@ public class DbImpl implements Db {
 
             callback.call(users);
         } catch (Exception e) {
-            log.error("ERROR: Error in getUsers.", e);
+            log.error("Error in getUsers.", e);
             callback.call(null);
         }
     }
@@ -549,7 +549,7 @@ public class DbImpl implements Db {
                 callback.call(null);
             }
         } catch (Exception e) {
-            log.error("ERROR: Error in getIdentity.", e);
+            log.error("Error in getIdentity.", e);
             callback.call(null);
         }
     }
@@ -582,7 +582,7 @@ public class DbImpl implements Db {
 
             callback.call(identities);
         } catch (Exception e) {
-            log.error("ERROR: Error in getIdentity.", e);
+            log.error("Error in getIdentity.", e);
             callback.call(null);
         }
     }
@@ -594,7 +594,7 @@ public class DbImpl implements Db {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
-            log.error("ERROR: JDBC driver was not properly set.", e);
+            log.error("JDBC driver was not properly set.", e);
             return;
         }
 
@@ -602,13 +602,39 @@ public class DbImpl implements Db {
 
         try {
             File dbFile = new File(dbPath + ".script");
+
             if (!dbFile.isFile()) {
                 dbFileExists = false;
             }
+
             connection = DriverManager.getConnection(DEFAULT_DRIVER_NAME + dbPath + DEFAULT_DB_PARAMETERS, DB_USER, DB_PASSWORD);
         } catch (SQLException e) {
-            log.error("Could not connect to the database.", e);
-            return;
+            log.error("Can not connect to the database.", e);
+
+            try {
+                log.info("Trying to delete database lock file.");
+
+                File dbLckFile = new File(dbPath + ".lck");
+                if (dbLckFile.isFile()) {
+                    log.info("Database lock file detected.");
+
+                    if (!dbLckFile.delete()) {
+                        log.error("Can not delete database lock file.");
+                    }
+                }
+                else {
+                    log.warn("Database lock file does not exist.");
+                }
+            } catch (Exception deleteException) {
+                log.error("Can not delete database lock file.", deleteException);
+            }
+
+            try {
+                connection = DriverManager.getConnection(DEFAULT_DRIVER_NAME + dbPath + DEFAULT_DB_PARAMETERS, DB_USER, DB_PASSWORD);
+            } catch (SQLException secondConnectException) {
+                log.error("Can not connect to the database a second time. Exiting.", secondConnectException);
+                System.exit(-1);
+            }
         }
 
         log.info("Connection established");
@@ -629,7 +655,7 @@ public class DbImpl implements Db {
                 connection.close();
             }
         } catch (SQLException e) {
-            log.error("Could not close the database connection.", e);
+            log.error("Can not close the database connection.", e);
         }
     }
 
@@ -651,7 +677,7 @@ public class DbImpl implements Db {
             statement.execute(MessagesQueries.CREATE_MSG_INSERT_TRIGGER);
             insertTestData();
         } catch (SQLException e) {
-            log.error("Could not create the database schema", e);
+            log.error("Can not create the database schema", e);
         }
     }
 
