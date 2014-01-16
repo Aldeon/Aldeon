@@ -1,5 +1,6 @@
 package org.aldeon.sync;
 
+import org.aldeon.config.Config;
 import org.aldeon.model.Identifier;
 import org.aldeon.networking.mediums.ip.addresses.IpPeerAddress;
 
@@ -38,8 +39,9 @@ public class TopicManager {
 
         TopicState state = new TopicState(topic);
 
-        state.addSlot(new Slot(SlotType.NORMAL, IpPeerAddress.IPV4));
-        state.addSlot(new Slot(SlotType.NORMAL, IpPeerAddress.IPV4));
+        for(int i = Config.config().getInt("sync.slots.count"); i > 0; --i) {
+            state.addSlot(new Slot(SlotType.NORMAL, IpPeerAddress.IPV4));
+        }
 
         return state;
     }

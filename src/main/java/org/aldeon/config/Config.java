@@ -67,6 +67,7 @@ public class Config {
         configuration.addProperty("peers.initial", "aldeon.org:80");
 
         configuration.setProperty("sync.intervals.diff", "15000");
+        configuration.setProperty("sync.slots.count", "2");
 
     }
 }
