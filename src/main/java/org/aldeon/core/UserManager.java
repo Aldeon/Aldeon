@@ -1,12 +1,9 @@
 package org.aldeon.core;
 
-import org.aldeon.core.events.IdentityAddedEvent;
-import org.aldeon.core.events.IdentityRemovedEvent;
-import org.aldeon.core.events.MessageAddedEvent;
-import org.aldeon.core.events.MessageRemovedEvent;
-import org.aldeon.core.events.UserAddedEvent;
+import org.aldeon.core.events.*;
 import org.aldeon.crypt.Key;
 import org.aldeon.events.ACB;
+import org.aldeon.events.AsyncCallback;
 import org.aldeon.events.Callback;
 import org.aldeon.model.Identity;
 import org.aldeon.model.User;
@@ -16,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 public class UserManager {
 
@@ -40,7 +38,14 @@ public class UserManager {
         CoreModule.getInstance().getEventLoop().assign(UserAddedEvent.class , new ACB<UserAddedEvent>(CoreModule.getInstance().clientSideExecutor()) {
             @Override
             protected void react(UserAddedEvent usr) {
-                addUser(usr.getUser());
+                users.put(usr.getUser().getPublicKey(), usr.getUser());
+            }
+        });
+
+        CoreModule.getInstance().getEventLoop().assign(UserRemovedEvent.class, new ACB<UserRemovedEvent>(CoreModule.getInstance().clientSideExecutor()) {
+            @Override
+            protected void react(UserRemovedEvent userRemovedEvent) {
+                users.remove(userRemovedEvent.publicKey());
             }
         });
 
@@ -72,17 +77,6 @@ public class UserManager {
                 if (userInserted&&success[0]) {
                     identities.put(identity.getPublicKey(), identity);
                     users.put(identity.getPublicKey(),identity);
-                }
-            }
-        });
-    }
-
-    public static void addUser(final User user){
-        CoreModule.getInstance().getStorage().insertUser(user, new Callback<Boolean>() {
-            @Override
-            public void call(Boolean userInserted) {
-                if (userInserted) {
-                    users.put(user.getPublicKey(), user);
                 }
             }
         });

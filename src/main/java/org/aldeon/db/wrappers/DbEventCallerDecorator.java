@@ -1,10 +1,6 @@
 package org.aldeon.db.wrappers;
 
-import org.aldeon.core.events.IdentityAddedEvent;
-import org.aldeon.core.events.IdentityRemovedEvent;
-import org.aldeon.core.events.MessageAddedEvent;
-import org.aldeon.core.events.MessageRemovedEvent;
-import org.aldeon.core.events.UserAddedEvent;
+import org.aldeon.core.events.*;
 import org.aldeon.crypt.Key;
 import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
@@ -100,12 +96,28 @@ public class DbEventCallerDecorator extends AbstractDbWrapper {
 
     @Override
     public void insertUser(final User user, final Callback<Boolean> callback) {
-        db.insertUser(user, callback);
+        db.insertUser(user, new Callback<Boolean>() {
+            @Override
+            public void call(Boolean isInserted) {
+                if (isInserted) {
+                    eventLoop.notify(new UserAddedEvent(user));
+                }
+                callback.call(isInserted);
+            }
+        });
     }
 
     @Override
-    public void deleteUser(Key publicKey, Callback<Boolean> callback) {
-        db.deleteUser(publicKey, callback);
+    public void deleteUser(final Key publicKey, final Callback<Boolean> callback) {
+        db.deleteUser(publicKey, new Callback<Boolean>() {
+            @Override
+            public void call(Boolean isDeleted) {
+                if (isDeleted) {
+                    eventLoop.notify(new UserRemovedEvent(publicKey));
+                }
+                callback.call(isDeleted);
+            }
+        });
     }
 
     @Override
