@@ -9,10 +9,17 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import org.aldeon.core.CoreModule;
+import org.aldeon.core.events.UserAddedEvent;
+import org.aldeon.events.ACB;
+import org.aldeon.events.Callback;
 import org.aldeon.gui2.Gui2Utils;
-import org.aldeon.gui2.various.DeterministicColorGenerator;
-import org.aldeon.gui2.various.ToggleEvent;
+import org.aldeon.gui2.controllers.MainController;
+import org.aldeon.gui2.various.*;
 import org.aldeon.model.Message;
+import org.aldeon.model.User;
+import org.aldeon.model.UserImpl;
+import org.aldeon.utils.helpers.Callbacks;
 
 public class MessageCard extends HorizontalColorContainer {
 
@@ -23,6 +30,7 @@ public class MessageCard extends HorizontalColorContainer {
     @FXML protected Button responseButton;
     @FXML protected Button removeButton;
     @FXML protected Button toggleChildrenButton;
+    @FXML protected ImageButton personImageButton;
     protected boolean toggle = false;
 
     private final ObjectProperty<Message> messageProperty = new SimpleObjectProperty<>();
@@ -34,7 +42,20 @@ public class MessageCard extends HorizontalColorContainer {
         messageProperty().addListener(new ChangeListener<Message>() {
             @Override
             public void changed(ObservableValue<? extends Message> observableValue, Message oldMessage, Message newMessage) {
-                userNameLabel.setText("Anonymous");
+
+                User als= CoreModule.getInstance().getUserManager().getIdentity(newMessage.getAuthorPublicKey());
+                if(als != null) {
+                    userNameLabel.setText(als.getName());
+                    personImageButton.setVisible(false);
+                }  else {
+                    User friend = CoreModule.getInstance().getUserManager().getUser(newMessage.getAuthorPublicKey());
+                    if (friend != null) {
+                        userNameLabel.setText(friend.getName());
+                    } else {
+                        userNameLabel.setText("Anonymous");
+                    }
+                }
+
                 userIdLabel.setText(newMessage.getAuthorPublicKey().toString());
                 messageIdLabel.setText(newMessage.getIdentifier().toString());
                 messageContentLabel.setText(newMessage.getContent());
@@ -68,6 +89,25 @@ public class MessageCard extends HorizontalColorContainer {
 
     @FXML protected void onLink(ActionEvent event) {
         Gui2Utils.copyToClipboard(messageIdLabel.getText());
+    }
+
+    @FXML protected void onFriend(ActionEvent event) {
+        final FriendCreator creator = new FriendCreator(getMessage().getAuthorPublicKey());
+
+        creator.setOnCreatorClosed(new EventHandler<UserEvent>() {
+            @Override
+            public void handle(UserEvent userEvent) {
+                MainController.getInstance().getSlider(MainController.FRIENDS_SLIDE_PANE)
+                        .slideOut(creator, Direction.RIGHT);
+                if(userEvent.user() != null) {
+                    GuiDbUtils.db().insertUser(userEvent.user(), Callbacks.<Boolean>emptyCallback());
+                }
+            }
+        });
+
+        MainController.getInstance().slideTo(MainController.FRIENDS_SLIDE_PANE);
+        MainController.getInstance().getSlider(MainController.FRIENDS_SLIDE_PANE).
+                slideIn(creator, Direction.RIGHT);
     }
 
     public ObjectProperty<Message> messageProperty() {

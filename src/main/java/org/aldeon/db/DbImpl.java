@@ -688,12 +688,16 @@ public class DbImpl implements Db {
         KeyGen rsa = new RsaKeyGen();
         KeyGen.KeyPair vader = rsa.generate();
         KeyGen.KeyPair luke = rsa.generate();
+        KeyGen.KeyPair random1 = rsa.generate();
+        KeyGen.KeyPair random2 = rsa.generate();
 
         Message topic = Messages.createAndSign(null, vader.publicKey, vader.privateKey, "Obi-Wan never told you what happened to your father.");
         Message otherBranch2 = Messages.createAndSign(topic.getIdentifier(), luke.publicKey, luke.privateKey, "He told me enough!");
         Message response1 = Messages.createAndSign(topic.getIdentifier(), luke.publicKey, luke.privateKey, "He told me you killed him!");
         Message response11 = Messages.createAndSign(response1.getIdentifier(), vader.publicKey, vader.privateKey, "No, I am your father.");
         Message response111 = Messages.createAndSign(response11.getIdentifier(), luke.publicKey, luke.privateKey, "Nooooooooooooooooooo!!!1");
+        Message response1111 = Messages.createAndSign(response111.getIdentifier(), random1.publicKey, random1.privateKey, "You gotta love the star wars :D");
+        Message response1112 = Messages.createAndSign(response111.getIdentifier(), random2.publicKey, random2.privateKey, "Know that feel, bro...");
 
 
         Callback<InsertResult> cb = Callbacks.emptyCallback();
@@ -702,6 +706,8 @@ public class DbImpl implements Db {
         insertMessage(response11, cb);
         insertMessage(otherBranch2, cb);
         insertMessage(response111, cb);
+        insertMessage(response1111, cb);
+        insertMessage(response1112, cb);
 
         Identity vaderIdentity = Identity.create("Vader", vader.publicKey, vader.privateKey);
         Identity lukeIdentity = Identity.create("Luke", luke.publicKey, luke.privateKey);
