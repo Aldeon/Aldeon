@@ -16,7 +16,7 @@
         <SidebarButton onMouseClicked="#clickedIdentities" text="Identities" imagePath="/gui2/images/menu-icons/identities.png" />
         <SidebarButton onMouseClicked="#clickedTopics" text="Topics" imagePath="/gui2/images/menu-icons/topics.png"/>
         <SidebarButton onMouseClicked="#clickedFriends" text="Friends" imagePath="/gui2/images/menu-icons/friends.png"/>
-        <SidebarButton onMouseClicked="#clickedSettings" text="Settings" imagePath="/gui2/images/menu-icons/settings.png"/>
+        <SidebarButton visible="false" onMouseClicked="#clickedSettings" text="Settings" imagePath="/gui2/images/menu-icons/settings.png"/>
       </children>
     </VBox>
   </left>

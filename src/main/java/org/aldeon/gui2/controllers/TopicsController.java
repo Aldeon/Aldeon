@@ -1,5 +1,7 @@
 package org.aldeon.gui2.controllers;
 
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -80,9 +82,15 @@ public class TopicsController {
     }
 
     private void addTopic(final Message topic) {
-        TopicCard card = new TopicCard(topic);
-        addCardCallbacks(card);
-        topicCards.add(card);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                TopicCard card = new TopicCard(topic);
+                addCardCallbacks(card);
+                topicCards.add(card);
+            }
+        });
+
     }
 
     private void delTopic(Message topic) {
