@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import org.aldeon.gui2.Gui2Utils;
 import org.aldeon.gui2.various.DeterministicColorGenerator;
 import org.aldeon.model.Identifier;
@@ -24,6 +25,8 @@ public class TopicCard extends HorizontalColorContainer {
     @FXML protected Button removeButton;
     @FXML protected ImageButton toggleButton;
 
+    protected final Tooltip tooltipSyncPending = new Tooltip();
+
     private final ObjectProperty<Message> messageProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<EventHandler<ActionEvent>> onResumeProp = new SimpleObjectProperty<>();
     private final ObjectProperty<EventHandler<ActionEvent>> onPauseProp = new SimpleObjectProperty<>();
@@ -38,6 +41,7 @@ public class TopicCard extends HorizontalColorContainer {
             }
         });
         toggleButton.setImage(PLAY_ICON);
+        tooltipSyncPending.setText("Synchronization in process...");
     }
 
     public TopicCard(Message topic) {
@@ -58,6 +62,7 @@ public class TopicCard extends HorizontalColorContainer {
             toggleButton.setImage(PAUSE_ICON);
             if(getOnResume() != null) {
                 getOnResume().handle(event);
+                toggleButton.setTooltip(tooltipSyncPending);
             }
         }
 //        else {

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tooltip?>
 <fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <content>
         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #222222;">
@@ -38,9 +39,21 @@
                         <top>
                             <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">
                                 <children>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/link.png" onAction="#onLink"/>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/bubble.png" fx:id="responseButton"/>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/delete.png" fx:id="removeButton"/>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/link.png" onAction="#onLink">
+                                        <tooltip>
+                                            <Tooltip text="Copy message identifier to clipboard"/>
+                                        </tooltip>
+                                    </ImageButton>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/bubble.png" fx:id="responseButton">
+                                        <tooltip>
+                                            <Tooltip text="Respond"/>
+                                        </tooltip>
+                                    </ImageButton>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/delete.png" fx:id="removeButton">
+                                        <tooltip>
+                                            <Tooltip text="Delete this message"/>
+                                        </tooltip>
+                                    </ImageButton>
                                 </children>
                             </FlowPane>
                         </top>
@@ -60,7 +73,11 @@
                             <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="-1.0" prefWrapLength="0.0">
                                 <children>
                                     <ImageButton styleClass="btn" image="@/gui2/images/message-icons/block.png" visible="false"/>
-                                    <ImageButton fx:id="personImageButton" styleClass="btn" image="@/gui2/images/message-icons/person.png" onAction="#onFriend"/>
+                                    <ImageButton fx:id="personImageButton" styleClass="btn" image="@/gui2/images/message-icons/person.png" onAction="#onFriend">
+                                        <tooltip>
+                                            <Tooltip text="Add friend"/>
+                                        </tooltip>
+                                    </ImageButton>
                                 </children>
                             </FlowPane>
                         </top>
