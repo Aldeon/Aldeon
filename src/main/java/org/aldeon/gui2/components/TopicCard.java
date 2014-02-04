@@ -59,12 +59,13 @@ public class TopicCard extends HorizontalColorContainer {
             if(getOnResume() != null) {
                 getOnResume().handle(event);
             }
-        } else {
-            toggleButton.setImage(PLAY_ICON);
-            if(getOnPause() != null) {
-                getOnPause().handle(event);
-            }
         }
+//        else {
+//            toggleButton.setImage(PLAY_ICON);
+//            if(getOnPause() != null) {
+//                getOnPause().handle(event);
+//            }
+//        }
     }
 
     private void update(Message message) {

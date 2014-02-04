@@ -76,6 +76,7 @@ public class ListConversationViewer extends ConversationViewer {
 
     private MessageCard card(final Message message) {
         MessageCard card = new MessageCard(message);
+        card.hideToggleChildrenButton();
         card.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {

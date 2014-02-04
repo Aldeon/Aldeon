@@ -24,7 +24,7 @@
                                     </Label>
                                 </center>
                                 <right>
-                                    <Button fx:id="toggleChildrenButton" text="toggle?" />
+                                    <Button fx:id="toggleChildrenButton" text="toggle?" styleClass="styled"/>
                                 </right>
                             </BorderPane>
                         </bottom>
@@ -59,8 +59,8 @@
                         <top>
                             <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="-1.0" prefWrapLength="0.0">
                                 <children>
+                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/block.png" visible="false"/>
                                     <ImageButton fx:id="personImageButton" styleClass="btn" image="@/gui2/images/message-icons/person.png" onAction="#onFriend"/>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/block.png"/>
                                 </children>
                             </FlowPane>
                         </top>

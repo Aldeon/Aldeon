@@ -51,6 +51,7 @@ public class MessageCard extends HorizontalColorContainer {
                     User friend = CoreModule.getInstance().getUserManager().getUser(newMessage.getAuthorPublicKey());
                     if (friend != null) {
                         userNameLabel.setText(friend.getName());
+                        personImageButton.setVisible(false);
                     } else {
                         userNameLabel.setText("Anonymous");
                     }
@@ -85,6 +86,10 @@ public class MessageCard extends HorizontalColorContainer {
     public MessageCard(Message message) {
         this();
         setMessage(message);
+    }
+
+    public void hideToggleChildrenButton() {
+        toggleChildrenButton.setVisible(false);
     }
 
     @FXML protected void onLink(ActionEvent event) {
