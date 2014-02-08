@@ -1,114 +1,95 @@
 package org.aldeon.gui.controllers;
 
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import org.aldeon.gui.GuiUtils;
-import org.aldeon.model.Message;
+import org.aldeon.gui.components.SlidingStackPane;
+import org.aldeon.gui.various.Direction;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
 
+public class MainController {
 
-public class MainController implements Initializable {
-    public VBox sidebar;
-    public StackPane logo;
-    public ScrollPane contents;
-    public StackPane Identities;
-    public StackPane Threads;
-    public StackPane Friends;
-    public StackPane Settings;
-    public ImageView IdentitiesImage;
-    public ImageView ThreadsImage;
-    public ImageView FriendsImage;
-    public ImageView SettingsImage;
-    public BorderPane main;
+    private static MainController instance;
+    @FXML private SlidingStackPane content;
 
-    private void changeFxml(String pathToFxml) {
-        Node node = GuiUtils.loadFromFxml(pathToFxml);
-        contents.setContent(node);
+    private int activeId = 0;
+    private Map<Integer, SlidingStackPane> sliders = new HashMap<>();
+
+    public static final int CURRENT_SLIDE_PANE = 0;
+    public static final int WELCOME_SLIDE_PANE = 1;
+    public static final int IDENTITIES_SLIDE_PANE = 2;
+    public static final int TOPICS_SLIDE_PANE = 3;
+    public static final int FRIENDS_SLIDE_PANE = 4;
+    public static final int SETTINGS_SLIDE_PANE = 5;
+
+    public MainController() {
+        // Allocate all view nodes
+        sliders.put(WELCOME_SLIDE_PANE, createSlidingStackPane(WelcomeController.create()));
+        sliders.put(TOPICS_SLIDE_PANE, createSlidingStackPane(TopicsController.create()));
+        sliders.put(FRIENDS_SLIDE_PANE, createSlidingStackPane(FriendsController.create()));
+        sliders.put(IDENTITIES_SLIDE_PANE, createSlidingStackPane(IdentitiesController.create()));
+        sliders.put(SETTINGS_SLIDE_PANE, createSlidingStackPane(SettingsController.create()));
+
+        instance = this;
     }
 
-    private void resetHighlights(StackPane stackPane, ImageView imageView) {
-        int index = stackPane.getStyleClass().indexOf("menuHighlight");
-        if (index != -1) {
-            stackPane.getStyleClass().remove(index);
-            stackPane.getStyleClass().add("menuNoHighlight");
-            imageView.opacityProperty().set(0.3);
+    private SlidingStackPane createSlidingStackPane(Node node) {
+        SlidingStackPane pane = new SlidingStackPane();
+        pane.insertWithoutAnimation(node);
+        return pane;
+    }
+
+    /**
+     * "second constructor" - fired as soon as all the Node references are set.
+     */
+    public void initialize() {
+        content.insertWithoutAnimation(getSlider(WELCOME_SLIDE_PANE));
+        activeId = WELCOME_SLIDE_PANE;
+    }
+
+    @FXML protected void clickedLogo(MouseEvent event) {
+        slideTo(WELCOME_SLIDE_PANE);
+    }
+
+    @FXML protected void clickedIdentities(MouseEvent event) {
+        slideTo(IDENTITIES_SLIDE_PANE);
+    }
+
+    @FXML protected void clickedTopics(MouseEvent event) {
+        slideTo(TOPICS_SLIDE_PANE);
+    }
+
+    @FXML protected void clickedFriends(MouseEvent event) {
+        slideTo(FRIENDS_SLIDE_PANE);
+    }
+
+    @FXML protected void clickedSettings(MouseEvent event) {
+        slideTo(SETTINGS_SLIDE_PANE);
+    }
+
+    public static MainController getInstance() {
+        return instance;
+    }
+
+    public void slideTo(int slidePane) {
+        SlidingStackPane pane = getSlider(slidePane);
+
+        if(slidePane != activeId &&  pane != null) {
+            Direction dir = Direction.BOTTOM;
+            if(slidePane > activeId) dir = dir.opposite();
+            content.slideOut(getSlider(activeId), dir);
+            content.slideIn(pane, dir.opposite());
+            activeId = slidePane;
         }
     }
-
-    private void setHighlights(StackPane stackPane, ImageView imageView) {
-        imageView.opacityProperty().set(0.8);
-        stackPane.getStyleClass().add("menuHighlight");
-
-        int index = stackPane.getStyleClass().indexOf("menuNoHighlight");
-        if (index != -1) {
-            stackPane.getStyleClass().remove(index);
+    public SlidingStackPane getSlider(int slidePane) {
+        if (slidePane == CURRENT_SLIDE_PANE) {
+            return sliders.get(activeId);
         }
+        return sliders.get(slidePane);
     }
-
-    private void resetAllHighlights() {
-        resetHighlights(Identities, IdentitiesImage);
-        resetHighlights(Threads, ThreadsImage);
-        resetHighlights(Friends, FriendsImage);
-        resetHighlights(Settings, SettingsImage);
-    }
-
-    public void identitiesClicked(MouseEvent event) {
-        resetAllHighlights();
-        setHighlights(Identities, IdentitiesImage);
-        changeFxml("IdentityManager.fxml");
-    }
-
-    public void threadsClicked(MouseEvent event) {
-        resetAllHighlights();
-        setHighlights(Threads, ThreadsImage);
-
-        TopicListController topicListController = GuiUtils.getController("TopicList.fxml");
-        topicListController.setMainController(this);
-
-        contents.setContent(topicListController.mainWindow);
-    }
-
-    public void friendsClicked(MouseEvent event) {
-        resetAllHighlights();
-        setHighlights(Friends, FriendsImage);
-        changeFxml("FriendsManager.fxml");
-    }
-
-    public void settingsClicked(MouseEvent event) {
-        resetAllHighlights();
-        setHighlights(Settings, SettingsImage);
-        changeFxml("Settings.fxml");
-    }
-
-
-    public void showTopicMsgs(Message rootMsg) {
-        //TODO pass root msg identifier in argument
-
-        TopicMsgsController topicMsgsController = GuiUtils.getController("TopicMsgs.fxml");
-        topicMsgsController.setTopicMessage(rootMsg);
-
-        contents.setContent(topicMsgsController.hbox);
-    }
-
-    public void showCreateThreadView() {
-        CreateThreadController createThreadController = GuiUtils.getController("CreateThread.fxml");
-        createThreadController.setMainController(this);
-        contents.setContent(createThreadController.root);
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        changeFxml("dashboard.fxml");
-    }
-
 }
 
 
