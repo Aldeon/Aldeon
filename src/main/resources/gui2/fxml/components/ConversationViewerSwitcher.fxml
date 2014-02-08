@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import java.net.URL?>
-<?import org.aldeon.gui2.components.SlidingStackPane?>
+<?import org.aldeon.gui.components.SlidingStackPane?>
 <fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" style="-fx-background-color: #444444;">
     <top>
         <BorderPane prefHeight="48.0" styleClass="topBar">

@@ -5,9 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<?import org.aldeon.gui2.components.SlidingStackPane?>
+<?import org.aldeon.gui.components.SlidingStackPane?>
 <?import java.net.URL?>
-<SlidingStackPane fx:id="slider" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.IdentitiesController">
+<SlidingStackPane fx:id="slider" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.IdentitiesController">
   <children>
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent">
           <FlowPane fx:id="container" hgap="16.0" prefHeight="-1.0" prefWidth="-1.0" prefWrapLength="0.0" vgap="16.0">

@@ -5,9 +5,9 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
-<?import org.aldeon.gui2.components.ImageButton?>
+<?import org.aldeon.gui.components.ImageButton?>
 <?import javafx.scene.control.Tooltip?>
-<fx:root type="org.aldeon.gui2.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<fx:root type="org.aldeon.gui.components.HorizontalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <content>
         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #222222;" >
             <bottom>

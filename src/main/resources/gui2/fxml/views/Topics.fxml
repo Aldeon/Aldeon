@@ -4,8 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import org.aldeon.gui2.components.SlidingStackPane?>
-<SlidingStackPane fx:id="slider" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui2.controllers.TopicsController">
+<?import org.aldeon.gui.components.SlidingStackPane?>
+<SlidingStackPane fx:id="slider" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.TopicsController">
     <children>
         <BorderPane fx:id="topicsView">
             <center>

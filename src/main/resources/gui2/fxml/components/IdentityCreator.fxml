@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import org.aldeon.gui2.components.ColorizedImageView?>
+<?import org.aldeon.gui.components.ColorizedImageView?>
 
 <fx:root type="javafx.scene.layout.BorderPane" style="-fx-background-color: #444444" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <bottom>

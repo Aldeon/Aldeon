@@ -5,10 +5,10 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.image.Image?>
-<?import org.aldeon.gui2.components.ColorizedImageView?>
+<?import org.aldeon.gui.components.ColorizedImageView?>
 
 <?import java.net.URL?>
-<fx:root type="org.aldeon.gui2.components.VerticalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<fx:root type="org.aldeon.gui.components.VerticalColorContainer" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <content>
         <AnchorPane styleClass="cardBackground" prefHeight="128.0" prefWidth="128.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
             <children>
