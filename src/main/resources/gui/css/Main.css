@@ -1,0 +1,64 @@
+/* -- Sidebar -- */
+#sideBar {
+    -fx-background-color: linear-gradient(to right, #222222 80%, #181818);
+    -fx-border-color: #666666;
+    -fx-border-width: 0 1px 0 0;
+}
+
+/* -- Main content -- */
+#content {
+    -fx-background-color: #444444;
+}
+
+/* -- Common button styles -- */
+.sideButton {
+    -fx-background-color: transparent;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1px 0;
+}
+
+#sideBar Label {
+    -fx-text-fill: #999999;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.logoButton {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-image: url("../images/menu-icons/logo.png");
+    -fx-cursor: hand;
+}
+
+/* -- Common input components -- */
+
+.styled {
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-background-color: #333333;
+    -fx-border-color: #222222;
+    -fx-border-width: 1px;
+    -fx-text-fill: #999999;
+    -fx-padding: 6px;
+    -fx-focus-color: transparent;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.styled:hover {
+    -fx-background-color: #282828;
+}
+
+.styled:focused {
+    -fx-background-color: #252525;
+    -fx-effect: dropshadow(three-pass-box, rgba(40,40,40,0.7), 8, 0.2, 0, 0);
+}
+
+Button.styled {
+    -fx-cursor: hand;
+}
+
+.styledTextArea {
+    -fx-background-color: #333333;
+    -fx-border-color: #222222;
+    -fx-text-fill: #999999;
+    -fx-font-weight: bold;
+}

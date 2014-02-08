@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" id="BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+    <top>
+        <BorderPane fx:id="messageContainer" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" />
+    </top>
+    <center>
+        <VBox>
+            <children>
+                <BorderPane fx:id="responseContainer" prefWidth="600.0" maxWidth="600.0" minWidth="600.0" />
+                <VBox fx:id="childrenContainer"  />
+            </children>
+            <padding>
+                <Insets />
+            </padding>
+            <BorderPane.margin>
+                <Insets left="48.0" />
+            </BorderPane.margin>
+        </VBox>
+    </center>
+    <padding>
+        <Insets top="16.0" left="16.0" />
+    </padding>
+</fx:root>

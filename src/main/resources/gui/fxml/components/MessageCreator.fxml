@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<fx:root type="org.aldeon.gui.components.HorizontalColorContainer" prefHeight="256.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+    <content>
+        <BorderPane>
+            <bottom>
+                <FlowPane alignment="CENTER" hgap="16.0" prefHeight="32.0">
+                    <children>
+                        <Button onAction="#onOk" fx:id="okButton" disable="true" styleClass="styled" mnemonicParsing="false" text="OK" />
+                        <Button onAction="#onCancel" styleClass="styled" mnemonicParsing="false" text="Cancel" />
+                    </children>
+                </FlowPane>
+            </bottom>
+            <center>
+                <TextArea fx:id="textArea" styleClass="messageCreatorTextArea" wrapText="true" />
+            </center>
+            <right>
+                <ListView fx:id="identities" styleClass="messageCreatorListView" prefWidth="160.0" />
+            </right>
+        </BorderPane>
+    </content>
+    <stylesheets>
+        <URL value="@../../css/MessageCreator.css" />
+    </stylesheets>
+</fx:root>

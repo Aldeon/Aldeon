@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.layout.*?>
+<?import org.aldeon.gui.components.SidebarButton?>
+
+<?import org.aldeon.gui.components.SlidingStackPane?>
+<BorderPane fx:id="main" prefHeight="540.0" prefWidth="690.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.aldeon.gui.controllers.MainController">
+  <center>
+    <SlidingStackPane fx:id="content" />
+  </center>
+  <left>
+    <VBox fx:id="sideBar" maxWidth="96.0" minWidth="96.0" prefWidth="96.0">
+      <children>
+        <Pane onMouseClicked="#clickedLogo" prefHeight="64.0" prefWidth="96.0" styleClass="sideButton, logoButton" />
+        <SidebarButton onMouseClicked="#clickedIdentities" text="Identities" imagePath="/gui/images/menu-icons/identities.png" />
+        <SidebarButton onMouseClicked="#clickedTopics" text="Topics" imagePath="/gui/images/menu-icons/topics.png"/>
+        <SidebarButton onMouseClicked="#clickedFriends" text="Friends" imagePath="/gui/images/menu-icons/friends.png"/>
+        <SidebarButton visible="false" onMouseClicked="#clickedSettings" text="Settings" imagePath="/gui/images/menu-icons/settings.png"/>
+      </children>
+    </VBox>
+  </left>
+  <stylesheets>
+    <URL value="@/gui/css/Main.css" />
+    <URL value="@/gui/css/ScrollPane.css" />
+  </stylesheets>
+</BorderPane>

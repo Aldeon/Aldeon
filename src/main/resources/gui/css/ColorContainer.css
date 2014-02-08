@@ -1,0 +1,14 @@
+.coloredRoundedRectangle {
+    -fx-background-color: #ff0000;
+    -fx-background-radius: 8px;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 8, 0.2, 0, 4);
+}
+
+#container {
+    -fx-background-color: #222222;
+}
+
+.side {
+    -fx-background-color: transparent;
+}

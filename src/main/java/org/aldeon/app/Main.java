@@ -1,8 +1,25 @@
 package org.aldeon.app;
 
-public class Main {
+import org.aldeon.gui.GuiModule;
+import org.aldeon.protocol.ProtocolModule;
+import org.aldeon.utils.conversion.ConversionException;
+import org.aldeon.utils.various.VirtualMachine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+import java.io.IOException;
+
+public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String[] args) throws IOException, ConversionException {
+        if(VirtualMachine.getNumberOfApplicationInstances() > 1)
+        {
+            log.error("Attempting to run more than one instance. Exiting.");
+            System.exit(-1);
+        }
+
+        ProtocolModule.initialize();
+        GuiModule.launch();
     }
 }

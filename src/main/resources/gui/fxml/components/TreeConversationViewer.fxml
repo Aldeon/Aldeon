@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" style="-fx-background-color: #444444;">
+    <center>
+       <ScrollPane fx:id="scrollPane" style="-fx-background-color: transparent">
+       </ScrollPane>
+    </center>
+</fx:root>

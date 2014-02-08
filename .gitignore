@@ -27,3 +27,13 @@ target/
 build
 out
 gen
+
+#Aldeon
+aldeon.db
+aldeon.db.lck
+aldeon.db.log
+aldeon.db.properties
+aldeon.db.script
+aldeon.conf
+aldeon.properties
+
