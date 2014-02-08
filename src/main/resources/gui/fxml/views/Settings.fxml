@@ -161,6 +161,6 @@
         </TabPane>
     </center>
     <stylesheets>
-        <URL value="@/gui2/css/Settings.css" />
+        <URL value="@/gui/css/Settings.css" />
     </stylesheets>
 </BorderPane>

@@ -10,7 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.model.Message;
 
 public class ConversationViewerSwitcher extends BorderPane {
@@ -27,7 +27,7 @@ public class ConversationViewerSwitcher extends BorderPane {
 
     public ConversationViewerSwitcher(Message topic) {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/ConversationViewerSwitcher.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/ConversationViewerSwitcher.fxml", this);
 
         show(new ListConversationViewer());
         back.setOnAction(new EventHandler<ActionEvent>() {

@@ -7,7 +7,7 @@ import javafx.scene.control.ScrollPane;
 import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.core.events.MessageRemovedEvent;
 import org.aldeon.db.Db;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.FxCallback;
 import org.aldeon.gui.various.GuiDbUtils;
 import org.aldeon.gui.various.MessageEvent;
@@ -29,10 +29,10 @@ public class TreeConversationViewer extends ConversationViewer {
 
     public TreeConversationViewer(Message topic) {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/TreeConversationViewer.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/TreeConversationViewer.fxml", this);
         scrollPane.setContent(createContainer(topic));
 
-        Gui2Utils.loop().assign(MessageAddedEvent.class, new FxCallback<MessageAddedEvent>() {
+        GuiUtils.loop().assign(MessageAddedEvent.class, new FxCallback<MessageAddedEvent>() {
             @Override
             protected void react(MessageAddedEvent val) {
                 MessageWithChildren container = containersMap.get(val.getMessage().getParentMessageIdentifier());
@@ -44,7 +44,7 @@ public class TreeConversationViewer extends ConversationViewer {
             }
         });
 
-        Gui2Utils.loop().assign(MessageRemovedEvent.class, new FxCallback<MessageRemovedEvent>() {
+        GuiUtils.loop().assign(MessageRemovedEvent.class, new FxCallback<MessageRemovedEvent>() {
             @Override
             protected void react(MessageRemovedEvent val) {
                 MessageWithChildren container = containersMap.get(val.getIdentifier());

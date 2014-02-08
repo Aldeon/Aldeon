@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Executor;
 
-public class Gui2Utils {
-    private static final String FXML_PATH = "/gui2/fxml";
+public class GuiUtils {
+    private static final String FXML_PATH = "/gui/fxml";
     private static EventLoop loop;
     private static Executor fxExecutor = null;
 
@@ -39,7 +39,7 @@ public class Gui2Utils {
 
     public static Parent loadFXML(String path) {
         try {
-            return FXMLLoader.load(Gui2Utils.class.getResource(path));
+            return FXMLLoader.load(GuiUtils.class.getResource(path));
         } catch (IOException e) {
             return null;
         }
@@ -50,7 +50,7 @@ public class Gui2Utils {
     }
 
     public static Object loadFXMLandInjectController(String path, Object controller) {
-        URL url = Gui2Utils.class.getResource(path);
+        URL url = GuiUtils.class.getResource(path);
         FXMLLoader fxmlLoader = new FXMLLoader(url);
         fxmlLoader.setRoot(controller);
         fxmlLoader.setController(controller);

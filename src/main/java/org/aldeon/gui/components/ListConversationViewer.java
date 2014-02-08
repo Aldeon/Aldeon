@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.events.AsyncCallback;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.FxCallback;
 import org.aldeon.gui.various.GuiDbUtils;
 import org.aldeon.gui.various.MessageEvent;
@@ -37,7 +37,7 @@ public class ListConversationViewer extends ConversationViewer {
 
     public ListConversationViewer() {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/ListConversationViewer.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/ListConversationViewer.fxml", this);
         focusProperty().addListener(new ChangeListener<Message>() {
             @Override
             public void changed(ObservableValue<? extends Message> observableValue, Message oldMessage, Message newMessage) {
@@ -71,7 +71,7 @@ public class ListConversationViewer extends ConversationViewer {
             }
         };
 
-        Gui2Utils.loop().assign(MessageAddedEvent.class, messageAddedCallback);
+        GuiUtils.loop().assign(MessageAddedEvent.class, messageAddedCallback);
     }
 
     private MessageCard card(final Message message) {
@@ -199,6 +199,6 @@ public class ListConversationViewer extends ConversationViewer {
 
     @Override
     public void onRemovedFromScene() {
-        Gui2Utils.loop().resign(MessageAddedEvent.class, messageAddedCallback);
+        GuiUtils.loop().resign(MessageAddedEvent.class, messageAddedCallback);
     }
 }

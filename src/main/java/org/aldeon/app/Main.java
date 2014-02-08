@@ -1,6 +1,6 @@
 package org.aldeon.app;
 
-import org.aldeon.gui.Gui2Module;
+import org.aldeon.gui.GuiModule;
 import org.aldeon.protocol.ProtocolModule;
 import org.aldeon.utils.conversion.ConversionException;
 import org.aldeon.utils.various.VirtualMachine;
@@ -20,6 +20,6 @@ public class Main {
         }
 
         ProtocolModule.initialize();
-        Gui2Module.launch();
+        GuiModule.launch();
     }
 }

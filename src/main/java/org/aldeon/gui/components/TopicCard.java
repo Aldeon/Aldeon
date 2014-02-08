@@ -10,15 +10,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.DeterministicColorGenerator;
 import org.aldeon.model.Identifier;
 import org.aldeon.model.Message;
 
 public class TopicCard extends HorizontalColorContainer {
 
-    private static final String PLAY_ICON = "/gui2/images/message-icons/play.png";
-    private static final String PAUSE_ICON = "/gui2/images/message-icons/pause.png";
+    private static final String PLAY_ICON = "/gui/images/message-icons/play.png";
+    private static final String PAUSE_ICON = "/gui/images/message-icons/pause.png";
 
     @FXML protected Label messageContentLabel;
     @FXML protected Label messageIdLabel;
@@ -32,7 +32,7 @@ public class TopicCard extends HorizontalColorContainer {
     private final ObjectProperty<EventHandler<ActionEvent>> onPauseProp = new SimpleObjectProperty<>();
 
     public TopicCard() {
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/TopicCard.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/TopicCard.fxml", this);
 
         messageProperty().addListener(new ChangeListener<Message>() {
             @Override
@@ -50,7 +50,7 @@ public class TopicCard extends HorizontalColorContainer {
     }
 
     @FXML protected void onLink(ActionEvent event) {
-        Gui2Utils.copyToClipboard(messageIdLabel.getText());
+        GuiUtils.copyToClipboard(messageIdLabel.getText());
     }
 
     @FXML protected void onRemove(ActionEvent event) {

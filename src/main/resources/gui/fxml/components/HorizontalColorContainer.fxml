@@ -14,6 +14,6 @@
     <Pane maxWidth="16.0" minWidth="16.0" prefWidth="16.0" styleClass="side" />
   </right>
   <stylesheets>
-    <URL value="@/gui2/css/ColorContainer.css" />
+    <URL value="@/gui/css/ColorContainer.css" />
   </stylesheets>
 </fx:root>

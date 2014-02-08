@@ -12,7 +12,7 @@ import org.aldeon.core.events.IdentityRemovedEvent;
 import org.aldeon.crypt.Key;
 import org.aldeon.events.Callback;
 import org.aldeon.events.EventLoop;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.components.IdentityCreator;
 import org.aldeon.gui.components.SlidingStackPane;
 import org.aldeon.gui.components.UserCard;
@@ -37,7 +37,7 @@ public class IdentitiesController {
     private Map<Key, UserCard> identityCards = new HashMap<>();
 
     public static Node create() {
-        return Gui2Utils.loadFXMLfromDefaultPath(FXML_FILE);
+        return GuiUtils.loadFXMLfromDefaultPath(FXML_FILE);
     }
 
     public void initialize() {

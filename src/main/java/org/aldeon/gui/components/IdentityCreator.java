@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import org.aldeon.crypt.KeyGen;
 import org.aldeon.crypt.rsa.RsaModule;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.DeterministicColorGenerator;
 import org.aldeon.gui.various.IdentityEvent;
 import org.aldeon.model.Identity;
@@ -38,7 +38,7 @@ public class IdentityCreator extends BorderPane {
 
     public IdentityCreator(Identity identity) {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/IdentityCreator.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/IdentityCreator.fxml", this);
 
         if(identity == null) {
             shuffleKeys();

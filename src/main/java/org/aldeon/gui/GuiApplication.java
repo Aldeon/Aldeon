@@ -17,9 +17,9 @@ public class GuiApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         log.info("Starting GUI...");
-        Parent root = Gui2Utils.loadFXMLfromDefaultPath("views/Main.fxml");
+        Parent root = GuiUtils.loadFXMLfromDefaultPath("views/Main.fxml");
         primaryStage.setTitle("Aldeon");
-        primaryStage.getIcons().add(new Image("/gui2/images/appIcon.png"));
+        primaryStage.getIcons().add(new Image("/gui/images/appIcon.png"));
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

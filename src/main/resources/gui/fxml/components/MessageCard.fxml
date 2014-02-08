@@ -39,17 +39,17 @@
                         <top>
                             <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="0.0">
                                 <children>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/link.png" onAction="#onLink">
+                                    <ImageButton styleClass="btn" image="@/gui/images/message-icons/link.png" onAction="#onLink">
                                         <tooltip>
                                             <Tooltip text="Copy message identifier to clipboard"/>
                                         </tooltip>
                                     </ImageButton>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/bubble.png" fx:id="responseButton">
+                                    <ImageButton styleClass="btn" image="@/gui/images/message-icons/bubble.png" fx:id="responseButton">
                                         <tooltip>
                                             <Tooltip text="Respond"/>
                                         </tooltip>
                                     </ImageButton>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/delete.png" fx:id="removeButton">
+                                    <ImageButton styleClass="btn" image="@/gui/images/message-icons/delete.png" fx:id="removeButton">
                                         <tooltip>
                                             <Tooltip text="Delete this message"/>
                                         </tooltip>
@@ -72,8 +72,8 @@
                         <top>
                             <FlowPane alignment="CENTER_RIGHT" prefHeight="24.0" prefWidth="-1.0" prefWrapLength="0.0">
                                 <children>
-                                    <ImageButton styleClass="btn" image="@/gui2/images/message-icons/block.png" visible="false"/>
-                                    <ImageButton fx:id="personImageButton" styleClass="btn" image="@/gui2/images/message-icons/person.png" onAction="#onFriend">
+                                    <ImageButton styleClass="btn" image="@/gui/images/message-icons/block.png" visible="false"/>
+                                    <ImageButton fx:id="personImageButton" styleClass="btn" image="@/gui/images/message-icons/person.png" onAction="#onFriend">
                                         <tooltip>
                                             <Tooltip text="Add friend"/>
                                         </tooltip>

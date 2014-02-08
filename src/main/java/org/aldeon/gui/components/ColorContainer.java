@@ -9,7 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 
 public abstract class ColorContainer extends BorderPane {
 
@@ -22,7 +22,7 @@ public abstract class ColorContainer extends BorderPane {
         colorProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> observableValue, Color oldColor, Color newColor) {
-                main.setStyle("-fx-background-color: " + Gui2Utils.toWebHex(newColor));
+                main.setStyle("-fx-background-color: " + GuiUtils.toWebHex(newColor));
             }
         });
 

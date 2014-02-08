@@ -13,7 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 
 public class SidebarButton extends Pane {
 
@@ -24,7 +24,7 @@ public class SidebarButton extends Pane {
     public SidebarButton() {
         super();
 
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/SidebarButton.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/SidebarButton.fxml", this);
 
         imagePathProperty().addListener(new ChangeListener<String>() {
             @Override

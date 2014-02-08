@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import org.aldeon.core.CoreModule;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.controllers.MainController;
 import org.aldeon.gui.various.*;
 import org.aldeon.model.Message;
@@ -33,7 +33,7 @@ public class MessageCard extends HorizontalColorContainer {
     private final ObjectProperty<EventHandler<ToggleEvent>> onToggleProperty = new SimpleObjectProperty<>();
 
     public MessageCard() {
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageCard.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/MessageCard.fxml", this);
 
         messageProperty().addListener(new ChangeListener<Message>() {
             @Override
@@ -89,7 +89,7 @@ public class MessageCard extends HorizontalColorContainer {
     }
 
     @FXML protected void onLink(ActionEvent event) {
-        Gui2Utils.copyToClipboard(messageIdLabel.getText());
+        GuiUtils.copyToClipboard(messageIdLabel.getText());
     }
 
     @FXML protected void onFriend(ActionEvent event) {

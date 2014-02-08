@@ -16,7 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.aldeon.events.Callback;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.DeterministicColorGenerator;
 import org.aldeon.gui.various.GuiDbUtils;
 import org.aldeon.gui.various.MessageEvent;
@@ -40,7 +40,7 @@ public class MessageCreator extends HorizontalColorContainer {
 
     public MessageCreator(final Identifier parent) {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageCreator.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/MessageCreator.fxml", this);
         setAuthor(null);
         this.parent = parent;
 
@@ -119,7 +119,7 @@ public class MessageCreator extends HorizontalColorContainer {
                 rect.setFill(color);
                 setGraphic(rect);
                 setText(identity.getName());
-                setStyle("-fx-text-fill: " + Gui2Utils.toWebHex(color));
+                setStyle("-fx-text-fill: " + GuiUtils.toWebHex(color));
             }
         }
     }

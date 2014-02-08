@@ -1,12 +1,12 @@
 package org.aldeon.gui.components;
 
 
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 
 public class HorizontalColorContainer extends ColorContainer {
 
     public HorizontalColorContainer(){
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/HorizontalColorContainer.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/HorizontalColorContainer.fxml", this);
     }
 }

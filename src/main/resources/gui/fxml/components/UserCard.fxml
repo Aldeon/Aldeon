@@ -34,6 +34,6 @@
         </AnchorPane>
     </content>
     <stylesheets>
-        <URL value="@/gui2/css/UserCard.css" />
+        <URL value="@/gui/css/UserCard.css" />
     </stylesheets>
 </fx:root>

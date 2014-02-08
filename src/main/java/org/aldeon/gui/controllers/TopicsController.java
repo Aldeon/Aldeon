@@ -16,7 +16,7 @@ import org.aldeon.core.CoreModule;
 import org.aldeon.core.events.MessageAddedEvent;
 import org.aldeon.db.Db;
 import org.aldeon.events.Callback;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.components.ConversationViewerSwitcher;
 import org.aldeon.gui.components.MessageCreator;
 import org.aldeon.gui.components.SlidingStackPane;
@@ -61,7 +61,7 @@ public class TopicsController {
                 }
             }
         });
-        Gui2Utils.loop().assign(MessageAddedEvent.class, new FxCallback<MessageAddedEvent>() {
+        GuiUtils.loop().assign(MessageAddedEvent.class, new FxCallback<MessageAddedEvent>() {
             @Override
             protected void react(MessageAddedEvent event) {
                 UnknownTopicCard card = unknownTopics.get(event.getMessage().getIdentifier());
@@ -144,7 +144,7 @@ public class TopicsController {
     }
 
     public static Node create() {
-        return Gui2Utils.loadFXMLfromDefaultPath(FXML_FILE);
+        return GuiUtils.loadFXMLfromDefaultPath(FXML_FILE);
     }
 
     @FXML protected void newTopicClicked(ActionEvent actionEvent) {

@@ -7,7 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.DeterministicColorGenerator;
 import org.aldeon.model.User;
 
@@ -21,7 +21,7 @@ public class UserCard extends VerticalColorContainer {
 
     public UserCard() {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/UserCard.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/UserCard.fxml", this);
 
         colorProperty().addListener(new ChangeListener<Color>() {
             @Override

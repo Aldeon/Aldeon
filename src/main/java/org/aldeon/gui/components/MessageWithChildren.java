@@ -13,7 +13,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.MessageEvent;
 import org.aldeon.gui.various.ToggleEvent;
 import org.aldeon.model.Message;
@@ -31,7 +31,7 @@ public class MessageWithChildren extends BorderPane {
 
     public MessageWithChildren(){
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/MessageWithChildren.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/MessageWithChildren.fxml", this);
 
         messageCard = new MessageCard();
         messageContainer.setCenter(messageCard);

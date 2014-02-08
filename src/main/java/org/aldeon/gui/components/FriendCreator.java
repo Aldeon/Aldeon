@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import org.aldeon.crypt.Key;
-import org.aldeon.gui.Gui2Utils;
+import org.aldeon.gui.GuiUtils;
 import org.aldeon.gui.various.DeterministicColorGenerator;
 import org.aldeon.gui.various.UserEvent;
 import org.aldeon.model.User;
@@ -27,7 +27,7 @@ public class FriendCreator extends BorderPane {
 
     public FriendCreator(Key newUserKey) {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/FriendCreator.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/FriendCreator.fxml", this);
 
         publicKey = newUserKey;
         update("");
@@ -35,7 +35,7 @@ public class FriendCreator extends BorderPane {
 
     public FriendCreator(User user) {
         super();
-        Gui2Utils.loadFXMLandInjectController("/gui2/fxml/components/FriendCreator.fxml", this);
+        GuiUtils.loadFXMLandInjectController("/gui/fxml/components/FriendCreator.fxml", this);
 
         publicKey = user.getPublicKey();
         update(user.getName());
